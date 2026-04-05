@@ -1,0 +1,52 @@
+// ---------------------------------------------------------------------------
+// Budget calculation (Steps 1-2)
+// ---------------------------------------------------------------------------
+
+import type { Tier, Role, CampaignSettings } from './types';
+import { XP_BY_CR, GP_PER_XP } from './constants';
+
+/**
+ * Map from numeric CR values to the string keys used in XP_BY_CR.
+ * Fractional CRs (0.125, 0.25, 0.5) are mapped to "1/8", "1/4", "1/2".
+ */
+function crToKey(cr: number): string {
+  if (cr === 0.125) return '1/8';
+  if (cr === 0.25) return '1/4';
+  if (cr === 0.5) return '1/2';
+  return String(cr);
+}
+
+/**
+ * Calculate the full budget and role budget for a creature.
+ *
+ * full_budget = XP_BY_CR[cr] × GP_PER_XP[tier] × (4 / partySize)
+ * role_budget = full_budget × roleRatio[role]
+ *
+ * @param cr - Challenge Rating as a number (0, 0.125, 0.25, 0.5, 1..30).
+ * @param tier - Tier of play (1-4).
+ * @param role - Creature's economy role.
+ * @param settings - Campaign settings (party size, role ratios, etc.).
+ * @returns The full hoard budget and the role-adjusted budget in GP.
+ */
+export function calculateBudget(
+  cr: number,
+  tier: Tier,
+  role: Role,
+  settings: CampaignSettings,
+): { fullBudget: number; roleBudget: number } {
+  const key = crToKey(cr);
+  const xp = XP_BY_CR[key];
+
+  if (xp === undefined) {
+    throw new Error(`Unknown CR: ${cr} (key "${key}")`);
+  }
+
+  const gpPerXp = GP_PER_XP[tier];
+  const partySizeScalar = 4 / settings.partySize;
+  const fullBudget = xp * gpPerXp * partySizeScalar;
+
+  const roleRatio = settings.roleRatios[role];
+  const roleBudget = fullBudget * roleRatio;
+
+  return { fullBudget, roleBudget };
+}
