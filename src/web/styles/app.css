@@ -1,0 +1,419 @@
+/* =========================================================================
+   D&D 5e Loot Generator - Dark Fantasy Theme
+   ========================================================================= */
+
+/* --- Reset & Base --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: #1a1a2e;
+  color: #e0e0e0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- App Container --- */
+.app-container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+.app-title {
+  text-align: center;
+  font-size: 1.75rem;
+  color: #e94560;
+  margin: 0 0 1.5rem;
+  letter-spacing: 0.02em;
+}
+
+/* --- Cards --- */
+.card {
+  background: #16213e;
+  border: 1px solid #0f3460;
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  color: #e94560;
+  margin: 0 0 1rem;
+  font-weight: 600;
+}
+
+/* --- Field Rows --- */
+.field-row {
+  margin-bottom: 0.85rem;
+}
+
+.field-label {
+  display: block;
+  font-size: 0.85rem;
+  color: #a0a0b8;
+  margin-bottom: 0.35rem;
+  font-weight: 500;
+}
+
+/* --- CR Input --- */
+.cr-input-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.cr-number,
+.cr-select {
+  width: 5.5rem;
+  padding: 0.4rem 0.5rem;
+  background: #0f3460;
+  border: 1px solid #1a3a6a;
+  border-radius: 4px;
+  color: #e0e0e0;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.cr-number:focus,
+.cr-select:focus {
+  outline: none;
+  border-color: #e94560;
+}
+
+.cr-select option {
+  background: #16213e;
+}
+
+/* --- Tier Radio Group --- */
+.tier-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.tier-radio {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  padding: 0.3rem 0.75rem;
+  background: #0f3460;
+  border: 1px solid #1a3a6a;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.tier-radio input[type='radio'] {
+  display: none;
+}
+
+.tier-radio.active {
+  background: #e94560;
+  border-color: #e94560;
+  color: #fff;
+}
+
+.tier-radio:not(.active):hover {
+  border-color: #e94560;
+}
+
+/* --- Checkboxes --- */
+.checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: #c0c0d0;
+}
+
+.checkbox-label input[type='checkbox'] {
+  accent-color: #e94560;
+  width: 1rem;
+  height: 1rem;
+}
+
+/* --- Role Steppers --- */
+.roles-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.role-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #0f3460;
+  border: 1px solid #1a3a6a;
+  border-radius: 4px;
+  padding: 0.4rem 0.6rem;
+}
+
+.role-label {
+  font-variant: small-caps;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.stepper-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.stepper-btn {
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  border-radius: 4px;
+  background: #16213e;
+  color: #e94560;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.stepper-btn:hover:not(:disabled) {
+  background: #e94560;
+  color: #fff;
+}
+
+.stepper-btn:disabled {
+  color: #3a3a5a;
+  cursor: default;
+}
+
+.stepper-value {
+  width: 2rem;
+  text-align: center;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+/* --- Roll Button --- */
+.roll-btn {
+  display: block;
+  width: 100%;
+  padding: 0.7rem;
+  margin-top: 0.5rem;
+  background: #e94560;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.roll-btn:hover {
+  background: #d63651;
+}
+
+.roll-btn:active {
+  transform: scale(0.98);
+}
+
+/* --- Results Panel --- */
+.results-panel {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #0f3460;
+}
+
+.results-title {
+  font-size: 1rem;
+  color: #e94560;
+  margin: 0 0 0.6rem;
+}
+
+.results-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.creature-line {
+  padding: 0.45rem 0;
+  border-bottom: 1px solid rgba(15, 52, 96, 0.6);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.creature-line:last-child {
+  border-bottom: none;
+}
+
+.creature-label {
+  font-variant: small-caps;
+  font-weight: 700;
+  color: #e0c097;
+  letter-spacing: 0.03em;
+}
+
+.creature-coins {
+  font-family: 'Courier New', Courier, monospace;
+  color: #f0d060;
+}
+
+.creature-item {
+  color: #a0d0ff;
+}
+
+.mundane-finds {
+  margin-top: 0.15rem;
+  font-size: 0.8rem;
+  color: #707088;
+  font-style: italic;
+}
+
+.mundane-item {
+  /* inherited from .mundane-finds */
+}
+
+.results-total {
+  margin-top: 0.7rem;
+  padding-top: 0.6rem;
+  border-top: 2px solid #e94560;
+  font-weight: 700;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1rem;
+  color: #f0d060;
+}
+
+/* --- Collapsible Settings Panel --- */
+.settings-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.collapsible-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1rem 1.25rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  text-align: left;
+}
+
+.collapsible-header:hover {
+  background: rgba(233, 69, 96, 0.06);
+}
+
+.chevron {
+  font-size: 0.7rem;
+  color: #a0a0b8;
+  transition: transform 0.25s ease;
+}
+
+.chevron.open {
+  transform: rotate(180deg);
+}
+
+.collapsible-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.collapsible-body.expanded {
+  max-height: 500px;
+}
+
+.settings-content {
+  padding: 0 1.25rem 1.25rem;
+}
+
+/* --- Sliders --- */
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: #0f3460;
+  border-radius: 3px;
+  outline: none;
+  margin: 0.35rem 0;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #e94560;
+  cursor: pointer;
+  border: 2px solid #16213e;
+}
+
+.slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #e94560;
+  cursor: pointer;
+  border: 2px solid #16213e;
+}
+
+.slider-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: #707088;
+  margin-top: 0.1rem;
+}
+
+/* --- Mono utility --- */
+.mono {
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 700;
+}
+
+/* --- Mobile --- */
+@media (max-width: 500px) {
+  .app-container {
+    padding: 1rem 0.5rem;
+  }
+
+  .roles-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stepper-btn {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.4rem;
+  }
+
+  .stepper-value {
+    width: 2.5rem;
+    font-size: 1.1rem;
+  }
+}
