@@ -17,10 +17,9 @@
     "noFallthroughCasesInSwitch": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "baseUrl": ".",
     "paths": {
-      "@engine/*": ["src/engine/*"],
-      "@data/*": ["src/data/*"]
+      "@engine/*": ["./src/engine/*"],
+      "@data/*": ["./src/data/*"]
     }
   },
   "include": ["src", "tests"]

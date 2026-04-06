@@ -4,6 +4,7 @@ import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
+  base: '/loot-tables/',
   root: 'src/web',
   publicDir: '../../public',
   resolve: {
