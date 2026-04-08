@@ -35,6 +35,16 @@ export interface LootInput {
   settings: CampaignSettings;
 }
 
+/** Input for generating a vault hoard (tier-based, no CR). */
+export interface VaultLootInput {
+  /** Tier of play. */
+  tier: Tier;
+  /** Vault size (minor/standard/major). */
+  size: import('./constants').VaultSize;
+  /** Campaign settings to apply. */
+  settings: CampaignSettings;
+}
+
 /** Input for generating loot for an entire encounter. */
 export interface EncounterInput {
   /** Challenge Rating shared by all creatures (0-30). */
@@ -134,8 +144,8 @@ export interface EncounterInputV2 {
   groups: CreatureGroup[];
   /** Number of vault hoards (separate from creature groups). */
   vaultCount: number;
-  /** CR for vault budget calculation. */
-  vaultCr: number;
+  /** Vault size category (minor/standard/major). */
+  vaultSize: import('./constants').VaultSize;
   /** Tier of play. */
   tier: Tier;
   /** Whether to derive tier from the highest CR. */

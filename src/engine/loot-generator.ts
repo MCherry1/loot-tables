@@ -20,8 +20,9 @@ import type {
   Role,
   Tier,
   TreasureItem,
+  VaultLootInput,
 } from './types';
-import { calculateBudget } from './budget';
+import { calculateBudget, calculateVaultBudget } from './budget';
 import {
   MUNDANE_FINDS,
   TIER_CATEGORIES,
@@ -320,17 +321,117 @@ export function generateLootResolvable(
 }
 
 /**
+ * Generate loot for a vault hoard using fixed per-tier budgets.
+ *
+ * Uses VAULT_BUDGET_PER_TIER instead of CR-based budget calculation.
+ * Category breakdown still uses TIER_CATEGORIES for the selected tier.
+ */
+export function generateVaultLootResolvable(
+  input: VaultLootInput,
+  resolveImmediately: boolean,
+): ResolvableLootResult {
+  const { tier, size, settings } = input;
+  const roleBudget = calculateVaultBudget(tier, size, settings);
+
+  const categories = resolveCategories(roleBudget, tier, settings);
+
+  let coinsFormula = '0';
+  let coinsAverage = 0;
+  const gems: TreasureItem[] = [];
+  const artObjects: TreasureItem[] = [];
+  const magicItems: ResolvableMagicItem[] = [];
+  const mundaneFinds: string[] = [];
+
+  for (const cat of categories) {
+    const categoryGp = (cat.pct / 100) * roleBudget;
+
+    switch (cat.type) {
+      case 'coins': {
+        const diceInfo = gpToDiceFormula(categoryGp);
+        coinsFormula = diceInfo.formula;
+        coinsAverage = diceInfo.average;
+        break;
+      }
+
+      case 'gems': {
+        if (!cat.unitValue || !cat.tableName) break;
+        const probability = categoryGp / cat.unitValue;
+        const guaranteed = Math.floor(probability);
+        const fractional = probability - guaranteed;
+        const count = guaranteed + (probHit(fractional) ? 1 : 0);
+        for (let i = 0; i < count; i++) {
+          gems.push(rollGem(cat.tableName));
+        }
+        break;
+      }
+
+      case 'art': {
+        if (!cat.unitValue || !cat.tableName) break;
+        const probability = categoryGp / cat.unitValue;
+        const guaranteed = Math.floor(probability);
+        const fractional = probability - guaranteed;
+        const count = guaranteed + (probHit(fractional) ? 1 : 0);
+        for (let i = 0; i < count; i++) {
+          artObjects.push(rollArt(cat.tableName));
+        }
+        break;
+      }
+
+      case 'magic': {
+        if (!cat.miTable || !cat.avgValue) break;
+        const probability = categoryGp / cat.avgValue;
+        const guaranteed = Math.floor(probability);
+        const fractional = probability - guaranteed;
+        const count = guaranteed + (probHit(fractional) ? 1 : 0);
+        for (let i = 0; i < count; i++) {
+          const item = rollMagicItemResolvable(cat.miTable);
+
+          if (resolveImmediately) {
+            const resolved = resolveAllRefs(item.segments);
+            item.segments = resolved.segments;
+            if (resolved.source) item.source = resolved.source;
+            item.isFullyResolved = true;
+          }
+
+          if (settings.showValues) {
+            const pricing = priceItem(cat.miTable);
+            item.valueScore = pricing.valueScore;
+            item.buyPrice = pricing.buyPrice;
+            if (settings.showSalePrice) {
+              item.salePrice = pricing.salePrice;
+            }
+          }
+          magicItems.push(item);
+        }
+        break;
+      }
+    }
+  }
+
+  if (coinsAverage < 1 && settings.showMundane) {
+    mundaneFinds.push(randomMundaneFind());
+  }
+
+  return {
+    coins: { formula: coinsFormula, average: coinsAverage },
+    gems,
+    artObjects,
+    magicItems,
+    mundaneFinds,
+  };
+}
+
+/**
  * Generate loot for a mixed-CR encounter (V2).
  *
  * Each creature group has its own CR and role. Vault is handled separately.
  * Tier is derived from the highest CR across all groups when autoTier is true.
  */
 export function generateEncounterV2(input: EncounterInputV2, resolveImmediately: boolean): ResolvableEncounterResult {
-  const { groups, vaultCount, vaultCr, tier: inputTier, autoTier, settings } = input;
+  const { groups, vaultCount, vaultSize, tier: inputTier, autoTier, settings } = input;
 
-  // Derive tier from the highest CR across all groups + vault
+  // Derive tier from the highest CR across creature groups
   const allCrs = groups.map((g) => g.cr);
-  if (vaultCount > 0) allCrs.push(vaultCr);
   const maxCr = allCrs.length > 0 ? Math.max(...allCrs) : 0;
   const tier: Tier = autoTier ? crToDefaultTier(maxCr) : inputTier;
 
@@ -351,10 +452,10 @@ export function generateEncounterV2(input: EncounterInputV2, resolveImmediately:
     }
   }
 
-  // Process vault hoards
+  // Process vault hoards (fixed per-tier budget)
   for (let i = 0; i < vaultCount; i++) {
-    const loot = generateLootResolvable(
-      { cr: vaultCr, tier, role: 'vault', settings },
+    const loot = generateVaultLootResolvable(
+      { tier, size: vaultSize, settings },
       resolveImmediately,
     );
     creatures.push({

@@ -3,7 +3,8 @@
 // ---------------------------------------------------------------------------
 
 import type { Tier, Role, CampaignSettings } from './types';
-import { XP_BY_CR, GP_PER_XP } from './constants';
+import type { VaultSize } from './constants';
+import { XP_BY_CR, GP_PER_XP, VAULT_BUDGET_PER_TIER, VAULT_SIZE_MULTIPLIER } from './constants';
 
 /**
  * Map from numeric CR values to the string keys used in XP_BY_CR.
@@ -49,4 +50,25 @@ export function calculateBudget(
   const roleBudget = fullBudget * roleRatio;
 
   return { fullBudget, roleBudget };
+}
+
+/**
+ * Calculate the budget for a vault hoard using fixed per-tier values.
+ *
+ * vault_budget = VAULT_BUDGET_PER_TIER[tier] × size_multiplier × (4 / partySize)
+ *
+ * @param tier - Tier of play (1-4).
+ * @param size - Vault size category (minor/standard/major).
+ * @param settings - Campaign settings (party size, etc.).
+ * @returns The vault budget in GP.
+ */
+export function calculateVaultBudget(
+  tier: Tier,
+  size: VaultSize,
+  settings: CampaignSettings,
+): number {
+  const base = VAULT_BUDGET_PER_TIER[tier];
+  const sizeMultiplier = VAULT_SIZE_MULTIPLIER[size];
+  const partySizeScalar = 4 / settings.partySize;
+  return base * sizeMultiplier * partySizeScalar;
 }
