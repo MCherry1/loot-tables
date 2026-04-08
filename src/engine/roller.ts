@@ -1,10 +1,24 @@
 import { MAGIC_ITEMS } from '../data/magic-items';
+import { SPELL_TABLES } from '../data/spells';
+import { SUPPLEMENTAL_TABLES } from '../data/supplemental';
 import { CUSTOM_GEMS } from '../data/gems';
 import { CUSTOM_ART } from '../data/art';
+import { cryptoRandom } from './random';
 import type { MITable, TreasureItem, ItemSegment, ResolvableMagicItem } from './types';
 
 type MIEntry = { name: string; source: string; weight: number };
-const MI = MAGIC_ITEMS as Record<string, MIEntry[]>;
+
+/** Merge all table sources (magic items, spells, supplemental) into one lookup. */
+function buildTableLookup(): Record<string, MIEntry[]> {
+  const lookup = { ...(MAGIC_ITEMS as Record<string, MIEntry[]>) };
+  for (const table of [...SPELL_TABLES, ...SUPPLEMENTAL_TABLES]) {
+    lookup[table.name] = table.entries;
+  }
+  return lookup;
+}
+
+/** Unified lookup containing all rollable tables. */
+export const ALL_TABLES = buildTableLookup();
 
 /** Maximum recursion depth when resolving nested table references. */
 const MAX_DEPTH = 5;
@@ -19,7 +33,7 @@ const SUBTABLE_REF_RE = /\[\[\s*(\d*)t\[([^\]]+)\]\s*\]\]/;
  */
 export function weightedPick<T extends { weight: number }>(entries: readonly T[]): T {
   const totalWeight = entries.reduce((sum, e) => sum + e.weight, 0);
-  let roll = Math.random() * totalWeight;
+  let roll = cryptoRandom() * totalWeight;
   for (const entry of entries) {
     roll -= entry.weight;
     if (roll <= 0) return entry;
@@ -42,7 +56,7 @@ function resolveEntry(
   if (!match) return { name: entry.name, source: entry.source };
 
   const tableName = match[2];
-  const subtable = MI[tableName];
+  const subtable = ALL_TABLES[tableName];
   if (!subtable || subtable.length === 0) {
     return { name: entry.name, source: entry.source };
   }
@@ -61,7 +75,7 @@ function resolveEntry(
  */
 export function rollMagicItem(table: MITable): { name: string; source: string } {
   const key = `Magic-Item-Table-${table}`;
-  const entries = MI[key];
+  const entries = ALL_TABLES[key];
   if (!entries || entries.length === 0) {
     throw new Error(`Unknown magic item table: ${key}`);
   }
@@ -158,7 +172,7 @@ export function resolveOneRef(segments: ItemSegment[], refId: string): { segment
   if (idx === -1) return { segments, source: '' };
 
   const ref = segments[idx] as { type: 'ref'; tableName: string; id: string };
-  const subtable = MI[ref.tableName];
+  const subtable = ALL_TABLES[ref.tableName];
   if (!subtable || subtable.length === 0) {
     // Can't resolve - replace ref with its table name as plain text
     const result = [...segments];
@@ -199,7 +213,7 @@ export function resolveAllRefs(segments: ItemSegment[]): { segments: ItemSegment
  */
 export function rollMagicItemResolvable(table: MITable): ResolvableMagicItem {
   const key = `Magic-Item-Table-${table}`;
-  const entries = MI[key];
+  const entries = ALL_TABLES[key];
   if (!entries || entries.length === 0) {
     throw new Error(`Unknown magic item table: ${key}`);
   }

@@ -28,6 +28,7 @@ import {
   crToDefaultTier,
 } from './constants';
 import { gpToDiceFormula, evalDiceFormula } from './dice';
+import { cryptoRandom } from './random';
 import { applyRichness } from './richness';
 import {
   rollMagicItem,
@@ -58,12 +59,12 @@ function resolveCategories(
 
 /** Roll a probability check: returns true with the given probability (0-1). */
 function probHit(probability: number): boolean {
-  return Math.random() < probability;
+  return cryptoRandom() < probability;
 }
 
 /** Pick a random mundane find. */
 function randomMundaneFind(): string {
-  return MUNDANE_FINDS[Math.floor(Math.random() * MUNDANE_FINDS.length)];
+  return MUNDANE_FINDS[Math.floor(cryptoRandom() * MUNDANE_FINDS.length)];
 }
 
 // ---------------------------------------------------------------------------

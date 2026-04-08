@@ -108,9 +108,9 @@ export const MI_AVG_VALUES: Record<MITable, number> = {
 
 /** Derive the default tier of play from a creature's CR. */
 export function crToDefaultTier(cr: number): Tier {
-  if (cr <= 4) return 1;
+  if (cr <= 5) return 1;
   if (cr <= 10) return 2;
-  if (cr <= 16) return 3;
+  if (cr <= 15) return 3;
   return 4;
 }
 
