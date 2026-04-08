@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { MAGIC_ITEMS } from '../../data/magic-items';
 import { SPELL_TABLES } from '../../data/spells';
 import { SUPPLEMENTAL_TABLES } from '../../data/supplemental';
@@ -12,7 +12,6 @@ import type { MITable } from '@engine/index';
 // ---------------------------------------------------------------------------
 
 type Entry = { name: string; source?: string; weight: number };
-type TableData = { name: string; entries: Entry[] };
 
 /** Tables that should display as subtype dropdowns instead of nested rolls. */
 const SUBTYPE_DROPDOWN_TABLES = new Set([
@@ -26,12 +25,17 @@ const SUBTYPE_GROUPS: Record<string, string[]> = {
   'Ranged': ['Simple-Ranged', 'Martial-Ranged'],
 };
 
-/** Regex for detecting subtable refs. */
-const REF_RE = /\[\[\s*\d*t\[([^\]]+)\]\s*\]\]/;
+/** Regex for detecting subtable refs like [Potions-A]. */
+const REF_RE = /\[([A-Za-z][A-Za-z0-9_-]*)\]/;
 
 function extractRef(name: string): string | null {
   const m = REF_RE.exec(name);
   return m ? m[1] : null;
+}
+
+/** Strip bracket refs from an entry name for clean display. */
+function cleanDisplayName(name: string): string {
+  return name.replace(/\[([A-Za-z][A-Za-z0-9_-]*)\]/g, '$1').replace(/-/g, ' ');
 }
 
 function isSubtypeTable(tableName: string): boolean {
@@ -50,10 +54,40 @@ function getSubtypeItems(tableName: string): { group: string; items: Entry[] }[]
       };
     });
   }
-  // Flat table (Swords, Axes, Bows) - single group
   const table = ALL_TABLES[tableName];
   if (!table) return [];
   return [{ group: tableName, items: [...table] }];
+}
+
+// ---------------------------------------------------------------------------
+// Dice range computation
+// ---------------------------------------------------------------------------
+
+function computeDiceRanges(entries: { weight: number }[]): string[] {
+  const ranges: string[] = [];
+  let cumulative = 0;
+  for (const entry of entries) {
+    const lo = cumulative + 1;
+    const hi = cumulative + entry.weight;
+    ranges.push(lo === hi ? `${lo}` : `${lo}\u2013${hi}`);
+    cumulative = hi;
+  }
+  return ranges;
+}
+
+// ---------------------------------------------------------------------------
+// Color palette for stacked bar segments
+// ---------------------------------------------------------------------------
+
+const SEGMENT_COLORS = [
+  '#e94560', '#c9a84c', '#7fccbf', '#a78bfa', '#f97316',
+  '#34d399', '#f472b6', '#60a5fa', '#fbbf24', '#6ee7b7',
+  '#e879f9', '#fb923c', '#38bdf8', '#f87171', '#4ade80',
+  '#c084fc', '#facc15', '#2dd4bf', '#f9a8d4', '#818cf8',
+];
+
+function getSegmentColor(index: number): string {
+  return SEGMENT_COLORS[index % SEGMENT_COLORS.length];
 }
 
 // ---------------------------------------------------------------------------
@@ -68,25 +102,97 @@ function getMITableEntries(letter: MITable): Entry[] {
   return table || [];
 }
 
-/** Get the subtable entries for a category like "Potions-A", "Spells-A", etc. */
 function getSubtableEntries(name: string): Entry[] | null {
   const table = ALL_TABLES[name];
   return table ? [...table] : null;
 }
 
 // ---------------------------------------------------------------------------
-// Components
+// Dice Animation Component
 // ---------------------------------------------------------------------------
 
-/** Weight bar visualization. */
-function WeightBar({ weight, maxWeight }: { weight: number; maxWeight: number }) {
-  const pct = maxWeight > 0 ? (weight / maxWeight) * 100 : 0;
+function DiceAnimation({ rolling }: { rolling: boolean }) {
+  if (!rolling) return null;
   return (
-    <div className="weight-bar-bg">
-      <div className="weight-bar-fill" style={{ width: `${pct}%` }} />
+    <div className="dice-overlay">
+      <div className="dice-bounce">
+        <div className="dice-face">
+          <span className="dice-dot dot-1" />
+          <span className="dice-dot dot-2" />
+          <span className="dice-dot dot-3" />
+          <span className="dice-dot dot-4" />
+          <span className="dice-dot dot-5" />
+          <span className="dice-dot dot-6" />
+        </div>
+      </div>
     </div>
   );
 }
+
+// ---------------------------------------------------------------------------
+// Stacked Probability Bar
+// ---------------------------------------------------------------------------
+
+function StackedBar({
+  entries,
+  highlightIdx,
+}: {
+  entries: { weight: number }[];
+  highlightIdx: number | null;
+}) {
+  const totalWeight = entries.reduce((sum, e) => sum + e.weight, 0);
+  if (totalWeight === 0) return null;
+
+  return (
+    <div className="stacked-bar">
+      {entries.map((entry, i) => {
+        const pct = (entry.weight / totalWeight) * 100;
+        const isActive = highlightIdx === i;
+        return (
+          <div
+            key={i}
+            className={`stacked-segment${isActive ? ' active' : ''}`}
+            style={{
+              width: `${pct}%`,
+              backgroundColor: getSegmentColor(i),
+              opacity: highlightIdx != null && !isActive ? 0.3 : 1,
+            }}
+            title={`${Math.round(pct)}%`}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Roll Result Banner (shown at top)
+// ---------------------------------------------------------------------------
+
+function RollResultBanner({
+  entry,
+  colorIdx,
+  diceRange,
+}: {
+  entry: Entry;
+  colorIdx: number;
+  diceRange: string;
+}) {
+  return (
+    <div
+      className="roll-result-banner"
+      style={{ borderLeftColor: getSegmentColor(colorIdx) }}
+    >
+      <span className="roll-result-dice">{diceRange}</span>
+      <span className="roll-result-name">{cleanDisplayName(entry.name)}</span>
+      {entry.source && <span className="roll-result-source">({entry.source})</span>}
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Components
+// ---------------------------------------------------------------------------
 
 /** Subtype dropdown for Armor/Weapons when resolving an entry. */
 function SubtypeDropdown({
@@ -128,27 +234,23 @@ function SubtypeDropdown({
   );
 }
 
-/** A single table entry row with highlight animation support. */
+/** A single table entry row. */
 function TableEntryRow({
   entry,
-  maxWeight,
   isHighlighted,
   isClickable,
+  diceRange,
+  colorIdx,
   onClick,
 }: {
   entry: Entry;
-  maxWeight: number;
   isHighlighted: boolean;
   isClickable: boolean;
+  diceRange?: string;
+  colorIdx?: number;
   onClick?: () => void;
 }) {
   const rowRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (isHighlighted && rowRef.current) {
-      rowRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-  }, [isHighlighted]);
 
   return (
     <div
@@ -156,10 +258,13 @@ function TableEntryRow({
       className={`table-entry-row${isHighlighted ? ' highlighted' : ''}${isClickable ? ' clickable' : ''}`}
       onClick={isClickable ? onClick : undefined}
     >
-      <span className="entry-name">{entry.name}</span>
+      {diceRange && <span className="entry-dice-range">{diceRange}</span>}
+      <span
+        className="entry-color-dot"
+        style={{ backgroundColor: getSegmentColor(colorIdx ?? 0) }}
+      />
+      <span className="entry-name">{cleanDisplayName(entry.name)}</span>
       {entry.source && <span className="entry-source">({entry.source})</span>}
-      <span className="entry-weight">{entry.weight}</span>
-      <WeightBar weight={entry.weight} maxWeight={maxWeight} />
     </div>
   );
 }
@@ -177,7 +282,7 @@ function ResolutionChain({
           {i > 0 && <span className="chain-arrow">&rarr;</span>}
           <span className="chain-step">
             <span className="chain-table">{step.tableName}</span>
-            <span className="chain-result">{step.result}</span>
+            <span className="chain-result">{cleanDisplayName(step.result)}</span>
           </span>
         </React.Fragment>
       ))}
@@ -185,17 +290,32 @@ function ResolutionChain({
   );
 }
 
+/** Custom hook for dice roll animation timing. */
+function useDiceAnimation() {
+  const [rolling, setRolling] = useState(false);
+
+  const triggerRoll = useCallback(() => {
+    setRolling(true);
+    setTimeout(() => setRolling(false), 800);
+  }, []);
+
+  return { rolling, triggerRoll };
+}
+
 /** Interactive view of a single magic item table (A-I). */
 function MITableView({ letter }: { letter: MITable }) {
   const entries = getMITableEntries(letter);
-  const maxWeight = Math.max(...entries.map((e) => e.weight), 1);
+  const totalWeight = entries.reduce((s, e) => s + e.weight, 0);
+  const diceRanges = computeDiceRanges(entries);
   const [highlightIdx, setHighlightIdx] = useState<number | null>(null);
   const [resolutionSteps, setResolutionSteps] = useState<
     { tableName: string; result: string; isSubtype?: boolean; subtypeTable?: string }[]
   >([]);
   const [pendingSubtype, setPendingSubtype] = useState<string | null>(null);
+  const { rolling, triggerRoll } = useDiceAnimation();
 
   const handleRoll = () => {
+    triggerRoll();
     const picked = weightedPick(entries);
     const idx = entries.indexOf(picked);
     setHighlightIdx(idx);
@@ -204,11 +324,9 @@ function MITableView({ letter }: { letter: MITable }) {
   };
 
   const handleEntryClick = (entry: Entry) => {
-    // Check if entry has a subtable reference
     const ref = extractRef(entry.name);
-    if (!ref) return; // Terminal entry, nothing to resolve
+    if (!ref) return;
 
-    // Check if this resolves to a subtype (dropdown)
     if (isSubtypeTable(ref)) {
       setPendingSubtype(ref);
       setResolutionSteps((prev) => [
@@ -218,7 +336,6 @@ function MITableView({ letter }: { letter: MITable }) {
       return;
     }
 
-    // Roll on the subtable
     const subtable = getSubtableEntries(ref);
     if (!subtable || subtable.length === 0) return;
 
@@ -228,13 +345,11 @@ function MITableView({ letter }: { letter: MITable }) {
       { tableName: ref, result: picked.name },
     ]);
 
-    // Check if the resolved entry itself has more refs
     const nextRef = extractRef(picked.name);
     if (nextRef) {
       if (isSubtypeTable(nextRef)) {
         setPendingSubtype(nextRef);
       } else {
-        // Auto-resolve next level
         const nextTable = getSubtableEntries(nextRef);
         if (nextTable && nextTable.length > 0) {
           const nextPicked = weightedPick(nextTable);
@@ -242,7 +357,6 @@ function MITableView({ letter }: { letter: MITable }) {
             ...prev,
             { tableName: nextRef, result: nextPicked.name },
           ]);
-          // Continue checking...
           const thirdRef = extractRef(nextPicked.name);
           if (thirdRef && isSubtypeTable(thirdRef)) {
             setPendingSubtype(thirdRef);
@@ -262,25 +376,26 @@ function MITableView({ letter }: { letter: MITable }) {
 
   return (
     <div className="mi-table-view">
+      <DiceAnimation rolling={rolling} />
+
       <div className="table-header-bar">
-        <h3 className="table-view-title">Magic Item Table {letter}</h3>
+        <h3 className="table-view-title">
+          Magic Item Table {letter}
+          <span className="table-die-label">d{totalWeight}</span>
+        </h3>
         <button className="table-roll-btn" onClick={handleRoll}>
           Roll
         </button>
       </div>
 
-      <div className="table-entries">
-        {entries.map((entry, i) => (
-          <TableEntryRow
-            key={i}
-            entry={entry}
-            maxWeight={maxWeight}
-            isHighlighted={highlightIdx === i}
-            isClickable={highlightIdx === i && !!extractRef(entry.name)}
-            onClick={() => handleEntryClick(entry)}
-          />
-        ))}
-      </div>
+      {/* Roll result at top */}
+      {highlightIdx != null && (
+        <RollResultBanner
+          entry={entries[highlightIdx]}
+          colorIdx={highlightIdx}
+          diceRange={diceRanges[highlightIdx]}
+        />
+      )}
 
       {/* Resolution chain */}
       {resolutionSteps.length > 0 && (
@@ -296,6 +411,23 @@ function MITableView({ letter }: { letter: MITable }) {
           />
         </div>
       )}
+
+      {/* Stacked probability bar */}
+      <StackedBar entries={entries} highlightIdx={highlightIdx} />
+
+      <div className="table-entries">
+        {entries.map((entry, i) => (
+          <TableEntryRow
+            key={i}
+            entry={entry}
+            isHighlighted={highlightIdx === i}
+            isClickable={highlightIdx === i && !!extractRef(entry.name)}
+            diceRange={diceRanges[i]}
+            colorIdx={i}
+            onClick={() => handleEntryClick(entry)}
+          />
+        ))}
+      </div>
     </div>
   );
 }
@@ -309,14 +441,17 @@ function SubtableView({
   onBack: () => void;
 }) {
   const entries = getSubtableEntries(name) || [];
-  const maxWeight = Math.max(...entries.map((e) => e.weight), 1);
+  const totalWeight = entries.reduce((s, e) => s + e.weight, 0);
+  const diceRanges = computeDiceRanges(entries);
   const [highlightIdx, setHighlightIdx] = useState<number | null>(null);
   const [resolutionSteps, setResolutionSteps] = useState<
     { tableName: string; result: string; isSubtype?: boolean; subtypeTable?: string }[]
   >([]);
   const [pendingSubtype, setPendingSubtype] = useState<string | null>(null);
+  const { rolling, triggerRoll } = useDiceAnimation();
 
   const handleRoll = () => {
+    triggerRoll();
     const picked = weightedPick(entries);
     const idx = entries.indexOf(picked);
     setHighlightIdx(idx);
@@ -362,33 +497,36 @@ function SubtableView({
 
   return (
     <div className="mi-table-view">
+      <DiceAnimation rolling={rolling} />
+
       <div className="table-header-bar">
         <button className="table-back-btn" onClick={onBack}>
           &larr; Back
         </button>
-        <h3 className="table-view-title">{name.replace(/-/g, ' ')}</h3>
+        <h3 className="table-view-title">
+          {name.replace(/-/g, ' ')}
+          <span className="table-die-label">d{totalWeight}</span>
+        </h3>
         <button className="table-roll-btn" onClick={handleRoll}>
           Roll
         </button>
       </div>
 
-      <div className="table-entries">
-        {entries.map((entry, i) => (
-          <TableEntryRow
-            key={i}
-            entry={entry}
-            maxWeight={maxWeight}
-            isHighlighted={highlightIdx === i}
-            isClickable={highlightIdx === i && !!extractRef(entry.name)}
-            onClick={() => handleEntryClick(entry)}
-          />
-        ))}
-      </div>
+      {/* Roll result at top */}
+      {highlightIdx != null && (
+        <RollResultBanner
+          entry={entries[highlightIdx]}
+          colorIdx={highlightIdx}
+          diceRange={diceRanges[highlightIdx]}
+        />
+      )}
 
+      {/* Resolution chain */}
       {resolutionSteps.length > 0 && (
         <ResolutionChain steps={resolutionSteps} />
       )}
 
+      {/* Subtype dropdown */}
       {pendingSubtype && (
         <div className="subtype-section">
           <SubtypeDropdown
@@ -397,6 +535,23 @@ function SubtableView({
           />
         </div>
       )}
+
+      {/* Stacked probability bar */}
+      <StackedBar entries={entries} highlightIdx={highlightIdx} />
+
+      <div className="table-entries">
+        {entries.map((entry, i) => (
+          <TableEntryRow
+            key={i}
+            entry={entry}
+            isHighlighted={highlightIdx === i}
+            isClickable={highlightIdx === i && !!extractRef(entry.name)}
+            diceRange={diceRanges[i]}
+            colorIdx={i}
+            onClick={() => handleEntryClick(entry)}
+          />
+        ))}
+      </div>
     </div>
   );
 }
@@ -411,33 +566,53 @@ function SimpleTableView({
   entries: { name: string; weight: number }[];
   baseValue?: number;
 }) {
-  const maxWeight = Math.max(...entries.map((e) => e.weight), 1);
+  const totalWeight = entries.reduce((s, e) => s + e.weight, 0);
+  const diceRanges = computeDiceRanges(entries);
   const [highlightIdx, setHighlightIdx] = useState<number | null>(null);
+  const { rolling, triggerRoll } = useDiceAnimation();
 
   const handleRoll = () => {
+    triggerRoll();
     const picked = weightedPick(entries);
     setHighlightIdx(entries.indexOf(picked));
   };
 
   return (
     <div className="mi-table-view">
+      <DiceAnimation rolling={rolling} />
+
       <div className="table-header-bar">
         <h3 className="table-view-title">
           {name.replace(/-/g, ' ')}
           {baseValue != null && <span className="base-value"> ({baseValue} gp)</span>}
+          <span className="table-die-label">d{totalWeight}</span>
         </h3>
         <button className="table-roll-btn" onClick={handleRoll}>
           Roll
         </button>
       </div>
+
+      {/* Roll result at top */}
+      {highlightIdx != null && (
+        <RollResultBanner
+          entry={entries[highlightIdx]}
+          colorIdx={highlightIdx}
+          diceRange={diceRanges[highlightIdx]}
+        />
+      )}
+
+      {/* Stacked probability bar */}
+      <StackedBar entries={entries} highlightIdx={highlightIdx} />
+
       <div className="table-entries">
         {entries.map((entry, i) => (
           <TableEntryRow
             key={i}
             entry={entry}
-            maxWeight={maxWeight}
             isHighlighted={highlightIdx === i}
             isClickable={false}
+            diceRange={diceRanges[i]}
+            colorIdx={i}
           />
         ))}
       </div>
@@ -456,13 +631,11 @@ const LootTables: React.FC = () => {
   const [subtableStack, setSubtableStack] = useState<string[]>([]);
   const [activeSection, setActiveSection] = useState<Section>('magic');
 
-  // When viewing a magic item table, the user can click into subtables
   const currentSubtable = subtableStack[subtableStack.length - 1] || null;
 
   const pushSubtable = (name: string) => setSubtableStack((s) => [...s, name]);
   const popSubtable = () => setSubtableStack((s) => s.slice(0, -1));
 
-  // Build list of category subtables for the current letter
   const miEntries = getMITableEntries(activeLetter);
   const categorySubtables: string[] = [];
   for (const entry of miEntries) {
@@ -511,7 +684,6 @@ const LootTables: React.FC = () => {
       {/* Magic Items Section */}
       {activeSection === 'magic' && (
         <>
-          {/* Letter sub-tabs */}
           <div className="letter-tabs">
             {MI_LETTERS.map((l) => (
               <button
@@ -527,7 +699,6 @@ const LootTables: React.FC = () => {
             ))}
           </div>
 
-          {/* Category quick-nav */}
           {!currentSubtable && categorySubtables.length > 0 && (
             <div className="category-nav">
               {categorySubtables.map((cat) => (
@@ -542,7 +713,6 @@ const LootTables: React.FC = () => {
             </div>
           )}
 
-          {/* Table view */}
           {currentSubtable ? (
             <SubtableView
               key={currentSubtable}
@@ -555,7 +725,6 @@ const LootTables: React.FC = () => {
         </>
       )}
 
-      {/* Spells Section */}
       {activeSection === 'spells' && (
         <div className="spells-section">
           {SPELL_TABLES.map((table) => (
@@ -568,7 +737,6 @@ const LootTables: React.FC = () => {
         </div>
       )}
 
-      {/* Equipment (Supplemental) Section */}
       {activeSection === 'supplemental' && (
         <div className="supplemental-section">
           {SUPPLEMENTAL_TABLES.map((table) => (
@@ -581,7 +749,6 @@ const LootTables: React.FC = () => {
         </div>
       )}
 
-      {/* Gems Section */}
       {activeSection === 'gems' && (
         <div className="gems-section">
           {CUSTOM_GEMS.map((table) => (
@@ -595,7 +762,6 @@ const LootTables: React.FC = () => {
         </div>
       )}
 
-      {/* Art Section */}
       {activeSection === 'art' && (
         <div className="art-section">
           {CUSTOM_ART.map((table) => (

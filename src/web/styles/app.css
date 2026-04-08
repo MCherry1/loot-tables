@@ -684,6 +684,7 @@ body {
 /* Table view */
 .mi-table-view {
   margin-bottom: 1rem;
+  position: relative;
 }
 
 .table-header-bar {
@@ -810,32 +811,185 @@ body {
   flex-shrink: 0;
 }
 
-.entry-weight {
-  color: #8a7f72;
+/* --- Stacked Probability Bar --- */
+.stacked-bar {
+  display: flex;
+  width: 100%;
+  height: 14px;
+  border-radius: 7px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+  background: #2a2520;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.stacked-segment {
+  height: 100%;
+  transition: opacity 0.4s, filter 0.4s, transform 0.3s;
+  min-width: 2px;
+  position: relative;
+}
+
+.stacked-segment.active {
+  filter: brightness(1.5);
+  transform: scaleY(1.35);
+  z-index: 1;
+  box-shadow: 0 0 10px currentColor;
+  border-radius: 2px;
+}
+
+/* --- Roll Result Banner --- */
+.roll-result-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.8rem;
+  margin-bottom: 0.5rem;
+  background: rgba(201, 168, 76, 0.1);
+  border: 1px solid rgba(201, 168, 76, 0.3);
+  border-left: 4px solid #c9a84c;
+  border-radius: 6px;
+  animation: banner-appear 0.4s ease-out;
+}
+
+@keyframes banner-appear {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.roll-result-dice {
   font-family: 'Courier New', Courier, monospace;
   font-size: 0.8rem;
   font-weight: 700;
-  width: 2rem;
+  color: #c9a84c;
+  background: rgba(201, 168, 76, 0.15);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.roll-result-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #f0d060;
+  flex: 1;
+}
+
+.roll-result-source {
+  font-size: 0.75rem;
+  color: #8a7f72;
+  flex-shrink: 0;
+}
+
+/* --- Dice Range on Table Rows --- */
+.entry-dice-range {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #8a7f72;
+  min-width: 2.8rem;
   text-align: right;
   flex-shrink: 0;
 }
 
-/* Weight bar */
-.weight-bar-bg {
-  width: 3rem;
-  height: 6px;
-  background: #2a2520;
-  border-radius: 3px;
-  overflow: hidden;
+/* --- Color dot on table rows --- */
+.entry-color-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
   flex-shrink: 0;
 }
 
-.weight-bar-fill {
-  height: 100%;
-  background: #c9a84c;
-  border-radius: 3px;
-  transition: width 0.3s;
+/* --- Die label next to table title --- */
+.table-die-label {
+  font-size: 0.7rem;
+  color: #8a7f72;
+  font-variant: normal;
+  font-weight: 400;
+  margin-left: 0.4rem;
 }
+
+/* --- Dice Roll Animation --- */
+.dice-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.dice-bounce {
+  position: absolute;
+  animation: dice-roll 0.8s ease-out forwards;
+}
+
+@keyframes dice-roll {
+  0% {
+    top: 40%;
+    left: -10%;
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  25% {
+    top: 20%;
+    left: 25%;
+    transform: rotate(180deg) scale(1.1);
+    opacity: 1;
+  }
+  50% {
+    top: 45%;
+    left: 50%;
+    transform: rotate(400deg) scale(1);
+    opacity: 1;
+  }
+  75% {
+    top: 25%;
+    left: 75%;
+    transform: rotate(600deg) scale(0.9);
+    opacity: 0.8;
+  }
+  100% {
+    top: 50%;
+    left: 110%;
+    transform: rotate(720deg) scale(0.6);
+    opacity: 0;
+  }
+}
+
+.dice-face {
+  width: 36px;
+  height: 36px;
+  background: #f5f0e8;
+  border-radius: 6px;
+  border: 2px solid #c9a84c;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), inset 0 0 4px rgba(201, 168, 76, 0.3);
+  position: relative;
+}
+
+.dice-dot {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: #1a1a1e;
+  border-radius: 50%;
+}
+
+/* d6 face showing 6 dots */
+.dot-1 { top: 5px; left: 5px; }
+.dot-2 { top: 5px; right: 5px; }
+.dot-3 { top: 50%; left: 5px; transform: translateY(-50%); }
+.dot-4 { top: 50%; right: 5px; transform: translateY(-50%); }
+.dot-5 { bottom: 5px; left: 5px; }
+.dot-6 { bottom: 5px; right: 5px; }
 
 /* Resolution chain */
 .resolution-chain {

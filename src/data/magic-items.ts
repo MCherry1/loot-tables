@@ -3,224 +3,224 @@
 export const MAGIC_ITEMS = {
   "Magic-Item-Table-A": [
     {
-      "name": "[[ 1t[Potions-A] ]]",
+      "name": "[Potions-A]",
       "source": "",
       "weight": 6
     },
     {
-      "name": "[[ 1t[Spells-A] ]]",
+      "name": "[Spells-A]",
       "source": "",
       "weight": 3
     },
     {
-      "name": "[[ 1t[Armor-A] ]]",
+      "name": "[Armor-A]",
       "source": "",
       "weight": 2
     },
     {
-      "name": "[[ 1t[Arms-A] ]]",
+      "name": "[Arms-A]",
       "source": "",
       "weight": 2
     },
     {
-      "name": "[[ 1t[Ammunition-A] ]]",
+      "name": "[Ammunition-A]",
       "source": "",
       "weight": 1
     },
     {
-      "name": "[[ 1t[Apparel-A] ]]",
+      "name": "[Apparel-A]",
       "source": "",
       "weight": 1
     },
     {
-      "name": "[[ 1t[Consumables-A] ]]",
+      "name": "[Consumables-A]",
       "source": "",
       "weight": 1
     },
     {
-      "name": "[[ 1t[Items-A] ]]",
+      "name": "[Items-A]",
       "source": "",
       "weight": 1
     },
     {
-      "name": "[[ 1t[Jewelry-A] ]]",
+      "name": "[Jewelry-A]",
       "source": "",
       "weight": 1
     },
     {
-      "name": "[[ 1t[Misc-A] ]]",
+      "name": "[Misc-A]",
       "source": "",
       "weight": 1
     },
     {
-      "name": "[[ 1t[Spellcaster-A] ]]",
+      "name": "[Spellcaster-A]",
       "source": "",
       "weight": 1
     }
   ],
   "Magic-Item-Table-B": [
     {
-      "name": "[[ 1t[Ammunition-B] ]]",
+      "name": "[Ammunition-B]",
       "source": "",
       "weight": 5
     },
     {
-      "name": "[[ 1t[Consumables-B] ]]",
+      "name": "[Consumables-B]",
       "source": "",
       "weight": 15
     },
     {
-      "name": "[[ 1t[Items-B] ]]",
+      "name": "[Items-B]",
       "source": "",
       "weight": 20
     },
     {
-      "name": "[[ 1t[Potions-B] ]]",
+      "name": "[Potions-B]",
       "source": "",
       "weight": 50
     },
     {
-      "name": "[[ 1t[Spells-B] ]]",
+      "name": "[Spells-B]",
       "source": "",
       "weight": 10
     }
   ],
   "Magic-Item-Table-C": [
     {
-      "name": "[[ 1t[Ammunition-C] ]]",
+      "name": "[Ammunition-C]",
       "source": "",
       "weight": 5
     },
     {
-      "name": "[[ 1t[Consumables-C] ]]",
+      "name": "[Consumables-C]",
       "source": "",
       "weight": 20
     },
     {
-      "name": "[[ 1t[Items-C] ]]",
+      "name": "[Items-C]",
       "source": "",
       "weight": 15
     },
     {
-      "name": "[[ 1t[Potions-C] ]]",
+      "name": "[Potions-C]",
       "source": "",
       "weight": 50
     },
     {
-      "name": "[[ 1t[Spells-C] ]]",
+      "name": "[Spells-C]",
       "source": "",
       "weight": 10
     }
   ],
   "Magic-Item-Table-D": [
     {
-      "name": "[[ 1t[Ammunition-D] ]]",
+      "name": "[Ammunition-D]",
       "source": "",
       "weight": 10
     },
     {
-      "name": "[[ 1t[Consumables-D] ]]",
+      "name": "[Consumables-D]",
       "source": "",
       "weight": 5
     },
     {
-      "name": "[[ 1t[Items-D] ]]",
+      "name": "[Items-D]",
       "source": "",
       "weight": 15
     },
     {
-      "name": "[[ 1t[Potions-D] ]]",
+      "name": "[Potions-D]",
       "source": "",
       "weight": 50
     },
     {
-      "name": "[[ 1t[Spells-D] ]]",
+      "name": "[Spells-D]",
       "source": "",
       "weight": 20
     }
   ],
   "Magic-Item-Table-E": [
     {
-      "name": "[[ 1t[Ammunition-E] ]]",
+      "name": "[Ammunition-E]",
       "source": "",
       "weight": 5
     },
     {
-      "name": "[[ 1t[Consumables-E] ]]",
+      "name": "[Consumables-E]",
       "source": "",
       "weight": 15
     },
     {
-      "name": "[[ 1t[Potions-E] ]]",
+      "name": "[Potions-E]",
       "source": "",
       "weight": 40
     },
     {
-      "name": "[[ 1t[Spells-E] ]]",
+      "name": "[Spells-E]",
       "source": "",
       "weight": 40
     }
   ],
   "Magic-Item-Table-F": [
     {
-      "name": "[[ 1t[Apparel-F] ]]",
+      "name": "[Apparel-F]",
       "source": "",
       "weight": 20
     },
     {
-      "name": "[[ 1t[Armor-F] ]]",
+      "name": "[Armor-F]",
       "source": "",
       "weight": 10
     },
     {
-      "name": "[[ 1t[Arms-F] ]]",
+      "name": "[Arms-F]",
       "source": "",
       "weight": 15
     },
     {
-      "name": "[[ 1t[Jewelry-F] ]]",
+      "name": "[Jewelry-F]",
       "source": "",
       "weight": 15
     },
     {
-      "name": "[[ 1t[Misc-F] ]]",
+      "name": "[Misc-F]",
       "source": "",
       "weight": 25
     },
     {
-      "name": "[[ 1t[Spellcaster-F] ]]",
+      "name": "[Spellcaster-F]",
       "source": "",
       "weight": 15
     }
   ],
   "Magic-Item-Table-G": [
     {
-      "name": "[[ 1t[Apparel-G] ]]",
+      "name": "[Apparel-G]",
       "source": "",
       "weight": 15
     },
     {
-      "name": "[[ 1t[Armor-G] ]]",
+      "name": "[Armor-G]",
       "source": "",
       "weight": 15
     },
     {
-      "name": "[[ 1t[Arms-G] ]]",
+      "name": "[Arms-G]",
       "source": "",
       "weight": 20
     },
     {
-      "name": "[[ 1t[Jewelry-G] ]]",
+      "name": "[Jewelry-G]",
       "source": "",
       "weight": 15
     },
     {
-      "name": "[[ 1t[Misc-G] ]]",
+      "name": "[Misc-G]",
       "source": "",
       "weight": 15
     },
     {
-      "name": "[[ 1t[Spellcaster-G] ]]",
+      "name": "[Spellcaster-G]",
       "source": "",
       "weight": 20
     }
@@ -264,64 +264,64 @@ export const MAGIC_ITEMS = {
   ],
   "Magic-Item-Table-H": [
     {
-      "name": "[[ 1t[Apparel-H] ]]",
+      "name": "[Apparel-H]",
       "source": "",
       "weight": 20
     },
     {
-      "name": "[[ 1t[Armor-H] ]]",
+      "name": "[Armor-H]",
       "source": "",
       "weight": 15
     },
     {
-      "name": "[[ 1t[Arms-H] ]]",
+      "name": "[Arms-H]",
       "source": "",
       "weight": 15
     },
     {
-      "name": "[[ 1t[Jewelry-H] ]]",
+      "name": "[Jewelry-H]",
       "source": "",
       "weight": 15
     },
     {
-      "name": "[[ 1t[Misc-H] ]]",
+      "name": "[Misc-H]",
       "source": "",
       "weight": 20
     },
     {
-      "name": "[[ 1t[Spellcaster-H] ]]",
+      "name": "[Spellcaster-H]",
       "source": "",
       "weight": 15
     }
   ],
   "Magic-Item-Table-I": [
     {
-      "name": "[[ 1t[Apparel-I] ]]",
+      "name": "[Apparel-I]",
       "source": "",
       "weight": 15
     },
     {
-      "name": "[[ 1t[Armor-I] ]]",
+      "name": "[Armor-I]",
       "source": "",
       "weight": 15
     },
     {
-      "name": "[[ 1t[Arms-I] ]]",
+      "name": "[Arms-I]",
       "source": "",
       "weight": 20
     },
     {
-      "name": "[[ 1t[Jewelry-I] ]]",
+      "name": "[Jewelry-I]",
       "source": "",
       "weight": 20
     },
     {
-      "name": "[[ 1t[Misc-I] ]]",
+      "name": "[Misc-I]",
       "source": "",
       "weight": 20
     },
     {
-      "name": "[[ 1t[Spellcaster-I] ]]",
+      "name": "[Spellcaster-I]",
       "source": "",
       "weight": 10
     }
@@ -365,12 +365,12 @@ export const MAGIC_ITEMS = {
   ],
   "Original-DMG-A": [
     {
-      "name": "[[ 1t[Potions-A] ]]",
+      "name": "[Potions-A]",
       "source": "",
       "weight": 65
     },
     {
-      "name": "[[ 1t[Spells-A] ]]",
+      "name": "[Spells-A]",
       "source": "",
       "weight": 34
     },
@@ -382,31 +382,31 @@ export const MAGIC_ITEMS = {
   ],
   "Ammunition-A": [
     {
-      "name": "[[ 1t[Ammunition] ]]",
+      "name": "[Ammunition]",
       "source": "",
       "weight": 5
     },
     {
-      "name": "Walloping [[ 1t[Ammunition] ]]",
+      "name": "Walloping [Ammunition]",
       "source": "XGE",
       "weight": 4
     },
     {
-      "name": "[[1d4]] Unbreakable [[ 1t[Ammunition] ]]",
+      "name": "[[1d4]] Unbreakable [Ammunition]",
       "source": "XGE",
       "weight": 1
     }
   ],
   "Consumables-A": [
     {
-      "name": "[[ 1t[Food-A] ]]",
+      "name": "[Food-A]",
       "source": "",
       "weight": 10
     }
   ],
   "Food-A": [
     {
-      "name": "[[1d4]] Fresh [[ 1t[Ingredients-A] ]]",
+      "name": "[[1d4]] Fresh [Ingredients-A]",
       "source": "",
       "weight": 3
     },
@@ -421,12 +421,12 @@ export const MAGIC_ITEMS = {
       "weight": 2
     },
     {
-      "name": "Bottle of Boundless [[ 1t[Beverages-A] ]]",
+      "name": "Bottle of Boundless [Beverages-A]",
       "source": "SCC",
       "weight": 1
     },
     {
-      "name": "Tankard of Plenty of [[ 1t[Alcohols-A] ]]",
+      "name": "Tankard of Plenty of [Alcohols-A]",
       "source": "ToD",
       "weight": 1
     }
@@ -514,7 +514,7 @@ export const MAGIC_ITEMS = {
       "weight": 10
     },
     {
-      "name": "[[ 1t[Prosthesis] ]]",
+      "name": "[Prosthesis]",
       "source": "",
       "weight": 5
     },
@@ -738,39 +738,39 @@ export const MAGIC_ITEMS = {
   ],
   "Spells-A": [
     {
-      "name": "Spell Scroll ([[ 1t[Spells-Cantrip] ]])",
+      "name": "Spell Scroll ([Spells-Cantrip])",
       "source": "DMG",
       "weight": 3
     },
     {
-      "name": "Spell Scroll ([[ 1t[Spells-Level-1] ]])",
+      "name": "Spell Scroll ([Spells-Level-1])",
       "source": "DMG",
       "weight": 9
     },
     {
-      "name": "Spell Scroll ([[ 1t[Spells-Level-2] ]])",
+      "name": "Spell Scroll ([Spells-Level-2])",
       "source": "DMG",
       "weight": 2
     },
     {
-      "name": "Spellwrought Tattoo ([[ 1t[Spells-Cantrip] ]])",
+      "name": "Spellwrought Tattoo ([Spells-Cantrip])",
       "source": "TCE",
       "weight": 2
     },
     {
-      "name": "Spellwrought Tattoo ([[ 1t[Spells-Level-1] ]])",
+      "name": "Spellwrought Tattoo ([Spells-Level-1])",
       "source": "TCE",
       "weight": 3
     },
     {
-      "name": "Spellwrought Tattoo ([[ 1t[Spells-Level-2] ]])",
+      "name": "Spellwrought Tattoo ([Spells-Level-2])",
       "source": "TCE",
       "weight": 1
     }
   ],
   "Apparel-A": [
     {
-      "name": "[[ 1t[Items-A] ]]",
+      "name": "[Items-A]",
       "source": "",
       "weight": 4
     },
@@ -787,22 +787,22 @@ export const MAGIC_ITEMS = {
   ],
   "Armor-A": [
     {
-      "name": "[[ 1t[Armor] ]]",
+      "name": "[Armor]",
       "source": "",
       "weight": 3
     },
     {
-      "name": "Cast-Off Armor ([[ 1t[Cast-Off-Armor] ]])",
+      "name": "Cast-Off Armor ([Cast-Off-Armor])",
       "source": "XGE",
       "weight": 3
     },
     {
-      "name": "[[ 1t[Metal-Armor] ]] of Gleaming",
+      "name": "[Metal-Armor] of Gleaming",
       "source": "XGE",
       "weight": 2
     },
     {
-      "name": "Smoldering [[ 1t[Smoldering-Armor] ]] Armor",
+      "name": "Smoldering [Smoldering-Armor] Armor",
       "source": "XGE",
       "weight": 2
     },
@@ -819,46 +819,46 @@ export const MAGIC_ITEMS = {
   ],
   "Cast-Off-Armor": [
     {
-      "name": "[[ 1t[Light-Armor] ]]",
+      "name": "[Light-Armor]",
       "source": "",
       "weight": 2
     },
     {
-      "name": "[[ 1t[Medium-Armor] ]]",
+      "name": "[Medium-Armor]",
       "source": "",
       "weight": 3
     },
     {
-      "name": "[[ 1t[Heavy-Armor] ]]",
+      "name": "[Heavy-Armor]",
       "source": "",
       "weight": 1
     }
   ],
   "Smoldering-Armor": [
     {
-      "name": "[[ 1t[Light-Armor] ]]",
+      "name": "[Light-Armor]",
       "source": "",
       "weight": 5
     },
     {
-      "name": "[[ 1t[Medium-Armor] ]]",
+      "name": "[Medium-Armor]",
       "source": "",
       "weight": 5
     },
     {
-      "name": "[[ 1t[Heavy-Armor] ]]",
+      "name": "[Heavy-Armor]",
       "source": "",
       "weight": 2
     }
   ],
   "Arms-A": [
     {
-      "name": "[[ 1t[Weapons] ]]",
+      "name": "[Weapons]",
       "source": "",
       "weight": 9
     },
     {
-      "name": "Moon-Touched [[ 1t[Swords] ]]",
+      "name": "Moon-Touched [Swords]",
       "source": "XGE",
       "weight": 2
     },
@@ -885,7 +885,7 @@ export const MAGIC_ITEMS = {
       "weight": 2
     },
     {
-      "name": "[[ 1t[Items-A] ]]",
+      "name": "[Items-A]",
       "source": "",
       "weight": 1
     },
@@ -907,12 +907,12 @@ export const MAGIC_ITEMS = {
       "weight": 3
     },
     {
-      "name": "Lantern of Tracking [[ 1t[Creature-Type-A] ]]",
+      "name": "Lantern of Tracking [Creature-Type-A]",
       "source": "IWD",
       "weight": 3
     },
     {
-      "name": "[[ 1t[Items-A] ]]",
+      "name": "[Items-A]",
       "source": "",
       "weight": 2
     },
@@ -1016,12 +1016,12 @@ export const MAGIC_ITEMS = {
   ],
   "Spellcaster-A": [
     {
-      "name": "[[ 1t[Orb-of-Shielding] ]] of Shielding ([[ 1t[Planar-Stone] ]])",
+      "name": "[Orb-of-Shielding] of Shielding ([Planar-Stone])",
       "source": "ERLW",
       "weight": 4
     },
     {
-      "name": "Imbued [[ 1t[Imbued-Wood] ]] ([[ 1t[Planar-Wood] ]])",
+      "name": "Imbued [Imbued-Wood] ([Planar-Wood])",
       "source": "ERLW",
       "weight": 4
     },
@@ -1228,29 +1228,29 @@ export const MAGIC_ITEMS = {
   ],
   "Warforged-A": [
     {
-      "name": "Armblade ([[ 1t[Armblades] ]])",
+      "name": "Armblade ([Armblades])",
       "source": "ERLW",
       "weight": 7
     },
     {
-      "name": "Wand Sheath ([[ 1t[Wands-A] ]])",
+      "name": "Wand Sheath ([Wands-A])",
       "source": "ERLW",
       "weight": 2
     },
     {
-      "name": "Integrated [[ 1t[Tools] ]]",
+      "name": "Integrated [Tools]",
       "source": "ExE",
       "weight": 1
     }
   ],
   "Armblades": [
     {
-      "name": "[[ 1t[Armblades-Simple] ]]",
+      "name": "[Armblades-Simple]",
       "source": "",
       "weight": 2
     },
     {
-      "name": "[[ 1t[Armblades-Martial] ]]",
+      "name": "[Armblades-Martial]",
       "source": "",
       "weight": 4
     }
@@ -1393,7 +1393,7 @@ export const MAGIC_ITEMS = {
       "weight": 4
     },
     {
-      "name": "Elemental Gem, [[ 1t[Gems-B] ]]",
+      "name": "Elemental Gem, [Gems-B]",
       "source": "DMG",
       "weight": 3
     },
@@ -1477,7 +1477,7 @@ export const MAGIC_ITEMS = {
       "weight": 6
     },
     {
-      "name": "Mithral [[ 1t[Metal-Armor] ]]",
+      "name": "Mithral [Metal-Armor]",
       "source": "DMG",
       "weight": 6
     },
@@ -1532,7 +1532,7 @@ export const MAGIC_ITEMS = {
       "weight": 3
     },
     {
-      "name": "Mariner's [[ 1t[Armor] ]]",
+      "name": "Mariner's [Armor]",
       "source": "DMG",
       "weight": 3
     },
@@ -1619,12 +1619,12 @@ export const MAGIC_ITEMS = {
       "weight": 3
     },
     {
-      "name": "Potion of [[ 1t[MM-Breath] ]] Breath",
+      "name": "Potion of [MM-Breath] Breath",
       "source": "DMG",
       "weight": 2
     },
     {
-      "name": "Potion of [[ 1t[Damage-Type] ]] Resistance",
+      "name": "Potion of [Damage-Type] Resistance",
       "source": "DMG",
       "weight": 2
     },
@@ -1656,39 +1656,39 @@ export const MAGIC_ITEMS = {
   ],
   "Spells-B": [
     {
-      "name": "Spell Scroll ([[ 1t[Spells-Level-2] ]])",
+      "name": "Spell Scroll ([Spells-Level-2])",
       "source": "DMG",
       "weight": 4
     },
     {
-      "name": "Spell Scroll ([[ 1t[Spells-Level-3] ]])",
+      "name": "Spell Scroll ([Spells-Level-3])",
       "source": "DMG",
       "weight": 4
     },
     {
-      "name": "Spellwrought Tattoo ([[ 1t[Spells-Level-2] ]])",
+      "name": "Spellwrought Tattoo ([Spells-Level-2])",
       "source": "TCE",
       "weight": 1
     },
     {
-      "name": "Spellwrought Tattoo ([[ 1t[Spells-Level-3] ]])",
+      "name": "Spellwrought Tattoo ([Spells-Level-3])",
       "source": "TCE",
       "weight": 1
     }
   ],
   "Ammunition-B": [
     {
-      "name": "[[ 1t[Ammunition] ]], +1",
+      "name": "[Ammunition], +1",
       "source": "DMG",
       "weight": 3
     },
     {
-      "name": "Dried Leech [[ 1t[Ammunition] ]]",
+      "name": "Dried Leech [Ammunition]",
       "source": "BMT",
       "weight": 1
     },
     {
-      "name": "Winged [[ 1t[Ammunition] ]]",
+      "name": "Winged [Ammunition]",
       "source": "BMT",
       "weight": 2
     }
@@ -1827,17 +1827,17 @@ export const MAGIC_ITEMS = {
   ],
   "Armor-F": [
     {
-      "name": "[[ 1t[Armor] ]] of Weightlessness",
+      "name": "[Armor] of Weightlessness",
       "source": "BMT",
       "weight": 5
     },
     {
-      "name": "Adamantine [[ 1t[Metal-Armor] ]]",
+      "name": "Adamantine [Metal-Armor]",
       "source": "DMG",
       "weight": 5
     },
     {
-      "name": "[[ 1t[Metal-Armor] ]] of the Fallen",
+      "name": "[Metal-Armor] of the Fallen",
       "source": "BMT",
       "weight": 2
     },
@@ -1857,29 +1857,29 @@ export const MAGIC_ITEMS = {
       "weight": 2
     },
     {
-      "name": "[[ 1t[Heavy-Armor] ]] of Knight's Fellowship",
+      "name": "[Heavy-Armor] of Knight's Fellowship",
       "source": "BMT",
       "weight": 1
     },
     {
-      "name": "[[ 1t[Medium-Armor] ]] of Fungal Spores",
+      "name": "[Medium-Armor] of Fungal Spores",
       "source": "BMT",
       "weight": 1
     }
   ],
   "Arms-F": [
     {
-      "name": "[[ 1t[Weapons] ]], +1",
+      "name": "[Weapons], +1",
       "source": "DMG",
       "weight": 20
     },
     {
-      "name": "[[ 1t[Weapons] ]] of Warning",
+      "name": "[Weapons] of Warning",
       "source": "DMG",
       "weight": 6
     },
     {
-      "name": "Dragon Wing [[ 1t[Dragon-Breath] ]] [[ 1t[Bows] ]]",
+      "name": "Dragon Wing [Dragon-Breath] [Bows]",
       "source": "FTD",
       "weight": 6
     },
@@ -1889,7 +1889,7 @@ export const MAGIC_ITEMS = {
       "weight": 6
     },
     {
-      "name": "Hungry [[ 1t[Weapons] ]]",
+      "name": "Hungry [Weapons]",
       "source": "ExE",
       "weight": 6
     },
@@ -1899,7 +1899,7 @@ export const MAGIC_ITEMS = {
       "weight": 6
     },
     {
-      "name": "Vicious [[ 1t[Weapons] ]]",
+      "name": "Vicious [Weapons]",
       "source": "DMG",
       "weight": 6
     },
@@ -1954,7 +1954,7 @@ export const MAGIC_ITEMS = {
       "weight": 3
     },
     {
-      "name": "Slumbering [[ 1t[Dragon-Breath] ]] Dragon's Wrath [[ 1t[Weapons] ]]",
+      "name": "Slumbering [Dragon-Breath] Dragon's Wrath [Weapons]",
       "source": "FTD",
       "weight": 3
     },
@@ -1981,7 +1981,7 @@ export const MAGIC_ITEMS = {
   ],
   "Jewelry-F": [
     {
-      "name": "[[ 1t[Ioun-Stones-G] ]]",
+      "name": "[Ioun-Stones-G]",
       "source": "DMG",
       "weight": 3
     },
@@ -2195,7 +2195,7 @@ export const MAGIC_ITEMS = {
       "weight": 3
     },
     {
-      "name": "[[ 1t[Bag-of-Tricks-F] ]]",
+      "name": "[Bag-of-Tricks-F]",
       "source": "DMG",
       "weight": 2
     },
@@ -2371,7 +2371,7 @@ export const MAGIC_ITEMS = {
   ],
   "Consumables-C": [
     {
-      "name": "Scroll of Protection Against [[ 1t[Creature-Type-C] ]]",
+      "name": "Scroll of Protection Against [Creature-Type-C]",
       "source": "DMG",
       "weight": 6
     },
@@ -2381,7 +2381,7 @@ export const MAGIC_ITEMS = {
       "weight": 2
     },
     {
-      "name": "Quaal's Feather Token, [[ 1t[Feather-Token-C] ]]",
+      "name": "Quaal's Feather Token, [Feather-Token-C]",
       "source": "DMG",
       "weight": 2
     },
@@ -2661,29 +2661,29 @@ export const MAGIC_ITEMS = {
   ],
   "Spells-C": [
     {
-      "name": "Spell Scroll ([[ 1t[Spells-Level-4] ]])",
+      "name": "Spell Scroll ([Spells-Level-4])",
       "source": "DMG",
       "weight": 5
     },
     {
-      "name": "Spell Scroll ([[ 1t[Spells-Level-5] ]])",
+      "name": "Spell Scroll ([Spells-Level-5])",
       "source": "DMG",
       "weight": 4
     },
     {
-      "name": "Spellwrought Tattoo ([[ 1t[Spells-Level-4] ]])",
+      "name": "Spellwrought Tattoo ([Spells-Level-4])",
       "source": "TCE",
       "weight": 2
     },
     {
-      "name": "Spellwrought Tattoo ([[ 1t[Spells-Level-5] ]])",
+      "name": "Spellwrought Tattoo ([Spells-Level-5])",
       "source": "TCE",
       "weight": 1
     }
   ],
   "Ammunition-C": [
     {
-      "name": "[[ 1t[Ammunition] ]], +2",
+      "name": "[Ammunition], +2",
       "source": "DMG",
       "weight": 6
     }
@@ -2822,12 +2822,12 @@ export const MAGIC_ITEMS = {
   ],
   "Armor-G": [
     {
-      "name": "[[ 1t[Armor] ]] of [[ 1t[Damage-Type] ]] Resistance",
+      "name": "[Armor] of [Damage-Type] Resistance",
       "source": "DMG",
       "weight": 12
     },
     {
-      "name": "[[ 1t[Armor] ]], +1",
+      "name": "[Armor], +1",
       "source": "DMG",
       "weight": 12
     },
@@ -2842,7 +2842,7 @@ export const MAGIC_ITEMS = {
       "weight": 8
     },
     {
-      "name": "Feywrought [[ 1t[Armor] ]]",
+      "name": "Feywrought [Armor]",
       "source": "BMT",
       "weight": 8
     },
@@ -2852,17 +2852,17 @@ export const MAGIC_ITEMS = {
       "weight": 8
     },
     {
-      "name": "Gloomwrought Armor [[ 1t[Armor] ]]",
+      "name": "Gloomwrought Armor [Armor]",
       "source": "BMT",
       "weight": 8
     },
     {
-      "name": "Molten Bronze Skin [[ 1t[Molten-Armor-G] ]]",
+      "name": "Molten Bronze Skin [Molten-Armor-G]",
       "source": "MOT",
       "weight": 8
     },
     {
-      "name": "Zephyr [[ 1t[Light-Armor] ]]",
+      "name": "Zephyr [Light-Armor]",
       "source": "BGG",
       "weight": 8
     },
@@ -2906,7 +2906,7 @@ export const MAGIC_ITEMS = {
   ],
   "Arms-G": [
     {
-      "name": "[[ 1t[Weapons] ]], +2",
+      "name": "[Weapons], +2",
       "source": "DMG",
       "weight": 10
     },
@@ -2931,7 +2931,7 @@ export const MAGIC_ITEMS = {
       "weight": 3
     },
     {
-      "name": "Glimmering Moon [[ 1t[Bows] ]]",
+      "name": "Glimmering Moon [Bows]",
       "source": "BMT",
       "weight": 3
     },
@@ -2941,7 +2941,7 @@ export const MAGIC_ITEMS = {
       "weight": 3
     },
     {
-      "name": "Oceanic [[ 1t[Ranged] ]]",
+      "name": "Oceanic [Ranged]",
       "source": "TDCS",
       "weight": 3
     },
@@ -2951,7 +2951,7 @@ export const MAGIC_ITEMS = {
       "weight": 3
     },
     {
-      "name": "Starshot [[ 1t[Bows] ]]",
+      "name": "Starshot [Bows]",
       "source": "BMT",
       "weight": 3
     },
@@ -2961,37 +2961,37 @@ export const MAGIC_ITEMS = {
       "weight": 3
     },
     {
-      "name": "[[ 1t[Bows] ]] of Conflagration",
+      "name": "[Bows] of Conflagration",
       "source": "BMT",
       "weight": 2
     },
     {
-      "name": "[[ 1t[Swords] ]] of Life Stealing",
+      "name": "[Swords] of Life Stealing",
       "source": "DMG",
       "weight": 2
     },
     {
-      "name": "[[ 1t[Swords] ]] of Wounding",
+      "name": "[Swords] of Wounding",
       "source": "DMG",
       "weight": 2
     },
     {
-      "name": "[[ 1t[Weapons] ]] of Certain Death",
+      "name": "[Weapons] of Certain Death",
       "source": "EGW",
       "weight": 2
     },
     {
-      "name": "Acheron [[ 1t[Swords] ]]",
+      "name": "Acheron [Swords]",
       "source": "EGW",
       "weight": 2
     },
     {
-      "name": "Corpse Slayer [[ 1t[Weapons] ]]",
+      "name": "Corpse Slayer [Weapons]",
       "source": "EGW",
       "weight": 2
     },
     {
-      "name": "Crystal [[ 1t[Swords] ]]",
+      "name": "Crystal [Swords]",
       "source": "FTD",
       "weight": 2
     },
@@ -3006,12 +3006,12 @@ export const MAGIC_ITEMS = {
       "weight": 2
     },
     {
-      "name": "Dragon Slayer [[ 1t[Swords] ]]",
+      "name": "Dragon Slayer [Swords]",
       "source": "DMG",
       "weight": 2
     },
     {
-      "name": "Flame Tongue [[ 1t[Swords] ]]",
+      "name": "Flame Tongue [Swords]",
       "source": "DMG",
       "weight": 2
     },
@@ -3021,12 +3021,12 @@ export const MAGIC_ITEMS = {
       "weight": 2
     },
     {
-      "name": "Frost Brand [[ 1t[Swords] ]]",
+      "name": "Frost Brand [Swords]",
       "source": "DMG",
       "weight": 2
     },
     {
-      "name": "Giant Slayer [[ 1t[Giant-Slayer-G] ]]",
+      "name": "Giant Slayer [Giant-Slayer-G]",
       "source": "DMG",
       "weight": 2
     },
@@ -3076,7 +3076,7 @@ export const MAGIC_ITEMS = {
       "weight": 2
     },
     {
-      "name": "Stirring Dragon's Wrath [[ 1t[Dragon-Breath] ]] [[ 1t[Weapons] ]]",
+      "name": "Stirring Dragon's Wrath [Dragon-Breath] [Weapons]",
       "source": "FTD",
       "weight": 2
     },
@@ -3113,24 +3113,24 @@ export const MAGIC_ITEMS = {
   ],
   "Giant-Slayer-G": [
     {
-      "name": "[[ 1t[Axes] ]]",
+      "name": "[Axes]",
       "source": "",
       "weight": 4
     },
     {
-      "name": "[[ 1t[Swords] ]]",
+      "name": "[Swords]",
       "source": "",
       "weight": 2
     }
   ],
   "Jewelry-G": [
     {
-      "name": "Ring of [[ 1t[Damage-Type-Gem-G] ]]",
+      "name": "Ring of [Damage-Type-Gem-G]",
       "source": "DMG",
       "weight": 30
     },
     {
-      "name": "[[ 1t[Ioun-Stone-H] ]]",
+      "name": "[Ioun-Stone-H]",
       "source": "DMG",
       "weight": 10
     },
@@ -3376,12 +3376,12 @@ export const MAGIC_ITEMS = {
       "weight": 3
     },
     {
-      "name": "[[ 1t[Figurine-of-Wondrous-Power-G] ]]",
+      "name": "[Figurine-of-Wondrous-Power-G]",
       "source": "DMG",
       "weight": 2
     },
     {
-      "name": "[[ 1t[Horn-of-Valhalla-G] ]] Horn of Valhalla",
+      "name": "[Horn-of-Valhalla-G] Horn of Valhalla",
       "source": "DMG",
       "weight": 2
     },
@@ -3508,24 +3508,24 @@ export const MAGIC_ITEMS = {
       "weight": 7
     },
     {
-      "name": "[[ 1t[Horn-of-Valhalla-G] ]]",
+      "name": "[Horn-of-Valhalla-G]",
       "source": "",
       "weight": 5
     }
   ],
   "Spellcaster-G": [
     {
-      "name": "[[ 1t[Sorcerer-G] ]]",
+      "name": "[Sorcerer-G]",
       "source": "",
       "weight": 20
     },
     {
-      "name": "[[ 1t[Wizard-G] ]]",
+      "name": "[Wizard-G]",
       "source": "",
       "weight": 20
     },
     {
-      "name": "[[ 1t[Bard-G] ]]",
+      "name": "[Bard-G]",
       "source": "",
       "weight": 6
     },
@@ -3575,7 +3575,7 @@ export const MAGIC_ITEMS = {
       "weight": 3
     },
     {
-      "name": "Stirring [[ 1t[FTD-Dragons] ]]-Dragon-Touched Focus",
+      "name": "Stirring [FTD-Dragons]-Dragon-Touched Focus",
       "source": "FTD",
       "weight": 3
     },
@@ -3758,12 +3758,12 @@ export const MAGIC_ITEMS = {
   ],
   "Ammunition-D": [
     {
-      "name": "[[ 1t[Ammunition] ]], +3",
+      "name": "[Ammunition], +3",
       "source": "DMG",
       "weight": 1
     },
     {
-      "name": "Bloodseeker [[ 1t[Ammunition] ]]",
+      "name": "Bloodseeker [Ammunition]",
       "source": "BMT",
       "weight": 1
     },
@@ -3891,44 +3891,44 @@ export const MAGIC_ITEMS = {
   ],
   "Spells-D": [
     {
-      "name": "Spell Scroll ([[ 1t[Spells-Level-6] ]])",
+      "name": "Spell Scroll ([Spells-Level-6])",
       "source": "DMG",
       "weight": 4
     },
     {
-      "name": "Spell Scroll ([[ 1t[Spells-Level-7] ]])",
+      "name": "Spell Scroll ([Spells-Level-7])",
       "source": "DMG",
       "weight": 3
     },
     {
-      "name": "Spell Scroll ([[ 1t[Spells-Level-8] ]])",
+      "name": "Spell Scroll ([Spells-Level-8])",
       "source": "DMG",
       "weight": 2
     },
     {
-      "name": "Spellwrought Tattoo ([[ 1t[Spells-Level-6] ]])",
+      "name": "Spellwrought Tattoo ([Spells-Level-6])",
       "source": "TCE",
       "weight": 1
     },
     {
-      "name": "Spellwrought Tattoo ([[ 1t[Spells-Level-7] ]])",
+      "name": "Spellwrought Tattoo ([Spells-Level-7])",
       "source": "TCE",
       "weight": 1
     },
     {
-      "name": "Spellwrought Tattoo ([[ 1t[Spells-Level-8] ]])",
+      "name": "Spellwrought Tattoo ([Spells-Level-8])",
       "source": "TCE",
       "weight": 1
     }
   ],
   "Apparel-H": [
     {
-      "name": "[[ 1t[Absorbing-H] ]] Tattoo",
+      "name": "[Absorbing-H] Tattoo",
       "source": "TCE",
       "weight": 8
     },
     {
-      "name": "Belt of [[ 1t[Giant-H] ]] Giant Strength",
+      "name": "Belt of [Giant-H] Giant Strength",
       "source": "DMG",
       "weight": 4
     },
@@ -4028,7 +4028,7 @@ export const MAGIC_ITEMS = {
       "weight": 4
     },
     {
-      "name": "Wakened Scaled Ornament of [[ 1t[Dragon-Breath] ]]",
+      "name": "Wakened Scaled Ornament of [Dragon-Breath]",
       "source": "FTD",
       "weight": 4
     },
@@ -4109,42 +4109,42 @@ export const MAGIC_ITEMS = {
   ],
   "Armor-H": [
     {
-      "name": "[[ 1t[Armor] ]], +2",
+      "name": "[Armor], +2",
       "source": "DMG",
       "weight": 4
     },
     {
-      "name": "[[ 1t[Dragon-H] ]] Dragon Scale Mail",
+      "name": "[Dragon-H] Dragon Scale Mail",
       "source": "DMG",
       "weight": 2
     },
     {
-      "name": "[[ 1t[Heavy-Armor] ]] of Safeguarding",
+      "name": "[Heavy-Armor] of Safeguarding",
       "source": "BGG",
       "weight": 2
     },
     {
-      "name": "[[ 1t[Shields-H] ]]",
+      "name": "[Shields-H]",
       "source": "DMG",
       "weight": 2
     },
     {
-      "name": "Antimagic [[ 1t[Armor] ]]",
+      "name": "Antimagic [Armor]",
       "source": "BMT",
       "weight": 2
     },
     {
-      "name": "Clockwork [[ 1t[Heavy-Armor] ]]",
+      "name": "Clockwork [Heavy-Armor]",
       "source": "BMT",
       "weight": 2
     },
     {
-      "name": "Last Stand [[ 1t[Armor] ]]",
+      "name": "Last Stand [Armor]",
       "source": "EGW",
       "weight": 2
     },
     {
-      "name": "Living [[ 1t[Armor] ]]",
+      "name": "Living [Armor]",
       "source": "ERLW",
       "weight": 2
     },
@@ -4240,22 +4240,22 @@ export const MAGIC_ITEMS = {
   ],
   "Arms-H": [
     {
-      "name": "[[ 1t[Weapons] ]], +3",
+      "name": "[Weapons], +3",
       "source": "DMG",
       "weight": 10
     },
     {
-      "name": "[[ 1t[Bows] ]] of Melodies",
+      "name": "[Bows] of Melodies",
       "source": "BMT",
       "weight": 6
     },
     {
-      "name": "[[ 1t[Weapons] ]] of Throne's Command",
+      "name": "[Weapons] of Throne's Command",
       "source": "BMT",
       "weight": 6
     },
     {
-      "name": "Wakened Dragon's Wrath [[ 1t[Dragon-Breath] ]] [[ 1t[Weapons] ]]",
+      "name": "Wakened Dragon's Wrath [Dragon-Breath] [Weapons]",
       "source": "FTD",
       "weight": 6
     },
@@ -4265,7 +4265,7 @@ export const MAGIC_ITEMS = {
       "weight": 6
     },
     {
-      "name": "[[ 1t[Swords] ]] of Sharpness",
+      "name": "[Swords] of Sharpness",
       "source": "DMG",
       "weight": 3
     },
@@ -4280,7 +4280,7 @@ export const MAGIC_ITEMS = {
       "weight": 3
     },
     {
-      "name": "Bloodshed [[ 1t[Swords] ]]",
+      "name": "Bloodshed [Swords]",
       "source": "BGG",
       "weight": 3
     },
@@ -4290,7 +4290,7 @@ export const MAGIC_ITEMS = {
       "weight": 3
     },
     {
-      "name": "Dancing [[ 1t[Swords] ]]",
+      "name": "Dancing [Swords]",
       "source": "DMG",
       "weight": 3
     },
@@ -4320,12 +4320,12 @@ export const MAGIC_ITEMS = {
       "weight": 3
     },
     {
-      "name": "Fool's Blade [[ 1t[Swords] ]]",
+      "name": "Fool's Blade [Swords]",
       "source": "BMT",
       "weight": 3
     },
     {
-      "name": "Forcebreaker [[ 1t[Martial-Melee] ]]",
+      "name": "Forcebreaker [Martial-Melee]",
       "source": "BMT",
       "weight": 3
     },
@@ -4335,7 +4335,7 @@ export const MAGIC_ITEMS = {
       "weight": 3
     },
     {
-      "name": "Nine Lives Stealer [[ 1t[Swords] ]]",
+      "name": "Nine Lives Stealer [Swords]",
       "source": "DMG",
       "weight": 3
     },
@@ -4377,7 +4377,7 @@ export const MAGIC_ITEMS = {
   ],
   "Jewelry-H": [
     {
-      "name": "[[ 1t[Ioun-Stone-I] ]]",
+      "name": "[Ioun-Stone-I]",
       "source": "DMG",
       "weight": 3
     },
@@ -4461,12 +4461,12 @@ export const MAGIC_ITEMS = {
   ],
   "Misc-H": [
     {
-      "name": "[[ 1t[Stat-Books-H] ]]",
+      "name": "[Stat-Books-H]",
       "source": "DMG",
       "weight": 24
     },
     {
-      "name": "[[ 1t[Candle-H] ]] Candle of Invocation",
+      "name": "[Candle-H] Candle of Invocation",
       "source": "DMG",
       "weight": 3
     },
@@ -4787,7 +4787,7 @@ export const MAGIC_ITEMS = {
       "weight": 3
     },
     {
-      "name": "Wakened [[ 1t[FTD-Dragons] ]]-Dragon-Touched Focus",
+      "name": "Wakened [FTD-Dragons]-Dragon-Touched Focus",
       "source": "FTD",
       "weight": 3
     },
@@ -4821,7 +4821,7 @@ export const MAGIC_ITEMS = {
       "weight": 2
     },
     {
-      "name": "Potion of [[ 1t[All-Dragons] ]] Dragon's Majesty",
+      "name": "Potion of [All-Dragons] Dragon's Majesty",
       "source": "FTD",
       "weight": 1
     },
@@ -4833,29 +4833,29 @@ export const MAGIC_ITEMS = {
   ],
   "Spells-E": [
     {
-      "name": "Spell Scroll ([[ 1t[Spells-Level-8] ]])",
+      "name": "Spell Scroll ([Spells-Level-8])",
       "source": "DMG",
       "weight": 3
     },
     {
-      "name": "Spell Scroll ([[ 1t[Spells-Level-9] ]])",
+      "name": "Spell Scroll ([Spells-Level-9])",
       "source": "DMG",
       "weight": 1
     },
     {
-      "name": "Spellwrought Tattoo ([[ 1t[Spells-Level-8] ]])",
+      "name": "Spellwrought Tattoo ([Spells-Level-8])",
       "source": "DMG",
       "weight": 1
     },
     {
-      "name": "Spellwrought Tattoo ([[ 1t[Spells-Level-9] ]])",
+      "name": "Spellwrought Tattoo ([Spells-Level-9])",
       "source": "DMG",
       "weight": 1
     }
   ],
   "Ammunition-E": [
     {
-      "name": "[[ 1t[Ammunition] ]] of Slaying",
+      "name": "[Ammunition] of Slaying",
       "source": "DMG",
       "weight": 6
     }
@@ -4877,7 +4877,7 @@ export const MAGIC_ITEMS = {
       "weight": 2
     },
     {
-      "name": "Ascendant Scaled Ornament of [[ 1t[Dragon-Breath] ]]",
+      "name": "Ascendant Scaled Ornament of [Dragon-Breath]",
       "source": "FTD",
       "weight": 1
     },
@@ -4909,7 +4909,7 @@ export const MAGIC_ITEMS = {
   ],
   "Armor-I": [
     {
-      "name": "[[ 1t[Armor] ]], +3",
+      "name": "[Armor], +3",
       "source": "DMG",
       "weight": 6
     },
@@ -4946,12 +4946,12 @@ export const MAGIC_ITEMS = {
   ],
   "Arms-I": [
     {
-      "name": "Ascendant [[ 1t[Dragon-Breath] ]] Dragon's Wrath [[ 1t[Weapons] ]]",
+      "name": "Ascendant [Dragon-Breath] Dragon's Wrath [Weapons]",
       "source": "FTD",
       "weight": 2
     },
     {
-      "name": "Defender [[ 1t[Swords] ]]",
+      "name": "Defender [Swords]",
       "source": "DMG",
       "weight": 2
     },
@@ -4971,12 +4971,12 @@ export const MAGIC_ITEMS = {
       "weight": 2
     },
     {
-      "name": "Sword of Answering ([[ 1t[Answering-I] ]])",
+      "name": "Sword of Answering ([Answering-I])",
       "source": "DMG",
       "weight": 2
     },
     {
-      "name": "[[ 1t[Swords] ]] of the Planes",
+      "name": "[Swords] of the Planes",
       "source": "BMT",
       "weight": 1
     },
@@ -4991,12 +4991,12 @@ export const MAGIC_ITEMS = {
       "weight": 1
     },
     {
-      "name": "Holy Avenger [[ 1t[Swords] ]]",
+      "name": "Holy Avenger [Swords]",
       "source": "DMG",
       "weight": 1
     },
     {
-      "name": "Luck Blade [[ 1t[Swords] ]]",
+      "name": "Luck Blade [Swords]",
       "source": "DMG",
       "weight": 1
     },
@@ -5011,7 +5011,7 @@ export const MAGIC_ITEMS = {
       "weight": 1
     },
     {
-      "name": "Vorpal [[ 1t[Swords] ]]",
+      "name": "Vorpal [Swords]",
       "source": "DMG",
       "weight": 1
     }
@@ -5122,12 +5122,12 @@ export const MAGIC_ITEMS = {
   ],
   "Jewelry-I": [
     {
-      "name": "Shard Solitaire ([[ 1t[Shard-I] ]])",
+      "name": "Shard Solitaire ([Shard-I])",
       "source": "KGV",
       "weight": 4
     },
     {
-      "name": "Ring of [[ 1t[Elemental-I] ]] Elemental Command",
+      "name": "Ring of [Elemental-I] Elemental Command",
       "source": "DMG",
       "weight": 4
     },
@@ -5223,7 +5223,7 @@ export const MAGIC_ITEMS = {
   ],
   "Misc-I": [
     {
-      "name": "Crystal Ball of [[ 1t[Crystal-Ball-I] ]]",
+      "name": "Crystal Ball of [Crystal-Ball-I]",
       "source": "",
       "weight": 2
     },

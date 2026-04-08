@@ -23,8 +23,8 @@ export const ALL_TABLES = buildTableLookup();
 /** Maximum recursion depth when resolving nested table references. */
 const MAX_DEPTH = 5;
 
-/** Regex matching a subtable reference like "[[ 1t[Potions-A] ]]". */
-const SUBTABLE_REF_RE = /\[\[\s*(\d*)t\[([^\]]+)\]\s*\]\]/;
+/** Regex matching a subtable reference like "[Potions-A]". */
+const SUBTABLE_REF_RE = /\[([A-Za-z][A-Za-z0-9_-]*)\]/;
 
 /**
  * Pick a random entry from a weighted table.
@@ -55,7 +55,7 @@ function resolveEntry(
   const match = SUBTABLE_REF_RE.exec(entry.name);
   if (!match) return { name: entry.name, source: entry.source };
 
-  const tableName = match[2];
+  const tableName = match[1];
   const subtable = ALL_TABLES[tableName];
   if (!subtable || subtable.length === 0) {
     return { name: entry.name, source: entry.source };
@@ -117,7 +117,7 @@ export function rollArt(tableName: string): TreasureItem {
 // ---------------------------------------------------------------------------
 
 /** Global regex for splitting text into segments. */
-const SUBTABLE_REF_GLOBAL = /\[\[\s*(\d*)t\[([^\]]+)\]\s*\]\]/g;
+const SUBTABLE_REF_GLOBAL = /\[([A-Za-z][A-Za-z0-9_-]*)\]/g;
 
 let _segId = 0;
 function nextSegId(): string {
@@ -139,7 +139,7 @@ export function parseSegments(text: string): ItemSegment[] {
     if (match.index > lastIndex) {
       segments.push({ type: 'text', value: text.slice(lastIndex, match.index) });
     }
-    segments.push({ type: 'ref', tableName: match[2], id: nextSegId() });
+    segments.push({ type: 'ref', tableName: match[1], id: nextSegId() });
     lastIndex = match.index + match[0].length;
   }
 
@@ -158,7 +158,7 @@ export function hasUnresolvedRefs(segments: ItemSegment[]): boolean {
 /** Flatten segments to a plain text string. */
 export function segmentsToString(segments: ItemSegment[]): string {
   return segments
-    .map((s) => (s.type === 'text' ? s.value : `[${s.tableName}]`))
+    .map((s) => (s.type === 'text' ? s.value : s.tableName))
     .join('');
 }
 
