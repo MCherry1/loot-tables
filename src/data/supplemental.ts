@@ -5,17 +5,17 @@ export const SUPPLEMENTAL_TABLES = [
     "name": "Armor",
     "entries": [
       {
-        "name": "[[ 1t[Light-Armor] ]]",
+        "name": "[Light-Armor]",
         "source": "",
         "weight": 3
       },
       {
-        "name": "[[ 1t[Medium-Armor] ]]",
+        "name": "[Medium-Armor]",
         "source": "",
         "weight": 3
       },
       {
-        "name": "[[ 1t[Heavy-Armor] ]]",
+        "name": "[Heavy-Armor]",
         "source": "",
         "weight": 2
       }
@@ -145,22 +145,22 @@ export const SUPPLEMENTAL_TABLES = [
     "name": "Weapons",
     "entries": [
       {
-        "name": "[[ 1t[Simple-Melee] ]]",
+        "name": "[Simple-Melee]",
         "source": "",
         "weight": 3
       },
       {
-        "name": "[[ 1t[Simple-Ranged] ]]",
+        "name": "[Simple-Ranged]",
         "source": "",
         "weight": 2
       },
       {
-        "name": "[[ 1t[Martial-Melee] ]]",
+        "name": "[Martial-Melee]",
         "source": "",
         "weight": 5
       },
       {
-        "name": "[[ 1t[Martial-Ranged] ]]",
+        "name": "[Martial-Ranged]",
         "source": "",
         "weight": 2
       }
@@ -485,12 +485,12 @@ export const SUPPLEMENTAL_TABLES = [
     "name": "Ranged",
     "entries": [
       {
-        "name": "[[ 1t[Simple-Ranged] ]]",
+        "name": "[Simple-Ranged]",
         "source": "",
         "weight": 4
       },
       {
-        "name": "[[ 1t[Martial-Ranged] ]]",
+        "name": "[Martial-Ranged]",
         "source": "",
         "weight": 6
       }
@@ -500,12 +500,12 @@ export const SUPPLEMENTAL_TABLES = [
     "name": "Dragon-Breath",
     "entries": [
       {
-        "name": "[[ 1t[MM-Breath] ]]",
+        "name": "[MM-Breath]",
         "source": "",
         "weight": 4
       },
       {
-        "name": "[[ 1t[FTD-Breath] ]]",
+        "name": "[FTD-Breath]",
         "source": "",
         "weight": 2
       }
