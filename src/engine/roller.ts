@@ -1,7 +1,7 @@
 import { MAGIC_ITEMS } from '../data/magic-items';
 import { CUSTOM_GEMS } from '../data/gems';
 import { CUSTOM_ART } from '../data/art';
-import type { MITable, TreasureItem } from './types';
+import type { MITable, TreasureItem, ItemSegment, ResolvableMagicItem } from './types';
 
 type MIEntry = { name: string; source: string; weight: number };
 const MI = MAGIC_ITEMS as Record<string, MIEntry[]>;
@@ -96,4 +96,121 @@ export function rollArt(tableName: string): TreasureItem {
 
   const picked = weightedPick(table.entries);
   return { name: picked.name, baseValue: table.baseValue, tableName: table.name };
+}
+
+// ---------------------------------------------------------------------------
+// V2: Segment-based resolution (step-by-step)
+// ---------------------------------------------------------------------------
+
+/** Global regex for splitting text into segments. */
+const SUBTABLE_REF_GLOBAL = /\[\[\s*(\d*)t\[([^\]]+)\]\s*\]\]/g;
+
+let _segId = 0;
+function nextSegId(): string {
+  return `seg-${++_segId}`;
+}
+
+/**
+ * Parse a text string into segments of plain text and unresolved table refs.
+ * e.g. "[[ 1t[Armor] ]] of [[ 1t[Damage-Type] ]] Resistance"
+ * -> [{ref:'Armor'}, {text:' of '}, {ref:'Damage-Type'}, {text:' Resistance'}]
+ */
+export function parseSegments(text: string): ItemSegment[] {
+  const segments: ItemSegment[] = [];
+  let lastIndex = 0;
+
+  SUBTABLE_REF_GLOBAL.lastIndex = 0;
+  let match: RegExpExecArray | null;
+  while ((match = SUBTABLE_REF_GLOBAL.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      segments.push({ type: 'text', value: text.slice(lastIndex, match.index) });
+    }
+    segments.push({ type: 'ref', tableName: match[2], id: nextSegId() });
+    lastIndex = match.index + match[0].length;
+  }
+
+  if (lastIndex < text.length) {
+    segments.push({ type: 'text', value: text.slice(lastIndex) });
+  }
+
+  return segments;
+}
+
+/** Check whether a segments array has any remaining unresolved refs. */
+export function hasUnresolvedRefs(segments: ItemSegment[]): boolean {
+  return segments.some((s) => s.type === 'ref');
+}
+
+/** Flatten segments to a plain text string. */
+export function segmentsToString(segments: ItemSegment[]): string {
+  return segments
+    .map((s) => (s.type === 'text' ? s.value : `[${s.tableName}]`))
+    .join('');
+}
+
+/**
+ * Resolve a single ref segment by ID.
+ * Rolls on the named table, parses the result into new segments,
+ * and splices them in place of the ref. Returns the updated array.
+ */
+export function resolveOneRef(segments: ItemSegment[], refId: string): { segments: ItemSegment[]; source: string } {
+  const idx = segments.findIndex((s) => s.type === 'ref' && s.id === refId);
+  if (idx === -1) return { segments, source: '' };
+
+  const ref = segments[idx] as { type: 'ref'; tableName: string; id: string };
+  const subtable = MI[ref.tableName];
+  if (!subtable || subtable.length === 0) {
+    // Can't resolve - replace ref with its table name as plain text
+    const result = [...segments];
+    result[idx] = { type: 'text', value: ref.tableName };
+    return { segments: result, source: '' };
+  }
+
+  const picked = weightedPick(subtable);
+  const newSegments = parseSegments(picked.name);
+
+  const result = [...segments.slice(0, idx), ...newSegments, ...segments.slice(idx + 1)];
+  return { segments: result, source: picked.source };
+}
+
+/**
+ * Resolve ALL remaining refs in a segments array.
+ * Iterates until no refs remain (with MAX_DEPTH guard).
+ */
+export function resolveAllRefs(segments: ItemSegment[]): { segments: ItemSegment[]; source: string } {
+  let current = segments;
+  let lastSource = '';
+
+  for (let depth = 0; depth < MAX_DEPTH * 10; depth++) {
+    const ref = current.find((s) => s.type === 'ref');
+    if (!ref || ref.type !== 'ref') break;
+
+    const result = resolveOneRef(current, ref.id);
+    current = result.segments;
+    if (result.source) lastSource = result.source;
+  }
+
+  return { segments: current, source: lastSource };
+}
+
+/**
+ * Roll on a magic item table and return a ResolvableMagicItem.
+ * The first-level roll is done, and segments are parsed but NOT recursively resolved.
+ */
+export function rollMagicItemResolvable(table: MITable): ResolvableMagicItem {
+  const key = `Magic-Item-Table-${table}`;
+  const entries = MI[key];
+  if (!entries || entries.length === 0) {
+    throw new Error(`Unknown magic item table: ${key}`);
+  }
+
+  const picked = weightedPick(entries);
+  const segments = parseSegments(picked.name);
+
+  return {
+    segments,
+    source: picked.source,
+    table,
+    isFullyResolved: !hasUnresolvedRefs(segments),
+  };
 }
