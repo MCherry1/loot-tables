@@ -24,6 +24,7 @@ export type {
   Role,
   Tier,
   TreasureItem,
+  VaultLootInput,
 } from './types';
 
 // Loot generation
@@ -31,6 +32,7 @@ export {
   generateLoot,
   generateEncounter,
   generateLootResolvable,
+  generateVaultLootResolvable,
   generateEncounterV2,
 } from './loot-generator';
 
@@ -47,7 +49,10 @@ export {
   DEFAULT_CAMPAIGN_SETTINGS,
   CR_TO_DEFAULT_TIER,
   crToDefaultTier,
+  VAULT_BUDGET_PER_TIER,
+  VAULT_SIZE_MULTIPLIER,
 } from './constants';
+export type { VaultSize } from './constants';
 
 // Table rollers
 export {

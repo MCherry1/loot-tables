@@ -61,6 +61,28 @@ export const GP_PER_XP: Record<Tier, number> = {
 } as const;
 
 // ---------------------------------------------------------------------------
+// Fixed vault hoard budget per tier (DMG average hoard values)
+// ---------------------------------------------------------------------------
+
+/** Average total hoard value in GP per tier, derived from DMG hoard tables. */
+export const VAULT_BUDGET_PER_TIER: Record<Tier, number> = {
+  1: 1077,
+  2: 7419,
+  3: 105922,
+  4: 710512,
+} as const;
+
+/** Vault size categories for flexible hoard scaling. */
+export type VaultSize = 'minor' | 'standard' | 'major';
+
+/** Multiplier applied to the base vault budget per size category. */
+export const VAULT_SIZE_MULTIPLIER: Record<VaultSize, number> = {
+  minor: 0.5,
+  standard: 1.0,
+  major: 2.0,
+} as const;
+
+// ---------------------------------------------------------------------------
 // Role ratios (fraction of per-creature hoard value)
 // ---------------------------------------------------------------------------
 

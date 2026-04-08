@@ -113,7 +113,7 @@ const EncounterBuilder: React.FC<Props> = ({ settings }) => {
       {
         groups,
         vaultCount: 0,
-        vaultCr: 0,
+        vaultSize: 'standard',
         tier: effectiveTier,
         autoTier,
         settings,
