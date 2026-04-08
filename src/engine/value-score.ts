@@ -1,12 +1,13 @@
 import { BASE_NUMBERS } from './constants';
+import { cryptoRandom } from './random';
 import type { MITable } from './types';
 
 /**
  * Roll a value score: 2d4 (range 2-8, average 5).
  */
 export function rollValueScore(): number {
-  const d4a = Math.floor(Math.random() * 4) + 1;
-  const d4b = Math.floor(Math.random() * 4) + 1;
+  const d4a = Math.floor(cryptoRandom() * 4) + 1;
+  const d4b = Math.floor(cryptoRandom() * 4) + 1;
   return d4a + d4b;
 }
 

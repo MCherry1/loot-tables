@@ -60,4 +60,9 @@ export {
   resolveAllRefs,
   hasUnresolvedRefs,
   segmentsToString,
+  weightedPick,
+  ALL_TABLES,
 } from './roller';
+
+// Random
+export { cryptoRandom } from './random';

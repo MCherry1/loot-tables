@@ -11,7 +11,7 @@ import EncounterResults from './EncounterResults';
 
 const CREATURE_ROLES: CreatureRole[] = ['minion', 'elite', 'boss'];
 
-const ALL_CRS: { label: string; value: number }[] = [
+export const ALL_CRS: { label: string; value: number }[] = [
   { label: '0', value: 0 },
   { label: '1/8', value: 0.125 },
   { label: '1/4', value: 0.25 },
@@ -21,6 +21,49 @@ const ALL_CRS: { label: string; value: number }[] = [
     value: i + 1,
   })),
 ];
+
+/** CR selector with +/- stepper buttons flanking the dropdown. */
+export function CrSelector({
+  value,
+  onChange,
+}: {
+  value: number;
+  onChange: (cr: number) => void;
+}) {
+  const idx = ALL_CRS.findIndex((c) => c.value === value);
+
+  return (
+    <div className="cr-stepper">
+      <button
+        className="cr-stepper-btn"
+        disabled={idx <= 0}
+        onClick={() => onChange(ALL_CRS[idx - 1].value)}
+        title="Previous CR"
+      >
+        &minus;
+      </button>
+      <select
+        className="group-select cr-select"
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+      >
+        {ALL_CRS.map((c) => (
+          <option key={c.value} value={c.value}>
+            CR {c.label}
+          </option>
+        ))}
+      </select>
+      <button
+        className="cr-stepper-btn"
+        disabled={idx >= ALL_CRS.length - 1}
+        onClick={() => onChange(ALL_CRS[idx + 1].value)}
+        title="Next CR"
+      >
+        +
+      </button>
+    </div>
+  );
+}
 
 let _groupId = 0;
 function nextGroupId(): string {
@@ -35,16 +78,13 @@ const EncounterBuilder: React.FC<Props> = ({ settings }) => {
   const [groups, setGroups] = useState<CreatureGroup[]>([
     { id: nextGroupId(), cr: 1, role: 'minion', count: 1 },
   ]);
-  const [vaultCount, setVaultCount] = useState(0);
-  const [vaultCr, setVaultCr] = useState<number>(1);
   const [tier, setTier] = useState<Tier>(1);
   const [autoTier, setAutoTier] = useState(true);
   const [stepByStep, setStepByStep] = useState(false);
   const [results, setResults] = useState<ResolvableEncounterResult | null>(null);
 
-  // Derive tier from highest CR across all groups + vault
+  // Derive tier from highest CR across all creature groups
   const allCrs = groups.map((g) => g.cr);
-  if (vaultCount > 0) allCrs.push(vaultCr);
   const maxCr = allCrs.length > 0 ? Math.max(...allCrs) : 0;
   const effectiveTier: Tier = autoTier ? crToDefaultTier(maxCr) : tier;
 
@@ -66,14 +106,14 @@ const EncounterBuilder: React.FC<Props> = ({ settings }) => {
   };
 
   const handleRoll = () => {
-    const totalCreatures = groups.reduce((sum, g) => sum + g.count, 0) + vaultCount;
+    const totalCreatures = groups.reduce((sum, g) => sum + g.count, 0);
     if (totalCreatures === 0) return;
 
     const result = generateEncounterV2(
       {
         groups,
-        vaultCount,
-        vaultCr,
+        vaultCount: 0,
+        vaultCr: 0,
         tier: effectiveTier,
         autoTier,
         settings,
@@ -107,19 +147,10 @@ const EncounterBuilder: React.FC<Props> = ({ settings }) => {
                 ))}
               </select>
 
-              <select
-                className="group-select cr-select"
+              <CrSelector
                 value={group.cr}
-                onChange={(e) =>
-                  updateGroup(group.id, { cr: Number(e.target.value) })
-                }
-              >
-                {ALL_CRS.map((c) => (
-                  <option key={c.value} value={c.value}>
-                    CR {c.label}
-                  </option>
-                ))}
-              </select>
+                onChange={(cr) => updateGroup(group.id, { cr })}
+              />
 
               <div className="group-count">
                 <button
@@ -158,42 +189,6 @@ const EncounterBuilder: React.FC<Props> = ({ settings }) => {
           <button className="add-group-btn" onClick={addGroup}>
             + Add Creature
           </button>
-        </div>
-      </div>
-
-      {/* Vault Section */}
-      <div className="field-row">
-        <label className="field-label">Vault Hoard</label>
-        <div className="vault-row">
-          <div className="group-count">
-            <button
-              className="stepper-btn"
-              onClick={() => setVaultCount(Math.max(0, vaultCount - 1))}
-              disabled={vaultCount === 0}
-            >
-              &minus;
-            </button>
-            <span className="stepper-value">{vaultCount}</span>
-            <button
-              className="stepper-btn"
-              onClick={() => setVaultCount(vaultCount + 1)}
-            >
-              +
-            </button>
-          </div>
-          {vaultCount > 0 && (
-            <select
-              className="group-select cr-select"
-              value={vaultCr}
-              onChange={(e) => setVaultCr(Number(e.target.value))}
-            >
-              {ALL_CRS.map((c) => (
-                <option key={c.value} value={c.value}>
-                  CR {c.label}
-                </option>
-              ))}
-            </select>
-          )}
         </div>
       </div>
 

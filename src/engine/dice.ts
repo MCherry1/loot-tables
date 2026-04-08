@@ -2,12 +2,14 @@
 // Dice utilities for the treasure economy engine
 // ---------------------------------------------------------------------------
 
+import { cryptoRandom } from './random';
+
 /** Common dice sizes used in D&D 5e. */
 const DICE_SIZES = [4, 6, 8, 10, 12] as const;
 
 /** Roll a single die of size M (uniform 1..M). */
 function rollOne(m: number): number {
-  return Math.floor(Math.random() * m) + 1;
+  return Math.floor(cryptoRandom() * m) + 1;
 }
 
 /** Roll NdM and return the sum. */
