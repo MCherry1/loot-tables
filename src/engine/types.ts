@@ -109,6 +109,91 @@ export interface EncounterResult {
   totalItems: number;
 }
 
+// ---------------------------------------------------------------------------
+// V2: Mixed-CR encounters and step-by-step resolution
+// ---------------------------------------------------------------------------
+
+/** Creature roles for creature groups (vault handled separately). */
+export type CreatureRole = 'minion' | 'elite' | 'boss';
+
+/** A creature group in a mixed-CR encounter. */
+export interface CreatureGroup {
+  /** Unique ID for React keys. */
+  id: string;
+  /** This group's Challenge Rating. */
+  cr: number;
+  /** Economy role (minion, elite, boss). */
+  role: CreatureRole;
+  /** How many creatures in this group (min 1). */
+  count: number;
+}
+
+/** Input for the new mixed-CR encounter generator. */
+export interface EncounterInputV2 {
+  /** Creature groups, each with their own CR/role/count. */
+  groups: CreatureGroup[];
+  /** Number of vault hoards (separate from creature groups). */
+  vaultCount: number;
+  /** CR for vault budget calculation. */
+  vaultCr: number;
+  /** Tier of play. */
+  tier: Tier;
+  /** Whether to derive tier from the highest CR. */
+  autoTier: boolean;
+  /** Campaign settings to apply. */
+  settings: CampaignSettings;
+}
+
+/** A segment of partially-resolved item text. */
+export type ItemSegment =
+  | { type: 'text'; value: string }
+  | { type: 'ref'; tableName: string; id: string };
+
+/** A magic item that supports step-by-step resolution. */
+export interface ResolvableMagicItem {
+  /** Parsed segments (text + unresolved refs). */
+  segments: ItemSegment[];
+  /** Sourcebook acronym. */
+  source: string;
+  /** Which MI table (A-I) produced this item. */
+  table: MITable;
+  /** True when no ref segments remain. */
+  isFullyResolved: boolean;
+  /** Value score from 2d4 roll (2-8). */
+  valueScore?: number;
+  /** Buy price: valueScore x baseNumber. */
+  buyPrice?: number;
+  /** Sale price: floor(valueScore / 2) x baseNumber. */
+  salePrice?: number;
+}
+
+/** Loot result with resolvable magic items for step-by-step mode. */
+export interface ResolvableLootResult {
+  coins: { formula: string; average: number };
+  gems: TreasureItem[];
+  artObjects: TreasureItem[];
+  magicItems: ResolvableMagicItem[];
+  mundaneFinds: string[];
+}
+
+/** One creature's results with resolvable items. */
+export interface ResolvableCreatureResult {
+  role: Role;
+  index: number;
+  loot: ResolvableLootResult;
+}
+
+/** Aggregated results with resolvable items. */
+export interface ResolvableEncounterResult {
+  creatures: ResolvableCreatureResult[];
+  totalCoinsAvg: number;
+  totalItems: number;
+}
+
+// ---------------------------------------------------------------------------
+// Internal engine types
+// ---------------------------------------------------------------------------
+
 /** A category entry in the tier breakdown (used internally by the engine). */
 export interface CategoryEntry {
   /** What kind of treasure this category represents. */

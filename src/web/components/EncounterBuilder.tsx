@@ -1,66 +1,85 @@
 import React, { useState } from 'react';
 import type {
   CampaignSettings,
-  EncounterResult,
-  Role,
+  CreatureGroup,
+  CreatureRole,
+  ResolvableEncounterResult,
   Tier,
 } from '@engine/index';
-import { generateEncounter, CR_TO_DEFAULT_TIER } from '@engine/index';
+import { generateEncounterV2, crToDefaultTier } from '@engine/index';
 import EncounterResults from './EncounterResults';
 
-const ROLES: Role[] = ['minion', 'elite', 'boss', 'vault'];
-const SUB_CRS = [
+const CREATURE_ROLES: CreatureRole[] = ['minion', 'elite', 'boss'];
+
+const ALL_CRS: { label: string; value: number }[] = [
+  { label: '0', value: 0 },
   { label: '1/8', value: 0.125 },
   { label: '1/4', value: 0.25 },
   { label: '1/2', value: 0.5 },
+  ...Array.from({ length: 30 }, (_, i) => ({
+    label: String(i + 1),
+    value: i + 1,
+  })),
 ];
+
+let _groupId = 0;
+function nextGroupId(): string {
+  return `grp-${++_groupId}`;
+}
 
 interface Props {
   settings: CampaignSettings;
 }
 
 const EncounterBuilder: React.FC<Props> = ({ settings }) => {
-  const [cr, setCr] = useState<number>(1);
-  const [useSubCr, setUseSubCr] = useState(false);
+  const [groups, setGroups] = useState<CreatureGroup[]>([
+    { id: nextGroupId(), cr: 1, role: 'minion', count: 1 },
+  ]);
+  const [vaultCount, setVaultCount] = useState(0);
+  const [vaultCr, setVaultCr] = useState<number>(1);
   const [tier, setTier] = useState<Tier>(1);
   const [autoTier, setAutoTier] = useState(true);
-  const [counts, setCounts] = useState<Record<Role, number>>({
-    minion: 0,
-    elite: 0,
-    boss: 0,
-    vault: 0,
-  });
-  const [results, setResults] = useState<EncounterResult | null>(null);
+  const [stepByStep, setStepByStep] = useState(false);
+  const [results, setResults] = useState<ResolvableEncounterResult | null>(null);
 
-  const effectiveTier: Tier = autoTier
-    ? (CR_TO_DEFAULT_TIER[Math.floor(cr)] ?? 1)
-    : tier;
+  // Derive tier from highest CR across all groups + vault
+  const allCrs = groups.map((g) => g.cr);
+  if (vaultCount > 0) allCrs.push(vaultCr);
+  const maxCr = allCrs.length > 0 ? Math.max(...allCrs) : 0;
+  const effectiveTier: Tier = autoTier ? crToDefaultTier(maxCr) : tier;
 
-  const handleCrChange = (value: number) => {
-    setCr(value);
-    if (autoTier) {
-      setTier(CR_TO_DEFAULT_TIER[Math.floor(value)] ?? 1);
-    }
+  const updateGroup = (id: string, updates: Partial<CreatureGroup>) => {
+    setGroups((prev) =>
+      prev.map((g) => (g.id === id ? { ...g, ...updates } : g)),
+    );
   };
 
-  const adjustCount = (role: Role, delta: number) => {
-    setCounts((prev) => ({
+  const removeGroup = (id: string) => {
+    setGroups((prev) => prev.filter((g) => g.id !== id));
+  };
+
+  const addGroup = () => {
+    setGroups((prev) => [
       ...prev,
-      [role]: Math.max(0, prev[role] + delta),
-    }));
+      { id: nextGroupId(), cr: 1, role: 'minion', count: 1 },
+    ]);
   };
 
   const handleRoll = () => {
-    const total = Object.values(counts).reduce((a, b) => a + b, 0);
-    if (total === 0) return;
+    const totalCreatures = groups.reduce((sum, g) => sum + g.count, 0) + vaultCount;
+    if (totalCreatures === 0) return;
 
-    const result = generateEncounter({
-      cr,
-      tier: effectiveTier,
-      autoTier,
-      counts,
-      settings,
-    });
+    const result = generateEncounterV2(
+      {
+        groups,
+        vaultCount,
+        vaultCr,
+        tier: effectiveTier,
+        autoTier,
+        settings,
+      },
+      !stepByStep,
+    );
     setResults(result);
   };
 
@@ -68,49 +87,112 @@ const EncounterBuilder: React.FC<Props> = ({ settings }) => {
     <div className="card">
       <h2 className="card-title">Encounter Builder</h2>
 
-      {/* CR Input */}
+      {/* Creature Groups */}
       <div className="field-row">
-        <label className="field-label">Challenge Rating</label>
-        <div className="cr-input-group">
-          <label className="checkbox-label">
-            <input
-              type="checkbox"
-              checked={useSubCr}
-              onChange={(e) => {
-                setUseSubCr(e.target.checked);
-                if (e.target.checked) {
-                  setCr(0.125);
-                  handleCrChange(0.125);
-                } else {
-                  setCr(1);
-                  handleCrChange(1);
+        <label className="field-label">Creatures</label>
+        <div className="creature-groups">
+          {groups.map((group) => (
+            <div key={group.id} className="creature-group-row">
+              <select
+                className="group-select role-select"
+                value={group.role}
+                onChange={(e) =>
+                  updateGroup(group.id, { role: e.target.value as CreatureRole })
                 }
-              }}
-            />
-            Sub-1 CR
-          </label>
-          {useSubCr ? (
-            <select
-              className="cr-select"
-              value={cr}
-              onChange={(e) => handleCrChange(Number(e.target.value))}
+              >
+                {CREATURE_ROLES.map((r) => (
+                  <option key={r} value={r}>
+                    {r}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                className="group-select cr-select"
+                value={group.cr}
+                onChange={(e) =>
+                  updateGroup(group.id, { cr: Number(e.target.value) })
+                }
+              >
+                {ALL_CRS.map((c) => (
+                  <option key={c.value} value={c.value}>
+                    CR {c.label}
+                  </option>
+                ))}
+              </select>
+
+              <div className="group-count">
+                <button
+                  className="stepper-btn"
+                  onClick={() =>
+                    updateGroup(group.id, {
+                      count: Math.max(1, group.count - 1),
+                    })
+                  }
+                  disabled={group.count <= 1}
+                >
+                  &minus;
+                </button>
+                <span className="stepper-value">{group.count}</span>
+                <button
+                  className="stepper-btn"
+                  onClick={() =>
+                    updateGroup(group.id, { count: group.count + 1 })
+                  }
+                >
+                  +
+                </button>
+              </div>
+
+              {groups.length > 1 && (
+                <button
+                  className="remove-group-btn"
+                  onClick={() => removeGroup(group.id)}
+                  title="Remove group"
+                >
+                  &times;
+                </button>
+              )}
+            </div>
+          ))}
+          <button className="add-group-btn" onClick={addGroup}>
+            + Add Creature
+          </button>
+        </div>
+      </div>
+
+      {/* Vault Section */}
+      <div className="field-row">
+        <label className="field-label">Vault Hoard</label>
+        <div className="vault-row">
+          <div className="group-count">
+            <button
+              className="stepper-btn"
+              onClick={() => setVaultCount(Math.max(0, vaultCount - 1))}
+              disabled={vaultCount === 0}
             >
-              {SUB_CRS.map((s) => (
-                <option key={s.value} value={s.value}>
-                  CR {s.label}
+              &minus;
+            </button>
+            <span className="stepper-value">{vaultCount}</span>
+            <button
+              className="stepper-btn"
+              onClick={() => setVaultCount(vaultCount + 1)}
+            >
+              +
+            </button>
+          </div>
+          {vaultCount > 0 && (
+            <select
+              className="group-select cr-select"
+              value={vaultCr}
+              onChange={(e) => setVaultCr(Number(e.target.value))}
+            >
+              {ALL_CRS.map((c) => (
+                <option key={c.value} value={c.value}>
+                  CR {c.label}
                 </option>
               ))}
             </select>
-          ) : (
-            <input
-              type="number"
-              className="cr-number"
-              min={0}
-              max={30}
-              step={1}
-              value={cr}
-              onChange={(e) => handleCrChange(Number(e.target.value))}
-            />
           )}
         </div>
       </div>
@@ -120,7 +202,10 @@ const EncounterBuilder: React.FC<Props> = ({ settings }) => {
         <label className="field-label">Tier</label>
         <div className="tier-group">
           {([1, 2, 3, 4] as Tier[]).map((t) => (
-            <label key={t} className={`tier-radio ${effectiveTier === t ? 'active' : ''}`}>
+            <label
+              key={t}
+              className={`tier-radio ${effectiveTier === t ? 'active' : ''}`}
+            >
               <input
                 type="radio"
                 name="tier"
@@ -143,32 +228,16 @@ const EncounterBuilder: React.FC<Props> = ({ settings }) => {
         </div>
       </div>
 
-      {/* Role Counts */}
+      {/* Resolution Mode */}
       <div className="field-row">
-        <label className="field-label">Creatures</label>
-        <div className="roles-grid">
-          {ROLES.map((role) => (
-            <div key={role} className="role-stepper">
-              <span className="role-label">{role}</span>
-              <div className="stepper-controls">
-                <button
-                  className="stepper-btn"
-                  onClick={() => adjustCount(role, -1)}
-                  disabled={counts[role] === 0}
-                >
-                  &minus;
-                </button>
-                <span className="stepper-value">{counts[role]}</span>
-                <button
-                  className="stepper-btn"
-                  onClick={() => adjustCount(role, 1)}
-                >
-                  +
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+        <label className="checkbox-label">
+          <input
+            type="checkbox"
+            checked={stepByStep}
+            onChange={(e) => setStepByStep(e.target.checked)}
+          />
+          Resolve step-by-step
+        </label>
       </div>
 
       {/* Roll Button */}

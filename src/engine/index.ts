@@ -6,20 +6,33 @@
 export type {
   CampaignSettings,
   CategoryEntry,
+  CreatureGroup,
   CreatureResult,
+  CreatureRole,
   EncounterInput,
+  EncounterInputV2,
   EncounterResult,
+  ItemSegment,
   LootInput,
   LootResult,
   MagicItemResult,
   MITable,
+  ResolvableCreatureResult,
+  ResolvableEncounterResult,
+  ResolvableLootResult,
+  ResolvableMagicItem,
   Role,
   Tier,
   TreasureItem,
 } from './types';
 
 // Loot generation
-export { generateLoot, generateEncounter } from './loot-generator';
+export {
+  generateLoot,
+  generateEncounter,
+  generateLootResolvable,
+  generateEncounterV2,
+} from './loot-generator';
 
 // Value scoring and pricing
 export {
@@ -33,7 +46,18 @@ export {
 export {
   DEFAULT_CAMPAIGN_SETTINGS,
   CR_TO_DEFAULT_TIER,
+  crToDefaultTier,
 } from './constants';
 
 // Table rollers
-export { rollMagicItem, rollGem, rollArt } from './roller';
+export {
+  rollMagicItem,
+  rollMagicItemResolvable,
+  rollGem,
+  rollArt,
+  parseSegments,
+  resolveOneRef,
+  resolveAllRefs,
+  hasUnresolvedRefs,
+  segmentsToString,
+} from './roller';
