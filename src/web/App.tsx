@@ -12,7 +12,7 @@ const App: React.FC = () => {
   const [settings, setSettings] = useState<CampaignSettings>({
     ...DEFAULT_CAMPAIGN_SETTINGS,
   });
-  const [activeTab, setActiveTab] = useState<Tab>('encounter');
+  const [activeTab, setActiveTab] = useState<Tab>('tables');
 
   return (
     <div className="app-container">
@@ -21,16 +21,16 @@ const App: React.FC = () => {
       {/* Tab Navigation */}
       <div className="tab-bar">
         <button
-          className={`tab-btn ${activeTab === 'encounter' ? 'active' : ''}`}
-          onClick={() => setActiveTab('encounter')}
-        >
-          Encounter Builder
-        </button>
-        <button
           className={`tab-btn ${activeTab === 'tables' ? 'active' : ''}`}
           onClick={() => setActiveTab('tables')}
         >
           Loot Tables
+        </button>
+        <button
+          className={`tab-btn ${activeTab === 'encounter' ? 'active' : ''}`}
+          onClick={() => setActiveTab('encounter')}
+        >
+          Encounter Builder
         </button>
       </div>
 

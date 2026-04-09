@@ -621,12 +621,46 @@ body {
   border-bottom-color: #c9a84c;
 }
 
+/* Sub-tabs (horizontal selectors for spells/equipment/gems/art) */
+.sub-tabs {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.sub-tab {
+  padding: 0.3rem 0.6rem;
+  border: 1px solid #4a3f34;
+  border-radius: 4px;
+  background: #1a1a1e;
+  color: #8a7f72;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.sub-tab:hover {
+  border-color: #c9a84c;
+  color: #c9a84c;
+}
+
+.sub-tab.active {
+  background: rgba(201, 168, 76, 0.15);
+  border-color: #c9a84c;
+  color: #c9a84c;
+}
+
 /* Letter tabs (A-I) */
 .letter-tabs {
   display: flex;
   gap: 0.25rem;
   margin-bottom: 0.75rem;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .letter-tab {
@@ -767,14 +801,6 @@ body {
   border-bottom: none;
 }
 
-.table-entry-row.clickable {
-  cursor: pointer;
-}
-
-.table-entry-row.clickable:hover {
-  background: rgba(201, 168, 76, 0.08);
-}
-
 /* Highlighted (rolled) entry - gold glow pulse */
 .table-entry-row.highlighted {
   background: rgba(201, 168, 76, 0.15);
@@ -888,6 +914,24 @@ body {
   flex-shrink: 0;
 }
 
+.roll-result-banner.clickable {
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.roll-result-banner.clickable:hover {
+  background: rgba(201, 168, 76, 0.2);
+  border-color: rgba(201, 168, 76, 0.5);
+}
+
+.roll-result-drill {
+  font-size: 1.4rem;
+  color: #c9a84c;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-left: 0.2rem;
+}
+
 /* --- Dice Range on Table Rows --- */
 .entry-dice-range {
   font-family: 'Courier New', Courier, monospace;
@@ -907,14 +951,6 @@ body {
   flex-shrink: 0;
 }
 
-/* --- Die label next to table title --- */
-.table-die-label {
-  font-size: 0.7rem;
-  color: #8a7f72;
-  font-variant: normal;
-  font-weight: 400;
-  margin-left: 0.4rem;
-}
 
 /* --- Dice Roll Animation --- */
 .dice-overlay {
