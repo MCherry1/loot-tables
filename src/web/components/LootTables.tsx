@@ -16,6 +16,7 @@ import {
   cleanDisplayName,
   extractRef,
   getFilteredStepperTable,
+  getStepperTable,
   type Entry,
   type StepRecord,
 } from '../lib/stepperResolve';
@@ -51,9 +52,9 @@ function getSegmentColor(index: number): string {
 // ---------------------------------------------------------------------------
 
 /**
- * Compute display-friendly dice ranges from entry weights.
- * Weights are rounded to integers (source-priority filtering can produce
- * fractional effective weights — fine for probability, ugly for display).
+ * Compute display dice ranges from entry weights.
+ * Always called with raw (integer) weights — source filtering is only
+ * used for probability sampling, not for display.
  */
 function computeDiceRanges(
   entries: { weight: number }[],
@@ -61,9 +62,8 @@ function computeDiceRanges(
   const ranges: { lo: number; hi: number }[] = [];
   let cumulative = 0;
   for (const entry of entries) {
-    const w = Math.max(1, Math.round(entry.weight));
     const lo = cumulative + 1;
-    const hi = cumulative + w;
+    const hi = cumulative + entry.weight;
     ranges.push({ lo, hi });
     cumulative = hi;
   }
@@ -287,7 +287,7 @@ function StackedBar({
   entries: { weight: number }[];
   highlightIdx: number | null;
 }) {
-  const totalWeight = entries.reduce((sum, e) => sum + Math.max(1, Math.round(e.weight)), 0);
+  const totalWeight = entries.reduce((sum, e) => sum + e.weight, 0);
   if (totalWeight === 0) return null;
 
   return (
@@ -297,7 +297,7 @@ function StackedBar({
       }`}
     >
       {entries.map((entry, i) => {
-        const pct = (Math.max(1, Math.round(entry.weight)) / totalWeight) * 100;
+        const pct = (entry.weight / totalWeight) * 100;
         const isActive = highlightIdx === i;
         return (
           <div
@@ -322,6 +322,7 @@ function StackedBar({
 function TableCard({
   tableName,
   entries,
+  rawEntries,
   diceRanges,
   totalWeight,
   state,
@@ -335,6 +336,7 @@ function TableCard({
 }: {
   tableName: string;
   entries: Entry[];
+  rawEntries: Entry[];
   diceRanges: { lo: number; hi: number }[];
   totalWeight: number;
   state: StepperState;
@@ -395,7 +397,7 @@ function TableCard({
                 <span className="entry-source">{entry.source}</span>
               )}
               <span className="entry-percentage">
-                {((Math.max(1, Math.round(entry.weight)) / totalWeight) * 100).toFixed(1)}%
+                {((rawEntries[i]?.weight ?? entry.weight) / totalWeight * 100).toFixed(1)}%
               </span>
             </div>
           );
@@ -736,19 +738,27 @@ const LootTables: React.FC<LootTablesProps> = ({
     };
   }, []);
 
+  // Raw entries (original weights) — used for display (ranges, die badge, %).
+  const rawEntries = useMemo<Entry[]>(
+    () => getStepperTable(state.currentTable) ?? [],
+    [state.currentTable],
+  );
+  // Filtered entries (effective weights from source priority) — used for
+  // probability sampling via weightedPick.
   const currentEntries = useMemo<Entry[]>(
     () =>
       getFilteredStepperTable(state.currentTable, settings.sourceSettings) ??
       [],
     [state.currentTable, settings.sourceSettings],
   );
+  // Display dice ranges are always computed from raw (designed) weights.
   const diceRanges = useMemo(
-    () => computeDiceRanges(currentEntries),
-    [currentEntries],
+    () => computeDiceRanges(rawEntries),
+    [rawEntries],
   );
   const totalWeight = useMemo(
-    () => currentEntries.reduce((s, e) => s + Math.max(1, Math.round(e.weight)), 0),
-    [currentEntries],
+    () => rawEntries.reduce((s, e) => s + e.weight, 0),
+    [rawEntries],
   );
 
   const handleRoll = useCallback(() => {
@@ -956,6 +966,7 @@ const LootTables: React.FC<LootTablesProps> = ({
           <TableCard
             tableName={state.currentTable}
             entries={currentEntries}
+            rawEntries={rawEntries}
             diceRanges={diceRanges}
             totalWeight={totalWeight}
             state={state}
