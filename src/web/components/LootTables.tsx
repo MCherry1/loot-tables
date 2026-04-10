@@ -50,14 +50,20 @@ function getSegmentColor(index: number): string {
 // Helpers
 // ---------------------------------------------------------------------------
 
+/**
+ * Compute display-friendly dice ranges from entry weights.
+ * Weights are rounded to integers (source-priority filtering can produce
+ * fractional effective weights — fine for probability, ugly for display).
+ */
 function computeDiceRanges(
   entries: { weight: number }[],
 ): { lo: number; hi: number }[] {
   const ranges: { lo: number; hi: number }[] = [];
   let cumulative = 0;
   for (const entry of entries) {
+    const w = Math.max(1, Math.round(entry.weight));
     const lo = cumulative + 1;
-    const hi = cumulative + entry.weight;
+    const hi = cumulative + w;
     ranges.push({ lo, hi });
     cumulative = hi;
   }
@@ -281,7 +287,7 @@ function StackedBar({
   entries: { weight: number }[];
   highlightIdx: number | null;
 }) {
-  const totalWeight = entries.reduce((sum, e) => sum + e.weight, 0);
+  const totalWeight = entries.reduce((sum, e) => sum + Math.max(1, Math.round(e.weight)), 0);
   if (totalWeight === 0) return null;
 
   return (
@@ -291,7 +297,7 @@ function StackedBar({
       }`}
     >
       {entries.map((entry, i) => {
-        const pct = (entry.weight / totalWeight) * 100;
+        const pct = (Math.max(1, Math.round(entry.weight)) / totalWeight) * 100;
         const isActive = highlightIdx === i;
         return (
           <div
@@ -389,7 +395,7 @@ function TableCard({
                 <span className="entry-source">{entry.source}</span>
               )}
               <span className="entry-percentage">
-                {((entry.weight / totalWeight) * 100).toFixed(1)}%
+                {((Math.max(1, Math.round(entry.weight)) / totalWeight) * 100).toFixed(1)}%
               </span>
             </div>
           );
@@ -741,7 +747,7 @@ const LootTables: React.FC<LootTablesProps> = ({
     [currentEntries],
   );
   const totalWeight = useMemo(
-    () => currentEntries.reduce((s, e) => s + e.weight, 0),
+    () => currentEntries.reduce((s, e) => s + Math.max(1, Math.round(e.weight)), 0),
     [currentEntries],
   );
 
