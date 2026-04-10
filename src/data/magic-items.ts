@@ -342,31 +342,16 @@ export const MAGIC_ITEMS = {
     {
       "name": "[Weapons]",
       "source": "",
-      "weight": 9
+      "weight": 5
     },
     {
       "name": "Moon-Touched [Swords]",
       "source": "XGE",
-      "weight": 3
+      "weight": 2
     },
     {
       "name": "Cast-Off Armor ([Cast-Off-Armor])",
       "source": "XGE",
-      "weight": 3
-    },
-    {
-      "name": "[Metal-Armor] of Gleaming",
-      "source": "XGE",
-      "weight": 2
-    },
-    {
-      "name": "Smoldering [Smoldering-Armor] Armor",
-      "source": "XGE",
-      "weight": 2
-    },
-    {
-      "name": "[Ammunition]",
-      "source": "",
       "weight": 2
     },
     {
@@ -375,9 +360,24 @@ export const MAGIC_ITEMS = {
       "weight": 2
     },
     {
+      "name": "[Metal-Armor] of Gleaming",
+      "source": "XGE",
+      "weight": 1
+    },
+    {
+      "name": "Smoldering [Smoldering-Armor] Armor",
+      "source": "XGE",
+      "weight": 1
+    },
+    {
+      "name": "[Ammunition]",
+      "source": "",
+      "weight": 1
+    },
+    {
       "name": "Armblade ([Armblades])",
       "source": "ERLW",
-      "weight": 2
+      "weight": 1
     },
     {
       "name": "Veteran's Cane",
@@ -409,329 +409,329 @@ export const MAGIC_ITEMS = {
     {
       "name": "Bag of Holding",
       "source": "DMG",
-      "weight": 2
+      "weight": 5
     },
     {
       "name": "Driftglobe",
       "source": "DMG",
-      "weight": 1
+      "weight": 5
     },
     {
       "name": "Everbright Lantern",
       "source": "ERLW",
-      "weight": 1
-    },
-    {
-      "name": "Lantern of Tracking [Creature-Type-A]",
-      "source": "IWD",
-      "weight": 1
-    },
-    {
-      "name": "Breathing Bubble",
-      "source": "EGW",
-      "weight": 1
+      "weight": 5
     },
     {
       "name": "Feather Token",
       "source": "ERLW",
-      "weight": 1
-    },
-    {
-      "name": "Thermal Cube",
-      "source": "IWD",
-      "weight": 1
-    },
-    {
-      "name": "Rope of Mending",
-      "source": "XGE",
-      "weight": 1
+      "weight": 5
     },
     {
       "name": "Horn of Silent Alarm",
       "source": "XGE",
-      "weight": 1
+      "weight": 5
     },
     {
       "name": "Clockwork Amulet",
       "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "Lock of Trickery",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "Chest of Preserving",
-      "source": "WDMM",
-      "weight": 1
-    },
-    {
-      "name": "Orb of Direction",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "Orb of Time",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "Ear Horn of Hearing",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "Coin of Delving",
-      "source": "EGW",
-      "weight": 1
-    },
-    {
-      "name": "Vox Seeker",
-      "source": "EGW",
-      "weight": 1
+      "weight": 5
     },
     {
       "name": "Shiftweave",
       "source": "ERLW",
-      "weight": 1
+      "weight": 5
+    },
+    {
+      "name": "Thermal Cube",
+      "source": "IWD",
+      "weight": 5
+    },
+    {
+      "name": "Lantern of Tracking [Creature-Type-A]",
+      "source": "IWD",
+      "weight": 4
+    },
+    {
+      "name": "Breathing Bubble",
+      "source": "EGW",
+      "weight": 4
+    },
+    {
+      "name": "Rope of Mending",
+      "source": "XGE",
+      "weight": 4
+    },
+    {
+      "name": "Lock of Trickery",
+      "source": "XGE",
+      "weight": 4
+    },
+    {
+      "name": "Chest of Preserving",
+      "source": "WDMM",
+      "weight": 4
+    },
+    {
+      "name": "Orb of Direction",
+      "source": "XGE",
+      "weight": 4
+    },
+    {
+      "name": "Orb of Time",
+      "source": "XGE",
+      "weight": 4
+    },
+    {
+      "name": "Ear Horn of Hearing",
+      "source": "XGE",
+      "weight": 4
+    },
+    {
+      "name": "Coin of Delving",
+      "source": "EGW",
+      "weight": 4
+    },
+    {
+      "name": "Vox Seeker",
+      "source": "EGW",
+      "weight": 4
     },
     {
       "name": "Spellshard",
       "source": "ERLW",
-      "weight": 1
+      "weight": 4
     },
     {
       "name": "Cleansing Stone",
       "source": "ERLW",
-      "weight": 1
+      "weight": 4
     },
     {
       "name": "[Prosthesis]",
       "source": "",
-      "weight": 1
+      "weight": 4
     },
     {
       "name": "Mystery Key",
       "source": "XGE",
-      "weight": 1
+      "weight": 4
     },
     {
       "name": "Integrated [Tools]",
       "source": "ExE",
-      "weight": 1
+      "weight": 4
     }
   ],
   "Trinkets-A": [
     {
-      "name": "Clothes of Mending",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "Common Glamerweave",
-      "source": "ERLW",
-      "weight": 1
-    },
-    {
-      "name": "Uncommon Glamerweave",
-      "source": "ERLW",
-      "weight": 1
-    },
-    {
-      "name": "Masquerade Tattoo",
-      "source": "TCE",
-      "weight": 1
-    },
-    {
-      "name": "Gem of Light",
-      "source": "",
-      "weight": 1
-    },
-    {
-      "name": "Masque Charm",
-      "source": "SCC",
-      "weight": 1
-    },
-    {
-      "name": "[[4d4]] Beads of Refreshment",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "[[1d4]] Beads of Nourishment",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "Bottle of Boundless Coffee",
-      "source": "SCC",
-      "weight": 1
-    },
-    {
-      "name": "Tankard of Plenty",
-      "source": "ToD",
-      "weight": 1
-    },
-    {
-      "name": "Heward's Handy Spice Pouch",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "Tankard of Sobriety",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "Charlatan's Gloves",
-      "source": "ExE",
-      "weight": 1
-    },
-    {
-      "name": "Drybrooch",
-      "source": "ExE",
-      "weight": 1
-    },
-    {
-      "name": "Duster",
-      "source": "ExE",
-      "weight": 1
-    },
-    {
-      "name": "Lamplighter",
-      "source": "ExE",
-      "weight": 1
-    },
-    {
-      "name": "Spark",
-      "source": "ExE",
-      "weight": 1
-    },
-    {
-      "name": "Talking Wand",
-      "source": "ExE",
-      "weight": 1
-    },
-    {
-      "name": "Thurimbar Rod",
-      "source": "ExE",
-      "weight": 1
-    },
-    {
-      "name": "Boots of False Tracks",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "Candle of the Deep",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "Charlatan's Die",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
       "name": "Cloak of Billowing",
       "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "Cloak of Many Fashions",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "Doublet of Dramatic Demise",
-      "source": "TDCS",
-      "weight": 1
-    },
-    {
-      "name": "Dread Helm",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "Hat of Vermin",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "Illuminator's Tattoo",
-      "source": "TCE",
-      "weight": 1
-    },
-    {
-      "name": "Perfume of Bewitching",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "Pipe of Remembrance",
-      "source": "GoS",
-      "weight": 1
-    },
-    {
-      "name": "Pipe of Smoke Monsters",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "Pole of Angling",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "Pole of Collapsing",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "Pot of Awakening",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "Staff of Adornment",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "Staff of Birdcalls",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "Staff of Flowers",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "Talking Doll",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "Wand of Conducting",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "Wand of Pyrotechnics",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "Wand of Scowls",
-      "source": "XGE",
-      "weight": 1
+      "weight": 3
     },
     {
       "name": "Wand of Smiles",
       "source": "XGE",
-      "weight": 1
+      "weight": 3
+    },
+    {
+      "name": "Pipe of Smoke Monsters",
+      "source": "XGE",
+      "weight": 3
+    },
+    {
+      "name": "Talking Doll",
+      "source": "XGE",
+      "weight": 3
+    },
+    {
+      "name": "Cloak of Many Fashions",
+      "source": "XGE",
+      "weight": 3
+    },
+    {
+      "name": "Hat of Vermin",
+      "source": "XGE",
+      "weight": 3
+    },
+    {
+      "name": "Pot of Awakening",
+      "source": "XGE",
+      "weight": 3
+    },
+    {
+      "name": "Charlatan's Die",
+      "source": "XGE",
+      "weight": 3
+    },
+    {
+      "name": "Staff of Adornment",
+      "source": "XGE",
+      "weight": 3
+    },
+    {
+      "name": "Staff of Birdcalls",
+      "source": "XGE",
+      "weight": 3
+    },
+    {
+      "name": "Staff of Flowers",
+      "source": "XGE",
+      "weight": 3
+    },
+    {
+      "name": "Wand of Conducting",
+      "source": "XGE",
+      "weight": 3
+    },
+    {
+      "name": "Wand of Pyrotechnics",
+      "source": "XGE",
+      "weight": 3
+    },
+    {
+      "name": "Wand of Scowls",
+      "source": "XGE",
+      "weight": 3
+    },
+    {
+      "name": "Perfume of Bewitching",
+      "source": "XGE",
+      "weight": 3
+    },
+    {
+      "name": "Pole of Angling",
+      "source": "XGE",
+      "weight": 3
+    },
+    {
+      "name": "Clothes of Mending",
+      "source": "XGE",
+      "weight": 2
+    },
+    {
+      "name": "Common Glamerweave",
+      "source": "ERLW",
+      "weight": 2
+    },
+    {
+      "name": "Uncommon Glamerweave",
+      "source": "ERLW",
+      "weight": 2
+    },
+    {
+      "name": "Masquerade Tattoo",
+      "source": "TCE",
+      "weight": 2
+    },
+    {
+      "name": "Gem of Light",
+      "source": "",
+      "weight": 2
+    },
+    {
+      "name": "Masque Charm",
+      "source": "SCC",
+      "weight": 2
+    },
+    {
+      "name": "[[4d4]] Beads of Refreshment",
+      "source": "XGE",
+      "weight": 2
+    },
+    {
+      "name": "[[1d4]] Beads of Nourishment",
+      "source": "XGE",
+      "weight": 2
+    },
+    {
+      "name": "Bottle of Boundless Coffee",
+      "source": "SCC",
+      "weight": 2
+    },
+    {
+      "name": "Tankard of Plenty",
+      "source": "ToD",
+      "weight": 2
+    },
+    {
+      "name": "Heward's Handy Spice Pouch",
+      "source": "XGE",
+      "weight": 2
+    },
+    {
+      "name": "Tankard of Sobriety",
+      "source": "XGE",
+      "weight": 2
+    },
+    {
+      "name": "Charlatan's Gloves",
+      "source": "ExE",
+      "weight": 2
+    },
+    {
+      "name": "Drybrooch",
+      "source": "ExE",
+      "weight": 2
+    },
+    {
+      "name": "Duster",
+      "source": "ExE",
+      "weight": 2
+    },
+    {
+      "name": "Lamplighter",
+      "source": "ExE",
+      "weight": 2
+    },
+    {
+      "name": "Spark",
+      "source": "ExE",
+      "weight": 2
+    },
+    {
+      "name": "Talking Wand",
+      "source": "ExE",
+      "weight": 2
+    },
+    {
+      "name": "Thurimbar Rod",
+      "source": "ExE",
+      "weight": 2
+    },
+    {
+      "name": "Boots of False Tracks",
+      "source": "XGE",
+      "weight": 2
+    },
+    {
+      "name": "Candle of the Deep",
+      "source": "XGE",
+      "weight": 2
+    },
+    {
+      "name": "Doublet of Dramatic Demise",
+      "source": "TDCS",
+      "weight": 2
+    },
+    {
+      "name": "Dread Helm",
+      "source": "XGE",
+      "weight": 2
+    },
+    {
+      "name": "Illuminator's Tattoo",
+      "source": "TCE",
+      "weight": 2
+    },
+    {
+      "name": "Pipe of Remembrance",
+      "source": "GoS",
+      "weight": 2
+    },
+    {
+      "name": "Pole of Collapsing",
+      "source": "XGE",
+      "weight": 2
     }
   ],
   "Potions-A": [
@@ -888,7 +888,7 @@ export const MAGIC_ITEMS = {
     {
       "name": "Imbued [Imbued-Wood] ([Planar-Wood])",
       "source": "ERLW",
-      "weight": 4
+      "weight": 3
     },
     {
       "name": "Battle Rod",
