@@ -61,6 +61,29 @@ Crimson Text:wght@400;600;700
 IBM Plex Mono:wght@400;500
 ```
 
+### Dark Mode
+
+The parchment theme is warm but bright. Support a dark mode that respects `prefers-color-scheme: dark` and can also be manually toggled from the Settings tab.
+
+**Dark mode palette — "Torchlit Parchment":**
+
+| Role | Light | Dark |
+|------|-------|------|
+| Page background | `#f5ede0` → `#ede1c9` | `#1a1410` → `#12100c` |
+| Card background | `#faf6ee` | `#211c14` |
+| Card header | `#3d2b1f` → `#2a1f14` | `#2a1f14` → `#1a120a` |
+| Primary ink | `#2a1f14` | `#e8dcc8` |
+| Secondary ink | `#7a6652` | `#a08a6e` |
+| Tertiary ink | `#a08a6e` | `#7a6652` |
+| Faint ink | `#b8a48c` | `#5a4a3a` |
+| Borders / dividers | `#d4c4a8` / `#e8dcc8` | `#3d2b1f` / `#2a1f14` |
+| Action bar bg | `#f8f2e6` | `#1a1410` |
+| Probability bar empty | `#e8dcc8` | `#2a1f14` |
+
+Accents (sienna, gold, burnt red) stay the same in both themes — they're already warm tones that work on dark backgrounds.
+
+Implement via CSS custom properties on `:root` and `:root[data-theme="dark"]` (or `@media (prefers-color-scheme: dark)` as default, with a manual override stored in localStorage). The Settings tab should have a theme toggle: `Auto` / `Light` / `Dark`.
+
 ---
 
 ## The Table Card
@@ -92,7 +115,7 @@ This is the core UI element. It appears at every step of every resolution. Same 
 - Table name: left-aligned, cream `#f5ede0`, `Crimson Text` bold 17px
 - Dice badge: right-aligned, `IBM Plex Mono` 12px, `#c9b896` text on `rgba(201,184,150,0.15)` background, 4px border-radius
 - Padding: 14px 16px
-- **Display name cleaning:** strip `[brackets]`, strip trailing `-A` through `-I` suffixes, replace hyphens with spaces. `Magic-Item-Table-G` → `Magic Item Table G`. `Martial-Melee` → `Martial Melee`. `Figurine-of-Wondrous-Power-G` → `Figurine of Wondrous Power`.
+- **Display name cleaning:** strip `[brackets]`, strip trailing `-A` through `-I` suffixes, replace hyphens with spaces. `Martial-Melee` → `Martial Melee`. `Figurine-of-Wondrous-Power-G` → `Figurine of Wondrous Power`. **Exception: the root Magic Item Tables keep their letter.** `Magic-Item-Table-G` → `Magic Item Table G` (not just `Magic Item Table`). This letter is essential — it tells the user which table they started from and should remain visible in the header and breadcrumb at all times.
 
 ### Probability Bar
 
@@ -303,11 +326,21 @@ The payoff moment when resolution is complete. Should feel like uncovering treas
 
 ---
 
-## Section Navigation
+## Top-Level Navigation
 
 ### Tab Structure
 
-Keep the existing section tabs: **Magic Items**, **Spells**, **Equipment**, **Gems**, **Art**.
+The app has **five top-level tabs**: **Loot Tables**, **Encounter Builder**, **Settings**, **About**.
+
+The current "Campaign Settings" panel embedded within the Encounter Builder becomes the standalone **Settings** tab. The current section sub-navigation (Magic Items / Spells / Equipment / Gems / Art) moves inside the **Loot Tables** tab.
+
+```
+[ Loot Tables ]  [ Encounter Builder ]  [ Settings ]  [ About ]
+```
+
+### Loot Tables Tab
+
+Contains section sub-tabs: **Magic Items**, **Spells**, **Equipment**, **Gems**, **Art**.
 
 **Every section is a full stepper entry point.** The same stepper component, breadcrumb, context bar, and result history are used everywhere. The only difference is which root table the sub-tabs point to.
 
@@ -318,7 +351,7 @@ Keep the existing section tabs: **Magic Items**, **Spells**, **Equipment**, **Ge
 
 The stepper gracefully handles both deep chains (4+ steps) and shallow ones (1 step). A single roll on the 50 gp gem table still gets the full table card, probability bar, roll/pick interaction, and final result card — it just resolves in one step. This is fine. Consistency matters more than optimizing for short tables.
 
-### Sub-Tabs
+### Section Sub-Tabs (within Loot Tables)
 
 - **Magic Items:** `A` `B` `C` `D` `E` `F` `G` `H` `I` — letter tabs.
 - **Spells:** `Cantrip` `1st` `2nd` `3rd` `4th` `5th` `6th` `7th` `8th` `9th` — level tabs.
@@ -327,6 +360,104 @@ The stepper gracefully handles both deep chains (4+ steps) and shallow ones (1 s
 - **Art:** GP value tiers.
 
 Selecting any sub-tab resets the stepper with that table as the root. Breadcrumb clears. Context bar clears. The table card shows the selected table, ready to roll or browse.
+
+### Settings Tab
+
+This replaces the "Campaign Settings" panel currently embedded in the Encounter Builder. It becomes a standalone top-level tab. Three sections:
+
+#### General Settings (existing, moved here)
+- **Party Size** (1–8, default 4)
+- **Magic Richness** slider (0.5x–1.5x, default 1.0x, labels: Scarce / Low / Standard / High / Abundant)
+- **Show Values** toggle
+- **Show Sale Price** toggle
+- **Show Mundane Finds** toggle
+- **Theme** toggle: `Auto` / `Light` / `Dark`
+
+#### Sources
+
+A source priority system that controls which sourcebooks appear and how heavily they're weighted. This system was designed in a prior conversation and uses a **hybrid multiplier dampened by book size** so that large books (DMG, 300+ items) don't overwhelm small ones.
+
+**Priority levels per source** (five levels, not a simple on/off):
+
+| Priority | Book Multiplier | Description |
+|----------|----------------|-------------|
+| **Off** | 0 | All items from this source excluded entirely. |
+| **Low** | ×0.5 | De-emphasized. Items appear but are less likely. |
+| **Normal** | ×1.0 | Default. Standard weighting. |
+| **High** | ×1.5 | Boosted. Items appear more often. |
+| **Emphasis** | ×2.0 | Strongly boosted. Use for campaign-specific sources. |
+
+**Dampening factor** (prevents large books from dominating):
+
+```
+dampFactor = clamp(√(20 / bookItemCount), 0.4, 1.5)
+```
+
+DMG with ~300 items gets dampened to ×0.4 per item. A small book like Candlekeep Mysteries with ~8 items gets ×1.5 per item. Net effect: DMG still has the largest total presence because of volume, but setting a small book to Emphasis actually makes its items competitive.
+
+**Named item tiers** (mapped from existing weights in the Excel data):
+
+| Tier | Value | Description |
+|------|-------|-------------|
+| Low | 1.5 | Niche or situational items |
+| Mid | 3.5 | Standard items |
+| High | 5.5 | Popular/iconic items |
+| Very High | 9.0 | Signature items, campaign staples |
+
+**Effective weight formula:**
+
+```
+effectiveWeight = tierValue × bookMultiplier × dampFactor
+```
+
+This is computed per-item at roll time. When a source is toggled off, all its items get effectiveWeight = 0. When emphasis changes, all probabilities, dice types, and distribution charts update live.
+
+**Source grouping for batch controls:** Sources are organized into collapsible groups for easier management. Each group has batch buttons to set all sources in the group at once:
+
+| Group | Sources |
+|-------|---------|
+| Core Supplements | DMG, XGE, TCE, FTD, BGG, BMT |
+| Settings | ERLW, ExE, EGW, TDCS, MOT, GGR, SCC, AAG |
+| Adventures | ToD, WDH, WDMM, IWD, WBtW, TYP, SKT, PotA, LMoP, PaB, GoS, ToA, CM, CotN, OotA |
+
+Each group header has priority buttons (Off / Low / Normal / High / Emphasis) that apply to all sources in that group. Individual sources can still be overridden within a group.
+
+**Per-source row display:**
+- Source acronym (colored) + full book name
+- Item count (e.g. "37×")
+- Dampening factor (shown if formula view is expanded)
+- Priority selector: five small buttons, active one highlighted
+
+**Show Formula toggle:** A small button that reveals/hides the formula explanation and per-item dampening factors. Hidden by default to keep the UI clean.
+
+**Default state:** All sources enabled, all set to Normal. Eberron sources (ERLW, ExE) specifically default to Normal — the table data as written already has Eberron over-represented in raw entry count, so Normal weighting with dampening is the correct baseline. DMs who want more Eberron can set those sources to High or Emphasis.
+
+**Implementation:** Source filtering and effective weight calculation should be applied at roll time, not by mutating the data. When building the effective entry list for any table, compute `effectiveWeight` for each item based on its source's priority and dampening factor, and exclude items where effectiveWeight = 0. Entries with empty source strings (`""`) are always included with their raw weight — these are structural entries (sub-table refs like `[Armor]`) not actual items.
+
+**Note on source acronym expansion:** Throughout the rest of the UI (final result cards, result history, encounter builder results), display the **full source name** rather than the acronym. Use `SOURCEBOOKS` as the lookup. If an acronym isn't found in `SOURCEBOOKS` (there are a few in the data like `KGV`, `DL`, `SDW` that aren't in the list), display the acronym as-is.
+
+#### Role Ratios (existing, moved here)
+The existing role ratio adjustments (Minion / Elite / Boss / Vault percentages).
+
+### About Tab
+
+A static page explaining how the system works. Content should be derived from `DESIGN.md` in the repo root, rendered as readable prose. Sections:
+
+1. **What This Is** — brief intro: a unified loot generation system for D&D 5e that replaces DMG hoard tables with per-creature probability.
+2. **How the Math Works** — explain the budget calculation: CR → XP → GP budget via tier-specific GP/XP ratios. Show the GP/XP table. Explain role percentages (Minion 10%, Elite 30%, Boss 60%, Vault 100%).
+3. **Category Breakdown** — explain how the budget splits across coins, gems, art, and magic items using DMG-derived tier percentages.
+4. **Magic Item Tables** — explain the A–I table structure, Minor vs Major, rarity tiers, and the Value Score pricing system.
+5. **DMG Balance Verification** — explain that at default settings, a tier's worth of encounters produces treasure matching DMG expected values.
+
+Style this page with the same parchment/binder aesthetic. Use `Crimson Text` for body text. Keep it readable — generous line height (1.7), max-width ~650px, no dense tables unless necessary. This is a reference document, not a wall of stats.
+
+### Encounter Builder Tab
+
+Same as current, with these changes:
+
+- **Remove the Campaign Settings panel** (moved to Settings tab).
+- **Auto Tier checkbox is unchecked by default.** The tier selector is visible and active. The user must explicitly opt into auto-detection.
+- Magic item results are unresolved clickable links (see Encounter Builder Integration section below).
 
 ---
 
@@ -464,18 +595,20 @@ after each pick:
 
 | File | Changes |
 |------|---------|
-| `src/web/components/LootTables.tsx` | Major rewrite. Replace `TableView`, `DrillableTableView`, `SubtypeDropdown`, `RollResultBanner`, `ResolutionChain` with the stepper. Remove `SUBTYPE_DROPDOWN_TABLES`, `SUBTYPE_GROUPS`, `isSubtypeTable`, `getSubtypeItems`, `SubtypeDropdown`, `DiceAnimation`. Keep: section tabs, letter/sub-tab navigation, `StackedBar`, `computeDiceRanges`, `formatRange`, `cleanDisplayName`, `extractRef`, `getSegmentColor`, `SEGMENT_COLORS` (update values to match this spec's palette). |
-| `src/web/styles/app.css` | Restyle table card, entry rows, header bar, action bar to match spec. Add: breadcrumb styles, context bar (`.context-bar`, `.ref-chip`), final result card (`.final-result-card`), result history section, page-turn transition keyframes (`@keyframes page-exit`, `@keyframes page-enter`), scan-sweep roll animation (`@keyframes scan-sweep`), gold glow pulse (`@keyframes gold-glow`), final card entrance (`@keyframes card-entrance`). |
-| `src/web/App.tsx` | Lift encounter result state up. Add `pendingResolve` state and pass it to `LootTables`. Wire tab switching so encounter-resolve triggers Loot Tables tab. |
-| `src/web/components/EncounterBuilder.tsx` | Change magic item results from auto-resolved to unresolved clickable links. Add "Resolve All" button. Accept callback for resolved results. |
+| `src/web/components/LootTables.tsx` | Major rewrite. Replace `TableView`, `DrillableTableView`, `SubtypeDropdown`, `RollResultBanner`, `ResolutionChain` with the stepper. Remove `SUBTYPE_DROPDOWN_TABLES`, `SUBTYPE_GROUPS`, `isSubtypeTable`, `getSubtypeItems`, `SubtypeDropdown`, `DiceAnimation`. Keep: section sub-tabs, letter tabs, `StackedBar`, `computeDiceRanges`, `formatRange`, `cleanDisplayName`, `extractRef`, `getSegmentColor`, `SEGMENT_COLORS` (update values to match this spec's palette). This component is now nested inside the Loot Tables top-level tab, not a top-level tab itself. |
+| `src/web/styles/app.css` | Restyle table card, entry rows, header bar, action bar to match spec. Add: breadcrumb styles, context bar (`.context-bar`, `.ref-chip`), final result card (`.final-result-card`), result history section, page-turn transition keyframes, scan-sweep roll animation, gold glow pulse, final card entrance animation. Add full dark mode theme via CSS custom properties on `:root` and `:root[data-theme="dark"]`. |
+| `src/web/App.tsx` | Restructure top-level tabs to: Loot Tables, Encounter Builder, Settings, About. Lift encounter result state and settings state up to App level. Add `pendingResolve` state and pass it to `LootTables`. Wire tab switching so encounter-resolve triggers Loot Tables tab. Manage theme (dark/light/auto) from App level. |
+| `src/web/components/EncounterBuilder.tsx` | Remove embedded Campaign Settings panel (moved to Settings tab). Change magic item results from auto-resolved to unresolved clickable links. Add "Resolve All" button. Accept callback for resolved results. **Set auto-tier checkbox to unchecked by default.** |
+| `src/web/components/CampaignSettings.tsx` | Refactor into the **Settings tab**. Add **Sources section** with the full priority system: source groups (Core Supplements, Settings, Adventures) with batch priority buttons, per-source priority selector (Off/Low/Normal/High/Emphasis), item counts, dampening factor display, and a "Show Formula" toggle. Add **Theme toggle** (Auto/Light/Dark). Keep existing settings (party size, magic richness, show values, show sale price, show mundane, role ratios). |
+| `src/web/components/About.tsx` | **New file.** Static content page explaining system math, derived from `DESIGN.md`. Sections: What This Is, How the Math Works, Category Breakdown, Magic Item Tables, DMG Balance Verification. Styled with parchment aesthetic, `Crimson Text`, generous line height, max-width ~650px. |
+| `src/engine/roller.ts` | Add `getEffectiveWeight(entry, sourceSettings)` function implementing the formula: `tierValue × bookMultiplier × clamp(√(20/bookItemCount), 0.4, 1.5)`. Add `getFilteredEntries(tableName, sourceSettings)` that computes effective weights for all entries, excludes zero-weight entries, and returns the filtered list. Empty-source structural entries (sub-table refs) pass through with raw weight. |
+| `src/engine/types.ts` | Add source settings types: `SourcePriority = 'off' \| 'low' \| 'normal' \| 'high' \| 'emphasis'`. `SourceSettings = Record<string, SourcePriority>`. `ItemTier = 'low' \| 'mid' \| 'high' \| 'vhigh'`. Add `sourceSettings: SourceSettings` to `CampaignSettings`. |
 
 ## Files NOT to Modify
 
 | File | Reason |
 |------|--------|
-| `src/engine/*` | Engine already has all needed APIs: `ALL_TABLES`, `weightedPick`, `parseSegments`, `resolveAllRefs`. No changes. |
 | `src/data/*` | Auto-generated from Excel. No changes. |
-| `src/web/components/CampaignSettings.tsx` | Unrelated settings panel. No changes. |
 | `src/web/components/VaultHoard.tsx` | Separate vault feature. No changes. |
 
 ## No New Dependencies
