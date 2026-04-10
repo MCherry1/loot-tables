@@ -3,7 +3,12 @@
 // "Resolve All" batch action. String-based composed-name resolution.
 // ---------------------------------------------------------------------------
 
-import { ALL_TABLES, weightedPick } from '@engine/index';
+import {
+  ALL_TABLES,
+  getFilteredEntries,
+  weightedPick,
+} from '@engine/index';
+import type { SourceSettings } from '@engine/index';
 import { CUSTOM_GEMS } from '../../data/gems';
 import { CUSTOM_ART } from '../../data/art';
 
@@ -25,6 +30,23 @@ const STEPPER_TABLES: Record<string, Entry[]> = (() => {
 /** Look up a table by name from the extended (stepper-aware) lookup. */
 export function getStepperTable(name: string): Entry[] | null {
   return STEPPER_TABLES[name] ?? null;
+}
+
+/**
+ * Look up a table and apply source-priority filtering. Entries with empty
+ * `source` (structural refs like `[Armor]`) pass through unchanged.
+ */
+export function getFilteredStepperTable(
+  name: string,
+  sourceSettings: SourceSettings | undefined,
+): Entry[] | null {
+  const raw = STEPPER_TABLES[name];
+  if (!raw) return null;
+  if (!sourceSettings) return raw;
+  // getFilteredEntries expects required `source`; our stepper entries have
+  // optional source so normalize to '' before filtering.
+  const normalized = raw.map((e) => ({ ...e, source: e.source ?? '' }));
+  return getFilteredEntries(normalized, sourceSettings);
 }
 
 export type StepRecord = {
@@ -96,8 +118,14 @@ export function applyPickPure(
  * Auto-resolve a full table chain starting from `rootTable` by repeatedly
  * weighted-picking and applying the result. Used by the stepper SKIP button
  * and by the encounter "Resolve All" button.
+ *
+ * `sourceSettings` is optional: when provided, entries are filtered by
+ * per-book priority before every weightedPick.
  */
-export function walkTableChain(rootTable: string): {
+export function walkTableChain(
+  rootTable: string,
+  sourceSettings?: SourceSettings,
+): {
   name: string;
   source: string;
   steps: StepRecord[];
@@ -109,8 +137,9 @@ export function walkTableChain(rootTable: string): {
 
   // Hard cap to defend against pathological data.
   for (let i = 0; i < 32; i++) {
-    const entries = STEPPER_TABLES[currentTable];
-    if (!entries || entries.length === 0) break;
+    const entries =
+      getFilteredStepperTable(currentTable, sourceSettings) ?? [];
+    if (entries.length === 0) break;
 
     const picked = weightedPick(entries);
     const idx = entries.indexOf(picked);

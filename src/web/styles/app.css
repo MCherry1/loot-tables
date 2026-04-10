@@ -2,6 +2,68 @@
    D&D 5e Loot Generator — "The DM's Binder" parchment theme
    ========================================================================= */
 
+/* --- Theme Custom Properties --------------------------------------------
+   Light is the default parchment palette; [data-theme="dark"] overrides
+   only the tokens that change. Sienna/gold/burnt-red accents stay constant.
+   -------------------------------------------------------------------- */
+:root {
+  --bg-start: #f5ede0;
+  --bg-end: #ede1c9;
+  --bg-card: #f8f2e6;
+  --bg-card-soft: #fbf5e7;
+  --bg-raised: #e8dcc8;
+  --ink: #2a1f14;
+  --ink-strong: #1a120a;
+  --ink-muted: #7a6652;
+  --ink-faint: #a08a6e;
+  --ink-fainter: #b8a48c;
+  --ink-inverse: #f5ede0;
+  --border: #d4c4a8;
+  --border-soft: #e8dcc8;
+  --border-muted: #c9b896;
+  /* Accents — stable in both themes */
+  --accent: #8b5e3c;
+  --accent-dark: #5a3a25;
+  --accent-darker: #6b4530;
+  --accent-gold: #c9943a;
+  --accent-gold-dark: #a07830;
+  --accent-gold-darker: #8a6828;
+  --header-start: #3d2b1f;
+  --header-end: #2a1f14;
+  --danger: #c9553a;
+  --shadow: rgba(42, 31, 20, 0.08);
+  --shadow-strong: rgba(42, 31, 20, 0.2);
+}
+
+[data-theme='dark'] {
+  --bg-start: #1a1410;
+  --bg-end: #12100c;
+  --bg-card: #211c14;
+  --bg-card-soft: #2a1f14;
+  --bg-raised: #2a1f14;
+  --ink: #e8dcc8;
+  --ink-strong: #f5ede0;
+  --ink-muted: #a08a6e;
+  --ink-faint: #7a6652;
+  --ink-fainter: #5a4a3a;
+  --ink-inverse: #1a1410;
+  --border: #3d2b1f;
+  --border-soft: #2a1f14;
+  --border-muted: #5a4a3a;
+  /* Accents unchanged */
+  --accent: #8b5e3c;
+  --accent-dark: #5a3a25;
+  --accent-darker: #6b4530;
+  --accent-gold: #c9943a;
+  --accent-gold-dark: #a07830;
+  --accent-gold-darker: #8a6828;
+  --header-start: #2a1f14;
+  --header-end: #1a120a;
+  --danger: #c9553a;
+  --shadow: rgba(0, 0, 0, 0.4);
+  --shadow-strong: rgba(0, 0, 0, 0.6);
+}
+
 /* --- Reset & Base --- */
 *,
 *::before,
@@ -16,9 +78,9 @@ body {
 }
 
 body {
-  background: linear-gradient(180deg, #f5ede0 0%, #ede1c9 100%);
+  background: linear-gradient(180deg, var(--bg-start) 0%, var(--bg-end) 100%);
   background-attachment: fixed;
-  color: #2a1f14;
+  color: var(--ink);
   font-family: 'Crimson Text', Georgia, 'Times New Roman', serif;
   font-size: 15px;
   line-height: 1.5;
@@ -42,15 +104,15 @@ button {
   font-family: 'Crimson Text', Georgia, serif;
   font-size: 1.9rem;
   font-weight: 700;
-  color: #2a1f14;
+  color: var(--ink);
   margin: 0 0 1.5rem;
   letter-spacing: 0.03em;
 }
 
 /* --- Cards --- */
 .card {
-  background: #f8f2e6;
-  border: 1px solid #d4c4a8;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 1.25rem;
   margin-bottom: 1rem;
@@ -63,7 +125,7 @@ button {
   font-family: 'Crimson Text', Georgia, serif;
   font-size: 1.15rem;
   font-weight: 700;
-  color: #2a1f14;
+  color: var(--ink);
   margin: 0 0 1rem;
   letter-spacing: 0.01em;
 }
@@ -77,7 +139,7 @@ button {
   display: block;
   font-family: 'IBM Plex Mono', monospace;
   font-size: 0.72rem;
-  color: #7a6652;
+  color: var(--ink-muted);
   margin-bottom: 0.35rem;
   font-weight: 500;
   letter-spacing: 0.06em;
@@ -89,7 +151,7 @@ button {
   display: flex;
   gap: 0;
   margin-bottom: 1rem;
-  border-bottom: 1px solid #d4c4a8;
+  border-bottom: 1px solid var(--border);
 }
 
 .tab-btn {
@@ -98,7 +160,7 @@ button {
   background: transparent;
   border: none;
   border-bottom: 3px solid transparent;
-  color: #7a6652;
+  color: var(--ink-muted);
   font-family: 'Crimson Text', Georgia, serif;
   font-size: 1rem;
   font-weight: 600;
@@ -108,13 +170,13 @@ button {
 }
 
 .tab-btn:hover {
-  color: #8b5e3c;
+  color: var(--accent);
 }
 
 .tab-btn.active {
-  color: #2a1f14;
+  color: var(--ink);
   font-weight: 700;
-  border-bottom-color: #8b5e3c;
+  border-bottom-color: var(--accent);
 }
 
 /* --- Creature Groups (Encounter Builder) --- */
@@ -128,18 +190,18 @@ button {
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  background: #fbf5e7;
-  border: 1px solid #d4c4a8;
+  background: var(--bg-card-soft);
+  border: 1px solid var(--border);
   border-radius: 6px;
   padding: 0.4rem 0.55rem;
 }
 
 .group-select {
   padding: 0.35rem 0.45rem;
-  background: #fbf5e7;
-  border: 1px solid #c9b896;
+  background: var(--bg-card-soft);
+  border: 1px solid var(--border-muted);
   border-radius: 4px;
-  color: #2a1f14;
+  color: var(--ink);
   font-family: inherit;
   font-size: 0.9rem;
   cursor: pointer;
@@ -148,12 +210,12 @@ button {
 
 .group-select:focus {
   outline: none;
-  border-color: #8b5e3c;
+  border-color: var(--accent);
 }
 
 .group-select option {
-  background: #fbf5e7;
-  color: #2a1f14;
+  background: var(--bg-card-soft);
+  color: var(--ink);
 }
 
 .role-select {
@@ -181,7 +243,7 @@ button {
   border: none;
   border-radius: 4px;
   background: transparent;
-  color: #a08a6e;
+  color: var(--ink-faint);
   font-size: 1.1rem;
   font-weight: 700;
   cursor: pointer;
@@ -194,14 +256,14 @@ button {
 
 .remove-group-btn:hover {
   background: rgba(201, 85, 58, 0.12);
-  color: #c9553a;
+  color: var(--danger);
 }
 
 .add-group-btn {
   background: transparent;
-  border: 1px dashed #c9b896;
+  border: 1px dashed var(--border-muted);
   border-radius: 6px;
-  color: #7a6652;
+  color: var(--ink-muted);
   padding: 0.45rem;
   font-family: inherit;
   font-size: 0.9rem;
@@ -210,8 +272,8 @@ button {
 }
 
 .add-group-btn:hover {
-  border-color: #8b5e3c;
-  color: #8b5e3c;
+  border-color: var(--accent);
+  color: var(--accent);
   background: rgba(139, 94, 60, 0.04);
 }
 
@@ -236,13 +298,13 @@ button {
   justify-content: center;
   gap: 0.25rem;
   padding: 0.3rem 0.85rem;
-  background: #fbf5e7;
-  border: 1px solid #c9b896;
+  background: var(--bg-card-soft);
+  border: 1px solid var(--border-muted);
   border-radius: 4px;
   cursor: pointer;
   font-family: inherit;
   font-size: 0.95rem;
-  color: #2a1f14;
+  color: var(--ink);
   transition: background 0.15s, border-color 0.15s;
 }
 
@@ -251,14 +313,14 @@ button {
 }
 
 .tier-radio.active {
-  background: #8b5e3c;
-  border-color: #5a3a25;
-  color: #f5ede0;
+  background: var(--accent);
+  border-color: var(--accent-dark);
+  color: var(--ink-inverse);
   font-weight: 700;
 }
 
 .tier-radio:not(.active):hover {
-  border-color: #8b5e3c;
+  border-color: var(--accent);
 }
 
 /* --- Checkboxes --- */
@@ -269,11 +331,11 @@ button {
   font-family: inherit;
   font-size: 0.95rem;
   cursor: pointer;
-  color: #2a1f14;
+  color: var(--ink);
 }
 
 .checkbox-label input[type='checkbox'] {
-  accent-color: #8b5e3c;
+  accent-color: var(--accent);
   width: 1rem;
   height: 1rem;
 }
@@ -288,10 +350,10 @@ button {
 .stepper-btn {
   width: 2rem;
   height: 2rem;
-  border: 1px solid #c9b896;
+  border: 1px solid var(--border-muted);
   border-radius: 4px;
-  background: #fbf5e7;
-  color: #8b5e3c;
+  background: var(--bg-card-soft);
+  color: var(--accent);
   font-size: 1.2rem;
   font-weight: 700;
   cursor: pointer;
@@ -303,13 +365,13 @@ button {
 }
 
 .stepper-btn:hover:not(:disabled) {
-  background: #8b5e3c;
-  color: #f5ede0;
-  border-color: #5a3a25;
+  background: var(--accent);
+  color: var(--ink-inverse);
+  border-color: var(--accent-dark);
 }
 
 .stepper-btn:disabled {
-  color: #c9b896;
+  color: var(--border-muted);
   cursor: default;
 }
 
@@ -319,7 +381,7 @@ button {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 1rem;
   font-weight: 500;
-  color: #2a1f14;
+  color: var(--ink);
 }
 
 /* --- Big Roll Button (Encounter "Roll Encounter") --- */
@@ -328,9 +390,9 @@ button {
   width: 100%;
   padding: 0.75rem;
   margin-top: 0.5rem;
-  background: linear-gradient(180deg, #8b5e3c 0%, #6b4530 100%);
-  color: #f5ede0;
-  border: 1px solid #5a3a25;
+  background: linear-gradient(180deg, var(--accent) 0%, var(--accent-darker) 100%);
+  color: var(--ink-inverse);
+  border: 1px solid var(--accent-dark);
   border-radius: 6px;
   font-family: 'Crimson Text', Georgia, serif;
   font-size: 1.05rem;
@@ -357,9 +419,9 @@ button {
   margin-top: 0.75rem;
   padding: 0.4rem 0.85rem;
   background: rgba(139, 94, 60, 0.08);
-  border: 1px solid #d4c4a8;
+  border: 1px solid var(--border);
   border-radius: 6px;
-  color: #8b5e3c;
+  color: var(--accent);
   font-family: 'IBM Plex Mono', monospace;
   font-size: 0.78rem;
   cursor: pointer;
@@ -368,21 +430,21 @@ button {
 
 .resolve-all-btn:hover {
   background: rgba(139, 94, 60, 0.16);
-  border-color: #8b5e3c;
+  border-color: var(--accent);
 }
 
 /* --- Results Panel (Encounter results list) --- */
 .results-panel {
   margin-top: 1rem;
   padding-top: 1rem;
-  border-top: 1px solid #e8dcc8;
+  border-top: 1px solid var(--bg-raised);
 }
 
 .results-title {
   font-family: 'Crimson Text', Georgia, serif;
   font-size: 1.05rem;
   font-weight: 700;
-  color: #2a1f14;
+  color: var(--ink);
   margin: 0 0 0.6rem;
 }
 
@@ -394,7 +456,7 @@ button {
 
 .creature-line {
   padding: 0.55rem 0;
-  border-bottom: 1px solid #e8dcc8;
+  border-bottom: 1px solid var(--bg-raised);
   font-size: 0.95rem;
   line-height: 1.55;
 }
@@ -405,34 +467,34 @@ button {
 
 .creature-label {
   font-weight: 700;
-  color: #2a1f14;
+  color: var(--ink);
 }
 
 .creature-coins {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 0.85rem;
-  color: #7a6652;
+  color: var(--ink-muted);
 }
 
 .creature-item {
-  color: #2a1f14;
+  color: var(--ink);
 }
 
 .mundane-finds {
   margin-top: 0.2rem;
   font-size: 0.85rem;
-  color: #a08a6e;
+  color: var(--ink-faint);
   font-style: italic;
 }
 
 .results-total {
   margin-top: 0.7rem;
   padding-top: 0.6rem;
-  border-top: 1px solid #d4c4a8;
+  border-top: 1px solid var(--border);
   font-weight: 700;
   font-family: 'IBM Plex Mono', monospace;
   font-size: 0.9rem;
-  color: #2a1f14;
+  color: var(--ink);
 }
 
 /* --- Resolvable Item — unresolved-link button (Encounter Builder) --- */
@@ -447,7 +509,7 @@ button {
   background: rgba(139, 94, 60, 0.1);
   border: 1px solid rgba(139, 94, 60, 0.35);
   border-radius: 4px;
-  color: #8b5e3c;
+  color: var(--accent);
   font-family: 'Crimson Text', Georgia, serif;
   font-size: 0.95rem;
   font-weight: 600;
@@ -459,16 +521,16 @@ button {
 
 .unresolved-link:hover {
   background: rgba(139, 94, 60, 0.18);
-  border-color: #8b5e3c;
+  border-color: var(--accent);
 }
 
 .resolved-name {
-  color: #2a1f14;
+  color: var(--ink);
   font-weight: 600;
 }
 
 .item-meta {
-  color: #a08a6e;
+  color: var(--ink-faint);
   font-family: 'IBM Plex Mono', monospace;
   font-size: 0.75rem;
 }
@@ -499,7 +561,7 @@ button {
 
 .chevron {
   font-size: 0.7rem;
-  color: #7a6652;
+  color: var(--ink-muted);
   transition: transform 0.25s ease;
 }
 
@@ -527,7 +589,7 @@ button {
   appearance: none;
   width: 100%;
   height: 6px;
-  background: #e8dcc8;
+  background: var(--bg-raised);
   border-radius: 3px;
   outline: none;
   margin: 0.4rem 0;
@@ -539,9 +601,9 @@ button {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #8b5e3c;
+  background: var(--accent);
   cursor: pointer;
-  border: 2px solid #f8f2e6;
+  border: 2px solid var(--bg-card);
   box-shadow: 0 1px 3px rgba(42, 31, 20, 0.25);
 }
 
@@ -549,9 +611,9 @@ button {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #8b5e3c;
+  background: var(--accent);
   cursor: pointer;
-  border: 2px solid #f8f2e6;
+  border: 2px solid var(--bg-card);
   box-shadow: 0 1px 3px rgba(42, 31, 20, 0.25);
 }
 
@@ -560,7 +622,7 @@ button {
   justify-content: space-between;
   font-family: 'IBM Plex Mono', monospace;
   font-size: 0.7rem;
-  color: #a08a6e;
+  color: var(--ink-faint);
   margin-top: 0.1rem;
 }
 
@@ -580,10 +642,10 @@ button {
 .cr-stepper-btn {
   width: 1.7rem;
   height: 1.7rem;
-  border: 1px solid #c9b896;
+  border: 1px solid var(--border-muted);
   border-radius: 4px;
-  background: #fbf5e7;
-  color: #8b5e3c;
+  background: var(--bg-card-soft);
+  color: var(--accent);
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
@@ -596,13 +658,13 @@ button {
 }
 
 .cr-stepper-btn:hover:not(:disabled) {
-  background: #8b5e3c;
-  color: #f5ede0;
-  border-color: #5a3a25;
+  background: var(--accent);
+  color: var(--ink-inverse);
+  border-color: var(--accent-dark);
 }
 
 .cr-stepper-btn:disabled {
-  color: #c9b896;
+  color: var(--border-muted);
   cursor: default;
 }
 
@@ -614,24 +676,24 @@ button {
   padding: 0.55rem 0.7rem;
   margin-bottom: 0.75rem;
   background: rgba(139, 94, 60, 0.05);
-  border: 1px solid #d4c4a8;
-  border-left: 3px solid #8b5e3c;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
   border-radius: 4px;
   font-size: 0.85rem;
 }
 
 .vault-dmg-ref {
   font-weight: 700;
-  color: #2a1f14;
+  color: var(--ink);
   letter-spacing: 0.01em;
 }
 
 .vault-dmg-detail {
-  color: #7a6652;
+  color: var(--ink-muted);
 }
 
 .vault-dmg-total {
-  color: #a08a6e;
+  color: var(--ink-faint);
   font-family: 'IBM Plex Mono', monospace;
   font-size: 0.78rem;
 }
@@ -641,7 +703,7 @@ button {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 0.85rem;
   font-weight: 500;
-  color: #2a1f14;
+  color: var(--ink);
 }
 
 /* =========================================================================
@@ -658,7 +720,7 @@ button {
   gap: 0;
   flex-wrap: wrap;
   margin-bottom: 0.85rem;
-  border-bottom: 1px solid #d4c4a8;
+  border-bottom: 1px solid var(--border);
 }
 
 .section-tab {
@@ -666,7 +728,7 @@ button {
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
-  color: #7a6652;
+  color: var(--ink-muted);
   font-family: 'Crimson Text', Georgia, serif;
   font-size: 0.95rem;
   font-weight: 600;
@@ -676,13 +738,13 @@ button {
 }
 
 .section-tab:hover {
-  color: #8b5e3c;
+  color: var(--accent);
 }
 
 .section-tab.active {
-  color: #2a1f14;
+  color: var(--ink);
   font-weight: 700;
-  border-bottom-color: #8b5e3c;
+  border-bottom-color: var(--accent);
 }
 
 /* Sub-tabs (spells/equipment/gems/art) */
@@ -696,10 +758,10 @@ button {
 
 .sub-tab {
   padding: 0.32rem 0.7rem;
-  border: 1px solid #c9b896;
+  border: 1px solid var(--border-muted);
   border-radius: 4px;
-  background: #fbf5e7;
-  color: #7a6652;
+  background: var(--bg-card-soft);
+  color: var(--ink-muted);
   font-family: 'Crimson Text', Georgia, serif;
   font-size: 0.85rem;
   font-weight: 600;
@@ -709,14 +771,14 @@ button {
 }
 
 .sub-tab:hover {
-  border-color: #8b5e3c;
-  color: #8b5e3c;
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .sub-tab.active {
-  background: #8b5e3c;
-  border-color: #5a3a25;
-  color: #f5ede0;
+  background: var(--accent);
+  border-color: var(--accent-dark);
+  color: var(--ink-inverse);
 }
 
 /* Letter tabs (A-I) */
@@ -731,10 +793,10 @@ button {
 .letter-tab {
   width: 2.3rem;
   height: 2.3rem;
-  border: 1px solid #c9b896;
+  border: 1px solid var(--border-muted);
   border-radius: 4px;
-  background: #fbf5e7;
-  color: #2a1f14;
+  background: var(--bg-card-soft);
+  color: var(--ink);
   font-family: 'IBM Plex Mono', monospace;
   font-size: 0.95rem;
   font-weight: 500;
@@ -746,14 +808,14 @@ button {
 }
 
 .letter-tab:hover {
-  border-color: #8b5e3c;
-  color: #8b5e3c;
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .letter-tab.active {
-  background: #8b5e3c;
-  border-color: #5a3a25;
-  color: #f5ede0;
+  background: var(--accent);
+  border-color: var(--accent-dark);
+  color: var(--ink-inverse);
 }
 
 /* =========================================================================
@@ -773,7 +835,7 @@ button {
   background: none;
   border: none;
   padding: 0;
-  color: #8b5e3c;
+  color: var(--accent);
   font-family: inherit;
   font-size: inherit;
   text-decoration: underline;
@@ -782,18 +844,18 @@ button {
 }
 
 .breadcrumb-step:hover {
-  color: #6b4530;
+  color: var(--accent-darker);
 }
 
 .breadcrumb-step.current {
-  color: #2a1f14;
+  color: var(--ink);
   font-weight: 700;
   text-decoration: none;
   cursor: default;
 }
 
 .breadcrumb-sep {
-  color: #b8a48c;
+  color: var(--ink-fainter);
   margin: 0 6px;
 }
 
@@ -802,20 +864,20 @@ button {
    ========================================================================= */
 
 .context-bar {
-  border: 1px dashed #c9b896;
+  border: 1px dashed var(--border-muted);
   border-radius: 6px;
   background: rgba(139, 94, 60, 0.04);
   padding: 10px 14px;
   margin-bottom: 12px;
   font-family: 'Crimson Text', Georgia, serif;
   font-size: 15px;
-  color: #2a1f14;
+  color: var(--ink);
 }
 
 .ref-chip {
   display: inline-block;
   background: rgba(139, 94, 60, 0.1);
-  color: #8b5e3c;
+  color: var(--accent);
   padding: 0 3px;
   border-radius: 2px;
   font-size: 14px;
@@ -828,8 +890,8 @@ button {
    ========================================================================= */
 
 .table-card {
-  background: #f8f2e6;
-  border: 1px solid #d4c4a8;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: 8px;
   overflow: hidden;
   margin-bottom: 16px;
@@ -849,7 +911,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: linear-gradient(180deg, #3d2b1f 0%, #2a1f14 100%);
+  background: linear-gradient(180deg, var(--header-start) 0%, var(--ink) 100%);
   padding: 14px 16px;
 }
 
@@ -857,14 +919,14 @@ button {
   font-family: 'Crimson Text', Georgia, serif;
   font-size: 17px;
   font-weight: 700;
-  color: #f5ede0;
+  color: var(--ink-inverse);
   letter-spacing: 0.01em;
 }
 
 .dice-badge {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 12px;
-  color: #c9b896;
+  color: var(--border-muted);
   background: rgba(201, 184, 150, 0.15);
   border-radius: 4px;
   padding: 3px 8px;
@@ -875,7 +937,7 @@ button {
   display: flex;
   width: 100%;
   height: 6px;
-  background: #e8dcc8;
+  background: var(--bg-raised);
 }
 
 .probability-segment {
@@ -935,13 +997,13 @@ button {
 
 .entry-row.highlighted {
   background: rgba(139, 94, 60, 0.1);
-  border-left-color: #8b5e3c;
+  border-left-color: var(--accent);
 }
 
 .entry-dice-range {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 11px;
-  color: #a08a6e;
+  color: var(--ink-faint);
   min-width: 40px;
   text-align: right;
   flex-shrink: 0;
@@ -958,12 +1020,12 @@ button {
   flex: 1;
   font-family: 'Crimson Text', Georgia, serif;
   font-size: 15px;
-  color: #2a1f14;
+  color: var(--ink);
   min-width: 0;
 }
 
 .entry-name.has-ref {
-  color: #8b5e3c;
+  color: var(--accent);
   font-weight: 600;
 }
 
@@ -974,7 +1036,7 @@ button {
 .entry-source {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 11px;
-  color: #a08a6e;
+  color: var(--ink-faint);
   font-style: italic;
   flex-shrink: 0;
 }
@@ -982,7 +1044,7 @@ button {
 .entry-percentage {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 11px;
-  color: #b8a48c;
+  color: var(--ink-fainter);
   min-width: 40px;
   text-align: right;
   flex-shrink: 0;
@@ -993,8 +1055,8 @@ button {
   display: flex;
   gap: 10px;
   align-items: center;
-  border-top: 1px solid #e8dcc8;
-  background: #f8f2e6;
+  border-top: 1px solid var(--bg-raised);
+  background: var(--bg-card);
   padding: 12px 16px;
 }
 
@@ -1012,9 +1074,9 @@ button {
 }
 
 .btn-roll {
-  background: linear-gradient(180deg, #8b5e3c 0%, #6b4530 100%);
-  color: #f5ede0;
-  border: 1px solid #5a3a25;
+  background: linear-gradient(180deg, var(--accent) 0%, var(--accent-darker) 100%);
+  color: var(--ink-inverse);
+  border: 1px solid var(--accent-dark);
   box-shadow: 0 2px 6px rgba(42, 31, 20, 0.15);
 }
 
@@ -1034,9 +1096,9 @@ button {
 }
 
 .btn-continue {
-  background: linear-gradient(180deg, #c9943a 0%, #a07830 100%);
-  color: #2a1f14;
-  border: 1px solid #8a6828;
+  background: linear-gradient(180deg, var(--accent-gold) 0%, var(--accent-gold-dark) 100%);
+  color: var(--ink);
+  border: 1px solid var(--accent-gold-darker);
   box-shadow: 0 2px 6px rgba(42, 31, 20, 0.15);
 }
 
@@ -1051,9 +1113,9 @@ button {
   font-family: 'Crimson Text', Georgia, serif;
   font-size: 14px;
   font-weight: 600;
-  color: #8b5e3c;
+  color: var(--accent);
   background: rgba(139, 94, 60, 0.08);
-  border: 1px solid #d4c4a8;
+  border: 1px solid var(--border);
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s;
@@ -1062,7 +1124,7 @@ button {
 .btn-skip:hover,
 .btn-reroll:hover {
   background: rgba(139, 94, 60, 0.16);
-  border-color: #8b5e3c;
+  border-color: var(--accent);
 }
 
 .btn-start-over {
@@ -1070,7 +1132,7 @@ button {
   padding: 6px 10px;
   background: none;
   border: none;
-  color: #c9553a;
+  color: var(--danger);
   font-family: 'Crimson Text', Georgia, serif;
   font-size: 13px;
   cursor: pointer;
@@ -1085,13 +1147,13 @@ button {
    ========================================================================= */
 
 .final-result-card {
-  background: linear-gradient(135deg, #1a120a 0%, #2a1f14 40%, #3d2b1f 100%);
-  border: 2px solid #c9943a;
+  background: linear-gradient(135deg, var(--ink-strong) 0%, var(--ink) 40%, var(--header-start) 100%);
+  border: 2px solid var(--accent-gold);
   border-radius: 10px;
   padding: 24px 20px;
   margin: 16px 0;
   text-align: center;
-  color: #f5ede0;
+  color: var(--ink-inverse);
   box-shadow:
     0 0 24px rgba(201, 148, 58, 0.15),
     0 4px 16px rgba(42, 31, 20, 0.2);
@@ -1122,7 +1184,7 @@ button {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 11px;
   text-transform: uppercase;
-  color: #c9943a;
+  color: var(--accent-gold);
   letter-spacing: 0.12em;
   margin-bottom: 10px;
 }
@@ -1131,21 +1193,21 @@ button {
   font-family: 'Crimson Text', Georgia, serif;
   font-size: 22px;
   font-weight: 700;
-  color: #f5ede0;
+  color: var(--ink-inverse);
   margin-bottom: 4px;
 }
 
 .final-result-source {
   font-size: 13px;
   font-style: italic;
-  color: #c9b896;
+  color: var(--border-muted);
   margin-bottom: 14px;
 }
 
 .final-result-chain {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 12px;
-  color: #a08a6e;
+  color: var(--ink-faint);
   margin-bottom: 18px;
   line-height: 1.6;
 }
@@ -1169,9 +1231,9 @@ button {
 }
 
 .btn-roll-again {
-  background: linear-gradient(180deg, #c9943a 0%, #a07830 100%);
-  color: #3d2b1f;
-  border: 1px solid #8a6828;
+  background: linear-gradient(180deg, var(--accent-gold) 0%, var(--accent-gold-dark) 100%);
+  color: var(--header-start);
+  border: 1px solid var(--accent-gold-darker);
   box-shadow: 0 2px 8px rgba(42, 31, 20, 0.2);
 }
 
@@ -1182,13 +1244,13 @@ button {
 
 .btn-done {
   background: rgba(245, 237, 224, 0.1);
-  color: #f5ede0;
-  border: 1px solid #c9b896;
+  color: var(--ink-inverse);
+  border: 1px solid var(--border-muted);
 }
 
 .btn-done:hover {
   background: rgba(245, 237, 224, 0.2);
-  border-color: #f5ede0;
+  border-color: var(--ink-inverse);
 }
 
 /* =========================================================================
@@ -1198,7 +1260,7 @@ button {
 .result-history {
   margin-top: 20px;
   padding-top: 12px;
-  border-top: 1px solid #d4c4a8;
+  border-top: 1px solid var(--border);
 }
 
 .result-history-header {
@@ -1208,7 +1270,7 @@ button {
   font-family: 'Crimson Text', Georgia, serif;
   font-size: 13px;
   font-weight: 700;
-  color: #7a6652;
+  color: var(--ink-muted);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   margin-bottom: 8px;
@@ -1217,7 +1279,7 @@ button {
 .result-history-empty {
   font-family: 'Crimson Text', Georgia, serif;
   font-size: 13px;
-  color: #a08a6e;
+  color: var(--ink-faint);
   font-style: italic;
   padding: 8px 0;
 }
@@ -1225,7 +1287,7 @@ button {
 .btn-clear-history {
   background: none;
   border: none;
-  color: #c9553a;
+  color: var(--danger);
   font-family: 'IBM Plex Mono', monospace;
   font-size: 11px;
   cursor: pointer;
@@ -1246,7 +1308,7 @@ button {
 
 .result-entry {
   padding: 8px 0;
-  border-bottom: 1px solid #e8dcc8;
+  border-bottom: 1px solid var(--bg-raised);
 }
 
 .result-entry:last-child {
@@ -1257,14 +1319,14 @@ button {
   font-family: 'Crimson Text', Georgia, serif;
   font-size: 15px;
   font-weight: 700;
-  color: #2a1f14;
+  color: var(--ink);
   display: flex;
   align-items: baseline;
   gap: 6px;
 }
 
 .result-entry-mark {
-  color: #c9943a;
+  color: var(--accent-gold);
 }
 
 .result-entry-source {
@@ -1273,13 +1335,13 @@ button {
   font-size: 12px;
   font-weight: 400;
   font-style: italic;
-  color: #a08a6e;
+  color: var(--ink-faint);
 }
 
 .result-entry-chain {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 11px;
-  color: #a08a6e;
+  color: var(--ink-faint);
   margin-top: 2px;
 }
 
@@ -1338,3 +1400,360 @@ button {
     flex-basis: 100%;
   }
 }
+
+/* =========================================================================
+   Settings tab
+   ========================================================================= */
+
+.settings-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.settings-section {
+  padding: 1.25rem 1.5rem;
+}
+
+.settings-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.field-hint {
+  color: var(--ink-muted);
+  font-size: 0.9rem;
+  margin: 0 0 0.75rem;
+  font-style: italic;
+}
+
+/* --- Theme segmented control --- */
+.segmented-control {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 0.25rem;
+}
+
+.segmented-btn {
+  background: var(--bg-card);
+  color: var(--ink-muted);
+  border: none;
+  padding: 6px 14px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-right: 1px solid var(--border);
+  transition: background 120ms ease;
+}
+
+.segmented-btn:last-child {
+  border-right: none;
+}
+
+.segmented-btn:hover {
+  background: var(--bg-raised);
+}
+
+.segmented-btn.active {
+  background: var(--accent);
+  color: var(--ink-inverse);
+}
+
+/* --- Sources section --- */
+.formula-toggle {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--accent);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.formula-toggle:hover {
+  background: rgba(139, 94, 60, 0.08);
+}
+
+.formula-explain {
+  background: var(--bg-card-soft);
+  border: 1px dashed var(--border-muted);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+  margin: 0 0 0.75rem;
+}
+
+.formula-explain code {
+  font-family: 'IBM Plex Mono', monospace;
+  color: var(--ink);
+  font-size: 0.8rem;
+}
+
+.sources-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.source-group {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-card-soft);
+}
+
+.source-group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 8px 12px;
+  background: var(--bg-raised);
+  border-bottom: 1px solid var(--border);
+  border-radius: 6px 6px 0 0;
+  flex-wrap: wrap;
+}
+
+.source-group-toggle {
+  background: none;
+  border: none;
+  color: var(--ink);
+  font-family: 'Crimson Text', serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+}
+
+.source-group-toggle .chevron {
+  display: inline-block;
+  transition: transform 120ms ease;
+  color: var(--ink-muted);
+  font-size: 10px;
+}
+
+.source-group-toggle .chevron.open {
+  transform: rotate(0deg);
+}
+
+.source-group-toggle .chevron:not(.open) {
+  transform: rotate(-90deg);
+}
+
+.source-group-batch {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.source-group-body {
+  padding: 8px 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.source-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 6px 8px;
+  border-radius: 4px;
+  flex-wrap: wrap;
+}
+
+.source-row:hover {
+  background: rgba(139, 94, 60, 0.05);
+}
+
+.source-row-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.source-acronym {
+  display: inline-block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  background: var(--accent);
+  color: var(--ink-inverse);
+  padding: 2px 6px;
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+}
+
+.source-name {
+  color: var(--ink);
+  font-size: 14px;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.source-count {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--ink-faint);
+  flex-shrink: 0;
+}
+
+.source-damp {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--ink-fainter);
+  flex-shrink: 0;
+}
+
+.priority-selector {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.priority-btn {
+  background: var(--bg-card);
+  color: var(--ink-muted);
+  border: 1px solid var(--border);
+  padding: 3px 8px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background 120ms ease;
+}
+
+.priority-btn:hover {
+  background: var(--bg-raised);
+}
+
+.priority-btn.active {
+  background: var(--accent);
+  color: var(--ink-inverse);
+  border-color: var(--accent-dark);
+}
+
+.priority-btn.batch {
+  font-size: 9px;
+  padding: 3px 6px;
+}
+
+/* --- Role ratios --- */
+.role-ratios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+}
+
+.role-ratio-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.role-ratio-input {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.role-ratio-number {
+  width: 64px;
+  padding: 4px 6px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-card);
+  color: var(--ink);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  text-align: right;
+}
+
+/* =========================================================================
+   About page
+   ========================================================================= */
+
+.about-page {
+  max-width: 650px;
+  margin: 1rem auto 3rem;
+  padding: 0 1rem;
+  line-height: 1.7;
+  font-family: 'Crimson Text', Georgia, serif;
+  color: var(--ink);
+}
+
+.about-page h1 {
+  font-family: 'Crimson Text', Georgia, serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0 0 1.5rem;
+  color: var(--ink);
+  text-align: center;
+}
+
+.about-page h2 {
+  font-family: 'Crimson Text', Georgia, serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 1.75rem 0 0.5rem;
+  color: var(--accent);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.25rem;
+}
+
+.about-page p {
+  margin: 0 0 1rem;
+}
+
+.about-page code {
+  font-family: 'IBM Plex Mono', monospace;
+  background: var(--bg-raised);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+.about-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.75rem 0 1.25rem;
+  font-size: 14px;
+}
+
+.about-table th,
+.about-table td {
+  padding: 6px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.about-table th {
+  font-family: 'Crimson Text', serif;
+  font-weight: 700;
+  color: var(--ink-muted);
+  background: var(--bg-card-soft);
+}
+
+.about-table td {
+  color: var(--ink);
+}
+

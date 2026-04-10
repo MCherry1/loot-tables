@@ -13,6 +13,7 @@ export type {
   EncounterInputV2,
   EncounterResult,
   ItemSegment,
+  ItemTier,
   LootInput,
   LootResult,
   MagicItemResult,
@@ -22,6 +23,9 @@ export type {
   ResolvableLootResult,
   ResolvableMagicItem,
   Role,
+  SourcePriority,
+  SourceSettings,
+  ThemePref,
   Tier,
   TreasureItem,
   VaultLootInput,
@@ -51,6 +55,11 @@ export {
   crToDefaultTier,
   VAULT_BUDGET_PER_TIER,
   VAULT_SIZE_MULTIPLIER,
+  PRIORITY_MULTIPLIER,
+  TIER_VALUE,
+  SOURCE_GROUPS,
+  SOURCE_GROUP_LABELS,
+  weightToTier,
 } from './constants';
 export type { VaultSize } from './constants';
 
@@ -66,6 +75,10 @@ export {
   hasUnresolvedRefs,
   segmentsToString,
   weightedPick,
+  getEffectiveWeight,
+  getFilteredEntries,
+  getBookItemCounts,
+  getBookDampFactors,
   ALL_TABLES,
 } from './roller';
 

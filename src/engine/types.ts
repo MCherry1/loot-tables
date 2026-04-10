@@ -7,6 +7,19 @@ export type Tier = 1 | 2 | 3 | 4;
 /** Magic item table letters (DMG Appendix). */
 export type MITable = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I';
 
+/** Priority level for a single sourcebook. */
+export type SourcePriority = 'off' | 'low' | 'normal' | 'high' | 'emphasis';
+
+/** Bucketed "named item" tier derived from raw entry weight. */
+export type ItemTier = 'low' | 'mid' | 'high' | 'veryHigh';
+
+/** Per-sourcebook priority map keyed by acronym (e.g. "DMG"). Missing keys
+ *  are treated as 'normal'. */
+export type SourceSettings = Record<string, SourcePriority>;
+
+/** User-chosen color theme preference. */
+export type ThemePref = 'auto' | 'light' | 'dark';
+
 /** Campaign-level settings that affect all loot generation. */
 export interface CampaignSettings {
   /** Number of players in the party (1-8, default 4). */
@@ -21,6 +34,10 @@ export interface CampaignSettings {
   showSalePrice: boolean;
   /** Whether to include mundane flavor finds. */
   showMundane: boolean;
+  /** Per-sourcebook priority overrides (missing keys = 'normal'). */
+  sourceSettings: SourceSettings;
+  /** Color theme preference. */
+  theme: ThemePref;
 }
 
 /** Input for generating loot for a single creature. */
