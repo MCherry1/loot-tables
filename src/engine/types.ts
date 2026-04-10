@@ -1,5 +1,5 @@
 /** Roles a creature can have in the treasure economy. */
-export type Role = 'minion' | 'elite' | 'boss' | 'vault';
+export type Role = 'minion' | 'elite' | 'mini-boss' | 'boss' | 'vault';
 
 /** Tiers of play (1-4), mapping to character-level bands. */
 export type Tier = 1 | 2 | 3 | 4;
@@ -20,6 +20,9 @@ export type SourceSettings = Record<string, SourcePriority>;
 /** User-chosen color theme preference. */
 export type ThemePref = 'auto' | 'light' | 'dark';
 
+/** D&D edition for item data and table assignments. */
+export type Edition = '2014' | '2024';
+
 /** Campaign-level settings that affect all loot generation. */
 export interface CampaignSettings {
   /** Number of players in the party (1-8, default 4). */
@@ -38,6 +41,12 @@ export interface CampaignSettings {
   sourceSettings: SourceSettings;
   /** Color theme preference. */
   theme: ThemePref;
+  /** APL adjustment multiplier on GP_PER_XP (0.7–1.3, default 1.0). */
+  aplAdjustment: number;
+  /** Concentration: controls steepness of role multiplier ratios (1.5–5.0, default 3.0). */
+  concentration: number;
+  /** D&D edition for item data (default '2014'). */
+  edition: Edition;
 }
 
 /** Input for generating loot for a single creature. */
@@ -141,7 +150,7 @@ export interface EncounterResult {
 // ---------------------------------------------------------------------------
 
 /** Creature roles for creature groups (vault handled separately). */
-export type CreatureRole = 'minion' | 'elite' | 'boss';
+export type CreatureRole = 'minion' | 'elite' | 'mini-boss' | 'boss';
 
 /** A creature group in a mixed-CR encounter. */
 export interface CreatureGroup {

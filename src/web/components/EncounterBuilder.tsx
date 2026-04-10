@@ -11,7 +11,7 @@ import EncounterResults from './EncounterResults';
 import { walkTableChain } from '../lib/stepperResolve';
 import type { ResolvedItem } from '../App';
 
-const CREATURE_ROLES: CreatureRole[] = ['minion', 'elite', 'boss'];
+const CREATURE_ROLES: CreatureRole[] = ['minion', 'elite', 'mini-boss', 'boss'];
 
 export const ALL_CRS: { label: string; value: number }[] = [
   { label: '0', value: 0 },

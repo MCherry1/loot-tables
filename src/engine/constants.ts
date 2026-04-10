@@ -88,13 +88,53 @@ export const VAULT_SIZE_MULTIPLIER: Record<VaultSize, number> = {
 // Role ratios (fraction of per-creature hoard value)
 // ---------------------------------------------------------------------------
 
-/** Default fraction of total hoard value that each role receives. */
+/** Default fraction of total hoard value that each role receives (legacy flat ratios). */
 export const DEFAULT_ROLE_RATIOS: Record<Role, number> = {
   minion: 0.10,
   elite: 0.30,
+  'mini-boss': 0.45,
   boss: 0.60,
   vault: 1.00,
 } as const;
+
+/**
+ * Compute role multipliers from a concentration parameter.
+ *
+ * The concentration value controls the geometric step ratio between adjacent
+ * roles.  At concentration=3 (default):  minion ~0.25×, elite ~0.83×,
+ * mini-boss ~2.50×, boss ~7.50× their "fair share" of loot.
+ *
+ * Multipliers are normalized against an assumed campaign XP split so that the
+ * weighted-average multiplier across all roles equals 1.0:
+ *   50% minion XP, 30% elite, 12% mini-boss, 8% boss.
+ *
+ * Vault always returns 1.0 (standalone hoard, not role-based).
+ */
+export function computeRoleMultipliers(concentration: number): Record<Role, number> {
+  const c = Math.max(1.01, concentration); // avoid division-by-zero at c=1
+
+  // Raw geometric weights: minion=1, elite=c, mini-boss=c², boss=c³
+  const raw = { minion: 1, elite: c, 'mini-boss': c * c, boss: c * c * c };
+
+  // Assumed campaign XP distribution by role
+  const xpSplit = { minion: 0.50, elite: 0.30, 'mini-boss': 0.12, boss: 0.08 };
+
+  // Weighted average of raw multipliers given the XP split
+  const weightedAvg =
+    raw.minion * xpSplit.minion +
+    raw.elite * xpSplit.elite +
+    raw['mini-boss'] * xpSplit['mini-boss'] +
+    raw.boss * xpSplit.boss;
+
+  // Normalize so that the weighted average across all roles = 1.0
+  return {
+    minion: raw.minion / weightedAvg,
+    elite: raw.elite / weightedAvg,
+    'mini-boss': raw['mini-boss'] / weightedAvg,
+    boss: raw.boss / weightedAvg,
+    vault: 1.0,
+  };
+}
 
 // ---------------------------------------------------------------------------
 // Magic-item base numbers and average values
@@ -267,6 +307,9 @@ export const DEFAULT_CAMPAIGN_SETTINGS: CampaignSettings = {
   showMundane: true,
   sourceSettings: {},
   theme: 'auto',
+  aplAdjustment: 1.0,
+  concentration: 3.0,
+  edition: '2014',
 };
 
 // ---------------------------------------------------------------------------

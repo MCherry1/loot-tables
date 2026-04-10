@@ -1,0 +1,4852 @@
+{
+  "Potion of Healing|DMG": {
+    "table": "A",
+    "category": "Potions",
+    "weight": 12,
+    "status": "approved"
+  },
+  "Potion of Climbing|DMG": {
+    "table": "A",
+    "category": "Potions",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Potion of Comprehension|WDMM": {
+    "table": "A",
+    "category": "Potions",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Potion of Watchful Rest|WDMM": {
+    "table": "A",
+    "category": "Potions",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Potion of Greater Healing|DMG": {
+    "table": "A",
+    "category": "Potions",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Bag of Holding|DMG": {
+    "table": "A",
+    "category": "Gear",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Driftglobe|DMG": {
+    "table": "A",
+    "category": "Gear",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Everbright Lantern|ERLW": {
+    "table": "A",
+    "category": "Gear",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Lantern of Tracking [Creature-Type-A]|IWD": {
+    "table": "A",
+    "category": "Gear",
+    "weight": 1,
+    "status": "approved",
+    "refs": [
+      "Creature-Type-A"
+    ]
+  },
+  "Breathing Bubble|EGW": {
+    "table": "A",
+    "category": "Gear",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Feather Token|ERLW": {
+    "table": "A",
+    "category": "Gear",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Thermal Cube|IWD": {
+    "table": "A",
+    "category": "Gear",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Rope of Mending|XGE": {
+    "table": "A",
+    "category": "Gear",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Horn of Silent Alarm|XGE": {
+    "table": "A",
+    "category": "Gear",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Clockwork Amulet|XGE": {
+    "table": "A",
+    "category": "Gear",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Lock of Trickery|XGE": {
+    "table": "A",
+    "category": "Gear",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Chest of Preserving|WDMM": {
+    "table": "A",
+    "category": "Gear",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Orb of Direction|XGE": {
+    "table": "A",
+    "category": "Gear",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Orb of Time|XGE": {
+    "table": "A",
+    "category": "Gear",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Ear Horn of Hearing|XGE": {
+    "table": "A",
+    "category": "Gear",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Coin of Delving|EGW": {
+    "table": "A",
+    "category": "Gear",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Vox Seeker|EGW": {
+    "table": "A",
+    "category": "Gear",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Shiftweave|ERLW": {
+    "table": "A",
+    "category": "Gear",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Spellshard|ERLW": {
+    "table": "A",
+    "category": "Gear",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Cleansing Stone|ERLW": {
+    "table": "A",
+    "category": "Gear",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Ersatz Eye|XGE": {
+    "table": "A",
+    "category": "Gear",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Prosthetic Left Hand|TCE": {
+    "table": "A",
+    "category": "Gear",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Prosthetic Right Hand|TCE": {
+    "table": "A",
+    "category": "Gear",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Prosthetic Left Arm|TCE": {
+    "table": "A",
+    "category": "Gear",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Prosthetic Right Arm|TCE": {
+    "table": "A",
+    "category": "Gear",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Prosthetic Left Foot|TCE": {
+    "table": "A",
+    "category": "Gear",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Prosthetic Right Foot|TCE": {
+    "table": "A",
+    "category": "Gear",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Prosthetic Left Leg|TCE": {
+    "table": "A",
+    "category": "Gear",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Prosthetic Right Leg|TCE": {
+    "table": "A",
+    "category": "Gear",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Mystery Key|XGE": {
+    "table": "A",
+    "category": "Gear",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Integrated [Tools]|ExE": {
+    "table": "A",
+    "category": "Gear",
+    "weight": 1,
+    "status": "approved",
+    "refs": [
+      "Tools"
+    ]
+  },
+  "Spell Scroll ([Spells-Cantrip])|DMG": {
+    "table": "A",
+    "category": "Spell-Scrolls",
+    "weight": 3,
+    "status": "approved",
+    "refs": [
+      "Spells-Cantrip"
+    ]
+  },
+  "Spell Scroll ([Spells-Level-1])|DMG": {
+    "table": "A",
+    "category": "Spell-Scrolls",
+    "weight": 9,
+    "status": "approved",
+    "refs": [
+      "Spells-Level-1"
+    ]
+  },
+  "Spell Scroll ([Spells-Level-2])|DMG": {
+    "table": "A",
+    "category": "Spell-Scrolls",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Spells-Level-2"
+    ]
+  },
+  "Spellwrought Tattoo ([Spells-Cantrip])|TCE": {
+    "table": "A",
+    "category": "Spell-Scrolls",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Spells-Cantrip"
+    ]
+  },
+  "Spellwrought Tattoo ([Spells-Level-1])|TCE": {
+    "table": "A",
+    "category": "Spell-Scrolls",
+    "weight": 3,
+    "status": "approved",
+    "refs": [
+      "Spells-Level-1"
+    ]
+  },
+  "Spellwrought Tattoo ([Spells-Level-2])|TCE": {
+    "table": "A",
+    "category": "Spell-Scrolls",
+    "weight": 1,
+    "status": "approved",
+    "refs": [
+      "Spells-Level-2"
+    ]
+  },
+  "[Weapons]|": {
+    "table": "A",
+    "category": "Arms-Armor",
+    "weight": 9,
+    "status": "approved",
+    "refs": [
+      "Weapons"
+    ]
+  },
+  "Moon-Touched [Swords]|XGE": {
+    "table": "A",
+    "category": "Arms-Armor",
+    "weight": 3,
+    "status": "approved",
+    "refs": [
+      "Swords"
+    ]
+  },
+  "Cast-Off Armor ([Cast-Off-Armor])|XGE": {
+    "table": "A",
+    "category": "Arms-Armor",
+    "weight": 3,
+    "status": "approved",
+    "refs": [
+      "Cast-Off-Armor"
+    ]
+  },
+  "[Metal-Armor] of Gleaming|XGE": {
+    "table": "A",
+    "category": "Arms-Armor",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Metal-Armor"
+    ]
+  },
+  "Smoldering [Smoldering-Armor] Armor|XGE": {
+    "table": "A",
+    "category": "Arms-Armor",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Smoldering-Armor"
+    ]
+  },
+  "[Ammunition]|": {
+    "table": "A",
+    "category": "Arms-Armor",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Ammunition"
+    ]
+  },
+  "Walloping [Ammunition]|XGE": {
+    "table": "A",
+    "category": "Arms-Armor",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Ammunition"
+    ]
+  },
+  "Armblade ([Armblades])|ERLW": {
+    "table": "A",
+    "category": "Arms-Armor",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Armblades"
+    ]
+  },
+  "Veteran's Cane|XGE": {
+    "table": "A",
+    "category": "Arms-Armor",
+    "weight": 1,
+    "status": "approved"
+  },
+  "[Armor]|": {
+    "table": "A",
+    "category": "Arms-Armor",
+    "weight": 1,
+    "status": "approved",
+    "refs": [
+      "Armor"
+    ]
+  },
+  "Shield|": {
+    "table": "A",
+    "category": "Arms-Armor",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Shield of Expression|XGE": {
+    "table": "A",
+    "category": "Arms-Armor",
+    "weight": 1,
+    "status": "approved"
+  },
+  "[[1d4]] Unbreakable [Ammunition]|XGE": {
+    "table": "A",
+    "category": "Arms-Armor",
+    "weight": 1,
+    "status": "approved",
+    "refs": [
+      "Ammunition"
+    ]
+  },
+  "[Orb-of-Shielding] of Shielding ([Planar-Stone])|ERLW": {
+    "table": "A",
+    "category": "Spellcaster",
+    "weight": 4,
+    "status": "approved",
+    "refs": [
+      "Orb-of-Shielding",
+      "Planar-Stone"
+    ]
+  },
+  "Imbued [Imbued-Wood] ([Planar-Wood])|ERLW": {
+    "table": "A",
+    "category": "Spellcaster",
+    "weight": 4,
+    "status": "approved",
+    "refs": [
+      "Imbued-Wood",
+      "Planar-Wood"
+    ]
+  },
+  "Battle Rod|ExE": {
+    "table": "A",
+    "category": "Spellcaster",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Dark Shard Amulet|XGE": {
+    "table": "A",
+    "category": "Spellcaster",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Ruby of the War Mage|XGE": {
+    "table": "A",
+    "category": "Spellcaster",
+    "weight": 2,
+    "status": "approved"
+  },
+  "War Staff|ExE": {
+    "table": "A",
+    "category": "Spellcaster",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Enduring Spellbook|XGE": {
+    "table": "A",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Hat of Wizardry|XGE": {
+    "table": "A",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Instrument of Illusions|XGE": {
+    "table": "A",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Instrument of Scribing|XGE": {
+    "table": "A",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Wand Sheath ([Wands-A])|ERLW": {
+    "table": "A",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved",
+    "refs": [
+      "Wands-A"
+    ]
+  },
+  "Clothes of Mending|XGE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Common Glamerweave|ERLW": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Uncommon Glamerweave|ERLW": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Masquerade Tattoo|TCE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Gem of Light|": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Masque Charm|SCC": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "[[4d4]] Beads of Refreshment|XGE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "[[1d4]] Beads of Nourishment|XGE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Bottle of Boundless Coffee|SCC": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Tankard of Plenty|ToD": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Heward's Handy Spice Pouch|XGE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Tankard of Sobriety|XGE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Charlatan's Gloves|ExE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Drybrooch|ExE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Duster|ExE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Lamplighter|ExE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Spark|ExE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Talking Wand|ExE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Thurimbar Rod|ExE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Boots of False Tracks|XGE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Candle of the Deep|XGE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Charlatan's Die|XGE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Cloak of Billowing|XGE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Cloak of Many Fashions|XGE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Doublet of Dramatic Demise|TDCS": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Dread Helm|XGE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Hat of Vermin|XGE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Illuminator's Tattoo|TCE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Perfume of Bewitching|XGE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Pipe of Remembrance|GoS": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Pipe of Smoke Monsters|XGE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Pole of Angling|XGE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Pole of Collapsing|XGE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Pot of Awakening|XGE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Staff of Adornment|XGE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Staff of Birdcalls|XGE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Staff of Flowers|XGE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Talking Doll|XGE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Wand of Conducting|XGE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Wand of Pyrotechnics|XGE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Wand of Scowls|XGE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Wand of Smiles|XGE": {
+    "table": "A",
+    "category": "Trinkets",
+    "weight": 1,
+    "status": "approved"
+  },
+  "[Ammunition], +1|DMG": {
+    "table": "B",
+    "category": "Ammunition",
+    "weight": 3,
+    "status": "approved",
+    "refs": [
+      "Ammunition"
+    ]
+  },
+  "Dried Leech [Ammunition]|BMT": {
+    "table": "B",
+    "category": "Ammunition",
+    "weight": 1,
+    "status": "approved",
+    "refs": [
+      "Ammunition"
+    ]
+  },
+  "Winged [Ammunition]|BMT": {
+    "table": "B",
+    "category": "Ammunition",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Ammunition"
+    ]
+  },
+  "Keoghtom's Ointment|DMG": {
+    "table": "B",
+    "category": "Consumables",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Elemental Gem, [Gems-B]|DMG": {
+    "table": "B",
+    "category": "Consumables",
+    "weight": 3,
+    "status": "approved",
+    "refs": [
+      "Gems-B"
+    ]
+  },
+  "Oil of Slipperiness|DMG": {
+    "table": "B",
+    "category": "Consumables",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Dust of Deliciousness|EGW": {
+    "table": "B",
+    "category": "Consumables",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Dust of Disappearance|DMG": {
+    "table": "B",
+    "category": "Consumables",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Pixie Dust|WBtW": {
+    "table": "B",
+    "category": "Consumables",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Bottled Breath|PoTA": {
+    "table": "B",
+    "category": "Consumables",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Dust of Corrosion|WBtW": {
+    "table": "B",
+    "category": "Consumables",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Dust of Dryness|DMG": {
+    "table": "B",
+    "category": "Consumables",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Philter of Love|DMG": {
+    "table": "B",
+    "category": "Consumables",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Gloves of Storing|ExE": {
+    "table": "B",
+    "category": "Items",
+    "weight": 6,
+    "status": "approved"
+  },
+  "Mithral [Metal-Armor]|DMG": {
+    "table": "B",
+    "category": "Items",
+    "weight": 6,
+    "status": "approved",
+    "refs": [
+      "Metal-Armor"
+    ]
+  },
+  "Balloon Pack|PotA": {
+    "table": "B",
+    "category": "Items",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Cap of Water Breathing|DMG": {
+    "table": "B",
+    "category": "Items",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Cloak of the Manta Ray|DMG": {
+    "table": "B",
+    "category": "Items",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Echo Stone|TDCS": {
+    "table": "B",
+    "category": "Items",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Emerald Pen|FTD": {
+    "table": "B",
+    "category": "Items",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Goggles of Night|DMG": {
+    "table": "B",
+    "category": "Items",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Helm of Comprehending Languages|DMG": {
+    "table": "B",
+    "category": "Items",
+    "weight": 3,
+    "status": "approved"
+  },
+  "House of Cards|BMT": {
+    "table": "B",
+    "category": "Items",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Immovable Rod|DMG": {
+    "table": "B",
+    "category": "Items",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Lantern of Revealing|DMG": {
+    "table": "B",
+    "category": "Items",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Mariner's [Armor]|DMG": {
+    "table": "B",
+    "category": "Items",
+    "weight": 3,
+    "status": "approved",
+    "refs": [
+      "Armor"
+    ]
+  },
+  "Propeller Helm|WDMM": {
+    "table": "B",
+    "category": "Items",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Ring of Swimming|DMG": {
+    "table": "B",
+    "category": "Items",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Robe of Serpents|DMG": {
+    "table": "B",
+    "category": "Items",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Robe of Useful Items|DMG": {
+    "table": "B",
+    "category": "Items",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Rope of Climbing|DMG": {
+    "table": "B",
+    "category": "Items",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Saddle of the Cavalier|DMG": {
+    "table": "B",
+    "category": "Items",
+    "weight": 3,
+    "status": "approved"
+  },
+  "[[1d4]] Seeker Dart|PotA": {
+    "table": "B",
+    "category": "Items",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Serpent Scale Armor|CM": {
+    "table": "B",
+    "category": "Items",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Storm Boomerang|PotA": {
+    "table": "B",
+    "category": "Items",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Wand of Entangle|TYP": {
+    "table": "B",
+    "category": "Items",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Wand of Magic Detection|DMG": {
+    "table": "B",
+    "category": "Items",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Wand of Secrets|DMG": {
+    "table": "B",
+    "category": "Items",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Alchemy Jug|DMG": {
+    "table": "B",
+    "category": "Items",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Alchemy Jug (Blue)|CM": {
+    "table": "B",
+    "category": "Items",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Alchemy Jug (Orange)|CM": {
+    "table": "B",
+    "category": "Items",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Potion of [MM-Breath] Breath|DMG": {
+    "table": "B",
+    "category": "Potions",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "MM-Breath"
+    ]
+  },
+  "Potion of [Damage-Type] Resistance|DMG": {
+    "table": "B",
+    "category": "Potions",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Damage-Type"
+    ]
+  },
+  "Potion of Animal Friendship|DMG": {
+    "table": "B",
+    "category": "Potions",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Potion of Hill Giant Strength|DMG": {
+    "table": "B",
+    "category": "Potions",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Potion of Growth|DMG": {
+    "table": "B",
+    "category": "Potions",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Potion of Water Breathing|DMG": {
+    "table": "B",
+    "category": "Potions",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Potion of Advantage|WBtW": {
+    "table": "B",
+    "category": "Potions",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Spell Scroll ([Spells-Level-3])|DMG": {
+    "table": "B",
+    "category": "Spells",
+    "weight": 4,
+    "status": "approved",
+    "refs": [
+      "Spells-Level-3"
+    ]
+  },
+  "Spellwrought Tattoo ([Spells-Level-3])|TCE": {
+    "table": "B",
+    "category": "Spells",
+    "weight": 1,
+    "status": "approved",
+    "refs": [
+      "Spells-Level-3"
+    ]
+  },
+  "[Ammunition], +2|DMG": {
+    "table": "C",
+    "category": "Ammunition",
+    "weight": 6,
+    "status": "approved",
+    "refs": [
+      "Ammunition"
+    ]
+  },
+  "Scroll of Protection Against [Creature-Type-C]|DMG": {
+    "table": "C",
+    "category": "Consumables",
+    "weight": 6,
+    "status": "approved",
+    "refs": [
+      "Creature-Type-C"
+    ]
+  },
+  "Glowrune Pigment|BGG": {
+    "table": "C",
+    "category": "Consumables",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Quaal's Feather Token, [Feather-Token-C]|DMG": {
+    "table": "C",
+    "category": "Consumables",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Feather-Token-C"
+    ]
+  },
+  "Bag of Beans|DMG": {
+    "table": "C",
+    "category": "Consumables",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Bead of Force|DMG": {
+    "table": "C",
+    "category": "Consumables",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Black Chromatic Rose|WBtW": {
+    "table": "C",
+    "category": "Consumables",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Blue Chromatic Rose|WBtW": {
+    "table": "C",
+    "category": "Consumables",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Green Chromatic Rose|WBtW": {
+    "table": "C",
+    "category": "Consumables",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Necklace of Fireballs|DMG": {
+    "table": "C",
+    "category": "Consumables",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Oil of Etherealness|DMG": {
+    "table": "C",
+    "category": "Consumables",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Red Chromatic Rose|WBtW": {
+    "table": "C",
+    "category": "Consumables",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Teleportation Tablet|CotN": {
+    "table": "C",
+    "category": "Consumables",
+    "weight": 1,
+    "status": "approved"
+  },
+  "White Chromatic Rose|WBtW": {
+    "table": "C",
+    "category": "Consumables",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Eagle Whistle|TYP": {
+    "table": "C",
+    "category": "Items",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Heward's Handy Haversack|DMG": {
+    "table": "C",
+    "category": "Items",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Hook of Fisher's Delight|IWD": {
+    "table": "C",
+    "category": "Items",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Mirror of the Past|TYP": {
+    "table": "C",
+    "category": "Items",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Professor Orb|WDMM": {
+    "table": "C",
+    "category": "Items",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Sending Stones|DMG": {
+    "table": "C",
+    "category": "Items",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Cauldron of Plenty|IWD": {
+    "table": "C",
+    "category": "Items",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Chime of Opening|DMG": {
+    "table": "C",
+    "category": "Items",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Decanter of Endless Water|DMG": {
+    "table": "C",
+    "category": "Items",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Dodecahedron of Doom|WDMM": {
+    "table": "C",
+    "category": "Items",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Eyes of Minute Seeing|DMG": {
+    "table": "C",
+    "category": "Items",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Folding Boat|DMG": {
+    "table": "C",
+    "category": "Items",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Horseshoes of Speed|DMG": {
+    "table": "C",
+    "category": "Items",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Periapt of Health|DMG": {
+    "table": "C",
+    "category": "Items",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Potion of Superior Healing|DMG": {
+    "table": "C",
+    "category": "Potions",
+    "weight": 30,
+    "status": "approved"
+  },
+  "Elixir of Health|DMG": {
+    "table": "C",
+    "category": "Potions",
+    "weight": 5,
+    "status": "approved"
+  },
+  "Potion of Aqueous Form|MOT": {
+    "table": "C",
+    "category": "Potions",
+    "weight": 5,
+    "status": "approved"
+  },
+  "Potion of Clairvoyance|DMG": {
+    "table": "C",
+    "category": "Potions",
+    "weight": 5,
+    "status": "approved"
+  },
+  "Potion of Diminution|DMG": {
+    "table": "C",
+    "category": "Potions",
+    "weight": 5,
+    "status": "approved"
+  },
+  "Potion of Fire Giant Strength|DMG": {
+    "table": "C",
+    "category": "Potions",
+    "weight": 5,
+    "status": "approved"
+  },
+  "Potion of Frost Giant Strength|DMG": {
+    "table": "C",
+    "category": "Potions",
+    "weight": 5,
+    "status": "approved"
+  },
+  "Potion of Gaseous Form|DMG": {
+    "table": "C",
+    "category": "Potions",
+    "weight": 5,
+    "status": "approved"
+  },
+  "Potion of Heroism|DMG": {
+    "table": "C",
+    "category": "Potions",
+    "weight": 5,
+    "status": "approved"
+  },
+  "Potion of Invulnerability|DMG": {
+    "table": "C",
+    "category": "Potions",
+    "weight": 5,
+    "status": "approved"
+  },
+  "Potion of Maximum Power|EGW": {
+    "table": "C",
+    "category": "Potions",
+    "weight": 5,
+    "status": "approved"
+  },
+  "Potion of Mind Control (Beast)|TYP": {
+    "table": "C",
+    "category": "Potions",
+    "weight": 5,
+    "status": "approved"
+  },
+  "Potion of Mind Control (Humanoid)|TYP": {
+    "table": "C",
+    "category": "Potions",
+    "weight": 5,
+    "status": "approved"
+  },
+  "Potion of Mind Reading|DMG": {
+    "table": "C",
+    "category": "Potions",
+    "weight": 5,
+    "status": "approved"
+  },
+  "Potion of Stone Giant Strength|DMG": {
+    "table": "C",
+    "category": "Potions",
+    "weight": 5,
+    "status": "approved"
+  },
+  "Spell Scroll ([Spells-Level-4])|DMG": {
+    "table": "C",
+    "category": "Spells",
+    "weight": 5,
+    "status": "approved",
+    "refs": [
+      "Spells-Level-4"
+    ]
+  },
+  "Spell Scroll ([Spells-Level-5])|DMG": {
+    "table": "C",
+    "category": "Spells",
+    "weight": 4,
+    "status": "approved",
+    "refs": [
+      "Spells-Level-5"
+    ]
+  },
+  "Spellwrought Tattoo ([Spells-Level-4])|TCE": {
+    "table": "C",
+    "category": "Spells",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Spells-Level-4"
+    ]
+  },
+  "Spellwrought Tattoo ([Spells-Level-5])|TCE": {
+    "table": "C",
+    "category": "Spells",
+    "weight": 1,
+    "status": "approved",
+    "refs": [
+      "Spells-Level-5"
+    ]
+  },
+  "[Ammunition], +3|DMG": {
+    "table": "D",
+    "category": "Ammunition",
+    "weight": 1,
+    "status": "approved",
+    "refs": [
+      "Ammunition"
+    ]
+  },
+  "Bloodseeker [Ammunition]|BMT": {
+    "table": "D",
+    "category": "Ammunition",
+    "weight": 1,
+    "status": "approved",
+    "refs": [
+      "Ammunition"
+    ]
+  },
+  "Cataclysm Bolts|TDCS": {
+    "table": "D",
+    "category": "Ammunition",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Sling Bullets of Althemone|MOT": {
+    "table": "D",
+    "category": "Ammunition",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Dispelling Stone|EGW": {
+    "table": "D",
+    "category": "Consumables",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Oil of Sharpness|DMG": {
+    "table": "D",
+    "category": "Consumables",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Nolzur's Marvelous Pigments|DMG": {
+    "table": "D",
+    "category": "Consumables",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Reincarnation Dust|EGW": {
+    "table": "D",
+    "category": "Consumables",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Abracadabrus|IWD": {
+    "table": "D",
+    "category": "Items",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Fish Suit|AAG": {
+    "table": "D",
+    "category": "Items",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Horseshoes of a Zephyr|DMG": {
+    "table": "D",
+    "category": "Items",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Raven's Slumber|TDCS": {
+    "table": "D",
+    "category": "Items",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Bag of Devouring|DMG": {
+    "table": "D",
+    "category": "Items",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Mirror of Infinite Transpondence|TDCS": {
+    "table": "D",
+    "category": "Items",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Mudslick Tower|PaB": {
+    "table": "D",
+    "category": "Items",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Portable Hole|DMG": {
+    "table": "D",
+    "category": "Items",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Potion of Supreme Healing|DMG": {
+    "table": "D",
+    "category": "Potions",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Potion of Cloud Giant Strength|DMG": {
+    "table": "D",
+    "category": "Potions",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Potion of Flying|DMG": {
+    "table": "D",
+    "category": "Potions",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Potion of Invisibility|DMG": {
+    "table": "D",
+    "category": "Potions",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Potion of Longevity|DMG": {
+    "table": "D",
+    "category": "Potions",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Potion of Mind Control (Monster)|TYP": {
+    "table": "D",
+    "category": "Potions",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Potion of Possibility|EGW": {
+    "table": "D",
+    "category": "Potions",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Potion of Speed|DMG": {
+    "table": "D",
+    "category": "Potions",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Potion of Vitality|DMG": {
+    "table": "D",
+    "category": "Potions",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Spell Scroll ([Spells-Level-6])|DMG": {
+    "table": "D",
+    "category": "Spells",
+    "weight": 4,
+    "status": "approved",
+    "refs": [
+      "Spells-Level-6"
+    ]
+  },
+  "Spell Scroll ([Spells-Level-7])|DMG": {
+    "table": "D",
+    "category": "Spells",
+    "weight": 3,
+    "status": "approved",
+    "refs": [
+      "Spells-Level-7"
+    ]
+  },
+  "Spell Scroll ([Spells-Level-8])|DMG": {
+    "table": "D",
+    "category": "Spells",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Spells-Level-8"
+    ]
+  },
+  "Spellwrought Tattoo ([Spells-Level-6])|TCE": {
+    "table": "D",
+    "category": "Spells",
+    "weight": 1,
+    "status": "approved",
+    "refs": [
+      "Spells-Level-6"
+    ]
+  },
+  "Spellwrought Tattoo ([Spells-Level-7])|TCE": {
+    "table": "D",
+    "category": "Spells",
+    "weight": 1,
+    "status": "approved",
+    "refs": [
+      "Spells-Level-7"
+    ]
+  },
+  "Spellwrought Tattoo ([Spells-Level-8])|TCE": {
+    "table": "D",
+    "category": "Spells",
+    "weight": 1,
+    "status": "approved",
+    "refs": [
+      "Spells-Level-8"
+    ]
+  },
+  "[Ammunition] of Slaying|DMG": {
+    "table": "E",
+    "category": "Ammunition",
+    "weight": 6,
+    "status": "approved",
+    "refs": [
+      "Ammunition"
+    ]
+  },
+  "Universal Solvent|DMG": {
+    "table": "E",
+    "category": "Consumables",
+    "weight": 8,
+    "status": "approved"
+  },
+  "Sovereign Glue|DMG": {
+    "table": "E",
+    "category": "Consumables",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Potion of Storm Giant Strength|DMG": {
+    "table": "E",
+    "category": "Potions",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Potion of [All-Dragons] Dragon's Majesty|FTD": {
+    "table": "E",
+    "category": "Potions",
+    "weight": 1,
+    "status": "approved",
+    "refs": [
+      "All-Dragons"
+    ]
+  },
+  "Potion of Giant Size|SKT": {
+    "table": "E",
+    "category": "Potions",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Spell Scroll ([Spells-Level-9])|DMG": {
+    "table": "E",
+    "category": "Spells",
+    "weight": 1,
+    "status": "approved",
+    "refs": [
+      "Spells-Level-9"
+    ]
+  },
+  "Spellwrought Tattoo ([Spells-Level-8])|DMG": {
+    "table": "E",
+    "category": "Spells",
+    "weight": 1,
+    "status": "approved",
+    "refs": [
+      "Spells-Level-8"
+    ]
+  },
+  "Spellwrought Tattoo ([Spells-Level-9])|DMG": {
+    "table": "E",
+    "category": "Spells",
+    "weight": 1,
+    "status": "approved",
+    "refs": [
+      "Spells-Level-9"
+    ]
+  },
+  "Boots of Elvenkind|DMG": {
+    "table": "F",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Boots of Springing and Striding|DMG": {
+    "table": "F",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Boots of the Vigilant|TDCS": {
+    "table": "F",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Boots of the Winterlands|DMG": {
+    "table": "F",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Bracers of Archery|DMG": {
+    "table": "F",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Cloak of Elvenkind|DMG": {
+    "table": "F",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Cloak of Protection|DMG": {
+    "table": "F",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Coiling Grasp Tattoo|TCE": {
+    "table": "F",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Dragonhide Belt, +1|FTD": {
+    "table": "F",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Gauntlets of Ogre Power|DMG": {
+    "table": "F",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Gloves of Missile Snaring|DMG": {
+    "table": "F",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Gloves of Swimming and Climbing|DMG": {
+    "table": "F",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Gloves of Thievery|DMG": {
+    "table": "F",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Goggles of Object Reading|EGW": {
+    "table": "F",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Hat of Disguise|DMG": {
+    "table": "F",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Headband of Intellect|DMG": {
+    "table": "F",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Living Gloves|ERLW": {
+    "table": "F",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Robe of Summer|TYP": {
+    "table": "F",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Slippers of Spider Climbing|DMG": {
+    "table": "F",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Slumbering Scaled Ornament|FTD": {
+    "table": "F",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Small Barrier Tattoo|TCE": {
+    "table": "F",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Winged Boots|DMG": {
+    "table": "F",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Eyes of Charming|DMG": {
+    "table": "F",
+    "category": "Apparel",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Eyes of the Eagle|DMG": {
+    "table": "F",
+    "category": "Apparel",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Helm of Telepathy|DMG": {
+    "table": "F",
+    "category": "Apparel",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Helm of Underwater Action|GoS": {
+    "table": "F",
+    "category": "Apparel",
+    "weight": 3,
+    "status": "approved"
+  },
+  "[Armor] of Weightlessness|BMT": {
+    "table": "F",
+    "category": "Armor",
+    "weight": 5,
+    "status": "approved",
+    "refs": [
+      "Armor"
+    ]
+  },
+  "Adamantine [Metal-Armor]|DMG": {
+    "table": "F",
+    "category": "Armor",
+    "weight": 5,
+    "status": "approved",
+    "refs": [
+      "Metal-Armor"
+    ]
+  },
+  "[Metal-Armor] of the Fallen|BMT": {
+    "table": "F",
+    "category": "Armor",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Metal-Armor"
+    ]
+  },
+  "Boomerang Shield|BMT": {
+    "table": "F",
+    "category": "Armor",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Sentinel Shield|DMG": {
+    "table": "F",
+    "category": "Armor",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Shield, +1|DMG": {
+    "table": "F",
+    "category": "Armor",
+    "weight": 2,
+    "status": "approved"
+  },
+  "[Heavy-Armor] of Knight's Fellowship|BMT": {
+    "table": "F",
+    "category": "Armor",
+    "weight": 1,
+    "status": "approved",
+    "refs": [
+      "Heavy-Armor"
+    ]
+  },
+  "[Medium-Armor] of Fungal Spores|BMT": {
+    "table": "F",
+    "category": "Armor",
+    "weight": 1,
+    "status": "approved",
+    "refs": [
+      "Medium-Armor"
+    ]
+  },
+  "[Weapons], +1|DMG": {
+    "table": "F",
+    "category": "Arms",
+    "weight": 20,
+    "status": "approved",
+    "refs": [
+      "Weapons"
+    ]
+  },
+  "[Weapons] of Warning|DMG": {
+    "table": "F",
+    "category": "Arms",
+    "weight": 6,
+    "status": "approved",
+    "refs": [
+      "Weapons"
+    ]
+  },
+  "Dragon Wing [Dragon-Breath] [Bows]|FTD": {
+    "table": "F",
+    "category": "Arms",
+    "weight": 6,
+    "status": "approved",
+    "refs": [
+      "Dragon-Breath",
+      "Bows"
+    ]
+  },
+  "Gauntlets of Flaming Fury|DIA": {
+    "table": "F",
+    "category": "Arms",
+    "weight": 6,
+    "status": "approved"
+  },
+  "Hungry [Weapons]|ExE": {
+    "table": "F",
+    "category": "Arms",
+    "weight": 6,
+    "status": "approved",
+    "refs": [
+      "Weapons"
+    ]
+  },
+  "Quiver of Ehlonna|DMG": {
+    "table": "F",
+    "category": "Arms",
+    "weight": 6,
+    "status": "approved"
+  },
+  "Vicious [Weapons]|DMG": {
+    "table": "F",
+    "category": "Arms",
+    "weight": 6,
+    "status": "approved",
+    "refs": [
+      "Weapons"
+    ]
+  },
+  "Bloodrage Greataxe|BMT": {
+    "table": "F",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Crawling Gauntlet|ExE": {
+    "table": "F",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Dagger of Blindsight|WDMM": {
+    "table": "F",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Eldritch Claw Tattoo|TCE": {
+    "table": "F",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Hew|LMoP": {
+    "table": "F",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Javelin of Lightning|DMG": {
+    "table": "F",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Lightbringer|LMoP": {
+    "table": "F",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Needle of Mending|EGW": {
+    "table": "F",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Rod of Mercurial Form|TDCS": {
+    "table": "F",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Sling of Giant Felling|BMT": {
+    "table": "F",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Slumbering [Dragon-Breath] Dragon's Wrath [Weapons]|FTD": {
+    "table": "F",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved",
+    "refs": [
+      "Dragon-Breath",
+      "Weapons"
+    ]
+  },
+  "Throwing Scarab|ExE": {
+    "table": "F",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Tongueworm|ExE": {
+    "table": "F",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Wraps of Unarmed Prowess, +1|BMT": {
+    "table": "F",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Trident of Fish Command|DMG": {
+    "table": "F",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved"
+  },
+  "[Ioun-Stones-G]|DMG": {
+    "table": "F",
+    "category": "Jewelry",
+    "weight": 3,
+    "status": "approved",
+    "refs": [
+      "Ioun-Stones-G"
+    ]
+  },
+  "Amulet of Health|DMG": {
+    "table": "F",
+    "category": "Jewelry",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Amulet of Proof against Detection and Location|DMG": {
+    "table": "F",
+    "category": "Jewelry",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Amulet of the Drunkard|EGW": {
+    "table": "F",
+    "category": "Jewelry",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Brooch of Living Essence|EGW": {
+    "table": "F",
+    "category": "Jewelry",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Brooch of Shielding|DMG": {
+    "table": "F",
+    "category": "Jewelry",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Fabulist Gem|BMT": {
+    "table": "F",
+    "category": "Jewelry",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Medallion of Thoughts|DMG": {
+    "table": "F",
+    "category": "Jewelry",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Necklace of Adaptation|DMG": {
+    "table": "F",
+    "category": "Jewelry",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Periapt of Wound Closure|DMG": {
+    "table": "F",
+    "category": "Jewelry",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Ring of Jumping|DMG": {
+    "table": "F",
+    "category": "Jewelry",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Ring of Mind Shielding|DMG": {
+    "table": "F",
+    "category": "Jewelry",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Ring of Obscuring|EGW": {
+    "table": "F",
+    "category": "Jewelry",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Ring of Protection|DMG": {
+    "table": "F",
+    "category": "Jewelry",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Ring of Puzzler's Wit|BMT": {
+    "table": "F",
+    "category": "Jewelry",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Ring of Truth Telling|WDH": {
+    "table": "F",
+    "category": "Jewelry",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Ring of Warmth|DMG": {
+    "table": "F",
+    "category": "Jewelry",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Ring of Water Walking|DMG": {
+    "table": "F",
+    "category": "Jewelry",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Balance of Harmony|TYP": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 5,
+    "status": "approved"
+  },
+  "Earworm|ERLW": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 5,
+    "status": "approved"
+  },
+  "Feather of Diatryma Summoning|WDH": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 5,
+    "status": "approved"
+  },
+  "Gem of Brightness|DMG": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 5,
+    "status": "approved"
+  },
+  "Ghost Lantern|ToA": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 5,
+    "status": "approved"
+  },
+  "Night Caller|TYP": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 5,
+    "status": "approved"
+  },
+  "Prehistoric Figurine of Wondrous Power (Pyrite Plesiosaurus)|BGG": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 5,
+    "status": "approved"
+  },
+  "Wandering Eye|ExE": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 5,
+    "status": "approved"
+  },
+  "Card Sharp's Deck|BMT": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Deck of Miscellany|BMT": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Deck of Wonder|BMT": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Pyroconverger|GGR": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Rod of Retribution|EGW": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Rod of the Vonindod (Finding)|SKT": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Scissors of Shadow Snipping|WBtW": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Siren Song Lyre|MOT": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Stone of Good Luck|DMG": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Wand of Magic Missiles|DMG": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Wand of Web|DMG": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "War Horn of Valor|BGG": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "[Bag-of-Tricks-F]|DMG": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Bag-of-Tricks-F"
+    ]
+  },
+  "Broom of Flying|DMG": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Circlet of Blasting|DMG": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Deck of Illusions ([[34-1d20-1]] cards)|DMG": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Eversmoking Bottle|DMG": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Figurine of Wondrous Power (Silver Raven)|DMG": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Pipes of Haunting|DMG": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Pipes of the Sewers|DMG": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Skysail|TDCS": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Slumbering Dragon Vessel|FTD": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Spies' Murmur|GGR": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Wind Fan|DMG": {
+    "table": "F",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "All-Purpose Tool, +1|TCE": {
+    "table": "F",
+    "category": "Spellcaster",
+    "weight": 8,
+    "status": "approved"
+  },
+  "Arcane Grimoire, +1|TCE": {
+    "table": "F",
+    "category": "Spellcaster",
+    "weight": 8,
+    "status": "approved"
+  },
+  "Pearl of Power|DMG": {
+    "table": "F",
+    "category": "Spellcaster",
+    "weight": 8,
+    "status": "approved"
+  },
+  "Rod of the Pact Keeper, +1|DMG": {
+    "table": "F",
+    "category": "Spellcaster",
+    "weight": 8,
+    "status": "approved"
+  },
+  "Skyblinder Staff|GGR": {
+    "table": "F",
+    "category": "Spellcaster",
+    "weight": 8,
+    "status": "approved"
+  },
+  "Spellburrow|ExE": {
+    "table": "F",
+    "category": "Spellcaster",
+    "weight": 8,
+    "status": "approved"
+  },
+  "Tools of the Master, +1|ExE": {
+    "table": "F",
+    "category": "Spellcaster",
+    "weight": 8,
+    "status": "approved"
+  },
+  "Amulet of the Devout, +1|TCE": {
+    "table": "F",
+    "category": "Spellcaster",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Bloodwell Vial, +1|TCE": {
+    "table": "F",
+    "category": "Spellcaster",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Feywild Shard|TCE": {
+    "table": "F",
+    "category": "Spellcaster",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Guardian Emblem|TCE": {
+    "table": "F",
+    "category": "Spellcaster",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Moon Sickle, +1|TCE": {
+    "table": "F",
+    "category": "Spellcaster",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Nature's Mantle|TCE": {
+    "table": "F",
+    "category": "Spellcaster",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Slumbering Dragon-Touched Focus|FTD": {
+    "table": "F",
+    "category": "Spellcaster",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Wand of the War Mage, +1|DMG": {
+    "table": "F",
+    "category": "Spellcaster",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Instrument of the Bards (Doss Lute)|DMG": {
+    "table": "F",
+    "category": "Spellcaster",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Instrument of the Bards (Fochlucan Bandore)|DMG": {
+    "table": "F",
+    "category": "Spellcaster",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Instrument of the Bards (Mac-Fuimidh Cittern)|DMG": {
+    "table": "F",
+    "category": "Spellcaster",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Rhythm-Maker's Drum, +1|TCE": {
+    "table": "F",
+    "category": "Spellcaster",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Bracers of Defense|DMG": {
+    "table": "G",
+    "category": "Apparel",
+    "weight": 6,
+    "status": "approved"
+  },
+  "Dragonhide Belt, +2|FTD": {
+    "table": "G",
+    "category": "Apparel",
+    "weight": 6,
+    "status": "approved"
+  },
+  "Kagonesti Forest Shroud|DL": {
+    "table": "G",
+    "category": "Apparel",
+    "weight": 6,
+    "status": "approved"
+  },
+  "Medium Barrier Tattoo|TCE": {
+    "table": "G",
+    "category": "Apparel",
+    "weight": 6,
+    "status": "approved"
+  },
+  "Shadow Sibling|ExE": {
+    "table": "G",
+    "category": "Apparel",
+    "weight": 6,
+    "status": "approved"
+  },
+  "Shadowfell Brand Tattoo|TCE": {
+    "table": "G",
+    "category": "Apparel",
+    "weight": 6,
+    "status": "approved"
+  },
+  "Belt of Dwarvenkind|DMG": {
+    "table": "G",
+    "category": "Apparel",
+    "weight": 5,
+    "status": "approved"
+  },
+  "Belt of Hill Giant Strength|DMG": {
+    "table": "G",
+    "category": "Apparel",
+    "weight": 5,
+    "status": "approved"
+  },
+  "Boots of Levitation|DMG": {
+    "table": "G",
+    "category": "Apparel",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Boots of Speed|DMG": {
+    "table": "G",
+    "category": "Apparel",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Bracers of Celerity|PaB": {
+    "table": "G",
+    "category": "Apparel",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Butcher's Bib|EGW": {
+    "table": "G",
+    "category": "Apparel",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Cape of the Mountebank|DMG": {
+    "table": "G",
+    "category": "Apparel",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Cloak of Displacement|DMG": {
+    "table": "G",
+    "category": "Apparel",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Cloak of the Bat|DMG": {
+    "table": "G",
+    "category": "Apparel",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Coat of the Crest|TDCS": {
+    "table": "G",
+    "category": "Apparel",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Crown of the Wrath Bringer|BGG": {
+    "table": "G",
+    "category": "Apparel",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Delver's Claws|BGG": {
+    "table": "G",
+    "category": "Apparel",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Helm of Teleportation|DMG": {
+    "table": "G",
+    "category": "Apparel",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Helm of the Gods|MOT": {
+    "table": "G",
+    "category": "Apparel",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Mantle of Spell Resistance|DMG": {
+    "table": "G",
+    "category": "Apparel",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Robe of Eyes|DMG": {
+    "table": "G",
+    "category": "Apparel",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Rogue's Mantle|BMT": {
+    "table": "G",
+    "category": "Apparel",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Stirring Scaled Ornament|FTD": {
+    "table": "G",
+    "category": "Apparel",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Stormrider Boots|TDCS": {
+    "table": "G",
+    "category": "Apparel",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Wayfarer's Boots|BGG": {
+    "table": "G",
+    "category": "Apparel",
+    "weight": 3,
+    "status": "approved"
+  },
+  "[Armor] of [Damage-Type] Resistance|DMG": {
+    "table": "G",
+    "category": "Armor",
+    "weight": 12,
+    "status": "approved",
+    "refs": [
+      "Armor",
+      "Damage-Type"
+    ]
+  },
+  "[Armor], +1|DMG": {
+    "table": "G",
+    "category": "Armor",
+    "weight": 12,
+    "status": "approved",
+    "refs": [
+      "Armor"
+    ]
+  },
+  "Breastplate of Balance|BMT": {
+    "table": "G",
+    "category": "Armor",
+    "weight": 8,
+    "status": "approved"
+  },
+  "Elven Chain Shirt, +1|DMG": {
+    "table": "G",
+    "category": "Armor",
+    "weight": 8,
+    "status": "approved"
+  },
+  "Feywrought [Armor]|BMT": {
+    "table": "G",
+    "category": "Armor",
+    "weight": 8,
+    "status": "approved",
+    "refs": [
+      "Armor"
+    ]
+  },
+  "Glamoured Studded Leather, +1|DMG": {
+    "table": "G",
+    "category": "Armor",
+    "weight": 8,
+    "status": "approved"
+  },
+  "Gloomwrought Armor [Armor]|BMT": {
+    "table": "G",
+    "category": "Armor",
+    "weight": 8,
+    "status": "approved",
+    "refs": [
+      "Armor"
+    ]
+  },
+  "Molten Bronze Skin [Molten-Armor-G]|MOT": {
+    "table": "G",
+    "category": "Armor",
+    "weight": 8,
+    "status": "approved",
+    "refs": [
+      "Molten-Armor-G"
+    ]
+  },
+  "Zephyr [Light-Armor]|BGG": {
+    "table": "G",
+    "category": "Armor",
+    "weight": 8,
+    "status": "approved",
+    "refs": [
+      "Light-Armor"
+    ]
+  },
+  "Arrow-Catching Shield|DMG": {
+    "table": "G",
+    "category": "Armor",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Battering Shield|EGW": {
+    "table": "G",
+    "category": "Armor",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Pariah's Shield|GGR": {
+    "table": "G",
+    "category": "Armor",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Shield of Missile Attraction|DMG": {
+    "table": "G",
+    "category": "Armor",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Shield, +2|DMG": {
+    "table": "G",
+    "category": "Armor",
+    "weight": 4,
+    "status": "approved"
+  },
+  "[Weapons], +2|DMG": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 10,
+    "status": "approved",
+    "refs": [
+      "Weapons"
+    ]
+  },
+  "Arcane Propulsion Arm|ERLW": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Bonecounter|SDW": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Bracer of Flying Daggers|WDH": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Donjon's Sundering Sphere|BMT": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Glimmering Moon [Bows]|BMT": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved",
+    "refs": [
+      "Bows"
+    ]
+  },
+  "Lash of Immolation|BGG": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Oceanic [Ranged]|TDCS": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved",
+    "refs": [
+      "Ranged"
+    ]
+  },
+  "Staff of the Rooted Hills|BGG": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Starshot [Bows]|BMT": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved",
+    "refs": [
+      "Bows"
+    ]
+  },
+  "Two-Birds Sling|MOT": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "[Bows] of Conflagration|BMT": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Bows"
+    ]
+  },
+  "[Swords] of Life Stealing|DMG": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Swords"
+    ]
+  },
+  "[Swords] of Wounding|DMG": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Swords"
+    ]
+  },
+  "[Weapons] of Certain Death|EGW": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Weapons"
+    ]
+  },
+  "Acheron [Swords]|EGW": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Swords"
+    ]
+  },
+  "Corpse Slayer [Weapons]|EGW": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Weapons"
+    ]
+  },
+  "Crystal [Swords]|FTD": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Swords"
+    ]
+  },
+  "Dagger of Denial|EGW": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Dagger of Venom|DMG": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Dragon Slayer [Swords]|DMG": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Swords"
+    ]
+  },
+  "Flame Tongue [Swords]|DMG": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Swords"
+    ]
+  },
+  "Flayer Slayer|PaB": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Frost Brand [Swords]|DMG": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Swords"
+    ]
+  },
+  "Giant Slayer [Giant-Slayer-G]|DMG": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Giant-Slayer-G"
+    ]
+  },
+  "Grasping Whip|BMT": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Inescapable Lash|TDCS": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Luminous War Pick|PaB": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Mace of Disruption|DMG": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Mace of Smiting|DMG": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Mace of Terror|DMG": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Magician's Judge|TDCS": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Ruinous Flail|BMT": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Serpent's Fang|CM": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Stirring Dragon's Wrath [Dragon-Breath] [Weapons]|FTD": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Dragon-Breath",
+      "Weapons"
+    ]
+  },
+  "Summer's Dance|TDCS": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Sun Blade|DMG": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Sunforger|GGR": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Warrior's Passkey|BMT": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Woodcutter's Axe|WBtW": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Wraps of Unarmed Prowess, +2|BMT": {
+    "table": "G",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Ring of [Damage-Type-Gem-G]|DMG": {
+    "table": "G",
+    "category": "Jewelry",
+    "weight": 30,
+    "status": "approved",
+    "refs": [
+      "Damage-Type-Gem-G"
+    ]
+  },
+  "[Ioun-Stone-H]|DMG": {
+    "table": "G",
+    "category": "Jewelry",
+    "weight": 10,
+    "status": "approved",
+    "refs": [
+      "Ioun-Stone-H"
+    ]
+  },
+  "Amulet of Protection from Turning|TYP": {
+    "table": "G",
+    "category": "Jewelry",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Charm of Plant Command|GoS": {
+    "table": "G",
+    "category": "Jewelry",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Necklace of Prayer Beads|DMG": {
+    "table": "G",
+    "category": "Jewelry",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Periapt of Proof Against Poison|DMG": {
+    "table": "G",
+    "category": "Jewelry",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Ring of Animal Influence|DMG": {
+    "table": "G",
+    "category": "Jewelry",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Ring of Evasion|DMG": {
+    "table": "G",
+    "category": "Jewelry",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Ring of Feather Falling|DMG": {
+    "table": "G",
+    "category": "Jewelry",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Ring of Free Action|DMG": {
+    "table": "G",
+    "category": "Jewelry",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Ring of Protection, +2|TDCS": {
+    "table": "G",
+    "category": "Jewelry",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Ring of Spell Storing|DMG": {
+    "table": "G",
+    "category": "Jewelry",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Ring of Temporal Salvation|EGW": {
+    "table": "G",
+    "category": "Jewelry",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Ring of the Ram|DMG": {
+    "table": "G",
+    "category": "Jewelry",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Ring of X-Ray Vision|DMG": {
+    "table": "G",
+    "category": "Jewelry",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Sage's Serpent Signet|BMT": {
+    "table": "G",
+    "category": "Jewelry",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Sage's Songbird Signet|BMT": {
+    "table": "G",
+    "category": "Jewelry",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Docent|ERLW": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 10,
+    "status": "approved"
+  },
+  "Banner of the Krig Rune|SKT": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Bowl of Commanding Water Elementals|DMG": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Brazier of Commanding Fire Elementals|DMG": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Censer of Controlling Air Elementals|DMG": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Claw of the Wyrm Rune|SKT": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Deck of Oracles|BMT": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Earthboard|TDCS": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Flamefriend Lantern|TDCS": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Flying Chariot|MOT": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Gavel of the Venn Rune|SKT": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Opal of the Ild Rune|SKT": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Orb of the Stein Rune|SKT": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Prehistoric Figurine of Wondrous Power, Kyanite Pteranodon|BGG": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Weird Tank|PotA": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "[Figurine-of-Wondrous-Power-G]|DMG": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Figurine-of-Wondrous-Power-G"
+    ]
+  },
+  "[Horn-of-Valhalla-G] Horn of Valhalla|DMG": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Horn-of-Valhalla-G"
+    ]
+  },
+  "Cube of Force|DMG": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Daern's Instant Fortress|DMG": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Dimensional Shackles|DMG": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Gem of Seeing|DMG": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Horn of Blasting|DMG": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Iron Bands of Bilarro|DMG": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Ornithopter of Flying|WBtW": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Rod of Rulership|DMG": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Rope of Entanglement|DMG": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Stirring Dragon Vessel|FTD": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Stone of Controlling Earth Elementals|DMG": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Stonespeaker Crystal|OotA": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Tentacle Rod|DMG": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Wand of Binding|DMG": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Wand of Enemy Detection|DMG": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Wand of Fear|DMG": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Wand of Fireballs|DMG": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Wand of Lightning Bolts|DMG": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Wand of Paralysis|DMG": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Wand of Winter|ToD": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Wand of Wonder|DMG": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Wings of Flying|DMG": {
+    "table": "G",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Bloodwell Vial, +2|TCE": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Chaotic Essence Shard|TCE": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Evil Essence Shard|TCE": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Good Essence Shard|TCE": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Lawful Essence Shard|TCE": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Air Essence Shard|TCE": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Earth Essence Shard|TCE": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Fire Essence Shard|TCE": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Water Essence Shard|TCE": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Astral Shard|TCE": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Far Realm Shard|TCE": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Shadowfell Shard|TCE": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Arcane Grimoire, +2|TCE": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Alchemical Compendium|TCE": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Astromancy Archive|TCE": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Atlas of Endless Horizons|TCE": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Duplicitous Manuscript|TCE": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Fulminating Treatise|TCE": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Heart Weaver's Primer|TCE": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Libram of Souls and Flesh|TCE": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Planecaller's Codex|TCE": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Protective Verses|TCE": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Rhythm-Maker's Drum, +2|TCE": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Instrument of the Bards (Canaith mandolin)|DMG": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Instrument of the Bards (Cli lyre)|DMG": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Lyre of Building|TCE": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Reveler's Concertina|TCE": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 2,
+    "status": "approved"
+  },
+  "All-Purpose Tool, +2|TCE": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 6,
+    "status": "approved"
+  },
+  "Staff of Charming|DMG": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Staff of Healing|DMG": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Staff of Swarming Insects|DMG": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Staff of the Ivory Claw|EGW": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Staff of the Woodlands|DMG": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Staff of Withering|DMG": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Rod of the Pact Keeper, +2|DMG": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Staff of Defense|LMoP": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Stirring [FTD-Dragons]-Dragon-Touched Focus|FTD": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 3,
+    "status": "approved",
+    "refs": [
+      "FTD-Dragons"
+    ]
+  },
+  "Wand of the War Mage, +2|DMG": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Amulet of the Devout, +2|TCE": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Bell Branch|TCE": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Devotee's Censer|TCE": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Fate Dealer's Deck, +1|BMT": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Moon Sickle, +2|TCE": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Sun Staff|BMT": {
+    "table": "G",
+    "category": "Spellcaster",
+    "weight": 2,
+    "status": "approved"
+  },
+  "[Absorbing-H] Tattoo|TCE": {
+    "table": "H",
+    "category": "Apparel",
+    "weight": 8,
+    "status": "approved",
+    "refs": [
+      "Absorbing-H"
+    ]
+  },
+  "Belt of [Giant-H] Giant Strength|DMG": {
+    "table": "H",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved",
+    "refs": [
+      "Giant-H"
+    ]
+  },
+  "Belt of Fire Giant Strength|DMG": {
+    "table": "H",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Boots of Haste|TDCS": {
+    "table": "H",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Cape of Enlargement|PaB": {
+    "table": "H",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Cloak of Arachnida|DMG": {
+    "table": "H",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Crown of Whirling Comets|BMT": {
+    "table": "H",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Dragonhide Belt, +3|FTD": {
+    "table": "H",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Ghost Step Tattoo|TCE": {
+    "table": "H",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Helm of Brilliance|DMG": {
+    "table": "H",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Illusionist's Bracers|GGR": {
+    "table": "H",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Large Barrier Tattoo|TCE": {
+    "table": "H",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Lifewell Tattoo|TCE": {
+    "table": "H",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Mindblasting Cap|PaB": {
+    "table": "H",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Mindguard Crown|PaB": {
+    "table": "H",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Mistral Mantle|BGG": {
+    "table": "H",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Nimbus Coronet|BGG": {
+    "table": "H",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Peregrine Mask|GGR": {
+    "table": "H",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Robe of Scintillating Colors|DMG": {
+    "table": "H",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Robe of Stars|DMG": {
+    "table": "H",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Skull Helm|BMT": {
+    "table": "H",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Wakened Scaled Ornament of [Dragon-Breath]|FTD": {
+    "table": "H",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved",
+    "refs": [
+      "Dragon-Breath"
+    ]
+  },
+  "Watchful Helm|CM": {
+    "table": "H",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Wyrmreaver Gauntlets|BGG": {
+    "table": "H",
+    "category": "Apparel",
+    "weight": 4,
+    "status": "approved"
+  },
+  "[Armor], +2|DMG": {
+    "table": "H",
+    "category": "Armor",
+    "weight": 4,
+    "status": "approved",
+    "refs": [
+      "Armor"
+    ]
+  },
+  "[Dragon-H] Dragon Scale Mail|DMG": {
+    "table": "H",
+    "category": "Armor",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Dragon-H"
+    ]
+  },
+  "[Heavy-Armor] of Safeguarding|BGG": {
+    "table": "H",
+    "category": "Armor",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Heavy-Armor"
+    ]
+  },
+  "[Shields-H]|DMG": {
+    "table": "H",
+    "category": "Armor",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Shields-H"
+    ]
+  },
+  "Antimagic [Armor]|BMT": {
+    "table": "H",
+    "category": "Armor",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Armor"
+    ]
+  },
+  "Clockwork [Heavy-Armor]|BMT": {
+    "table": "H",
+    "category": "Armor",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Heavy-Armor"
+    ]
+  },
+  "Last Stand [Armor]|EGW": {
+    "table": "H",
+    "category": "Armor",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Armor"
+    ]
+  },
+  "Living [Armor]|ERLW": {
+    "table": "H",
+    "category": "Armor",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Armor"
+    ]
+  },
+  "Dwarven Plate|DMG": {
+    "table": "H",
+    "category": "Armor",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Hunter's Coat|EGW": {
+    "table": "H",
+    "category": "Armor",
+    "weight": 1,
+    "status": "approved"
+  },
+  "[Weapons], +3|DMG": {
+    "table": "H",
+    "category": "Arms",
+    "weight": 10,
+    "status": "approved",
+    "refs": [
+      "Weapons"
+    ]
+  },
+  "[Bows] of Melodies|BMT": {
+    "table": "H",
+    "category": "Arms",
+    "weight": 6,
+    "status": "approved",
+    "refs": [
+      "Bows"
+    ]
+  },
+  "[Weapons] of Throne's Command|BMT": {
+    "table": "H",
+    "category": "Arms",
+    "weight": 6,
+    "status": "approved",
+    "refs": [
+      "Weapons"
+    ]
+  },
+  "Wakened Dragon's Wrath [Dragon-Breath] [Weapons]|FTD": {
+    "table": "H",
+    "category": "Arms",
+    "weight": 6,
+    "status": "approved",
+    "refs": [
+      "Dragon-Breath",
+      "Weapons"
+    ]
+  },
+  "Wraps of Unarmed Prowess, +3|BMT": {
+    "table": "H",
+    "category": "Arms",
+    "weight": 6,
+    "status": "approved"
+  },
+  "[Swords] of Sharpness|DMG": {
+    "table": "H",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved",
+    "refs": [
+      "Swords"
+    ]
+  },
+  "Baleful Talon|BMT": {
+    "table": "H",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Bloodaxe|EGW": {
+    "table": "H",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Bloodshed [Swords]|BGG": {
+    "table": "H",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved",
+    "refs": [
+      "Swords"
+    ]
+  },
+  "Corecut Dagger|TDCS": {
+    "table": "H",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Dancing [Swords]|DMG": {
+    "table": "H",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved",
+    "refs": [
+      "Swords"
+    ]
+  },
+  "Duskcrusher|EGW": {
+    "table": "H",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Dwarven Thrower|DMG": {
+    "table": "H",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Dyrrn's Tentacle Whip|ERLW": {
+    "table": "H",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Elven Thrower|BGG": {
+    "table": "H",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Fate Cutter Shears|BMT": {
+    "table": "H",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Fool's Blade [Swords]|BMT": {
+    "table": "H",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved",
+    "refs": [
+      "Swords"
+    ]
+  },
+  "Forcebreaker [Martial-Melee]|BMT": {
+    "table": "H",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved",
+    "refs": [
+      "Martial-Melee"
+    ]
+  },
+  "Hammer of Runic Focus|BMT": {
+    "table": "H",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Nine Lives Stealer [Swords]|DMG": {
+    "table": "H",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved",
+    "refs": [
+      "Swords"
+    ]
+  },
+  "Oathbow|DMG": {
+    "table": "H",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Scimitar of Speed|DMG": {
+    "table": "H",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Steel|WBtW": {
+    "table": "H",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Stonemaker War Pick|BMT": {
+    "table": "H",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Sword of the Paruns|GGR": {
+    "table": "H",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Tidecaller Trident|BMT": {
+    "table": "H",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Tinkertop Boltblaster 1000|TDCS": {
+    "table": "H",
+    "category": "Arms",
+    "weight": 3,
+    "status": "approved"
+  },
+  "[Ioun-Stone-I]|DMG": {
+    "table": "H",
+    "category": "Jewelry",
+    "weight": 3,
+    "status": "approved",
+    "refs": [
+      "Ioun-Stone-I"
+    ]
+  },
+  "Amethyst Lodestone|FTD": {
+    "table": "H",
+    "category": "Jewelry",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Amulet of the Black Skull|ToA": {
+    "table": "H",
+    "category": "Jewelry",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Ring of Amity|BGG": {
+    "table": "H",
+    "category": "Jewelry",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Ring of Shooting Stars|DMG": {
+    "table": "H",
+    "category": "Jewelry",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Sanctum Amulet|BGG": {
+    "table": "H",
+    "category": "Jewelry",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Amulet of the Planes|DMG": {
+    "table": "H",
+    "category": "Jewelry",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Ring of Regeneration|DMG": {
+    "table": "H",
+    "category": "Jewelry",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Ring of Telekinesis|DMG": {
+    "table": "H",
+    "category": "Jewelry",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Sage's Bear Signet|BMT": {
+    "table": "H",
+    "category": "Jewelry",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Sage's Hart Signet|BMT": {
+    "table": "H",
+    "category": "Jewelry",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Sage's Lion Signet|BMT": {
+    "table": "H",
+    "category": "Jewelry",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Sage's Wolf Signet|BMT": {
+    "table": "H",
+    "category": "Jewelry",
+    "weight": 1,
+    "status": "approved"
+  },
+  "[Stat-Books-H]|DMG": {
+    "table": "H",
+    "category": "Misc",
+    "weight": 24,
+    "status": "approved",
+    "refs": [
+      "Stat-Books-H"
+    ]
+  },
+  "[Candle-H] Candle of Invocation|DMG": {
+    "table": "H",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved",
+    "refs": [
+      "Candle-H"
+    ]
+  },
+  "Bobbing Lily Pad|WBtW": {
+    "table": "H",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Bronze Horn of Valhalla|DMG": {
+    "table": "H",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Carpet of Flying|DMG": {
+    "table": "H",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Cauldron of Rebirth|TCE": {
+    "table": "H",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Constantori's Portrait|KGV": {
+    "table": "H",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Crystal Ball|DMG": {
+    "table": "H",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Deck of Dimensions|BMT": {
+    "table": "H",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Deck of Wild Cards|BMT": {
+    "table": "H",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Efreeti Bottle|DMG": {
+    "table": "H",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Ingot of the Skold Rune|SKT": {
+    "table": "H",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Kyrzin's Ooze|ERLW": {
+    "table": "H",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Manual of Golems|DMG": {
+    "table": "H",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Mirror of Life Trapping|DMG": {
+    "table": "H",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Mirror of Reflected Pasts|DL": {
+    "table": "H",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Orb of the Veil|EGW": {
+    "table": "H",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Pennant of the Vind Rune|SKT": {
+    "table": "H",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Prehistoric Figurine of Wondrous Power, Carnelian Triceratops|BGG": {
+    "table": "H",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Shard of the Ise Rune|SKT": {
+    "table": "H",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Spell Bottle|EGW": {
+    "table": "H",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Ventilating Lungs|ERLW": {
+    "table": "H",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Wakened Dragon Vessel|FTD": {
+    "table": "H",
+    "category": "Misc",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Figurine of Wondrous Power, Obsidian Steed|DMG": {
+    "table": "H",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Rod of Absorption|DMG": {
+    "table": "H",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Rod of Alertness|DMG": {
+    "table": "H",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Rod of Security|DMG": {
+    "table": "H",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Wand of Polymorph|DMG": {
+    "table": "H",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved"
+  },
+  "All-Purpose Tool, +3|TCE": {
+    "table": "H",
+    "category": "Spellcaster",
+    "weight": 10,
+    "status": "approved"
+  },
+  "Moon Sickle, +3|TCE": {
+    "table": "H",
+    "category": "Spellcaster",
+    "weight": 10,
+    "status": "approved"
+  },
+  "Amulet of the Devout, +3|TCE": {
+    "table": "H",
+    "category": "Spellcaster",
+    "weight": 7,
+    "status": "approved"
+  },
+  "Bloodwell Vial, +3|TCE": {
+    "table": "H",
+    "category": "Spellcaster",
+    "weight": 7,
+    "status": "approved"
+  },
+  "Rhythm-Maker's Drum, +3|TCE": {
+    "table": "H",
+    "category": "Spellcaster",
+    "weight": 7,
+    "status": "approved"
+  },
+  "Rod of the Pact Keeper, +3|DMG": {
+    "table": "H",
+    "category": "Spellcaster",
+    "weight": 7,
+    "status": "approved"
+  },
+  "Arcane Grimoire, +3|TCE": {
+    "table": "H",
+    "category": "Spellcaster",
+    "weight": 4,
+    "status": "approved"
+  },
+  "Blast Scepter|WDMM": {
+    "table": "H",
+    "category": "Spellcaster",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Crystalline Chronicle|TCE": {
+    "table": "H",
+    "category": "Spellcaster",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Eldritch Staff|WBtW": {
+    "table": "H",
+    "category": "Spellcaster",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Fate Dealer's Deck, +2|BMT": {
+    "table": "H",
+    "category": "Spellcaster",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Instrument of the Bards (Anstruth Harp)|DMG": {
+    "table": "H",
+    "category": "Spellcaster",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Rod of Hellish Flames|BMT": {
+    "table": "H",
+    "category": "Spellcaster",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Staff of Dunamancy|EGW": {
+    "table": "H",
+    "category": "Spellcaster",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Staff of Fate|CM": {
+    "table": "H",
+    "category": "Spellcaster",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Staff of Fire|DMG": {
+    "table": "H",
+    "category": "Spellcaster",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Staff of Frost|DMG": {
+    "table": "H",
+    "category": "Spellcaster",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Staff of Power|DMG": {
+    "table": "H",
+    "category": "Spellcaster",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Staff of Striking|DMG": {
+    "table": "H",
+    "category": "Spellcaster",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Staff of Thunder and Lightning|DMG": {
+    "table": "H",
+    "category": "Spellcaster",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Voyager Staff|GGR": {
+    "table": "H",
+    "category": "Spellcaster",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Wakened [FTD-Dragons]-Dragon-Touched Focus|FTD": {
+    "table": "H",
+    "category": "Spellcaster",
+    "weight": 3,
+    "status": "approved",
+    "refs": [
+      "FTD-Dragons"
+    ]
+  },
+  "Wand of the War Mage, +3|DMG": {
+    "table": "H",
+    "category": "Spellcaster",
+    "weight": 3,
+    "status": "approved"
+  },
+  "Belt of Cloud Giant Strength|DMG": {
+    "table": "I",
+    "category": "Apparel",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Blood Fury Tattoo|TCE": {
+    "table": "I",
+    "category": "Apparel",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Platinum Scarf|FTD": {
+    "table": "I",
+    "category": "Apparel",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Ascendant Scaled Ornament of [Dragon-Breath]|FTD": {
+    "table": "I",
+    "category": "Apparel",
+    "weight": 1,
+    "status": "approved",
+    "refs": [
+      "Dragon-Breath"
+    ]
+  },
+  "Belashyrra's Beholder Crown|ERLW": {
+    "table": "I",
+    "category": "Apparel",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Belt of Storm Giant Strength|DMG": {
+    "table": "I",
+    "category": "Apparel",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Cloak of Invisibility|DMG": {
+    "table": "I",
+    "category": "Apparel",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Gloves of Soul Catching|CM": {
+    "table": "I",
+    "category": "Apparel",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Robe of the Archmagi|DMG": {
+    "table": "I",
+    "category": "Apparel",
+    "weight": 1,
+    "status": "approved"
+  },
+  "[Armor], +3|DMG": {
+    "table": "I",
+    "category": "Armor",
+    "weight": 6,
+    "status": "approved",
+    "refs": [
+      "Armor"
+    ]
+  },
+  "Efreeti Chain Mail|DMG": {
+    "table": "I",
+    "category": "Armor",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Euryale's Aegis|BMT": {
+    "table": "I",
+    "category": "Armor",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Plate Armor of Etherealness|DMG": {
+    "table": "I",
+    "category": "Armor",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Plate Armor of Invulnerability|DMG": {
+    "table": "I",
+    "category": "Armor",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Shield of the Blazing Dreadnought|BGG": {
+    "table": "I",
+    "category": "Armor",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Stonebreaker's Breastplate|BGG": {
+    "table": "I",
+    "category": "Armor",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Ascendant [Dragon-Breath] Dragon's Wrath [Weapons]|FTD": {
+    "table": "I",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Dragon-Breath",
+      "Weapons"
+    ]
+  },
+  "Defender [Swords]|DMG": {
+    "table": "I",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Swords"
+    ]
+  },
+  "Longbow of the Healing Hearth|BGG": {
+    "table": "I",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Reaper's Scream|BGG": {
+    "table": "I",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Rod of Lordly Might|DMG": {
+    "table": "I",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Sword of Answering ([Answering-I])|DMG": {
+    "table": "I",
+    "category": "Arms",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Answering-I"
+    ]
+  },
+  "[Swords] of the Planes|BMT": {
+    "table": "I",
+    "category": "Arms",
+    "weight": 1,
+    "status": "approved",
+    "refs": [
+      "Swords"
+    ]
+  },
+  "Flail of Tiamat|FTD": {
+    "table": "I",
+    "category": "Arms",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Hammer of Thunderbolts|DMG": {
+    "table": "I",
+    "category": "Arms",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Holy Avenger [Swords]|DMG": {
+    "table": "I",
+    "category": "Arms",
+    "weight": 1,
+    "status": "approved",
+    "refs": [
+      "Swords"
+    ]
+  },
+  "Luck Blade [Swords]|DMG": {
+    "table": "I",
+    "category": "Arms",
+    "weight": 1,
+    "status": "approved",
+    "refs": [
+      "Swords"
+    ]
+  },
+  "Rakdos Riteknife|GGR": {
+    "table": "I",
+    "category": "Arms",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Topaz Annihilator|FTD": {
+    "table": "I",
+    "category": "Arms",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Vorpal [Swords]|DMG": {
+    "table": "I",
+    "category": "Arms",
+    "weight": 1,
+    "status": "approved",
+    "refs": [
+      "Swords"
+    ]
+  },
+  "Shard Solitaire ([Shard-I])|KGV": {
+    "table": "I",
+    "category": "Jewelry",
+    "weight": 4,
+    "status": "approved",
+    "refs": [
+      "Shard-I"
+    ]
+  },
+  "Ring of [Elemental-I] Elemental Command|DMG": {
+    "table": "I",
+    "category": "Jewelry",
+    "weight": 4,
+    "status": "approved",
+    "refs": [
+      "Elemental-I"
+    ]
+  },
+  "Ring of Djinni Summoning|DMG": {
+    "table": "I",
+    "category": "Jewelry",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Ring of Invisibility|DMG": {
+    "table": "I",
+    "category": "Jewelry",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Ring of Spell Turning|DMG": {
+    "table": "I",
+    "category": "Jewelry",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Scarab of Protection|DMG": {
+    "table": "I",
+    "category": "Jewelry",
+    "weight": 2,
+    "status": "approved"
+  },
+  "Ring of Three Wishes|DMG": {
+    "table": "I",
+    "category": "Jewelry",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Talisman of Pure Good|DMG": {
+    "table": "I",
+    "category": "Jewelry",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Talisman of the Sphere|DMG": {
+    "table": "I",
+    "category": "Jewelry",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Talisman of Ultimate Evil|DMG": {
+    "table": "I",
+    "category": "Jewelry",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Crystal Ball of [Crystal-Ball-I]|": {
+    "table": "I",
+    "category": "Misc",
+    "weight": 2,
+    "status": "approved",
+    "refs": [
+      "Crystal-Ball-I"
+    ]
+  },
+  "Ascendant Dragon Vessel|FTD": {
+    "table": "I",
+    "category": "Misc",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Cubic Gate|DMG": {
+    "table": "I",
+    "category": "Misc",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Deck of Many More Things|BMT": {
+    "table": "I",
+    "category": "Misc",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Deck of Many Things|DMG": {
+    "table": "I",
+    "category": "Misc",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Gold Canary Figurine of Wondrous Power|FTD": {
+    "table": "I",
+    "category": "Misc",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Harp of Gilded Plenty|BGG": {
+    "table": "I",
+    "category": "Misc",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Iron Flask|DMG": {
+    "table": "I",
+    "category": "Misc",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Iron Horn of Valhalla|DMG": {
+    "table": "I",
+    "category": "Misc",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Nether Scroll of Azumar|CM": {
+    "table": "I",
+    "category": "Misc",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Nightfall Pearl|EGW": {
+    "table": "I",
+    "category": "Misc",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Prehistoric Figurine of Wondrous Power, Jasper Tyrannosaurus Rex|BGG": {
+    "table": "I",
+    "category": "Misc",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Rod of Resurrection|DMG": {
+    "table": "I",
+    "category": "Misc",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Scroll of Tarrasque Summoning|IDRotF": {
+    "table": "I",
+    "category": "Misc",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Scroll of the Comet|IDRotF": {
+    "table": "I",
+    "category": "Misc",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Sphere of Annihilation|DMG": {
+    "table": "I",
+    "category": "Misc",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Spindle of Fate|BMT": {
+    "table": "I",
+    "category": "Misc",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Telescopic Transporter|BMT": {
+    "table": "I",
+    "category": "Misc",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Well of Many Worlds|DMG": {
+    "table": "I",
+    "category": "Misc",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Ascendant Dragon-Touched Focus|FTD": {
+    "table": "I",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Fate Dealer's Deck, +3|BMT": {
+    "table": "I",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Instrument of the Bards (Ollahm Harp)|DMG": {
+    "table": "I",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Jester's Mask|BMT": {
+    "table": "I",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Orb of Skoraeus|BGG": {
+    "table": "I",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Ruby Weave Gem|FTD": {
+    "table": "I",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Staff of the Magi|DMG": {
+    "table": "I",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Tome of the Stilled Tongue|DMG": {
+    "table": "I",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  }
+}

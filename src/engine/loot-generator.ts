@@ -184,7 +184,7 @@ export function generateEncounter(input: EncounterInput): EncounterResult {
   const tier: Tier = autoTier ? crToDefaultTier(cr) : inputTier;
 
   const creatures: CreatureResult[] = [];
-  const roles: Role[] = ['minion', 'elite', 'boss', 'vault'];
+  const roles: Role[] = ['minion', 'elite', 'mini-boss', 'boss', 'vault'];
 
   for (const role of roles) {
     const count = counts[role] ?? 0;

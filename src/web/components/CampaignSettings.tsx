@@ -1,6 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import type {
   CampaignSettings,
+  CreatureRole,
+  Edition,
   Role,
   SourcePriority,
   SourceSettings,
@@ -9,6 +11,7 @@ import type {
 import {
   SOURCE_GROUPS,
   SOURCE_GROUP_LABELS,
+  computeRoleMultipliers,
   getBookItemCounts,
   getBookDampFactors,
 } from '@engine/index';
@@ -16,6 +19,20 @@ import { SOURCEBOOK_BY_ACRONYM } from '../../data/sourcebook-lookup';
 
 const RICHNESS_STOPS = [0.5, 0.75, 1.0, 1.25, 1.5];
 const RICHNESS_LABELS = ['Scarce', 'Low', 'Standard', 'High', 'Abundant'];
+
+const APL_STOPS = [0.7, 0.85, 1.0, 1.15, 1.3];
+const APL_LABELS = ['Fresh', 'Below Avg', 'Standard', 'Above Avg', 'Veteran'];
+
+const CONC_STOPS = [1.5, 2.25, 3.0, 4.0, 5.0];
+const CONC_LABELS = ['Flat', 'Mild', 'Default', 'Steep', 'Hoarding'];
+
+const CREATURE_ROLES: CreatureRole[] = ['minion', 'elite', 'mini-boss', 'boss'];
+const ROLE_DISPLAY: Record<CreatureRole, string> = {
+  minion: 'Minion',
+  elite: 'Elite',
+  'mini-boss': 'Mini-boss',
+  boss: 'Boss',
+};
 
 const PRIORITY_ORDER: SourcePriority[] = [
   'off',
@@ -41,6 +58,8 @@ const THEME_OPTIONS: { value: ThemePref; label: string }[] = [
 interface Props {
   settings: CampaignSettings;
   onChange: (settings: CampaignSettings) => void;
+  adminMode?: boolean;
+  onAdminModeChange?: (enabled: boolean) => void;
 }
 
 /** Read the current priority for a source, defaulting to 'normal'. */
@@ -180,7 +199,7 @@ const SourceGroup: React.FC<SourceGroupProps> = ({
   );
 };
 
-const CampaignSettingsPanel: React.FC<Props> = ({ settings, onChange }) => {
+const CampaignSettingsPanel: React.FC<Props> = ({ settings, onChange, adminMode, onAdminModeChange }) => {
   const [showFormula, setShowFormula] = useState(false);
 
   const update = (patch: Partial<CampaignSettings>) => {
@@ -247,6 +266,27 @@ const CampaignSettingsPanel: React.FC<Props> = ({ settings, onChange }) => {
 
           <div className="field-row">
             <label className="field-label">
+              Edition:{' '}
+              <span className="mono">{settings.edition ?? '2014'}</span>
+            </label>
+            <div className="segmented-control">
+              {(['2014', '2024'] as Edition[]).map((ed) => (
+                <button
+                  key={ed}
+                  type="button"
+                  className={`segmented-btn ${
+                    (settings.edition ?? '2014') === ed ? 'active' : ''
+                  }`}
+                  onClick={() => update({ edition: ed })}
+                >
+                  {ed}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="field-row">
+            <label className="field-label">
               Party Size: <span className="mono">{settings.partySize}</span>
             </label>
             <input
@@ -280,6 +320,56 @@ const CampaignSettingsPanel: React.FC<Props> = ({ settings, onChange }) => {
             />
             <div className="slider-labels">
               {RICHNESS_LABELS.map((label) => (
+                <span key={label}>{label}</span>
+              ))}
+            </div>
+          </div>
+
+          <div className="field-row">
+            <label className="field-label">
+              APL Adjustment:{' '}
+              <span className="mono">
+                {APL_LABELS[APL_STOPS.indexOf(settings.aplAdjustment ?? 1.0)] ?? `${settings.aplAdjustment}×`}
+              </span>
+            </label>
+            <input
+              type="range"
+              className="slider"
+              min={0}
+              max={4}
+              step={1}
+              value={Math.max(0, APL_STOPS.indexOf(settings.aplAdjustment ?? 1.0))}
+              onChange={(e) =>
+                update({ aplAdjustment: APL_STOPS[Number(e.target.value)] })
+              }
+            />
+            <div className="slider-labels">
+              {APL_LABELS.map((label) => (
+                <span key={label}>{label}</span>
+              ))}
+            </div>
+          </div>
+
+          <div className="field-row">
+            <label className="field-label">
+              Concentration:{' '}
+              <span className="mono">
+                {CONC_LABELS[CONC_STOPS.indexOf(settings.concentration ?? 3.0)] ?? `${settings.concentration}×`}
+              </span>
+            </label>
+            <input
+              type="range"
+              className="slider"
+              min={0}
+              max={4}
+              step={1}
+              value={Math.max(0, CONC_STOPS.indexOf(settings.concentration ?? 3.0))}
+              onChange={(e) =>
+                update({ concentration: CONC_STOPS[Number(e.target.value)] })
+              }
+            />
+            <div className="slider-labels">
+              {CONC_LABELS.map((label) => (
                 <span key={label}>{label}</span>
               ))}
             </div>
@@ -393,34 +483,51 @@ const CampaignSettingsPanel: React.FC<Props> = ({ settings, onChange }) => {
         </div>
       </section>
 
-      {/* -------- Role Ratios -------- */}
+      {/* -------- Role Multipliers -------- */}
       <section className="card settings-section">
-        <h2 className="card-title">Role Ratios</h2>
+        <h2 className="card-title">Role Multipliers</h2>
         <p className="field-hint">
-          Fraction of each creature&apos;s budget that becomes loot.
+          Derived from the Concentration slider above. Shows each
+          role&apos;s multiplier relative to &ldquo;fair share&rdquo; of loot.
         </p>
         <div className="role-ratios-grid">
-          {(['minion', 'elite', 'boss', 'vault'] as Role[]).map((role) => (
-            <div key={role} className="role-ratio-row">
-              <label className="field-label">
-                {role.charAt(0).toUpperCase() + role.slice(1)}
-              </label>
-              <div className="role-ratio-input">
-                <input
-                  type="number"
-                  className="role-ratio-number"
-                  min={0}
-                  max={200}
-                  step={5}
-                  value={Math.round(settings.roleRatios[role] * 100)}
-                  onChange={(e) =>
-                    updateRoleRatio(role, Number(e.target.value))
-                  }
-                />
-                <span className="mono">%</span>
+          {CREATURE_ROLES.map((role) => {
+            const mult = computeRoleMultipliers(settings.concentration ?? 3.0)[role];
+            return (
+              <div key={role} className="role-ratio-row">
+                <label className="field-label">{ROLE_DISPLAY[role]}</label>
+                <div className="role-ratio-input">
+                  <span className="mono">{mult.toFixed(2)}×</span>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
+        </div>
+      </section>
+
+      {/* -------- Admin -------- */}
+      <section className="card settings-section">
+        <h2 className="card-title">Admin</h2>
+        <div className="settings-content">
+          <div className="field-row">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={adminMode ?? false}
+                onChange={(e) => {
+                  const enabled = e.target.checked;
+                  try {
+                    localStorage.setItem('loot-tables:admin', String(enabled));
+                  } catch { /* ignore */ }
+                  onAdminModeChange?.(enabled);
+                }}
+              />
+              Enable Admin Mode
+            </label>
+            <p className="field-hint">
+              Shows the Review tab for curating item assignments and weights.
+            </p>
+          </div>
         </div>
       </section>
     </div>
