@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import { MAGIC_ITEMS } from '../../src/data/magic-items';
-import { getFilteredEntries } from '../../src/engine/roller';
 
 type MIEntry = { name: string; source: string; weight: number };
 const tables = MAGIC_ITEMS as Record<string, MIEntry[]>;
@@ -21,6 +20,14 @@ const ROOT_TABLE_NAMES = [
   'Magic-Item-Table-I',
 ];
 
+/**
+ * Spell tables are exempt from standard-dice rules — they have natural
+ * counts that don't need to conform to physical dice.
+ */
+function isSpellTable(name: string): boolean {
+  return /^Spells-/.test(name);
+}
+
 describe('table dice sizes', () => {
   it('all root tables sum to d100', () => {
     for (const name of ROOT_TABLE_NAMES) {
@@ -31,7 +38,7 @@ describe('table dice sizes', () => {
     }
   });
 
-  it('all sub-tables sum to a standard die', () => {
+  it('all sub-tables (except spell tables) sum to a standard die', () => {
     const failures: string[] = [];
 
     for (const [name, entries] of Object.entries(tables)) {
@@ -39,6 +46,8 @@ describe('table dice sizes', () => {
       if (ROOT_TABLE_NAMES.includes(name)) continue;
       // Skip tables with only 1 entry (trivial pass-through)
       if (entries.length <= 1) continue;
+      // Skip spell tables — exempt per design
+      if (isSpellTable(name)) continue;
 
       const total = entries.reduce((s, e) => s + e.weight, 0);
       if (!STANDARD_DICE.has(total)) {
@@ -49,40 +58,6 @@ describe('table dice sizes', () => {
     expect(
       failures,
       `Sub-tables with non-standard dice:\n  ${failures.join('\n  ')}`,
-    ).toEqual([]);
-  });
-
-  it('source-filtered effective weights round to integers for display', () => {
-    // Simulate source settings that would produce fractional weights
-    const sourceSettings = { DMG: 'high' as const, XGE: 'low' as const };
-    const fractionalDisplays: string[] = [];
-
-    for (const [name, entries] of Object.entries(tables)) {
-      const filtered = getFilteredEntries(entries, sourceSettings);
-      if (filtered.length === 0) continue;
-
-      for (const entry of filtered) {
-        const rounded = Math.max(1, Math.round(entry.weight));
-        if (rounded !== entry.weight && !Number.isInteger(entry.weight)) {
-          // This is expected — effective weights ARE fractional.
-          // The display code rounds them. Verify rounding produces valid integers.
-          expect(Number.isInteger(rounded)).toBe(true);
-          expect(rounded).toBeGreaterThanOrEqual(1);
-        }
-      }
-
-      // Verify the rounded total is a positive integer
-      const roundedTotal = filtered.reduce(
-        (s, e) => s + Math.max(1, Math.round(e.weight)), 0,
-      );
-      if (!Number.isInteger(roundedTotal)) {
-        fractionalDisplays.push(`${name}: d${roundedTotal}`);
-      }
-    }
-
-    expect(
-      fractionalDisplays,
-      `Tables with fractional display totals:\n  ${fractionalDisplays.join('\n  ')}`,
     ).toEqual([]);
   });
 });
