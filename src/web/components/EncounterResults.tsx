@@ -1,93 +1,55 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import type {
   CampaignSettings,
-  ItemSegment,
-  ResolvableCreatureResult,
   ResolvableEncounterResult,
   ResolvableMagicItem,
 } from '@engine/index';
-import {
-  resolveOneRef,
-  resolveAllRefs,
-  hasUnresolvedRefs,
-  segmentsToString,
-} from '@engine/index';
+import type { ResolvedItem } from '../App';
 
 interface Props {
   results: ResolvableEncounterResult;
   settings: CampaignSettings;
+  resolvedItems: Record<string, ResolvedItem>;
+  onStartResolve: (itemId: string, table: string) => void;
 }
 
 function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-/** Inline component for a single resolvable magic item. */
-function ResolvableItem({
+/** Inline component for a single magic item — either an unresolved button
+ *  that opens the stepper, or a static resolved name. */
+function MagicItemSlot({
   item,
-  onUpdate,
+  itemId,
+  resolved,
+  onStartResolve,
   settings,
 }: {
   item: ResolvableMagicItem;
-  onUpdate: (updated: ResolvableMagicItem) => void;
+  itemId: string;
+  resolved: ResolvedItem | undefined;
+  onStartResolve: (itemId: string, table: string) => void;
   settings: CampaignSettings;
 }) {
-  const handleResolveRef = (refId: string) => {
-    const result = resolveOneRef(item.segments, refId);
-    const newSegments = result.segments;
-    const newSource = result.source || item.source;
-    onUpdate({
-      ...item,
-      segments: newSegments,
-      source: newSource,
-      isFullyResolved: !hasUnresolvedRefs(newSegments),
-    });
-  };
-
-  const handleResolveAll = () => {
-    const result = resolveAllRefs(item.segments);
-    onUpdate({
-      ...item,
-      segments: result.segments,
-      source: result.source || item.source,
-      isFullyResolved: true,
-    });
-  };
-
-  const nameText = segmentsToString(item.segments);
-  const hasRefs = !item.isFullyResolved;
+  const tableKey = `Magic-Item-Table-${item.table}`;
 
   return (
     <span className="resolvable-item">
-      {item.segments.map((seg, i) =>
-        seg.type === 'text' ? (
-          <span key={i} className="creature-item">
-            {seg.value}
-          </span>
-        ) : (
-          <button
-            key={seg.id}
-            className="ref-btn"
-            onClick={() => handleResolveRef(seg.id)}
-            title={`Roll on ${seg.tableName}`}
-          >
-            {seg.tableName}
-          </button>
-        ),
-      )}
-      {hasRefs && (
+      {resolved ? (
+        <span className="resolved-name">{resolved.name}</span>
+      ) : (
         <button
-          className="resolve-all-btn"
-          onClick={handleResolveAll}
-          title="Resolve all remaining"
+          className="unresolved-link"
+          onClick={() => onStartResolve(itemId, tableKey)}
+          title={`Resolve via Magic Item Table ${item.table}`}
         >
-          resolve all
+          {`Magic Item — Table ${item.table} →`}
         </button>
-      )}
-      {' '}
+      )}{' '}
       <span className="item-meta">
-        [{item.table}]
-        {item.source && ` (${item.source})`}
+        {resolved && resolved.source && `(${resolved.source})`}
+        {!resolved && item.source && `(${item.source})`}
         {settings.showValues && item.buyPrice != null && (
           <> Value: {item.buyPrice.toLocaleString()} gp</>
         )}
@@ -99,37 +61,17 @@ function ResolvableItem({
   );
 }
 
-const EncounterResults: React.FC<Props> = ({ results, settings }) => {
-  // Own mutable state so step-by-step resolution can update individual items
-  const [creatures, setCreatures] = useState<ResolvableCreatureResult[]>(
-    results.creatures,
-  );
-
-  // Reset when new results come in
-  useEffect(() => {
-    setCreatures(results.creatures);
-  }, [results]);
-
-  const handleItemUpdate = (
-    creatureIdx: number,
-    itemIdx: number,
-    updated: ResolvableMagicItem,
-  ) => {
-    setCreatures((prev) =>
-      prev.map((c, ci) => {
-        if (ci !== creatureIdx) return c;
-        const newItems = [...c.loot.magicItems];
-        newItems[itemIdx] = updated;
-        return { ...c, loot: { ...c.loot, magicItems: newItems } };
-      }),
-    );
-  };
-
+const EncounterResults: React.FC<Props> = ({
+  results,
+  settings,
+  resolvedItems,
+  onStartResolve,
+}) => {
   return (
     <div className="results-panel">
       <h3 className="results-title">Results</h3>
       <div className="results-list">
-        {creatures.map((creature, ci) => {
+        {results.creatures.map((creature, ci) => {
           const label = `${capitalize(creature.role)} ${creature.index}`;
           const loot = creature.loot;
           const coinText = `${Math.round(loot.coins.average)} gp`;
@@ -141,7 +83,6 @@ const EncounterResults: React.FC<Props> = ({ results, settings }) => {
             >
               <span className="creature-label">{label}:</span>{' '}
               <span className="creature-coins">{coinText}</span>
-              {/* Gems */}
               {loot.gems.map((gem, i) => (
                 <span key={`gem-${i}`}>
                   {', '}
@@ -150,7 +91,6 @@ const EncounterResults: React.FC<Props> = ({ results, settings }) => {
                   </span>
                 </span>
               ))}
-              {/* Art */}
               {loot.artObjects.map((art, i) => (
                 <span key={`art-${i}`}>
                   {', '}
@@ -159,18 +99,21 @@ const EncounterResults: React.FC<Props> = ({ results, settings }) => {
                   </span>
                 </span>
               ))}
-              {/* Magic Items */}
-              {loot.magicItems.map((mi, i) => (
-                <span key={`mi-${i}`}>
-                  {', '}
-                  <ResolvableItem
-                    item={mi}
-                    onUpdate={(updated) => handleItemUpdate(ci, i, updated)}
-                    settings={settings}
-                  />
-                </span>
-              ))}
-              {/* Mundane Finds */}
+              {loot.magicItems.map((mi, i) => {
+                const itemId = `mi-${ci}-${i}`;
+                return (
+                  <span key={`mi-${i}`}>
+                    {', '}
+                    <MagicItemSlot
+                      item={mi}
+                      itemId={itemId}
+                      resolved={resolvedItems[itemId]}
+                      onStartResolve={onStartResolve}
+                      settings={settings}
+                    />
+                  </span>
+                );
+              })}
               {settings.showMundane && loot.mundaneFinds.length > 0 && (
                 <div className="mundane-finds">
                   {loot.mundaneFinds.map((find, i) => (
