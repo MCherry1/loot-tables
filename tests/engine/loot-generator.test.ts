@@ -23,7 +23,7 @@ describe('generateEncounter', () => {
       cr: 5,
       tier: 2,
       autoTier: false,
-      counts: { minion: 4, elite: 1, boss: 1, vault: 0 },
+      counts: { minion: 4, elite: 1, 'mini-boss': 0, boss: 1, vault: 0 },
       settings,
     });
     expect(result.creatures).toHaveLength(6);
@@ -34,7 +34,7 @@ describe('generateEncounter', () => {
       cr: 5,
       tier: 2,
       autoTier: false,
-      counts: { minion: 4, elite: 1, boss: 1, vault: 0 },
+      counts: { minion: 4, elite: 1, 'mini-boss': 0, boss: 1, vault: 0 },
       settings,
     });
 
