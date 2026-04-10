@@ -1771,3 +1771,293 @@ button {
   color: var(--ink);
 }
 
+/* =========================================================================
+   Review UI
+   ========================================================================= */
+
+.review-ui {
+  padding: 0 1rem 2rem;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.review-stats {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+}
+
+.draft-badge {
+  background: var(--accent-gold);
+  color: var(--ink-strong);
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.review-filters {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.review-search {
+  flex: 1;
+  min-width: 150px;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-card);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 0.85rem;
+}
+
+.review-search-small {
+  flex: 0 0 80px;
+  min-width: 80px;
+}
+
+.review-filter-select {
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-card);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 0.85rem;
+}
+
+.review-batch {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.review-batch-btn {
+  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-raised);
+  color: var(--ink);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.review-batch-btn:hover {
+  background: var(--accent);
+  color: var(--ink-inverse);
+}
+
+.review-batch-danger:hover {
+  background: #a33;
+  color: #fff;
+}
+
+.review-layout {
+  display: flex;
+  gap: 1rem;
+}
+
+.review-table-wrap {
+  flex: 1;
+  overflow-x: auto;
+  max-height: 60vh;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.review-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.review-table th {
+  position: sticky;
+  top: 0;
+  background: var(--bg-raised);
+  color: var(--ink-strong);
+  padding: 0.4rem 0.5rem;
+  text-align: left;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 2px solid var(--border-muted);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.review-table th:hover {
+  background: var(--accent);
+  color: var(--ink-inverse);
+}
+
+.review-table td {
+  padding: 0.3rem 0.5rem;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--ink);
+}
+
+.review-cell-name {
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.review-cell-source {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+}
+
+.review-row-selected {
+  background: var(--accent-gold-dark) !important;
+  color: var(--ink-inverse) !important;
+}
+
+.review-row-selected td {
+  color: var(--ink-inverse);
+}
+
+.review-row-draft {
+  background: rgba(139, 94, 60, 0.08);
+}
+
+.review-row-excluded {
+  opacity: 0.5;
+}
+
+.review-weight-display {
+  cursor: pointer;
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  font-family: var(--font-mono, monospace);
+}
+
+.review-weight-display:hover {
+  background: var(--accent-gold);
+  color: var(--ink-strong);
+}
+
+.review-weight-input {
+  width: 40px;
+  padding: 0.1rem;
+  border: 1px solid var(--accent);
+  border-radius: 3px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.82rem;
+  text-align: center;
+}
+
+.review-status {
+  font-weight: 700;
+}
+
+.review-status-approved {
+  color: #3a8;
+}
+
+.review-status-ready-for-review {
+  color: var(--accent-gold);
+}
+
+.review-status-excluded {
+  color: #a33;
+}
+
+.review-approve-btn {
+  padding: 0.15rem 0.5rem;
+  border: 1px solid var(--accent);
+  border-radius: 3px;
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 0.75rem;
+}
+
+.review-approve-btn:hover {
+  background: var(--accent);
+  color: var(--ink-inverse);
+}
+
+/* Weight-in-context panel */
+.review-context {
+  flex: 0 0 260px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.75rem;
+  max-height: 60vh;
+  overflow-y: auto;
+  background: var(--bg-card-soft);
+}
+
+.review-context-title {
+  font-size: 0.9rem;
+  margin: 0 0 0.5rem;
+  color: var(--ink-strong);
+}
+
+.review-context-die {
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+  margin: 0 0 0.5rem;
+}
+
+.review-context-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.review-context-list li {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.2rem 0.3rem;
+  font-size: 0.8rem;
+  border-radius: 3px;
+}
+
+.review-context-selected {
+  background: var(--accent-gold-dark);
+  color: var(--ink-inverse);
+  font-weight: 600;
+}
+
+.review-context-draft {
+  border-left: 3px solid var(--accent-gold);
+}
+
+.review-context-weight {
+  font-family: var(--font-mono, monospace);
+  min-width: 1.5em;
+  text-align: right;
+  font-weight: 600;
+}
+
+.review-context-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.review-hints {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+  color: var(--ink-faint);
+}
+
+.review-hints span::before {
+  content: "⌨ ";
+}
+

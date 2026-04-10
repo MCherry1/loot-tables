@@ -10,8 +10,9 @@ import VaultHoard from './components/VaultHoard';
 import CampaignSettingsPanel from './components/CampaignSettings';
 import LootTables from './components/LootTables';
 import About from './components/About';
+import ReviewUI from './components/ReviewUI';
 
-type Tab = 'tables' | 'encounter' | 'settings' | 'about';
+type Tab = 'tables' | 'encounter' | 'settings' | 'review' | 'about';
 
 export type ResolvedItem = { name: string; source: string };
 export type PendingResolve = { itemId: string; table: string };
@@ -53,6 +54,13 @@ const App: React.FC = () => {
     loadSettings(),
   );
   const [activeTab, setActiveTab] = useState<Tab>('tables');
+  const [adminMode, setAdminMode] = useState(() => {
+    try {
+      return localStorage.getItem('loot-tables:admin') === 'true';
+    } catch {
+      return false;
+    }
+  });
 
   // Encounter state lifted from EncounterBuilder so that resolve-mode handoffs
   // survive tab switches.
@@ -153,6 +161,14 @@ const App: React.FC = () => {
         >
           Settings
         </button>
+        {adminMode && (
+          <button
+            className={`tab-btn ${activeTab === 'review' ? 'active' : ''}`}
+            onClick={() => setActiveTab('review')}
+          >
+            Review
+          </button>
+        )}
         <button
           className={`tab-btn ${activeTab === 'about' ? 'active' : ''}`}
           onClick={() => setActiveTab('about')}
@@ -186,8 +202,15 @@ const App: React.FC = () => {
       )}
 
       {activeTab === 'settings' && (
-        <CampaignSettingsPanel settings={settings} onChange={setSettings} />
+        <CampaignSettingsPanel
+          settings={settings}
+          onChange={setSettings}
+          adminMode={adminMode}
+          onAdminModeChange={setAdminMode}
+        />
       )}
+
+      {activeTab === 'review' && adminMode && <ReviewUI />}
 
       {activeTab === 'about' && <About />}
     </div>

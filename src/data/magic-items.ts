@@ -5,57 +5,32 @@ export const MAGIC_ITEMS = {
     {
       "name": "[Potions-A]",
       "source": "",
-      "weight": 6
+      "weight": 40
     },
     {
-      "name": "[Spells-A]",
+      "name": "[Gear-A]",
       "source": "",
-      "weight": 3
+      "weight": 20
     },
     {
-      "name": "[Armor-A]",
+      "name": "[Spell-Scrolls-A]",
       "source": "",
-      "weight": 2
+      "weight": 10
     },
     {
-      "name": "[Arms-A]",
+      "name": "[Arms-Armor-A]",
       "source": "",
-      "weight": 2
-    },
-    {
-      "name": "[Ammunition-A]",
-      "source": "",
-      "weight": 1
-    },
-    {
-      "name": "[Apparel-A]",
-      "source": "",
-      "weight": 1
-    },
-    {
-      "name": "[Consumables-A]",
-      "source": "",
-      "weight": 1
-    },
-    {
-      "name": "[Items-A]",
-      "source": "",
-      "weight": 1
-    },
-    {
-      "name": "[Jewelry-A]",
-      "source": "",
-      "weight": 1
-    },
-    {
-      "name": "[Misc-A]",
-      "source": "",
-      "weight": 1
+      "weight": 10
     },
     {
       "name": "[Spellcaster-A]",
       "source": "",
-      "weight": 1
+      "weight": 10
+    },
+    {
+      "name": "[Trinkets-A]",
+      "source": "",
+      "weight": 10
     }
   ],
   "Magic-Item-Table-B": [
@@ -363,33 +338,66 @@ export const MAGIC_ITEMS = {
       "weight": 1
     }
   ],
-  "Original-DMG-A": [
+  "Arms-Armor-A": [
     {
-      "name": "[Potions-A]",
+      "name": "[Weapons]",
       "source": "",
-      "weight": 65
+      "weight": 9
     },
     {
-      "name": "[Spells-A]",
-      "source": "",
-      "weight": 34
+      "name": "Moon-Touched [Swords]",
+      "source": "XGE",
+      "weight": 3
     },
     {
-      "name": "Bag of Holding",
-      "source": "",
-      "weight": 1
-    }
-  ],
-  "Ammunition-A": [
+      "name": "Cast-Off Armor ([Cast-Off-Armor])",
+      "source": "XGE",
+      "weight": 3
+    },
+    {
+      "name": "[Metal-Armor] of Gleaming",
+      "source": "XGE",
+      "weight": 2
+    },
+    {
+      "name": "Smoldering [Smoldering-Armor] Armor",
+      "source": "XGE",
+      "weight": 2
+    },
     {
       "name": "[Ammunition]",
       "source": "",
-      "weight": 5
+      "weight": 2
     },
     {
       "name": "Walloping [Ammunition]",
       "source": "XGE",
-      "weight": 4
+      "weight": 2
+    },
+    {
+      "name": "Armblade ([Armblades])",
+      "source": "ERLW",
+      "weight": 2
+    },
+    {
+      "name": "Veteran's Cane",
+      "source": "XGE",
+      "weight": 1
+    },
+    {
+      "name": "[Armor]",
+      "source": "",
+      "weight": 1
+    },
+    {
+      "name": "Shield",
+      "source": "",
+      "weight": 1
+    },
+    {
+      "name": "Shield of Expression",
+      "source": "XGE",
+      "weight": 1
     },
     {
       "name": "[[1d4]] Unbreakable [Ammunition]",
@@ -397,176 +405,218 @@ export const MAGIC_ITEMS = {
       "weight": 1
     }
   ],
-  "Consumables-A": [
+  "Gear-A": [
     {
-      "name": "[Food-A]",
-      "source": "",
-      "weight": 10
-    }
-  ],
-  "Food-A": [
-    {
-      "name": "[[1d4]] Fresh [Ingredients-A]",
-      "source": "",
-      "weight": 3
-    },
-    {
-      "name": "[[4d4]] Beads of Refreshment",
-      "source": "XGE",
-      "weight": 3
-    },
-    {
-      "name": "[[1d4]] Beads of Nourishment",
-      "source": "XGE",
+      "name": "Bag of Holding",
+      "source": "DMG",
       "weight": 2
     },
     {
-      "name": "Bottle of Boundless [Beverages-A]",
-      "source": "SCC",
+      "name": "Driftglobe",
+      "source": "DMG",
       "weight": 1
     },
     {
-      "name": "Tankard of Plenty of [Alcohols-A]",
-      "source": "ToD",
-      "weight": 1
-    }
-  ],
-  "Ingredients-A": [
-    {
-      "name": "Game",
-      "source": "",
-      "weight": 4
-    },
-    {
-      "name": "Vegetables",
-      "source": "",
-      "weight": 2
-    }
-  ],
-  "Beverages-A": [
-    {
-      "name": "Coffee",
-      "source": "",
-      "weight": 3
-    },
-    {
-      "name": "Black Tea",
-      "source": "",
-      "weight": 1
-    },
-    {
-      "name": "Green Tea",
-      "source": "",
-      "weight": 1
-    },
-    {
-      "name": "Herbal Tea",
-      "source": "",
-      "weight": 1
-    },
-    {
-      "name": "Sparkling Water",
-      "source": "",
-      "weight": 3
-    },
-    {
-      "name": "Still Water",
-      "source": "",
-      "weight": 3
-    }
-  ],
-  "Alcohols-A": [
-    {
-      "name": "Ale",
-      "source": "",
-      "weight": 2
-    },
-    {
-      "name": "Lager",
-      "source": "",
-      "weight": 2
-    },
-    {
-      "name": "White Wine",
-      "source": "",
-      "weight": 2
-    },
-    {
-      "name": "Red Wine",
-      "source": "",
-      "weight": 2
-    },
-    {
-      "name": "Cocktail",
-      "source": "",
-      "weight": 2
-    }
-  ],
-  "Items-A": [
-    {
-      "name": "Clothes of Mending",
-      "source": "XGE",
-      "weight": 10
-    },
-    {
-      "name": "Common Glamerweave",
+      "name": "Everbright Lantern",
       "source": "ERLW",
-      "weight": 10
+      "weight": 1
     },
     {
-      "name": "[Prosthesis]",
-      "source": "",
-      "weight": 5
+      "name": "Lantern of Tracking [Creature-Type-A]",
+      "source": "IWD",
+      "weight": 1
     },
     {
-      "name": "Charlatan's Gloves",
-      "source": "ExE",
-      "weight": 5
+      "name": "Breathing Bubble",
+      "source": "EGW",
+      "weight": 1
     },
     {
-      "name": "Drybrooch",
-      "source": "ExE",
-      "weight": 5
-    },
-    {
-      "name": "Duster",
-      "source": "ExE",
-      "weight": 5
-    },
-    {
-      "name": "Lamplighter",
-      "source": "ExE",
-      "weight": 5
-    },
-    {
-      "name": "Spark",
-      "source": "ExE",
-      "weight": 5
-    },
-    {
-      "name": "Talking Wand",
-      "source": "ExE",
-      "weight": 5
-    },
-    {
-      "name": "Thurimbar Rod",
-      "source": "ExE",
-      "weight": 5
-    },
-    {
-      "name": "Cleansing Stone",
+      "name": "Feather Token",
       "source": "ERLW",
-      "weight": 4
+      "weight": 1
+    },
+    {
+      "name": "Thermal Cube",
+      "source": "IWD",
+      "weight": 1
+    },
+    {
+      "name": "Rope of Mending",
+      "source": "XGE",
+      "weight": 1
+    },
+    {
+      "name": "Horn of Silent Alarm",
+      "source": "XGE",
+      "weight": 1
+    },
+    {
+      "name": "Clockwork Amulet",
+      "source": "XGE",
+      "weight": 1
+    },
+    {
+      "name": "Lock of Trickery",
+      "source": "XGE",
+      "weight": 1
+    },
+    {
+      "name": "Chest of Preserving",
+      "source": "WDMM",
+      "weight": 1
+    },
+    {
+      "name": "Orb of Direction",
+      "source": "XGE",
+      "weight": 1
+    },
+    {
+      "name": "Orb of Time",
+      "source": "XGE",
+      "weight": 1
+    },
+    {
+      "name": "Ear Horn of Hearing",
+      "source": "XGE",
+      "weight": 1
+    },
+    {
+      "name": "Coin of Delving",
+      "source": "EGW",
+      "weight": 1
+    },
+    {
+      "name": "Vox Seeker",
+      "source": "EGW",
+      "weight": 1
     },
     {
       "name": "Shiftweave",
       "source": "ERLW",
-      "weight": 4
+      "weight": 1
     },
     {
       "name": "Spellshard",
       "source": "ERLW",
-      "weight": 4
+      "weight": 1
+    },
+    {
+      "name": "Cleansing Stone",
+      "source": "ERLW",
+      "weight": 1
+    },
+    {
+      "name": "[Prosthesis]",
+      "source": "",
+      "weight": 1
+    },
+    {
+      "name": "Mystery Key",
+      "source": "XGE",
+      "weight": 1
+    },
+    {
+      "name": "Integrated [Tools]",
+      "source": "ExE",
+      "weight": 1
+    }
+  ],
+  "Trinkets-A": [
+    {
+      "name": "Clothes of Mending",
+      "source": "XGE",
+      "weight": 1
+    },
+    {
+      "name": "Common Glamerweave",
+      "source": "ERLW",
+      "weight": 1
+    },
+    {
+      "name": "Uncommon Glamerweave",
+      "source": "ERLW",
+      "weight": 1
+    },
+    {
+      "name": "Masquerade Tattoo",
+      "source": "TCE",
+      "weight": 1
+    },
+    {
+      "name": "Gem of Light",
+      "source": "",
+      "weight": 1
+    },
+    {
+      "name": "Masque Charm",
+      "source": "SCC",
+      "weight": 1
+    },
+    {
+      "name": "[[4d4]] Beads of Refreshment",
+      "source": "XGE",
+      "weight": 1
+    },
+    {
+      "name": "[[1d4]] Beads of Nourishment",
+      "source": "XGE",
+      "weight": 1
+    },
+    {
+      "name": "Bottle of Boundless Coffee",
+      "source": "SCC",
+      "weight": 1
+    },
+    {
+      "name": "Tankard of Plenty",
+      "source": "ToD",
+      "weight": 1
+    },
+    {
+      "name": "Heward's Handy Spice Pouch",
+      "source": "XGE",
+      "weight": 1
+    },
+    {
+      "name": "Tankard of Sobriety",
+      "source": "XGE",
+      "weight": 1
+    },
+    {
+      "name": "Charlatan's Gloves",
+      "source": "ExE",
+      "weight": 1
+    },
+    {
+      "name": "Drybrooch",
+      "source": "ExE",
+      "weight": 1
+    },
+    {
+      "name": "Duster",
+      "source": "ExE",
+      "weight": 1
+    },
+    {
+      "name": "Lamplighter",
+      "source": "ExE",
+      "weight": 1
+    },
+    {
+      "name": "Spark",
+      "source": "ExE",
+      "weight": 1
+    },
+    {
+      "name": "Talking Wand",
+      "source": "ExE",
+      "weight": 1
+    },
+    {
+      "name": "Thurimbar Rod",
+      "source": "ExE",
+      "weight": 1
     },
     {
       "name": "Boots of False Tracks",
@@ -594,11 +644,6 @@ export const MAGIC_ITEMS = {
       "weight": 1
     },
     {
-      "name": "Clockwork Amulet",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
       "name": "Doublet of Dramatic Demise",
       "source": "TDCS",
       "weight": 1
@@ -609,33 +654,13 @@ export const MAGIC_ITEMS = {
       "weight": 1
     },
     {
-      "name": "Ear Horn of Hearing",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
       "name": "Hat of Vermin",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "Horn of Silent Alarm",
       "source": "XGE",
       "weight": 1
     },
     {
       "name": "Illuminator's Tattoo",
       "source": "TCE",
-      "weight": 1
-    },
-    {
-      "name": "Lock of Trickery",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "Mystery Key",
-      "source": "XGE",
       "weight": 1
     },
     {
@@ -736,7 +761,7 @@ export const MAGIC_ITEMS = {
       "weight": 1
     }
   ],
-  "Spells-A": [
+  "Spell-Scrolls-A": [
     {
       "name": "Spell Scroll ([Spells-Cantrip])",
       "source": "DMG",
@@ -765,55 +790,6 @@ export const MAGIC_ITEMS = {
     {
       "name": "Spellwrought Tattoo ([Spells-Level-2])",
       "source": "TCE",
-      "weight": 1
-    }
-  ],
-  "Apparel-A": [
-    {
-      "name": "[Items-A]",
-      "source": "",
-      "weight": 4
-    },
-    {
-      "name": "Uncommon Glamerweave",
-      "source": "ERLW",
-      "weight": 4
-    },
-    {
-      "name": "Masquerade Tattoo",
-      "source": "TCE",
-      "weight": 2
-    }
-  ],
-  "Armor-A": [
-    {
-      "name": "[Armor]",
-      "source": "",
-      "weight": 3
-    },
-    {
-      "name": "Cast-Off Armor ([Cast-Off-Armor])",
-      "source": "XGE",
-      "weight": 3
-    },
-    {
-      "name": "[Metal-Armor] of Gleaming",
-      "source": "XGE",
-      "weight": 2
-    },
-    {
-      "name": "Smoldering [Smoldering-Armor] Armor",
-      "source": "XGE",
-      "weight": 2
-    },
-    {
-      "name": "Shield",
-      "source": "",
-      "weight": 1
-    },
-    {
-      "name": "Shield of Expression",
-      "source": "XGE",
       "weight": 1
     }
   ],
@@ -849,117 +825,6 @@ export const MAGIC_ITEMS = {
       "name": "[Heavy-Armor]",
       "source": "",
       "weight": 2
-    }
-  ],
-  "Arms-A": [
-    {
-      "name": "[Weapons]",
-      "source": "",
-      "weight": 9
-    },
-    {
-      "name": "Moon-Touched [Swords]",
-      "source": "XGE",
-      "weight": 2
-    },
-    {
-      "name": "Veteran's Cane",
-      "source": "XGE",
-      "weight": 1
-    }
-  ],
-  "Jewelry-A": [
-    {
-      "name": "Gem of Light",
-      "source": "",
-      "weight": 2
-    },
-    {
-      "name": "Orb of Direction",
-      "source": "XGE",
-      "weight": 2
-    },
-    {
-      "name": "Orb of Time",
-      "source": "XGE",
-      "weight": 2
-    },
-    {
-      "name": "[Items-A]",
-      "source": "",
-      "weight": 1
-    },
-    {
-      "name": "Masque Charm",
-      "source": "SCC",
-      "weight": 1
-    }
-  ],
-  "Misc-A": [
-    {
-      "name": "Everbright Lantern",
-      "source": "ERLW",
-      "weight": 3
-    },
-    {
-      "name": "Feather Token",
-      "source": "ERLW",
-      "weight": 3
-    },
-    {
-      "name": "Lantern of Tracking [Creature-Type-A]",
-      "source": "IWD",
-      "weight": 3
-    },
-    {
-      "name": "[Items-A]",
-      "source": "",
-      "weight": 2
-    },
-    {
-      "name": "Breathing Bubble",
-      "source": "EGW",
-      "weight": 1
-    },
-    {
-      "name": "Chest of Preserving",
-      "source": "WDMM",
-      "weight": 1
-    },
-    {
-      "name": "Coin of Delving",
-      "source": "EGW",
-      "weight": 1
-    },
-    {
-      "name": "Driftglobe",
-      "source": "DMG",
-      "weight": 1
-    },
-    {
-      "name": "Heward's Handy Spice Pouch",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "Rope of Mending",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "Tankard of Sobriety",
-      "source": "XGE",
-      "weight": 1
-    },
-    {
-      "name": "Thermal Cube",
-      "source": "IWD",
-      "weight": 1
-    },
-    {
-      "name": "Vox Seeker",
-      "source": "EGW",
-      "weight": 1
     }
   ],
   "Creature-Type-A": [
@@ -1063,6 +928,11 @@ export const MAGIC_ITEMS = {
     {
       "name": "Instrument of Scribing",
       "source": "XGE",
+      "weight": 1
+    },
+    {
+      "name": "Wand Sheath ([Wands-A])",
+      "source": "ERLW",
       "weight": 1
     }
   ],
@@ -1223,23 +1093,6 @@ export const MAGIC_ITEMS = {
     {
       "name": "Prosthetic Right Leg",
       "source": "TCE",
-      "weight": 1
-    }
-  ],
-  "Warforged-A": [
-    {
-      "name": "Armblade ([Armblades])",
-      "source": "ERLW",
-      "weight": 7
-    },
-    {
-      "name": "Wand Sheath ([Wands-A])",
-      "source": "ERLW",
-      "weight": 2
-    },
-    {
-      "name": "Integrated [Tools]",
-      "source": "ExE",
       "weight": 1
     }
   ],

@@ -4,7 +4,7 @@
 
 import type { Tier, Role, CampaignSettings } from './types';
 import type { VaultSize } from './constants';
-import { XP_BY_CR, GP_PER_XP, VAULT_BUDGET_PER_TIER, VAULT_SIZE_MULTIPLIER } from './constants';
+import { XP_BY_CR, GP_PER_XP, VAULT_BUDGET_PER_TIER, VAULT_SIZE_MULTIPLIER, computeRoleMultipliers } from './constants';
 
 /**
  * Map from numeric CR values to the string keys used in XP_BY_CR.
@@ -20,8 +20,11 @@ function crToKey(cr: number): string {
 /**
  * Calculate the full budget and role budget for a creature.
  *
- * full_budget = XP_BY_CR[cr] × GP_PER_XP[tier] × (4 / partySize)
- * role_budget = full_budget × roleRatio[role]
+ * full_budget = XP_BY_CR[cr] × GP_PER_XP[tier] × aplAdjustment × (4 / partySize)
+ * role_budget = full_budget × roleMultiplier[role]
+ *
+ * Role multipliers are derived from the concentration setting when available,
+ * falling back to the legacy flat roleRatios for backwards compatibility.
  *
  * @param cr - Challenge Rating as a number (0, 0.125, 0.25, 0.5, 1..30).
  * @param tier - Tier of play (1-4).
@@ -43,10 +46,16 @@ export function calculateBudget(
   }
 
   const gpPerXp = GP_PER_XP[tier];
+  const aplAdj = settings.aplAdjustment ?? 1.0;
   const partySizeScalar = 4 / settings.partySize;
-  const fullBudget = xp * gpPerXp * partySizeScalar;
+  const fullBudget = xp * gpPerXp * aplAdj * partySizeScalar;
 
-  const roleRatio = settings.roleRatios[role];
+  // Use concentration-derived multipliers when concentration is set,
+  // otherwise fall back to the legacy flat roleRatios.
+  const concentration = settings.concentration;
+  const roleRatio = concentration != null
+    ? computeRoleMultipliers(concentration)[role]
+    : settings.roleRatios[role];
   const roleBudget = fullBudget * roleRatio;
 
   return { fullBudget, roleBudget };
