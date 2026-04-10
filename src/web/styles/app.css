@@ -43,23 +43,23 @@
   --bg-raised: #2a1f14;
   --ink: #e8dcc8;
   --ink-strong: #f5ede0;
-  --ink-muted: #a08a6e;
-  --ink-faint: #7a6652;
-  --ink-fainter: #5a4a3a;
+  --ink-muted: #b8a48c;
+  --ink-faint: #9a8468;
+  --ink-fainter: #8a7a66;
   --ink-inverse: #1a1410;
   --border: #3d2b1f;
   --border-soft: #2a1f14;
   --border-muted: #5a4a3a;
-  /* Accents unchanged */
-  --accent: #8b5e3c;
-  --accent-dark: #5a3a25;
+  /* Accents — boosted for dark-bg contrast */
+  --accent: #b87a50;
+  --accent-dark: #8b5e3c;
   --accent-darker: #6b4530;
-  --accent-gold: #c9943a;
+  --accent-gold: #d4a44a;
   --accent-gold-dark: #a07830;
   --accent-gold-darker: #8a6828;
   --header-start: #2a1f14;
   --header-end: #1a120a;
-  --danger: #c9553a;
+  --danger: #d46a52;
   --shadow: rgba(0, 0, 0, 0.4);
   --shadow-strong: rgba(0, 0, 0, 0.6);
 }
@@ -69,6 +69,10 @@
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+html {
+  background: var(--bg-end);
 }
 
 html,
@@ -94,9 +98,7 @@ button {
 
 /* --- App Container --- */
 .app-container {
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 1.5rem 1rem 4rem;
+  padding: 1.5rem 2rem 4rem;
 }
 
 .app-title {
@@ -119,6 +121,12 @@ button {
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.6) inset,
     0 2px 10px rgba(58, 43, 31, 0.08);
+}
+
+[data-theme='dark'] .card {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.03) inset,
+    0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .card-title {
@@ -901,6 +909,12 @@ button {
   animation: card-fade-in 250ms ease-out;
 }
 
+[data-theme='dark'] .table-card {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.03) inset,
+    0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
 @keyframes card-fade-in {
   from { opacity: 0; transform: translateY(4px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -1351,7 +1365,7 @@ button {
 
 @media (max-width: 560px) {
   .app-container {
-    padding: 1rem 0.6rem 3rem;
+    padding: 1rem 0.75rem 3rem;
   }
 
   .creature-group-row {
@@ -1693,7 +1707,7 @@ button {
    ========================================================================= */
 
 .about-page {
-  max-width: 650px;
+  max-width: 48rem;
   margin: 1rem auto 3rem;
   padding: 0 1rem;
   line-height: 1.7;
