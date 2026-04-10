@@ -8,6 +8,8 @@ import type {
 } from '@engine/index';
 import { generateEncounterV2, crToDefaultTier } from '@engine/index';
 import EncounterResults from './EncounterResults';
+import { walkTableChain } from '../lib/stepperResolve';
+import type { ResolvedItem } from '../App';
 
 const CREATURE_ROLES: CreatureRole[] = ['minion', 'elite', 'boss'];
 
@@ -72,16 +74,28 @@ function nextGroupId(): string {
 
 interface Props {
   settings: CampaignSettings;
+  results: ResolvableEncounterResult | null;
+  onResultsChange: (results: ResolvableEncounterResult | null) => void;
+  resolvedItems: Record<string, ResolvedItem>;
+  setResolvedItems: React.Dispatch<
+    React.SetStateAction<Record<string, ResolvedItem>>
+  >;
+  onStartResolve: (itemId: string, table: string) => void;
 }
 
-const EncounterBuilder: React.FC<Props> = ({ settings }) => {
+const EncounterBuilder: React.FC<Props> = ({
+  settings,
+  results,
+  onResultsChange,
+  resolvedItems,
+  setResolvedItems,
+  onStartResolve,
+}) => {
   const [groups, setGroups] = useState<CreatureGroup[]>([
     { id: nextGroupId(), cr: 1, role: 'minion', count: 1 },
   ]);
   const [tier, setTier] = useState<Tier>(1);
   const [autoTier, setAutoTier] = useState(true);
-  const [stepByStep, setStepByStep] = useState(false);
-  const [results, setResults] = useState<ResolvableEncounterResult | null>(null);
 
   // Derive tier from highest CR across all creature groups
   const allCrs = groups.map((g) => g.cr);
@@ -109,6 +123,8 @@ const EncounterBuilder: React.FC<Props> = ({ settings }) => {
     const totalCreatures = groups.reduce((sum, g) => sum + g.count, 0);
     if (totalCreatures === 0) return;
 
+    // Always produce unresolved magic items; they become clickable links that
+    // open the stepper. Pass `false` to skip auto-resolution.
     const result = generateEncounterV2(
       {
         groups,
@@ -118,10 +134,32 @@ const EncounterBuilder: React.FC<Props> = ({ settings }) => {
         autoTier,
         settings,
       },
-      !stepByStep,
+      false,
     );
-    setResults(result);
+    onResultsChange(result);
   };
+
+  /** Auto-roll every still-unresolved magic item using weightedPick loops. */
+  const handleResolveAll = () => {
+    if (!results) return;
+    const next: Record<string, ResolvedItem> = { ...resolvedItems };
+    results.creatures.forEach((c, ci) => {
+      c.loot.magicItems.forEach((mi, ii) => {
+        const id = `mi-${ci}-${ii}`;
+        if (next[id]) return;
+        const rootTable = `Magic-Item-Table-${mi.table}`;
+        const walked = walkTableChain(rootTable);
+        next[id] = { name: walked.name, source: walked.source || mi.source };
+      });
+    });
+    setResolvedItems(next);
+  };
+
+  const hasUnresolved = results
+    ? results.creatures.some((c, ci) =>
+        c.loot.magicItems.some((_, ii) => !resolvedItems[`mi-${ci}-${ii}`]),
+      )
+    : false;
 
   return (
     <div className="card">
@@ -223,25 +261,31 @@ const EncounterBuilder: React.FC<Props> = ({ settings }) => {
         </div>
       </div>
 
-      {/* Resolution Mode */}
-      <div className="field-row">
-        <label className="checkbox-label">
-          <input
-            type="checkbox"
-            checked={stepByStep}
-            onChange={(e) => setStepByStep(e.target.checked)}
-          />
-          Resolve step-by-step
-        </label>
-      </div>
-
       {/* Roll Button */}
       <button className="roll-btn" onClick={handleRoll}>
         Roll Encounter
       </button>
 
       {/* Results */}
-      {results && <EncounterResults results={results} settings={settings} />}
+      {results && (
+        <>
+          <EncounterResults
+            results={results}
+            settings={settings}
+            resolvedItems={resolvedItems}
+            onStartResolve={onStartResolve}
+          />
+          {hasUnresolved && (
+            <button
+              className="resolve-all-btn"
+              onClick={handleResolveAll}
+              title="Auto-roll every remaining magic item"
+            >
+              Resolve All
+            </button>
+          )}
+        </>
+      )}
     </div>
   );
 };
