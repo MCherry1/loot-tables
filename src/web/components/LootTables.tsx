@@ -368,42 +368,6 @@ function TableCard({
 
       <StackedBar entries={entries} highlightIdx={visualHighlight} />
 
-      <div
-        className={`entries-container${state.rolling ? ' rolling' : ''}`}
-      >
-        {entries.map((entry, i) => {
-          const ref = extractRef(entry.name);
-          const isHighlighted = visualHighlight === i;
-          return (
-            <div
-              key={i}
-              className={`entry-row${isHighlighted ? ' highlighted' : ''}`}
-              onClick={() => onPick(entry, i)}
-            >
-              <span className="entry-dice-range">
-                {formatRange(diceRanges[i])}
-              </span>
-              <span
-                className="entry-color-dot"
-                style={{ backgroundColor: getSegmentColor(i) }}
-              />
-              <span
-                className={`entry-name${ref ? ' has-ref' : ''}`}
-              >
-                {cleanDisplayName(entry.name)}
-                {isHighlighted ? ' ✦' : ''}
-              </span>
-              {entry.source && (
-                <span className="entry-source">{entry.source}</span>
-              )}
-              <span className="entry-percentage">
-                {((rawEntries[i]?.weight ?? entry.weight) / totalWeight * 100).toFixed(1)}%
-              </span>
-            </div>
-          );
-        })}
-      </div>
-
       <div className="action-bar">
         {hasResult && highlightedEntry ? (
           <>
@@ -438,6 +402,42 @@ function TableCard({
             )}
           </>
         )}
+      </div>
+
+      <div
+        className={`entries-container${state.rolling ? ' rolling' : ''}`}
+      >
+        {entries.map((entry, i) => {
+          const ref = extractRef(entry.name);
+          const isHighlighted = visualHighlight === i;
+          return (
+            <div
+              key={i}
+              className={`entry-row${isHighlighted ? ' highlighted' : ''}`}
+              onClick={() => onPick(entry, i)}
+            >
+              <span className="entry-dice-range">
+                {formatRange(diceRanges[i])}
+              </span>
+              <span
+                className="entry-color-dot"
+                style={{ backgroundColor: getSegmentColor(i) }}
+              />
+              <span
+                className={`entry-name${ref ? ' has-ref' : ''}`}
+              >
+                {cleanDisplayName(entry.name)}
+                {isHighlighted ? ' ✦' : ''}
+              </span>
+              {entry.source && (
+                <span className="entry-source">{entry.source}</span>
+              )}
+              <span className="entry-percentage">
+                {((rawEntries[i]?.weight ?? entry.weight) / totalWeight * 100).toFixed(1)}%
+              </span>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

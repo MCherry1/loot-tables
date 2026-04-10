@@ -421,6 +421,30 @@ button {
   box-shadow: 0 1px 3px rgba(42, 31, 20, 0.2);
 }
 
+/* --- Role multiplier preview (Encounter Builder) --- */
+.role-preview {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  margin-top: 0.25rem;
+  background: var(--bg-raised, rgba(0,0,0,0.04));
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+.role-preview-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+}
+.role-preview-label {
+  font-size: 0.7rem;
+  opacity: 0.6;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
 /* --- Encounter "Resolve All" inline button --- */
 .resolve-all-btn {
   display: inline-block;

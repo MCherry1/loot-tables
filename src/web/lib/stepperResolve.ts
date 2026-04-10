@@ -67,6 +67,9 @@ export function extractRef(name: string): string | null {
 export function cleanDisplayName(name: string): string {
   return name
     .replace(/\[([A-Za-z][A-Za-z0-9_-]*)\]/g, '$1')
+    // Strip the table-letter suffix from sub-table names (e.g. "Potions-A" → "Potions")
+    // but preserve it on root table names (e.g. "Magic-Item-Table-A" → "Magic Item Table A")
+    .replace(/^(Magic-Item-Table)-([A-I])$/, '$1 $2')
     .replace(/-([A-I])$/, '')
     .replace(/-/g, ' ');
 }

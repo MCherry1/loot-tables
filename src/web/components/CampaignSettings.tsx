@@ -3,7 +3,6 @@ import type {
   CampaignSettings,
   CreatureRole,
   Edition,
-  Role,
   SourcePriority,
   SourceSettings,
   ThemePref,
@@ -227,12 +226,6 @@ const CampaignSettingsPanel: React.FC<Props> = ({ settings, onChange, adminMode,
 
   const updateSources = (next: SourceSettings) => {
     update({ sourceSettings: next });
-  };
-
-  const updateRoleRatio = (role: Role, pct: number) => {
-    update({
-      roleRatios: { ...settings.roleRatios, [role]: pct / 100 },
-    });
   };
 
   return (

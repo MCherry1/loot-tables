@@ -191,6 +191,7 @@ const App: React.FC = () => {
         <>
           <EncounterBuilder
             settings={settings}
+            onSettingsChange={setSettings}
             results={encounterResults}
             onResultsChange={handleNewResults}
             resolvedItems={resolvedItems}
