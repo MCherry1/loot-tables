@@ -4,7 +4,18 @@ import { SUPPLEMENTAL_TABLES } from '../data/supplemental';
 import { CUSTOM_GEMS } from '../data/gems';
 import { CUSTOM_ART } from '../data/art';
 import { cryptoRandom } from './random';
-import type { MITable, TreasureItem, ItemSegment, ResolvableMagicItem } from './types';
+import {
+  PRIORITY_MULTIPLIER,
+  TIER_VALUE,
+  weightToTier,
+} from './constants';
+import type {
+  MITable,
+  TreasureItem,
+  ItemSegment,
+  ResolvableMagicItem,
+  SourceSettings,
+} from './types';
 
 type MIEntry = { name: string; source: string; weight: number };
 
@@ -22,6 +33,92 @@ export const ALL_TABLES = buildTableLookup();
 
 /** Maximum recursion depth when resolving nested table references. */
 const MAX_DEPTH = 5;
+
+// ---------------------------------------------------------------------------
+// Source-priority filtering (STEPPER-DESIGN.md §Sources)
+// ---------------------------------------------------------------------------
+
+/** Cached per-book entry counts across all tables, gems, and art. */
+let _bookCounts: Record<string, number> | null = null;
+/** Cached per-book dampening factor. */
+let _dampFactors: Record<string, number> | null = null;
+
+/** Tally entries per non-empty source across every data source. */
+function computeBookItemCounts(): Record<string, number> {
+  if (_bookCounts) return _bookCounts;
+  const counts: Record<string, number> = {};
+  const bump = (source: string) => {
+    if (!source) return;
+    counts[source] = (counts[source] ?? 0) + 1;
+  };
+  for (const table of Object.values(ALL_TABLES)) {
+    for (const entry of table) bump(entry.source);
+  }
+  // Gems and art are generic treasure (no source attribution in the data).
+  _bookCounts = counts;
+  return counts;
+}
+
+/** Compute the dampening factor per book: clamp(sqrt(20/count), 0.4, 1.5). */
+function computeDampFactors(): Record<string, number> {
+  if (_dampFactors) return _dampFactors;
+  const counts = computeBookItemCounts();
+  const out: Record<string, number> = {};
+  for (const [source, count] of Object.entries(counts)) {
+    const raw = Math.sqrt(20 / Math.max(1, count));
+    out[source] = Math.max(0.4, Math.min(1.5, raw));
+  }
+  _dampFactors = out;
+  return out;
+}
+
+/** Public: item counts per sourcebook acronym. */
+export function getBookItemCounts(): Record<string, number> {
+  return computeBookItemCounts();
+}
+
+/** Public: dampening factor per sourcebook acronym. */
+export function getBookDampFactors(): Record<string, number> {
+  return computeDampFactors();
+}
+
+/**
+ * Compute the effective weight of an entry under a given SourceSettings.
+ *
+ * Structural entries (empty source — sub-table refs like `[Armor]`) pass
+ * through with their raw weight. Item entries use:
+ *   tierValue × priorityMultiplier × dampFactor
+ */
+export function getEffectiveWeight(
+  entry: { name: string; source: string; weight: number },
+  sourceSettings: SourceSettings,
+): number {
+  if (!entry.source) return entry.weight;
+  const priority = sourceSettings[entry.source] ?? 'normal';
+  const mult = PRIORITY_MULTIPLIER[priority];
+  if (mult === 0) return 0;
+  const damp = computeDampFactors()[entry.source] ?? 1.0;
+  return TIER_VALUE[weightToTier(entry.weight)] * mult * damp;
+}
+
+/**
+ * Return a filtered copy of `entries` with effective weights applied and
+ * zero-weight items removed. Use at the read boundary before `weightedPick`.
+ *
+ * If `sourceSettings` is undefined, returns the entries untouched (preserves
+ * raw-weight behavior for existing engine callers / tests).
+ */
+export function getFilteredEntries<
+  T extends { name: string; source: string; weight: number },
+>(entries: readonly T[], sourceSettings?: SourceSettings): T[] {
+  if (!sourceSettings) return [...entries];
+  const out: T[] = [];
+  for (const e of entries) {
+    const w = getEffectiveWeight(e, sourceSettings);
+    if (w > 0) out.push({ ...e, weight: w });
+  }
+  return out;
+}
 
 /** Regex matching a subtable reference like "[Potions-A]". */
 const SUBTABLE_REF_RE = /\[([A-Za-z][A-Za-z0-9_-]*)\]/;

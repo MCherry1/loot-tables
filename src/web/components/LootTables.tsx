@@ -10,15 +10,16 @@ import { SUPPLEMENTAL_TABLES } from '../../data/supplemental';
 import { CUSTOM_GEMS } from '../../data/gems';
 import { CUSTOM_ART } from '../../data/art';
 import { weightedPick } from '@engine/index';
-import type { MITable } from '@engine/index';
+import type { CampaignSettings, MITable, SourceSettings } from '@engine/index';
 import {
   applyPickPure,
   cleanDisplayName,
   extractRef,
-  getStepperTable,
+  getFilteredStepperTable,
   type Entry,
   type StepRecord,
 } from '../lib/stepperResolve';
+import { expandSource } from '../../data/sourcebook-lookup';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -107,9 +108,9 @@ type StepperAction =
   | { type: 'SET_ROOT'; rootTable: string }
   | { type: 'HIGHLIGHT'; idx: number; rolledNumber: number }
   | { type: 'ROLL_START' }
-  | { type: 'ADVANCE' }
+  | { type: 'ADVANCE'; entries: Entry[] }
   | { type: 'COMMIT_PICK'; entry: Entry; idx: number; rolledNumber: number }
-  | { type: 'SKIP' }
+  | { type: 'SKIP'; sourceSettings: SourceSettings }
   | { type: 'START_OVER' }
   | { type: 'CLEAR_HISTORY' };
 
@@ -223,9 +224,7 @@ function stepperReducer(
 
     case 'ADVANCE': {
       if (state.highlightIdx == null) return state;
-      const entries = getStepperTable(state.currentTable);
-      if (!entries) return state;
-      const entry = entries[state.highlightIdx];
+      const entry = action.entries[state.highlightIdx];
       if (!entry) return state;
       return commitPick(
         state,
@@ -244,8 +243,10 @@ function stepperReducer(
       // Hard cap.
       for (let i = 0; i < 32; i++) {
         if (working.finished) break;
-        const entries = getStepperTable(working.currentTable);
-        if (!entries || entries.length === 0) break;
+        const entries =
+          getFilteredStepperTable(working.currentTable, action.sourceSettings) ??
+          [];
+        if (entries.length === 0) break;
         const picked = weightedPick(entries);
         const idx = entries.indexOf(picked);
         const ranges = computeDiceRanges(entries);
@@ -549,7 +550,7 @@ function FinalResultCard({
       <div className="final-result-label">{'✦ Final Result ✦'}</div>
       <div className="final-result-name">{result.name}</div>
       {result.source && (
-        <div className="final-result-source">{result.source}</div>
+        <div className="final-result-source">{expandSource(result.source)}</div>
       )}
       <div className="final-result-chain">{chain}</div>
       <div className="final-result-actions">
@@ -604,7 +605,9 @@ function ResultHistory({
             <div className="result-entry-name">
               <span className="result-entry-mark">✦</span> {r.name}
               {r.source && (
-                <span className="result-entry-source">{r.source}</span>
+                <span className="result-entry-source">
+                  {expandSource(r.source)}
+                </span>
               )}
             </div>
             <div className="result-entry-chain">
@@ -626,6 +629,7 @@ function ResultHistory({
 type Section = 'magic' | 'spells' | 'supplemental' | 'gems' | 'art';
 
 export interface LootTablesProps {
+  settings: CampaignSettings;
   pendingResolve?: { itemId: string; table: string } | null;
   onResolveComplete?: (
     itemId: string,
@@ -635,6 +639,7 @@ export interface LootTablesProps {
 }
 
 const LootTables: React.FC<LootTablesProps> = ({
+  settings,
   pendingResolve,
   onResolveComplete,
 }) => {
@@ -726,8 +731,10 @@ const LootTables: React.FC<LootTablesProps> = ({
   }, []);
 
   const currentEntries = useMemo<Entry[]>(
-    () => getStepperTable(state.currentTable) ?? [],
-    [state.currentTable],
+    () =>
+      getFilteredStepperTable(state.currentTable, settings.sourceSettings) ??
+      [],
+    [state.currentTable, settings.sourceSettings],
   );
   const diceRanges = useMemo(
     () => computeDiceRanges(currentEntries),
@@ -772,16 +779,16 @@ const LootTables: React.FC<LootTablesProps> = ({
   );
 
   const handleContinue = useCallback(() => {
-    dispatch({ type: 'ADVANCE' });
-  }, []);
+    dispatch({ type: 'ADVANCE', entries: currentEntries });
+  }, [currentEntries]);
 
   const handleReroll = useCallback(() => {
     handleRoll();
   }, [handleRoll]);
 
   const handleSkip = useCallback(() => {
-    dispatch({ type: 'SKIP' });
-  }, []);
+    dispatch({ type: 'SKIP', sourceSettings: settings.sourceSettings });
+  }, [settings.sourceSettings]);
 
   const handleStartOver = useCallback(() => {
     dispatch({ type: 'START_OVER' });

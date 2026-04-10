@@ -1,8 +1,10 @@
 import type {
   CampaignSettings,
   CategoryEntry,
+  ItemTier,
   MITable,
   Role,
+  SourcePriority,
   Tier,
 } from './types';
 
@@ -263,4 +265,73 @@ export const DEFAULT_CAMPAIGN_SETTINGS: CampaignSettings = {
   showValues: true,
   showSalePrice: false,
   showMundane: true,
+  sourceSettings: {},
+  theme: 'auto',
+};
+
+// ---------------------------------------------------------------------------
+// Sourcebook priority system (STEPPER-DESIGN.md §Sources)
+// ---------------------------------------------------------------------------
+
+/** Per-sourcebook multiplier applied to every item from that source. */
+export const PRIORITY_MULTIPLIER: Record<SourcePriority, number> = {
+  off: 0,
+  low: 0.5,
+  normal: 1.0,
+  high: 1.5,
+  emphasis: 2.0,
+} as const;
+
+/** Bucketed tier values mapped from each item's raw weight. */
+export const TIER_VALUE: Record<ItemTier, number> = {
+  low: 1.5,
+  mid: 3.5,
+  high: 5.5,
+  veryHigh: 9.0,
+} as const;
+
+/**
+ * Bucket a raw item weight into a named tier.
+ *
+ * Derived from the raw-weight distribution in the data: ~368 entries at
+ * weight 1, ~251 at 2, ~210 at 3, ~136 at 4, then a thin tail at 5+.
+ */
+export function weightToTier(raw: number): ItemTier {
+  if (raw <= 1) return 'low';
+  if (raw === 2) return 'mid';
+  if (raw <= 4) return 'high';
+  return 'veryHigh';
+}
+
+/**
+ * Source acronym groupings for the Settings UI (STEPPER-DESIGN.md §Sources).
+ * Acronyms present in the data but not listed here fall into an "Other" group.
+ */
+export const SOURCE_GROUPS = {
+  core: ['DMG', 'XGE', 'TCE', 'FTD', 'BGG', 'BMT'],
+  settings: ['ERLW', 'ExE', 'EGW', 'TDCS', 'MOT', 'GGR', 'SCC', 'AAG'],
+  adventures: [
+    'ToD',
+    'WDH',
+    'WDMM',
+    'IWD',
+    'WBtW',
+    'TYP',
+    'SKT',
+    'PotA',
+    'LMoP',
+    'PaB',
+    'GoS',
+    'ToA',
+    'CM',
+    'CotN',
+    'OotA',
+  ],
+} as const;
+
+/** Labels for source groups, keyed by group name. */
+export const SOURCE_GROUP_LABELS: Record<keyof typeof SOURCE_GROUPS, string> = {
+  core: 'Core Supplements',
+  settings: 'Settings',
+  adventures: 'Adventures',
 } as const;

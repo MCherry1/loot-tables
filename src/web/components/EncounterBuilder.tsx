@@ -95,7 +95,7 @@ const EncounterBuilder: React.FC<Props> = ({
     { id: nextGroupId(), cr: 1, role: 'minion', count: 1 },
   ]);
   const [tier, setTier] = useState<Tier>(1);
-  const [autoTier, setAutoTier] = useState(true);
+  const [autoTier, setAutoTier] = useState(false);
 
   // Derive tier from highest CR across all creature groups
   const allCrs = groups.map((g) => g.cr);
@@ -148,7 +148,7 @@ const EncounterBuilder: React.FC<Props> = ({
         const id = `mi-${ci}-${ii}`;
         if (next[id]) return;
         const rootTable = `Magic-Item-Table-${mi.table}`;
-        const walked = walkTableChain(rootTable);
+        const walked = walkTableChain(rootTable, settings.sourceSettings);
         next[id] = { name: walked.name, source: walked.source || mi.source };
       });
     });

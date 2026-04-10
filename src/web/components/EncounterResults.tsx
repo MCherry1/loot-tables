@@ -5,6 +5,7 @@ import type {
   ResolvableMagicItem,
 } from '@engine/index';
 import type { ResolvedItem } from '../App';
+import { expandSource } from '../../data/sourcebook-lookup';
 
 interface Props {
   results: ResolvableEncounterResult;
@@ -48,8 +49,8 @@ function MagicItemSlot({
         </button>
       )}{' '}
       <span className="item-meta">
-        {resolved && resolved.source && `(${resolved.source})`}
-        {!resolved && item.source && `(${item.source})`}
+        {resolved && resolved.source && `(${expandSource(resolved.source)})`}
+        {!resolved && item.source && `(${expandSource(item.source)})`}
         {settings.showValues && item.buyPrice != null && (
           <> Value: {item.buyPrice.toLocaleString()} gp</>
         )}
