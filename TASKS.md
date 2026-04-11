@@ -59,15 +59,65 @@ After seeding, sub-table totals won't match standard dice. Write a one-time bala
 
 **Key constraint:** The 2014 pipeline must not be affected. Separate curation files, separate item-stats files. The toggle in `roller.ts` and `LootTables.tsx` already switches between them — just make sure the 2024 files contain real data.
 
+**Files already updated:**
+- `scripts/generate-item-stats.ts` — already accepts output path as argv[3]
+- `scripts/merge-curation.ts` — `--output` flag added for writing to a different curation file
+- `scripts/sync.ts` — orchestrates the full pipeline (pull, merge, regenerate) per edition
+- `.gitignore` — 5etools directories already ignored
+
 **Files to modify:**
-- `scripts/generate-item-stats.ts` — add output path argument or edition flag
-- `scripts/merge-curation.ts` — add `--output` flag for writing to a different curation file
 - `data/item-stats-2024.json` — regenerate from real 2024 5etools data
 - `data/curation-2024.json` — regenerate from auto-classify against 2024 items, then balance
-- `.gitignore` — ensure 5etools-src is ignored
+
+**Quick start:** After cloning the 2024 5etools mirror, just run:
+```bash
+npm run sync:2024
+```
 
 ### ~~About Section from Editable Markdown~~ ✅
 ~~The About tab should render content from a markdown file in the repository.~~ Done — About.tsx renders from ABOUT.md. Edit ABOUT.md and rebuild.
+
+---
+
+## Sync Pipeline
+
+### How It Works
+
+The sync script (`npm run sync`) keeps item data fresh from 5etools:
+
+```
+npm run sync           # sync both editions
+npm run sync:2014      # sync only 2014
+npm run sync:2024      # sync only 2024
+```
+
+For each edition it:
+1. Pulls latest data from the 5etools git mirror
+2. Runs auto-classify on all items
+3. Merges new items into the edition's curation file (existing approved items untouched)
+4. Regenerates item-stats JSON (descriptions for result cards)
+5. Reports what changed
+
+**New items are live immediately** with default weight=3 and status "ready-for-review". They appear in tables and can be rolled on. The DM reviews them later in the admin UI to confirm weights and assignments.
+
+**Approved items are never overwritten.** Your reviewed weights are law. If 5etools changes an item's rarity or description, the stats file updates but your curation weight stays.
+
+### When to Run
+
+- **New book released:** Run sync after 5etools adds the book's items. New items auto-classify into tables.
+- **Errata/corrections:** Run sync to pick up updated descriptions and stats. Existing table assignments unchanged.
+- **Periodically:** Run sync every few weeks to catch any additions.
+
+### Future: GitHub Action (automated)
+
+A GitHub Action could run sync on a schedule (weekly) or when the 5etools mirror pushes updates. It would:
+1. Pull latest 5etools data
+2. Run `npm run sync`
+3. If new items were added, create a PR with the updated curation and item-stats files
+4. The PR shows exactly which items were added and to which tables
+5. Merge the PR to deploy
+
+This is not implemented yet but the sync script is designed to support it — it's non-destructive and reports what changed.
 
 ---
 

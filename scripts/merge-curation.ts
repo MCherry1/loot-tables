@@ -17,13 +17,16 @@ import { classify, type FiveToolsItem } from './auto-classify';
 import { toCanonical, toLegacy } from './source-mapping';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const CURATION_PATH = resolve(__dirname, '..', 'data', 'curation.json');
+const DEFAULT_CURATION_PATH = resolve(__dirname, '..', 'data', 'curation.json');
+
+/** Resolved at startup from --output flag or default. */
+let CURATION_PATH = DEFAULT_CURATION_PATH;
 
 function loadCuration(): CurationFile {
   if (!existsSync(CURATION_PATH)) {
-    console.error(`Curation file not found: ${CURATION_PATH}`);
-    console.error('Run "npm run seed-curation" first.');
-    process.exit(1);
+    // If output file doesn't exist yet, start with empty curation
+    console.log(`No existing curation at ${CURATION_PATH} — starting fresh`);
+    return {};
   }
   return JSON.parse(readFileSync(CURATION_PATH, 'utf-8')) as CurationFile;
 }
@@ -76,7 +79,7 @@ function mergeItems(curation: CurationFile, items: FiveToolsItem[]): {
     const result = classify(item, curation);
 
     if (!result.classified) {
-      console.warn(`  SKIP: ${key} — ${result.reason}`);
+      console.warn(`  SKIP: ${canonicalKey} — ${result.reason}`);
       failed++;
       continue;
     }
@@ -96,10 +99,16 @@ function mergeItems(curation: CurationFile, items: FiveToolsItem[]): {
 function main(): void {
   const args = process.argv.slice(2);
   const itemsJsonIdx = args.indexOf('--items-json');
+  const outputIdx = args.indexOf('--output');
+
+  // Set output path before loading
+  if (outputIdx !== -1 && args[outputIdx + 1]) {
+    CURATION_PATH = resolve(args[outputIdx + 1]);
+  }
 
   const curation = loadCuration();
   const existingCount = Object.keys(curation).length;
-  console.log(`Loaded ${existingCount} existing entries from curation.json`);
+  console.log(`Loaded ${existingCount} existing entries from ${CURATION_PATH}`);
 
   if (itemsJsonIdx === -1 || !args[itemsJsonIdx + 1]) {
     // Validation only mode

@@ -12,7 +12,10 @@
     "merge-curation": "tsx scripts/merge-curation.ts",
     "test": "vitest run",
     "test:watch": "vitest",
-    "build:roll20": "tsx src/roll20/build-roll20.ts"
+    "build:roll20": "tsx src/roll20/build-roll20.ts",
+    "sync": "tsx scripts/sync.ts",
+    "sync:2014": "tsx scripts/sync.ts --edition 2014",
+    "sync:2024": "tsx scripts/sync.ts --edition 2024"
   },
   "dependencies": {
     "@3d-dice/dice-box": "^1.1.4",
