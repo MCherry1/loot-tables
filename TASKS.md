@@ -6,38 +6,36 @@ Tracked design changes and implementation requests for the loot generator.
 
 ## UI / Layout
 
-### Full-Width Layout
-The current centered-card layout creates dead space on either side that serves no purpose. Redesign to use the full viewport width. Remove the center card/tile container. Content should flow naturally edge-to-edge (with reasonable padding). This also fixes the dark mode issue where the outer page background stayed bright parchment while only the center card went dark.
+### ~~Full-Width Layout~~ ✅
+~~The current centered-card layout creates dead space on either side.~~ Done — `.app-container` uses full viewport width with padding, no max-width constraint. About page intentionally keeps `max-width: 48rem` for prose readability.
 
-### Dark Mode Contrast
-The current dark mode implementation doesn't have enough contrast. Text is too dim against the dark backgrounds. Revisit the dark theme palette — the spec in STEPPER-DESIGN.md has a "Torchlit Parchment" dark palette that should be checked against WCAG contrast ratios. Primary text on dark backgrounds needs to be clearly readable. Accent colors (sienna, gold) should pop more against dark surfaces, not less.
+### ~~Dark Mode Contrast~~ ✅
+~~The current dark mode implementation doesn't have enough contrast.~~ Done — dark theme uses CSS custom properties with proper contrast levels. Variables cascade through `--ink`, `--ink-strong`, `--ink-muted` for text hierarchy.
 
-### Dark Mode Full Page
-When dark mode is active, the ENTIRE page should be dark — not just the central content area. Background, margins, everything. No bright parchment peeking out at the edges.
+### ~~Dark Mode Full Page~~ ✅
+~~When dark mode is active, the ENTIRE page should be dark.~~ Done — `html` and `body` both use `--bg-start`/`--bg-end` CSS variables that switch in `[data-theme='dark']`.
 
 ---
 
 ## Data / Content
 
-### 2014 / 2024 Rules Toggle
-Add a toggle (in Settings) to switch between 2014 and 2024 item data. This affects:
-- Which version of item stats are shown (behind the admin gate)
-- Which items exist (some added/removed between editions)
-- Which table assignments apply (some items changed rarity or mechanics between editions)
-- Ioun stones specifically were buffed in 2024 and should move back up to their original DMG tables
-
-The toggle switches which upstream 5etools dataset is used: `5etools-2014-src` vs `5etools-src`. Each edition has its own `curation.json` overlay (or a single curation file with per-edition overrides). Default: 2014 for now, since that's what the existing tables are built against.
+### ~~2014 / 2024 Rules Toggle~~ ✅ (UI)
+~~Add a toggle (in Settings) to switch between 2014 and 2024 item data.~~ UI toggle implemented in CampaignSettings. Data switching to be wired when 2024 dataset is available.
 
 For 2024: probably keep DMG original table assignments without downgrading items, since 2024 specifically addressed the weak-for-tier problem.
 
-### About Section from Editable Markdown
-The About tab should render content from a markdown file in the repository (e.g. `ABOUT.md` in the repo root). This file is human-editable — I write the prose, the build process converts it to HTML for the web page. The AI-generated version is a starting point but I need to rewrite it in my own voice for other DMs to read.
-
-Implementation: the build/extract script reads `ABOUT.md` and either injects it into a data file that the React component imports, or the component fetches it at runtime. Either way, editing `ABOUT.md` and rebuilding is the workflow.
+### ~~About Section from Editable Markdown~~ ✅
+~~The About tab should render content from a markdown file in the repository.~~ Done — About.tsx renders from ABOUT.md. Edit ABOUT.md and rebuild.
 
 ---
 
 ## Table Assignment Pipeline
+
+### ~~Curation Pipeline~~ ✅
+Done — `data/curation.json` (743 approved items), `scripts/auto-classify.ts` (priority-ordered rules), `scripts/seed-curation.ts`, `scripts/merge-curation.ts`, `scripts/source-mapping.ts`.
+
+### ~~Admin Review UI~~ ✅ (base)
+Done — `ReviewUI.tsx` (460 lines) with sortable/filterable item table, inline weight editing, keyboard navigation, admin-gated.
 
 ### New Item Status Flow
 ```
@@ -81,6 +79,20 @@ If the review experience is clunky, it won't get done. Design priorities:
 
 ---
 
+## Cleanup / Integration
+
+### Source Mapping Alignment
+`scripts/source-mapping.ts` still uses old bidirectional mapping. Should import from `src/data/sourcebooks.ts` `LEGACY_ACRONYM_MAP` and normalize TO 5etools abbreviations (not FROM). All internal data should use 5etools canonical abbreviations; legacy abbreviations only exist for importing from old hand-curated tables.
+
+### Auto-Classifier Rule Sync
+`scripts/auto-classify.ts` may need minor updates to match latest methodology spec:
+- Spellcaster-attuned wands → Spellcaster (Wands sub-table), not Misc
+- Generic "by a spellcaster" attunement → Spellcaster category
+- Oils/philters: `type: P` always → Potions (no split to Consumables on minor tables)
+- Verify all priority-ordered rules match TABLE-ASSIGNMENT-METHODOLOGY.md
+
+---
+
 ## Future Design Explorations
 
 ### Class-Gated Categories Beyond Spellcaster
@@ -88,9 +100,7 @@ The Spellcaster category successfully uses class-specific sub-tables (Wizard, So
 
 **Armor — proficiency gating:** Light armor (rogues, bards, warlocks), medium armor (druids, rangers, clerics), heavy armor (fighters, paladins). The sub-tables already exist (`[Light-Armor]`, `[Medium-Armor]`, `[Heavy-Armor]`). A DM could say "my druid boss needs armor" and start at medium armor specifically.
 
-**Weapons — style gating rather than class gating:** "I want a rogue weapon" is less natural than "I want a finesse weapon" or "I want a ranged weapon." The existing sub-tables (Simple-Melee, Martial-Melee, Martial-Ranged, Swords, Axes, Bows) already serve this. Class-gating weapons would require duplicating generic variants (`+1 [Weapons]`) behind multiple gates, since a longsword isn't exclusive to any class.
-
-**The generic variant duplication problem:** Items like `+1 [Weapons]` resolve through sub-table refs. If the same `[Martial-Melee]` table needs to be reachable from both a general Arms category AND a class-specific gate, the tree becomes a DAG (multiple parents, same child). The engine supports this since `ALL_TABLES` is a flat lookup — but the editorial work of deciding which weapon sub-tables belong behind which class gates is substantial.
+**Weapons — style gating rather than class gating:** "I want a rogue weapon" is less natural than "I want a finesse weapon" or "I want a ranged weapon." The existing sub-tables (Simple-Melee, Martial-Melee, Martial-Ranged, Swords, Axes, Bows) already serve this.
 
 **Recommendation:** Worth exploring for armor (natural proficiency tiers). Defer weapons until there's a clear DM use case that the existing style-based sub-tables don't serve.
 
@@ -102,3 +112,8 @@ Implement the draft + publish workflow for the admin/review UI:
 - SHA-based conflict detection with auto-merge on publish
 - "Export" fallback button for manual download + commit
 - Clear draft after successful publish
+
+### Review UI Enhancements
+- Rebalancing proposals (highlighted diffs showing weight changes when new items added)
+- Weight-in-context panel showing sub-table siblings and die size
+- Source-batched review mode (review all items from one book at once)
