@@ -240,10 +240,7 @@ const COIN_MIX: Record<Tier, { cp: number; sp: number; gp: number; pp: number }>
 
 **Display:** Show each denomination separately: "12 cp, 6 sp, 2 gp" not "2.72 gp"
 
-**Three coin settings checkboxes (all off by default):**
-
-**☐ Use Electrum (off by default)**
-When on, adds EP to the denomination mix (1 EP = 5 SP = 0.5 GP). Splits some of the SP/GP allocation into EP. When off (default), any EP allocation converts to SP at 1 EP = 5 SP. Note: the DMG hoard tables don't use EP at all, so "off" matches the DMG.
+**Two coin settings checkboxes (both off by default):**
 
 **☐ Convert to Gold (off by default)**
 When on, trades up lower denominations to maximize gold:
@@ -265,7 +262,7 @@ When on, divides each denomination by party size:
 - `COIN_MIX` constant in `constants.ts`
 - `gpToDiceFormula` may need a `denominationToDiceFormula` variant that works in cp/sp units
 - `EncounterResults.tsx` display: show denomination breakdown instead of flat GP
-- Three new boolean settings: `useElectrum`, `convertToGold`, `splitAmongParty`
+- Two new boolean settings: `convertToGold`, `splitAmongParty`
 
 ### Party Level & Tier Progression UI — IMPLEMENT NOW
 Replace the 5-stop APL slider with a cleaner system. The engine changes are done (`types.ts`, `constants.ts`). This task is the UI wiring.
