@@ -2015,11 +2015,9 @@ button {
 
 /* Weight-in-context panel */
 .review-context {
-  flex: 0 0 260px;
   border: 1px solid var(--border);
   border-radius: 4px;
   padding: 0.75rem;
-  max-height: 60vh;
   overflow-y: auto;
   background: var(--bg-card-soft);
 }
@@ -2083,5 +2081,352 @@ button {
 
 .review-hints span::before {
   content: "⌨ ";
+}
+
+/* Right-side panel column (context + stats) */
+.review-right-panels {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 0 0 260px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.review-right-panels .review-context {
+  flex: 0 0 auto;
+}
+
+/* Item stats panel */
+.review-stats-panel {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.75rem;
+  background: var(--bg-card-soft);
+}
+
+.review-stats-title {
+  font-size: 0.9rem;
+  margin: 0 0 0.5rem;
+  color: var(--ink-strong);
+}
+
+.review-stats-meta {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.8rem;
+  margin-bottom: 0.25rem;
+}
+
+.review-stats-type {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.review-stats-rarity {
+  color: var(--accent-gold);
+  text-transform: capitalize;
+}
+
+.review-stats-attune {
+  font-size: 0.78rem;
+  color: var(--ink-muted);
+  margin-bottom: 0.5rem;
+}
+
+.review-stats-desc {
+  font-size: 0.78rem;
+  color: var(--ink-muted);
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* View mode toggle */
+.review-view-toggle {
+  display: flex;
+  gap: 0;
+  margin-bottom: 0.5rem;
+}
+
+.review-toggle-btn {
+  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--ink-muted);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.review-toggle-btn:first-child {
+  border-radius: 4px 0 0 4px;
+}
+
+.review-toggle-btn:last-child {
+  border-radius: 0 4px 4px 0;
+  border-left: none;
+}
+
+.review-toggle-btn.active {
+  background: var(--accent);
+  color: var(--ink-inverse);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+/* Source-batch view */
+.review-source-view {
+  flex: 1;
+  max-height: 60vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.source-card {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-card);
+}
+
+.source-card-dim {
+  opacity: 0.6;
+}
+
+.source-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.85rem;
+}
+
+.source-card-header:hover {
+  background: var(--bg-raised);
+}
+
+.source-card-arrow {
+  font-size: 0.7rem;
+  color: var(--ink-muted);
+  flex: 0 0 auto;
+}
+
+.source-card-name {
+  font-weight: 600;
+  color: var(--ink-strong);
+  flex: 1;
+}
+
+.source-card-counts {
+  font-size: 0.78rem;
+  color: var(--ink-muted);
+}
+
+.source-card-review-count {
+  color: var(--accent-gold);
+  font-weight: 600;
+}
+
+.source-card-body {
+  padding: 0 0.75rem 0.75rem;
+}
+
+.source-table-group {
+  margin-bottom: 0.5rem;
+}
+
+.source-table-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ink-muted);
+  padding: 0.25rem 0;
+  border-bottom: 1px solid var(--border-soft);
+  margin-bottom: 0.25rem;
+}
+
+.source-item-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.2rem 0.4rem;
+  font-size: 0.82rem;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.source-item-row:hover {
+  background: var(--bg-raised);
+}
+
+.source-item-row.review-row-selected {
+  background: var(--accent-gold-dark) !important;
+  color: var(--ink-inverse) !important;
+}
+
+.source-item-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.source-item-category {
+  font-size: 0.75rem;
+  color: var(--ink-faint);
+  flex: 0 0 auto;
+}
+
+.source-card-actions {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border-soft);
+}
+
+/* Rebalancing: new item and steal highlights */
+.review-context-new {
+  border-left: 3px solid #3a8;
+}
+
+.review-context-steal {
+  border-left: 3px solid var(--accent-gold);
+}
+
+.review-new-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #3a8;
+  margin-left: 0.3rem;
+  vertical-align: middle;
+}
+
+.review-steal-badge {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--accent-gold);
+  margin-left: 0.3rem;
+}
+
+.review-proposal {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border-soft);
+  font-size: 0.78rem;
+}
+
+.review-proposal-warn {
+  color: var(--accent-gold);
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.review-proposal-option {
+  color: var(--ink-muted);
+  padding: 0.15rem 0;
+}
+
+.review-proposal-apply {
+  margin-top: 0.35rem;
+}
+
+.review-proposal-ok {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border-soft);
+  font-size: 0.78rem;
+  color: #3a8;
+  font-weight: 600;
+}
+
+/* GitHub publish button states */
+.review-publish-btn {
+  font-weight: 600;
+}
+
+.review-publish-btn.publish-success {
+  background: #3a8;
+  color: #fff;
+  border-color: #3a8;
+}
+
+.review-publish-btn.publish-error {
+  background: #a33;
+  color: #fff;
+  border-color: #a33;
+}
+
+.review-publish-error {
+  font-size: 0.78rem;
+  color: #a33;
+  align-self: center;
+}
+
+.review-manage-pat {
+  font-size: 0.75rem;
+  color: var(--ink-faint);
+  margin-left: auto;
+}
+
+/* PAT modal */
+.pat-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.pat-modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 4px 24px var(--shadow-strong);
+}
+
+.pat-modal-title {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  color: var(--ink-strong);
+}
+
+.pat-modal-desc {
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+  margin: 0 0 0.5rem;
+}
+
+.pat-modal-list {
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+  margin: 0 0 0.75rem;
+  padding-left: 1.2rem;
+}
+
+.pat-modal-list li {
+  margin-bottom: 0.2rem;
+}
+
+.pat-modal-input {
+  width: 100%;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-card-soft);
+  color: var(--ink);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+  box-sizing: border-box;
+}
+
+.pat-modal-actions {
+  display: flex;
+  gap: 0.5rem;
 }
 

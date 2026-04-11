@@ -87,6 +87,52 @@ function extractGpLabel(name: string, baseValue?: number): string {
 }
 
 // ---------------------------------------------------------------------------
+// Integer rounding for standard-die display
+// ---------------------------------------------------------------------------
+
+const STANDARD_DICE = [4, 6, 8, 10, 12, 20, 100];
+
+function nextDieUp(total: number): number {
+  for (const d of STANDARD_DICE) {
+    if (d >= total) return d;
+  }
+  return 100;
+}
+
+/**
+ * Snap entry weights up to the next standard die using the
+ * largest-remainder method (Hamilton's method) for fair integer rounding.
+ */
+function snapToStandardDie(
+  entries: Entry[],
+): Entry[] {
+  if (entries.length === 0) return entries;
+  const total = entries.reduce((s, e) => s + e.weight, 0);
+  const target = nextDieUp(total);
+  if (target === total) return entries;
+
+  const ratio = target / total;
+  const scaled = entries.map((e) => {
+    const ideal = e.weight * ratio;
+    const floored = Math.max(1, Math.floor(ideal));
+    return { entry: e, floored, remainder: ideal - Math.floor(ideal) };
+  });
+
+  let currentTotal = scaled.reduce((s, e) => s + e.floored, 0);
+  const deficit = target - currentTotal;
+
+  const byRemainder = scaled
+    .map((e, i) => ({ i, remainder: e.remainder }))
+    .sort((a, b) => b.remainder - a.remainder);
+
+  for (let j = 0; j < deficit; j++) {
+    scaled[byRemainder[j].i].floored += 1;
+  }
+
+  return scaled.map((e) => ({ ...e.entry, weight: e.floored }));
+}
+
+// ---------------------------------------------------------------------------
 // Stepper state + reducer
 // ---------------------------------------------------------------------------
 
@@ -738,7 +784,7 @@ const LootTables: React.FC<LootTablesProps> = ({
     };
   }, []);
 
-  // Raw entries (original weights) — used for display (ranges, die badge, %).
+  // Raw entries (original weights) — full table before source filtering.
   const rawEntries = useMemo<Entry[]>(
     () => getStepperTable(state.currentTable) ?? [],
     [state.currentTable],
@@ -751,14 +797,28 @@ const LootTables: React.FC<LootTablesProps> = ({
       [],
     [state.currentTable, settings.sourceSettings],
   );
-  // Display dice ranges are always computed from raw (designed) weights.
+  // Display entries: when source filtering removes items, snap remaining
+  // raw integer weights up to the next standard die for display.
+  const displayEntries = useMemo<Entry[]>(() => {
+    if (currentEntries.length === rawEntries.length) return rawEntries;
+    // Build survivor set from filtered entries (match by name|source key)
+    const survivorKeys = new Set(
+      currentEntries.map((e) => `${e.name}|${e.source ?? ''}`),
+    );
+    const filtered = rawEntries.filter(
+      (e) => !e.source || survivorKeys.has(`${e.name}|${e.source ?? ''}`),
+    );
+    if (filtered.length === rawEntries.length) return rawEntries;
+    return snapToStandardDie(filtered);
+  }, [rawEntries, currentEntries]);
+  // Display dice ranges and total use snapped display weights.
   const diceRanges = useMemo(
-    () => computeDiceRanges(rawEntries),
-    [rawEntries],
+    () => computeDiceRanges(displayEntries),
+    [displayEntries],
   );
   const totalWeight = useMemo(
-    () => rawEntries.reduce((s, e) => s + e.weight, 0),
-    [rawEntries],
+    () => displayEntries.reduce((s, e) => s + e.weight, 0),
+    [displayEntries],
   );
 
   const handleRoll = useCallback(() => {
@@ -966,7 +1026,7 @@ const LootTables: React.FC<LootTablesProps> = ({
           <TableCard
             tableName={state.currentTable}
             entries={currentEntries}
-            rawEntries={rawEntries}
+            rawEntries={displayEntries}
             diceRanges={diceRanges}
             totalWeight={totalWeight}
             state={state}
