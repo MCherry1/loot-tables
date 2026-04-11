@@ -189,8 +189,25 @@ Done — `roller.ts` canonicalizes legacy abbreviations at startup. "Other" sour
 ### ~~"How it Works" and "D&Design" Tabs~~ ✅
 ~~Wire two additional info tabs alongside About.~~ Done — `HowItWorks.tsx` renders `HOW-IT-WORKS.md`, `DDesign.tsx` renders `DDESIGN.md`. Shared `markdownToHtml.ts` utility supports headings, tables, code blocks, and lists.
 
-### ~~3D Dice Roller~~ ✅
-~~Dice-box integration exists but may still need browser testing.~~ Done — assets in place, initialization guarded with try/catch, graceful fallback to CSS animation when dice-box fails or total weight isn't a standard die.
+### ~~3D Dice Roller~~ ✅ (basic integration done, tuning needed below)
+
+### 3D Dice Tuning — IMPLEMENT NOW
+The dice-box integration works but needs three fixes:
+
+**1. Speed up the roll:**
+- Set `gravity: 3` in the DiceBox constructor (currently defaults to 1). Higher gravity = dice settle faster.
+- Reduce the post-roll clear timeout from 800ms to 400ms in the `onRollComplete` handler in LootTables.tsx.
+- Docs: https://fantasticdice.games/docs/usage/config
+
+**2. Fix dice size and overflow:**
+- Reduce `scale` from 6 to 4 in the DiceBox constructor.
+- Give the `#dice-overlay` container a fixed max-height (e.g., `max-height: 300px`) instead of scaling with table content. Currently the dice appear tiny on long tables and huge on short ones. The overlay should be a consistent size regardless of content below it.
+- Test on mobile — the dice currently bounce off-screen on narrow viewports.
+
+**3. Show the rolled number:**
+- `state.rolledNumber` is already captured in the stepper state but never displayed in the UI.
+- After a roll completes and the entry is highlighted, show the rolled value somewhere visible — e.g., a small badge next to the dice range like "Rolled: 14" or inside the action bar.
+- The value is already available: `state.rolledNumber` in the `HIGHLIGHT` state. Just needs JSX.
 
 ### ~~APL Hint Text~~ ✅ (superseded by Party Level redesign below)
 
