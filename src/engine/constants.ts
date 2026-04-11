@@ -341,7 +341,7 @@ export const DEFAULT_CAMPAIGN_SETTINGS: CampaignSettings = {
   aplAdjustment: 1.0,
   edition: '2014',
   dice3d: false,
-  showItemDetails: false,
+  showItemDetails: true,
 };
 
 // ---------------------------------------------------------------------------
