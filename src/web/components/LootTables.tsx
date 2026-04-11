@@ -29,6 +29,19 @@ type ItemStatsMap = Record<string, { type: string; rarity: string; attune: strin
 const itemStats2014 = itemStatsData as ItemStatsMap;
 const itemStats2024Map = itemStatsData2024 as ItemStatsMap;
 
+/** Build a normalized lookup: lowercase name with punctuation stripped → original key. */
+function buildNormalizedIndex(stats: ItemStatsMap): Map<string, string> {
+  const index = new Map<string, string>();
+  for (const key of Object.keys(stats)) {
+    const normalized = key.toLowerCase().replace(/[(),]/g, '').replace(/\s+/g, ' ').trim();
+    index.set(normalized, key);
+  }
+  return index;
+}
+
+const normalizedIndex2014 = buildNormalizedIndex(itemStats2014);
+const normalizedIndex2024 = buildNormalizedIndex(itemStats2024Map);
+
 /** Strip sub-table refs from an item name: "Flame Tongue [Swords]" → "Flame Tongue" */
 function stripRefs(name: string): string {
   return name.replace(/\s*\[[^\]]+\]/g, '').trim();
@@ -36,15 +49,21 @@ function stripRefs(name: string): string {
 
 /**
  * Look up item stats for a completed result.
- * Tries: final name|source, then each step's entry name (refs stripped)|source.
+ * Tries: direct key, normalized key, then each step's entry name.
  */
 function lookupItemStats(
   result: CompletedResult,
   stats: ItemStatsMap,
+  normalizedIndex: Map<string, string>,
 ): { type: string; rarity: string; attune: string; desc: string } | null {
-  // Try final composed name
+  // Try final composed name — direct match
   const directKey = `${result.name}|${result.source}`;
   if (stats[directKey]) return stats[directKey];
+
+  // Try normalized match on final name
+  const normalizedDirect = directKey.toLowerCase().replace(/[(),]/g, '').replace(/\s+/g, ' ').trim();
+  const mappedDirect = normalizedIndex.get(normalizedDirect);
+  if (mappedDirect && stats[mappedDirect]) return stats[mappedDirect];
 
   // Try each step's picked entry (stripped of sub-table refs)
   for (const step of result.steps) {
@@ -52,6 +71,10 @@ function lookupItemStats(
     if (stripped) {
       const key = `${stripped}|${step.pickedEntry.source}`;
       if (stats[key]) return stats[key];
+
+      const normalizedStep = key.toLowerCase().replace(/[(),]/g, '').replace(/\s+/g, ' ').trim();
+      const mappedStep = normalizedIndex.get(normalizedStep);
+      if (mappedStep && stats[mappedStep]) return stats[mappedStep];
     }
   }
 
@@ -620,6 +643,7 @@ function FinalResultCard({
   inResolveMode,
   showItemDetails,
   itemStatsMap,
+  normalizedIndex,
   onRollAgain,
   onDone,
 }: {
@@ -627,6 +651,7 @@ function FinalResultCard({
   inResolveMode: boolean;
   showItemDetails: boolean;
   itemStatsMap: ItemStatsMap;
+  normalizedIndex: Map<string, string>;
   onRollAgain: () => void;
   onDone: () => void;
 }) {
@@ -639,7 +664,7 @@ function FinalResultCard({
     })
     .join('');
 
-  const stats = showItemDetails ? lookupItemStats(result, itemStatsMap) : null;
+  const stats = showItemDetails ? lookupItemStats(result, itemStatsMap, normalizedIndex) : null;
 
   return (
     <div className="final-result-card">
@@ -878,6 +903,7 @@ const LootTables: React.FC<LootTablesProps> = ({
 
   const edition = settings.edition ?? '2014';
   const currentItemStats = edition === '2024' ? itemStats2024Map : itemStats2014;
+  const currentNormalizedIndex = edition === '2024' ? normalizedIndex2024 : normalizedIndex2014;
 
   // Raw entries (original weights) — full table before source filtering.
   const rawEntries = useMemo<Entry[]>(
@@ -1148,6 +1174,7 @@ const LootTables: React.FC<LootTablesProps> = ({
           inResolveMode={inResolveMode}
           showItemDetails={settings.showItemDetails ?? false}
           itemStatsMap={currentItemStats}
+          normalizedIndex={currentNormalizedIndex}
           onRollAgain={handleRollAgain}
           onDone={handleDone}
         />

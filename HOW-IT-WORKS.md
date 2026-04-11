@@ -1,109 +1,53 @@
-# How it Works
+# How This Works
 
-### Budget Calculation
+### Loot Tables Tab
 
-Every creature's loot starts with a gold-piece budget:
+The Loot Tables tab is an interactive magic item roller. Pick a table letter (A through I), and you'll see every item on that table with its weight and probability.
 
-```
-full_budget = XP × GP_PER_XP[tier] × APL_adjustment × (4 / party_size)
-role_budget = full_budget × ROLE_MULTIPLIER[role]
-```
+**Rolling:** Click "Roll dN" to randomly select an item. The roll highlights the winner and pauses so you can see what you got. Click "Continue" to accept, or "Re-roll" to try again.
 
-**GP/XP ratios** are derived from the DMG's expected hoard totals divided by the total XP a party earns across each tier:
+**Manual picking:** Click any row to select it directly — no randomness, you just choose. This is useful when you know what item you want to place.
 
-| Tier | Levels | GP/XP Ratio | What it means |
-|------|--------|-------------|---------------|
-| 1 | 1-4 | 0.29 | 1 XP ≈ 3 sp of treasure |
-| 2 | 5-10 | 0.58 | 1 XP ≈ 6 sp |
-| 3 | 11-16 | 2.43 | 1 XP ≈ 2.4 gp |
-| 4 | 17-20 | 8.88 | 1 XP ≈ 9 gp |
+**Sub-tables:** Some entries reference sub-tables (shown with an arrow indicator). When you pick one, the stepper walks you through each table in the chain. For example: Table G → Arms → Swords → Longsword. You can roll or pick at each step.
 
-The steep climb reflects D&D's exponential wealth curve — high-level treasure is worth dramatically more per XP because magic items at those tiers cost tens of thousands of gold.
+**Skip to End:** Auto-rolls all remaining steps and shows the final result immediately. Good for speed.
 
-### Role Multipliers
+**Result card:** When an item is fully resolved, the result card shows its name, source book, and (if Show Item Details is enabled) its full description, rarity, and attunement requirements.
 
-Not every creature carries equal treasure. A goblin grunt has pocket change; the goblin king has the war chest. Role multipliers scale the budget using ~3× geometric steps:
+**Roll history:** Previous results are saved below the roller during your session. Clear them with the × button.
 
-| Role | Multiplier | Raw Weight | Feel |
-|------|-----------|------------|------|
-| Minion | ×0.10 | 1 | Pocket change. A few coins. |
-| Elite | ×0.30 | 3 | Personal stash worth searching. |
-| Mini-boss | ×0.90 | 9 | Well-equipped, significant treasure. |
-| Boss | ×2.70 | 27 | The big score. Best gear, personal hoard. |
+### Encounter Builder Tab
 
-These are normalized against an assumed 25/25/25/25 campaign XP split. Over a balanced campaign, the average multiplier is exactly 1.0 — total wealth distributed equals total XP budget. No treasure is created or lost.
+The Encounter Builder generates loot for an entire encounter at once.
 
-Individual encounters will over- or under-distribute depending on composition. A boss-heavy encounter is richer. A minion swarm is leaner. It balances out.
+**Adding creatures:** Set the CR, tier, and role for each creature group. Add as many groups as you need — 6 goblin minions, 2 hobgoblin elites, 1 bugbear boss.
 
-**Vault** is separate — it's placed treasure (a dragon's pile, a locked chest) sized by tier, not by creature CR.
+**Roles determine treasure share:**
+- **Minion** (×0.10) — pocket change. The fodder.
+- **Elite** (×0.30) — personal stash worth looting.
+- **Mini-boss** (×0.90) — well-equipped, significant personal treasure.
+- **Boss** (×2.70) — the big score. Best gear and a real hoard.
 
-### Category Breakdown
+**Rolling:** Click "Roll Encounter" and every creature generates its loot independently. Coins are rolled (not averaged), gems and art get quality scores, and magic items are drawn from the weighted tables.
 
-Each creature's budget is split across categories using percentages derived from the DMG hoard tables. The split is tier-specific:
+**Resolving magic items:** Magic items initially show as unresolved table references (e.g., "Table G"). Click any unresolved item to jump to the Loot Tables stepper and walk through the resolution. When you're done, you're returned to the encounter with the resolved item filled in.
 
-- **Coins** — guaranteed floor, expressed as a dice formula (e.g., 2d6×10 gp). Each creature rolls independently, so three goblins get three different coin amounts.
-- **Gems** — probability = budget_share / gem_unit_value. A 50 gp gem has a 20% chance of appearing on a creature with a 10 gp gem budget. When it does appear, its actual value varies by quality (2d4 scoring: range 0.4×–1.6× base).
-- **Art Objects** — same probability system as gems, with value scoring.
-- **Magic Items** — probability = budget_share / table_average_value. Low-CR creatures have slim chances at magic items; high-CR creatures expect them. The actual item is rolled from the weighted magic item tables.
+### Settings Tab
 
-At Tier 1, most value is in coins and Table A/B items. At Tier 4, Tables H and I dominate.
+**Party Size** — Adjusts treasure for larger or smaller parties (default 4). A 6-player party gets ⅔ the treasure per creature; a 3-player party gets 4/3.
 
-### Magic Item Tables
+**Magic Richness** — Multiplier on magic item probabilities (0.5×–1.5×). At "Scarce" your party finds fewer magic items but more coins. At "Abundant" magic items rain down.
 
-The nine tables (A through I) are organized by rarity and power:
+**APL Adjustment** — Adjusts treasure for party level within the tier. "×0.70 Fresh" means your party just entered the tier and should find less. "×1.30 Veteran" means they're near the top and treasure is richer.
 
-| Table | Type | Avg Value | Contents |
-|-------|------|-----------|----------|
-| A | Minor Common | 50 gp | Potions, cantrip scrolls, trinkets |
-| B | Minor Uncommon | 125 gp | Better potions, low-level scrolls |
-| C | Minor Rare | 1,250 gp | Serious consumables, rare scrolls |
-| D | Minor V.Rare | 12,500 gp | High-level scrolls, rare potions |
-| E | Minor Legendary | 125,000 gp | Legendary consumables |
-| F | Major Uncommon | 500 gp | Permanent uncommon gear |
-| G | Major Rare | 5,000 gp | Signature weapons, rare wondrous items |
-| H | Major V.Rare | 50,000 gp | Very rare arms, armor, and artifacts |
-| I | Major Legendary | 500,000 gp | Legendary items, world-shaping gear |
+**Show Item Details** — When enabled, result cards display the item's full description, rarity, and attunement requirement.
 
-Each table contains sub-categories (Arms, Armor, Apparel, Jewelry, Spellcaster, Misc, Potions, etc.) with weighted entries. The weights determine dice ranges — a d20 sub-table with 6 items might give the Flame Tongue a range of 1-4 and the Sun Blade a range of 5-6.
+**Show Values / Show Sale Price** — Display gold piece values and half-price sale values on magic items.
 
-### Value Scoring
+**Sources** — Toggle sourcebooks on/off or set priority (Off, Low, Normal, High, Emphasis). Sources are grouped by category: Core, Campaign Settings, Adventures, Digital/Supplemental, Third Party. Use the batch buttons to set an entire group at once.
 
-Every magic item, gem, and art object gets an individualized value through the scoring system:
+**Edition** — Switch between 2014 and 2024 D&D 5e item data.
 
-- **Magic items:** Roll 2d4 (range 2-8, average 5). Buy price = score × base number. A Table G item (base 1,000 gp) could cost 2,000-8,000 gp depending on the roll.
-- **Gems and art:** Same 2d4 quality roll, applied as a multiplier (score/5 × base value). A "50 gp gem" is actually worth 20-80 gp.
+### Vault Hoard Tab
 
-This creates natural price variance without a hand-maintained price database. Two +1 longswords from the same table cost different amounts — one is battle-worn, the other is pristine.
-
-### Source Priority System
-
-Magic item entries are tagged with their sourcebook (DMG, XGE, TCE, ELW, etc.). The priority system lets you weight books higher or lower:
-
-| Priority | Multiplier | Use case |
-|----------|-----------|----------|
-| Off | ×0 | Remove all items from this book |
-| Low | ×0.5 | De-emphasize (rarely appears) |
-| Normal | ×1.0 | Default |
-| High | ×1.5 | Emphasize (appears more often) |
-| Emphasis | ×2.0 | Strong emphasis (Eberron campaign, etc.) |
-
-A dampening factor prevents large books (DMG with 300+ items) from dominating: `clamp(sqrt(20/itemCount), 0.4, 1.5)`. Small books get a slight boost; large books get dampened. Source priority still matters, but item count alone doesn't determine representation.
-
-When a source is toggled off, its items are removed from the pool and probability redistributes proportionally to everything remaining. The dice ranges renumber automatically.
-
-### DMG Variance Profile
-
-The system preserves the DMG's natural variance — most rolls are below average, with occasional jackpots from magic items:
-
-| Tier | Mean | Median | CV | 90/10 Spread |
-|------|------|--------|-----|-------------|
-| 1 | 990 gp | 569 gp | 1.21 | 12× |
-| 2 | 6,807 gp | 5,105 gp | 0.76 | 3.2× |
-| 3 | 89,442 gp | 46,750 gp | 1.08 | 5.6× |
-| 4 | 715,751 gp | 557,000 gp | 0.56 | 4.2× |
-
-The median is always lower than the mean because rare magic items pull the average up. This right-skew is intentional — it's the excitement of treasure hunting.
-
-### Edition Support
-
-The app supports both 2014 and 2024 D&D 5e via a toggle in Settings. The 2014 tables are hand-curated with sparse rarity adjustments. The 2024 tables are auto-generated from the classification heuristic (2024 fixed the weak-for-tier items, so DMG placements are trusted). Each edition has its own item descriptions.
+For placed treasure — a dragon's pile, a locked chest, a bandit camp treasury. Not tied to a specific creature's CR. Choose the tier and vault size, and the system generates an appropriate hoard.

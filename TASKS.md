@@ -116,8 +116,12 @@ Done — `roller.ts` canonicalizes legacy abbreviations at startup. "Other" sour
 
 ## UI Tasks
 
-### "How it Works" Tab
-Wire a second info tab (alongside About) that renders from `HOW-IT-WORKS.md`. Same pattern as the existing About tab (`About.tsx` renders `ABOUT.md`). Create a `HowItWorks.tsx` component or extend `About.tsx` to accept a markdown source prop.
+### "How it Works" and "D&Design" Tabs
+Wire two additional info tabs alongside About:
+- **How This Works** — renders from `HOW-IT-WORKS.md`. DM usage guide (how to use the roller, encounter builder, settings).
+- **D&Design** — renders from `DDESIGN.md`. Technical design: budget formula, role multipliers, variance profiles, classification heuristic.
+
+Same pattern as the existing About tab. Either create new components or extend `About.tsx` to accept a markdown source prop. Tab labels: "About", "How This Works", "D&Design".
 
 ### 3D Dice Roller
 Dice-box integration exists but may still need browser testing. Worker files (`world.offscreen.js`, `Dice.js`) have been copied to `public/assets/dice-box/`. The `dice3d` setting toggle is in place. If init still fails, check browser console for asset loading errors. See CURATION-OVERLAY-SPEC.md §3D Dice for full integration spec.
