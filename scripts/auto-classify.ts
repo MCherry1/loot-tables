@@ -303,7 +303,7 @@ export function classify(
       entry: {
         table: 'A',
         category,
-        weight: 3,
+        weight: null,
         status: 'ready-for-review',
       },
     };
@@ -327,7 +327,7 @@ export function classify(
       entry: {
         table: dmgTable,
         category,
-        weight: 3,
+        weight: null,
         status: 'ready-for-review',
       },
     };
@@ -347,7 +347,7 @@ export function classify(
     entry: {
       table,
       category,
-      weight: 3,
+      weight: null,
       status: 'ready-for-review',
     },
   };

@@ -148,6 +148,38 @@ function main(): void {
 
   const stats = mergeItems(curation, items);
 
+  // Fill null weights with sub-table median
+  // Groups items by table+category, computes median weight of existing approved
+  // items in each group, and assigns that as the default for new items.
+  const subtableWeights: Record<string, number[]> = {};
+  for (const entry of Object.values(curation)) {
+    if (entry.weight != null && entry.status === 'approved') {
+      const groupKey = `${entry.table}|${entry.category}`;
+      if (!subtableWeights[groupKey]) subtableWeights[groupKey] = [];
+      subtableWeights[groupKey].push(entry.weight);
+    }
+  }
+
+  let filled = 0;
+  for (const entry of Object.values(curation)) {
+    if (entry.weight == null && entry.status !== 'excluded') {
+      const groupKey = `${entry.table}|${entry.category}`;
+      const siblings = subtableWeights[groupKey];
+      if (siblings && siblings.length > 0) {
+        siblings.sort((a, b) => a - b);
+        const median = siblings[Math.floor(siblings.length / 2)];
+        entry.weight = median;
+      } else {
+        entry.weight = 2; // absolute fallback if no siblings exist
+      }
+      filled++;
+    }
+  }
+
+  if (filled > 0) {
+    console.log(`  Assigned median-based weights to ${filled} new items`);
+  }
+
   console.log(`\nMerge results:`);
   console.log(`  New items added (ready-for-review): ${stats.added}`);
   console.log(`  Skipped (already approved): ${stats.skippedApproved}`);
