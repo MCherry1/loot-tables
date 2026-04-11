@@ -128,13 +128,23 @@ const ReviewUI: React.FC = () => {
     return [...cats].sort();
   }, [mergedItems]);
 
+  const allSources = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const item of mergedItems) {
+      if (item.source) counts[item.source] = (counts[item.source] ?? 0) + 1;
+    }
+    return Object.entries(counts)
+      .map(([acronym, count]) => ({ acronym, fullName: expandSource(acronym), count }))
+      .sort((a, b) => a.fullName.localeCompare(b.fullName));
+  }, [mergedItems]);
+
   // Filter
   const filtered = useMemo(() => {
     return mergedItems.filter((item) => {
       if (filterStatus !== 'all' && item.entry.status !== filterStatus) return false;
       if (filterTable !== 'all' && item.entry.table !== filterTable) return false;
       if (filterCategory !== 'all' && item.entry.category !== filterCategory) return false;
-      if (filterSource && !item.source.toLowerCase().includes(filterSource.toLowerCase())) return false;
+      if (filterSource && item.source !== filterSource) return false;
       if (searchQuery && !item.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
       return true;
     });
@@ -554,13 +564,18 @@ const ReviewUI: React.FC = () => {
             <option key={c} value={c}>{c}</option>
           ))}
         </select>
-        <input
-          type="text"
-          className="review-search review-search-small"
-          placeholder="Source..."
+        <select
+          className="review-filter-select"
           value={filterSource}
           onChange={(e) => { setFilterSource(e.target.value); setSelectedIdx(0); }}
-        />
+        >
+          <option value="">All sources</option>
+          {allSources.map((s) => (
+            <option key={s.acronym} value={s.acronym}>
+              {s.fullName} ({s.count})
+            </option>
+          ))}
+        </select>
       </div>
 
       {/* Batch operations */}
@@ -857,19 +872,23 @@ const ReviewUI: React.FC = () => {
               const attune = stats.attune === 'true' || stats.attune === 'True'
                 ? 'Yes'
                 : stats.attune || 'No';
+              const mobileSummary = `${stats.rarity} ${typeLabel}${attune !== 'No' ? ', attunement required' : ''}`;
               return (
                 <div className="review-stats-panel">
-                  <h3 className="review-stats-title">Item Stats</h3>
-                  <div className="review-stats-meta">
-                    <span className="review-stats-type">{typeLabel}</span>
-                    <span className="review-stats-rarity">{stats.rarity}</span>
+                  <span className="review-stats-mobile-summary">{mobileSummary}</span>
+                  <div className="review-stats-full">
+                    <h3 className="review-stats-title">Item Stats</h3>
+                    <div className="review-stats-meta">
+                      <span className="review-stats-type">{typeLabel}</span>
+                      <span className="review-stats-rarity">{stats.rarity}</span>
+                    </div>
+                    <div className="review-stats-attune">
+                      Attunement: {attune}
+                    </div>
+                    {stats.desc && (
+                      <p className="review-stats-desc">{stats.desc}</p>
+                    )}
                   </div>
-                  <div className="review-stats-attune">
-                    Attunement: {attune}
-                  </div>
-                  {stats.desc && (
-                    <p className="review-stats-desc">{stats.desc}</p>
-                  )}
                 </div>
               );
             })()}

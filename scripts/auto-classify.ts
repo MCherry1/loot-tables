@@ -137,6 +137,8 @@ function isMajor(item: FiveToolsItem): boolean {
   if (lower.includes('manual of') || lower.includes('tome of')) return true;
   if (lower.includes('figurine of wondrous power')) return true;
   if (lower.includes('deck of')) return true;
+  // 5d: Named progression series (Dormant/Awakened/Exalted, Stirring/Wakened/Ascendant)
+  if (/\b(dormant|awakened|exalted|stirring|wakened|ascendant)\b/.test(lower)) return true;
 
   // 5d: Legendary non-potion/non-scroll → Major
   if (item.rarity === 'legendary') {
@@ -192,7 +194,7 @@ function classifyMajorCategory(item: FiveToolsItem): string {
 
   // Priority 4: Keyword matching (wondrous items, type "none" or empty)
   // Defensive hand items vs attack hand items
-  if (/glove|gauntlet|bracer|vambrace/.test(lower)) {
+  if (/glove|gauntlet|bracer|vambrace|wraps/.test(lower)) {
     if (item.bonusWeapon || item.dmg1) return 'Arms';
     return 'Apparel';
   }
@@ -218,12 +220,16 @@ function classifyMinorCategory(item: FiveToolsItem): string {
   const lower = item.name.toLowerCase();
   const type = item.type ?? '';
 
-  if (type === 'P' || lower.startsWith('potion') || lower.startsWith('elixir')) return 'Potions';
+  // On minor tables, all type:P AND oils/philters/bottled → Potions (no Consumables split)
+  if (type === 'P' || lower.startsWith('potion') || lower.startsWith('elixir') ||
+      lower.startsWith('oil of') || lower.startsWith('philter') || lower.startsWith('bottled')) {
+    return 'Potions';
+  }
   if (lower.startsWith('spell scroll') || lower.startsWith('spellwrought tattoo')) return 'Spells';
   if (type === 'A') return 'Ammunition';
 
-  // Consumables: multi-use items with charges, dusts, oils, etc.
-  if (lower.includes('dust of') || lower.includes('pigment') || lower.includes('oil of') ||
+  // Consumables: multi-use items with charges, dusts, etc. (oils excluded — they're Potions)
+  if (lower.includes('dust of') || lower.includes('pigment') ||
       lower.includes('ointment') || lower.includes('bead') || lower.includes('necklace of fireballs')) {
     return 'Consumables';
   }

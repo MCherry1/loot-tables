@@ -2141,6 +2141,22 @@ button {
   margin: 0;
 }
 
+.review-stats-mobile-summary {
+  display: none;
+  font-size: 0.78rem;
+  color: var(--ink-muted);
+  text-transform: capitalize;
+}
+
+@media (max-width: 640px) {
+  .review-stats-mobile-summary {
+    display: block;
+  }
+  .review-stats-full {
+    display: none;
+  }
+}
+
 /* View mode toggle */
 .review-view-toggle {
   display: flex;
