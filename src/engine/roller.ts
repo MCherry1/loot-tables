@@ -3,6 +3,7 @@ import { SPELL_TABLES } from '../data/spells';
 import { SUPPLEMENTAL_TABLES } from '../data/supplemental';
 import { CUSTOM_GEMS } from '../data/gems';
 import { CUSTOM_ART } from '../data/art';
+import curationData from '../../data/curation.json';
 import { cryptoRandom } from './random';
 import {
   PRIORITY_MULTIPLIER,
@@ -25,6 +26,20 @@ function buildTableLookup(): Record<string, MIEntry[]> {
   for (const table of [...SPELL_TABLES, ...SUPPLEMENTAL_TABLES]) {
     lookup[table.name] = table.entries;
   }
+
+  // Apply curation weight overrides (only approved items)
+  const curation = curationData as Record<string, { weight?: number | null; status?: string }>;
+  for (const [tableName, entries] of Object.entries(lookup)) {
+    lookup[tableName] = entries.map((entry) => {
+      const key = `${entry.name}|${entry.source}`;
+      const override = curation[key];
+      if (override?.weight != null && override.status === 'approved') {
+        return { ...entry, weight: override.weight };
+      }
+      return entry;
+    });
+  }
+
   return lookup;
 }
 
