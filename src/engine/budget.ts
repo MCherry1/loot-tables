@@ -18,7 +18,7 @@
 
 import type { Tier, Role, CreatureRole, CampaignSettings } from './types';
 import type { VaultSize } from './constants';
-import { XP_BY_CR, GP_PER_XP, VAULT_BUDGET_PER_TIER, VAULT_SIZE_MULTIPLIER } from './constants';
+import { XP_BY_CR, GP_PER_XP, VAULT_BUDGET_PER_TIER, VAULT_SIZE_MULTIPLIER, progressionMultiplier } from './constants';
 
 /**
  * Raw role weights (~3× geometric steps).
@@ -87,7 +87,11 @@ export function calculateBudget(
   }
 
   const gpPerXp = GP_PER_XP[tier];
-  const aplAdj = settings.aplAdjustment ?? 1.0;
+  // New system: compute from partyLevel + tierProgression.
+  // Backward compat: fall back to stored aplAdjustment for old settings.
+  const aplAdj = settings.partyLevel != null
+    ? progressionMultiplier(settings.partyLevel, tier, settings.tierProgression ?? true)
+    : (settings.aplAdjustment ?? 1.0);
   const partySizeScalar = 4 / settings.partySize;
   const fullBudget = xp * gpPerXp * aplAdj * partySizeScalar;
 

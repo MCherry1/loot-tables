@@ -6,15 +6,12 @@ import type {
   ResolvableEncounterResult,
   Tier,
 } from '@engine/index';
-import { generateEncounterV2, crToDefaultTier, ROLE_MULTIPLIER } from '@engine/index';
+import { generateEncounterV2, ROLE_MULTIPLIER, tierFromLevel, progressionMultiplier } from '@engine/index';
 import EncounterResults from './EncounterResults';
 import { walkTableChain } from '../lib/stepperResolve';
 import type { ResolvedItem } from '../App';
 
 const CREATURE_ROLES: CreatureRole[] = ['minion', 'elite', 'mini-boss', 'boss'];
-
-const APL_STOPS = [0.7, 0.85, 1.0, 1.15, 1.3];
-const APL_LABELS = ['×0.70 Fresh', '×0.85 Low', '×1.00 Standard', '×1.15 High', '×1.30 Veteran'];
 
 const ROLE_DISPLAY: Record<CreatureRole, string> = {
   minion: 'Minion',
@@ -106,13 +103,13 @@ const EncounterBuilder: React.FC<Props> = ({
   const [groups, setGroups] = useState<CreatureGroup[]>([
     { id: nextGroupId(), cr: 1, role: 'minion', count: 1 },
   ]);
-  const [tier, setTier] = useState<Tier>(1);
-  const [autoTier, setAutoTier] = useState(false);
+  const [manualTier, setManualTier] = useState<Tier>(1);
 
-  // Derive tier from highest CR across all creature groups
-  const allCrs = groups.map((g) => g.cr);
-  const maxCr = allCrs.length > 0 ? Math.max(...allCrs) : 0;
-  const effectiveTier: Tier = autoTier ? crToDefaultTier(maxCr) : tier;
+  const partyLevel = settings.partyLevel ?? 5;
+  const autoTier = settings.autoTier ?? true;
+  const tierProg = settings.tierProgression ?? true;
+  const effectiveTier: Tier = autoTier ? tierFromLevel(partyLevel) : manualTier;
+  const multiplier = progressionMultiplier(partyLevel, effectiveTier, tierProg);
 
   const updateGroup = (id: string, updates: Partial<CreatureGroup>) => {
     setGroups((prev) =>
@@ -242,64 +239,67 @@ const EncounterBuilder: React.FC<Props> = ({
         </div>
       </div>
 
+      {/* Party Level */}
+      <div className="field-row">
+        <label className="field-label">
+          Party Level: <span className="mono">{partyLevel}</span>
+        </label>
+        <div className="level-stepper">
+          <button
+            className="stepper-btn"
+            disabled={partyLevel <= 1}
+            onClick={() => onSettingsChange({ ...settings, partyLevel: partyLevel - 1 })}
+          >
+            &minus;
+          </button>
+          <input
+            type="number"
+            className="level-input"
+            min={1}
+            max={20}
+            value={partyLevel}
+            onChange={(e) => {
+              const v = Math.max(1, Math.min(20, Number(e.target.value) || 1));
+              onSettingsChange({ ...settings, partyLevel: v });
+            }}
+          />
+          <button
+            className="stepper-btn"
+            disabled={partyLevel >= 20}
+            onClick={() => onSettingsChange({ ...settings, partyLevel: partyLevel + 1 })}
+          >
+            +
+          </button>
+        </div>
+      </div>
+
       {/* Tier Selector */}
       <div className="field-row">
-        <label className="field-label">Tier</label>
+        <label className="field-label">
+          Tier{' '}
+          <span className="mono">×{multiplier.toFixed(2)}</span>
+        </label>
         <div className="tier-group">
           {([1, 2, 3, 4] as Tier[]).map((t) => (
-            <label
+            <button
               key={t}
-              className={`tier-radio ${effectiveTier === t ? 'active' : ''}`}
+              type="button"
+              className={`tier-btn ${effectiveTier === t ? 'active' : ''} ${autoTier && effectiveTier !== t ? 'faded' : ''}`}
+              disabled={autoTier}
+              onClick={() => setManualTier(t)}
             >
-              <input
-                type="radio"
-                name="tier"
-                value={t}
-                checked={effectiveTier === t}
-                disabled={autoTier}
-                onChange={() => setTier(t)}
-              />
               {t}
-            </label>
+            </button>
           ))}
           <label className="checkbox-label">
             <input
               type="checkbox"
               checked={autoTier}
-              onChange={(e) => setAutoTier(e.target.checked)}
+              onChange={(e) => onSettingsChange({ ...settings, autoTier: e.target.checked })}
             />
             Auto
           </label>
         </div>
-      </div>
-
-      {/* APL Adjustment */}
-      <div className="field-row">
-        <label className="field-label">
-          APL:{' '}
-          <span className="mono">
-            {APL_LABELS[APL_STOPS.indexOf(settings.aplAdjustment ?? 1.0)] ?? `${settings.aplAdjustment}×`}
-          </span>
-        </label>
-        <input
-          type="range"
-          className="slider"
-          min={0}
-          max={4}
-          step={1}
-          value={Math.max(0, APL_STOPS.indexOf(settings.aplAdjustment ?? 1.0))}
-          onChange={(e) =>
-            onSettingsChange({ ...settings, aplAdjustment: APL_STOPS[Number(e.target.value)] })
-          }
-        />
-        <div className="slider-labels">
-          {APL_LABELS.map((label) => (
-            <span key={label}>{label}</span>
-          ))}
-        </div>
-        <p className="field-hint">
-          Adjusts treasure for party level within the tier. Fresh (×0.70) = just entered the tier. Veteran (×1.30) = near the top.
-        </p>
       </div>
 
       {/* Role Multiplier Preview */}

@@ -2,9 +2,10 @@ import { describe, it, expect } from 'vitest';
 import { calculateBudget } from '../../src/engine/budget';
 import { DEFAULT_CAMPAIGN_SETTINGS, computeRoleMultipliers } from '../../src/engine/constants';
 
-const settings = { ...DEFAULT_CAMPAIGN_SETTINGS };
+// Use flat progression (×1.00) so tests verify budget math in isolation.
+const settings = { ...DEFAULT_CAMPAIGN_SETTINGS, tierProgression: false };
 
-// Pre-compute the concentration=3.0 multipliers for use in assertions.
+// Pre-compute the role multipliers for use in assertions.
 const mults = computeRoleMultipliers(3.0);
 
 describe('calculateBudget', () => {
@@ -12,21 +13,20 @@ describe('calculateBudget', () => {
     const { fullBudget, roleBudget } = calculateBudget(5, 2, 'boss', settings);
     // 1800 × 0.5806 = 1045.08
     expect(fullBudget).toBeCloseTo(1045.08, 0);
-    // 1045.08 × bossMultiplier (concentration=3)
     expect(roleBudget).toBeCloseTo(1045.08 * mults.boss, 0);
   });
 
-  it('CR 5, Tier 2, Elite → roleBudget uses concentration multiplier', () => {
+  it('CR 5, Tier 2, Elite → roleBudget uses role multiplier', () => {
     const { roleBudget } = calculateBudget(5, 2, 'elite', settings);
     expect(roleBudget).toBeCloseTo(1045.08 * mults.elite, 0);
   });
 
-  it('CR 5, Tier 2, Minion → roleBudget uses concentration multiplier', () => {
+  it('CR 5, Tier 2, Minion → roleBudget uses role multiplier', () => {
     const { roleBudget } = calculateBudget(5, 2, 'minion', settings);
     expect(roleBudget).toBeCloseTo(1045.08 * mults.minion, 0);
   });
 
-  it('CR 5, Tier 2, Mini-boss → roleBudget uses concentration multiplier', () => {
+  it('CR 5, Tier 2, Mini-boss → roleBudget uses role multiplier', () => {
     const { roleBudget } = calculateBudget(5, 2, 'mini-boss', settings);
     expect(roleBudget).toBeCloseTo(1045.08 * mults['mini-boss'], 0);
   });
@@ -74,17 +74,23 @@ describe('calculateBudget', () => {
     expect(fullBudget).toBeCloseTo(29, 2);
   });
 
-  it('APL adjustment at 0.7 produces 70% of default budget', () => {
-    const low = { ...settings, aplAdjustment: 0.7 };
-    const base = calculateBudget(5, 2, 'boss', settings);
-    const adjusted = calculateBudget(5, 2, 'boss', low);
-    expect(adjusted.fullBudget).toBeCloseTo(base.fullBudget * 0.7, 2);
+  it('progression multiplier scales budget within tier', () => {
+    // Level 5 at start of Tier 2: ×0.70
+    const low = { ...settings, partyLevel: 5, tierProgression: true };
+    // Level 10 at end of Tier 2: ×1.30
+    const high = { ...settings, partyLevel: 10, tierProgression: true };
+    const baseBudget = calculateBudget(5, 2, 'boss', settings);
+    const lowBudget = calculateBudget(5, 2, 'boss', low);
+    const highBudget = calculateBudget(5, 2, 'boss', high);
+    expect(lowBudget.fullBudget).toBeCloseTo(baseBudget.fullBudget * 0.7, 2);
+    expect(highBudget.fullBudget).toBeCloseTo(baseBudget.fullBudget * 1.3, 2);
   });
 
-  it('APL adjustment at 1.3 produces 130% of default budget', () => {
-    const high = { ...settings, aplAdjustment: 1.3 };
-    const base = calculateBudget(5, 2, 'boss', settings);
-    const adjusted = calculateBudget(5, 2, 'boss', high);
-    expect(adjusted.fullBudget).toBeCloseTo(base.fullBudget * 1.3, 2);
+  it('flat progression always returns ×1.00 budget', () => {
+    const flat5 = { ...settings, partyLevel: 5, tierProgression: false };
+    const flat10 = { ...settings, partyLevel: 10, tierProgression: false };
+    const b5 = calculateBudget(5, 2, 'boss', flat5);
+    const b10 = calculateBudget(5, 2, 'boss', flat10);
+    expect(b5.fullBudget).toBeCloseTo(b10.fullBudget, 2);
   });
 });

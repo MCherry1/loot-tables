@@ -6,6 +6,7 @@ import type {
   SourcePriority,
   SourceSettings,
   ThemePref,
+  Tier,
 } from '@engine/index';
 import {
   SOURCE_GROUPS,
@@ -13,14 +14,13 @@ import {
   ROLE_MULTIPLIER,
   getBookItemCounts,
   getBookDampFactors,
+  tierFromLevel,
+  progressionMultiplier,
 } from '@engine/index';
 import { SOURCEBOOK_BY_ACRONYM } from '../../data/sourcebook-lookup';
 
 const RICHNESS_STOPS = [0.5, 0.75, 1.0, 1.25, 1.5];
 const RICHNESS_LABELS = ['Scarce', 'Low', 'Standard', 'High', 'Abundant'];
-
-const APL_STOPS = [0.7, 0.85, 1.0, 1.15, 1.3];
-const APL_LABELS = ['×0.70 Fresh', '×0.85 Low', '×1.00 Standard', '×1.15 High', '×1.30 Veteran'];
 
 const CREATURE_ROLES: CreatureRole[] = ['minion', 'elite', 'mini-boss', 'boss'];
 const ROLE_DISPLAY: Record<CreatureRole, string> = {
@@ -197,10 +197,17 @@ const SourceGroup: React.FC<SourceGroupProps> = ({
 
 const CampaignSettingsPanel: React.FC<Props> = ({ settings, onChange, adminMode, onAdminModeChange }) => {
   const [showFormula, setShowFormula] = useState(false);
+  const [manualTier, setManualTier] = useState<Tier>(1);
 
   const update = (patch: Partial<CampaignSettings>) => {
     onChange({ ...settings, ...patch });
   };
+
+  const partyLevel = settings.partyLevel ?? 5;
+  const autoTier = settings.autoTier ?? true;
+  const tierProg = settings.tierProgression ?? true;
+  const effectiveTier: Tier = autoTier ? tierFromLevel(partyLevel) : manualTier;
+  const multiplier = progressionMultiplier(partyLevel, effectiveTier, tierProg);
 
   const richnessIndex = RICHNESS_STOPS.indexOf(settings.magicRichness);
   const currentRichnessLabel =
@@ -319,29 +326,85 @@ const CampaignSettingsPanel: React.FC<Props> = ({ settings, onChange, adminMode,
 
           <div className="field-row">
             <label className="field-label">
-              APL Adjustment:{' '}
-              <span className="mono">
-                {APL_LABELS[APL_STOPS.indexOf(settings.aplAdjustment ?? 1.0)] ?? `${settings.aplAdjustment}×`}
-              </span>
+              Party Level: <span className="mono">{partyLevel}</span>
             </label>
-            <input
-              type="range"
-              className="slider"
-              min={0}
-              max={4}
-              step={1}
-              value={Math.max(0, APL_STOPS.indexOf(settings.aplAdjustment ?? 1.0))}
-              onChange={(e) =>
-                update({ aplAdjustment: APL_STOPS[Number(e.target.value)] })
-              }
-            />
-            <div className="slider-labels">
-              {APL_LABELS.map((label) => (
-                <span key={label}>{label}</span>
+            <div className="level-stepper">
+              <button
+                className="stepper-btn"
+                disabled={partyLevel <= 1}
+                onClick={() => update({ partyLevel: partyLevel - 1 })}
+              >
+                &minus;
+              </button>
+              <input
+                type="number"
+                className="level-input"
+                min={1}
+                max={20}
+                value={partyLevel}
+                onChange={(e) => {
+                  const v = Math.max(1, Math.min(20, Number(e.target.value) || 1));
+                  update({ partyLevel: v });
+                }}
+              />
+              <button
+                className="stepper-btn"
+                disabled={partyLevel >= 20}
+                onClick={() => update({ partyLevel: partyLevel + 1 })}
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          <div className="field-row">
+            <label className="field-label">Tier</label>
+            <div className="tier-group">
+              {([1, 2, 3, 4] as Tier[]).map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  className={`tier-btn ${effectiveTier === t ? 'active' : ''} ${autoTier && effectiveTier !== t ? 'faded' : ''}`}
+                  disabled={autoTier}
+                  onClick={() => setManualTier(t)}
+                >
+                  {t}
+                </button>
               ))}
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={autoTier}
+                  onChange={(e) => update({ autoTier: e.target.checked })}
+                />
+                Use party level to determine tier
+              </label>
+            </div>
+          </div>
+
+          <div className="field-row">
+            <label className="field-label">
+              Tier Progression:{' '}
+              <span className="mono">×{multiplier.toFixed(2)}</span>
+            </label>
+            <div className="segmented-control">
+              <button
+                type="button"
+                className={`segmented-btn ${tierProg ? 'active' : ''}`}
+                onClick={() => update({ tierProgression: true })}
+              >
+                Natural Progression
+              </button>
+              <button
+                type="button"
+                className={`segmented-btn ${!tierProg ? 'active' : ''}`}
+                onClick={() => update({ tierProgression: false })}
+              >
+                Flat
+              </button>
             </div>
             <p className="field-hint">
-              Adjusts treasure for party level within the tier. Fresh (×0.70) = just entered the tier. Veteran (×1.30) = near the top.
+              Natural Progression scales treasure within the tier (×0.70 at start → ×1.30 at end). Flat is always ×1.00.
             </p>
           </div>
 

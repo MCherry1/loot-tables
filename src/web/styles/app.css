@@ -292,7 +292,34 @@ button {
   gap: 0.6rem;
 }
 
-/* --- Tier Radio Group --- */
+/* --- Party Level Stepper --- */
+.level-stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.level-input {
+  width: 3.2rem;
+  text-align: center;
+  padding: 0.3rem 0.2rem;
+  border: 1px solid var(--border-muted);
+  border-radius: 4px;
+  background: var(--bg-card);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-variant-numeric: tabular-nums;
+  -moz-appearance: textfield;
+}
+
+.level-input::-webkit-inner-spin-button,
+.level-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* --- Tier Button Group --- */
 .tier-group {
   display: flex;
   align-items: center;
@@ -300,11 +327,10 @@ button {
   flex-wrap: wrap;
 }
 
-.tier-radio {
+.tier-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.25rem;
   padding: 0.3rem 0.85rem;
   background: var(--bg-card-soft);
   border: 1px solid var(--border-muted);
@@ -313,22 +339,29 @@ button {
   font-family: inherit;
   font-size: 0.95rem;
   color: var(--ink);
-  transition: background 0.15s, border-color 0.15s;
+  transition: transform 0.15s, box-shadow 0.15s, background 0.15s, border-color 0.15s, opacity 0.15s;
 }
 
-.tier-radio input[type='radio'] {
-  display: none;
-}
-
-.tier-radio.active {
+.tier-btn.active {
   background: var(--accent);
   border-color: var(--accent-dark);
   color: var(--ink-inverse);
   font-weight: 700;
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-.tier-radio:not(.active):hover {
+.tier-btn.faded {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.tier-btn:not(.active):not(.faded):hover {
   border-color: var(--accent);
+}
+
+.tier-btn:disabled:not(.active) {
+  cursor: default;
 }
 
 /* --- Checkboxes --- */
