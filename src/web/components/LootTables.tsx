@@ -476,6 +476,9 @@ function TableCard({
       <div className="action-bar">
         {hasResult && highlightedEntry ? (
           <>
+            {state.rolledNumber != null && (
+              <span className="rolled-badge">Rolled: {state.rolledNumber}</span>
+            )}
             <button className="btn-continue" onClick={onContinue}>
               {`Continue with ${cleanDisplayName(highlightedEntry.name)} →`}
             </button>
@@ -884,7 +887,8 @@ const LootTables: React.FC<LootTablesProps> = ({
         const box = new DiceBox({
           container: '#dice-overlay',
           assetPath: `${basePath}assets/dice-box/`,
-          scale: 6,
+          scale: 4,
+          gravity: 3,
           theme: 'default',
           offscreen: true,
         });
@@ -970,7 +974,7 @@ const LootTables: React.FC<LootTablesProps> = ({
           setShowDiceOverlay(false);
           box.clear();
           dispatch({ type: 'HIGHLIGHT', idx: hitIdx, rolledNumber });
-        }, 800);
+        }, 400);
       };
       box.roll(`1d${totalWeight}`);
       return;

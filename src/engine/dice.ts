@@ -87,6 +87,50 @@ export function gpToDiceFormula(targetGp: number): { formula: string; average: n
 }
 
 /**
+ * Given a target coin count (in any denomination), produce a dice formula.
+ * Works like gpToDiceFormula but calibrated for raw coin counts.
+ */
+export function coinCountToDiceFormula(count: number): { formula: string; average: number } {
+  if (count < 1) {
+    return { formula: '0', average: 0 };
+  }
+
+  let multiplier = 1;
+  if (count >= 1000) {
+    multiplier = 100;
+  } else if (count >= 100) {
+    multiplier = 10;
+  }
+
+  const scaled = count / multiplier;
+
+  let bestN = 1;
+  let bestM = 4;
+  let bestError = Infinity;
+
+  for (const m of DICE_SIZES) {
+    const avgPerDie = (m + 1) / 2;
+    const rawN = scaled / avgPerDie;
+    const n = Math.max(1, Math.round(rawN));
+    const actual = n * avgPerDie;
+    const error = Math.abs(actual - scaled);
+    if (error < bestError) {
+      bestError = error;
+      bestN = n;
+      bestM = m;
+    }
+  }
+
+  const average = bestN * ((bestM + 1) / 2) * multiplier;
+  const formula =
+    multiplier === 1
+      ? `${bestN}d${bestM}`
+      : `${bestN}d${bestM}\u00d7${multiplier}`;
+
+  return { formula, average };
+}
+
+/**
  * Evaluate a dice formula string and return the rolled result.
  *
  * Supported formats:

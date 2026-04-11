@@ -783,11 +783,16 @@ button {
 /* 3D Dice overlay */
 .dice-overlay {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 300px;
+  max-height: 300px;
   z-index: 50;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.3s ease;
+  overflow: hidden;
 }
 
 .dice-overlay.visible {
@@ -1152,6 +1157,19 @@ button {
   border-top: 1px solid var(--bg-raised);
   background: var(--bg-card);
   padding: 12px 16px;
+}
+
+.rolled-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  background: var(--accent);
+  color: var(--ink-inverse);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 .btn-roll,

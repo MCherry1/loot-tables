@@ -345,6 +345,8 @@ export const DEFAULT_CAMPAIGN_SETTINGS: CampaignSettings = {
   edition: '2014',
   dice3d: false,
   showItemDetails: true,
+  convertToGold: false,
+  splitAmongParty: false,
 };
 
 // ---------------------------------------------------------------------------
@@ -390,6 +392,18 @@ export function progressionMultiplier(
   const progress = span === 0 ? 1.0 : (clamped - range.start) / span;
   return 0.70 + progress * 0.60;
 }
+
+// ---------------------------------------------------------------------------
+// Coin denomination mix (from DMG hoard tables)
+// ---------------------------------------------------------------------------
+
+/** Percentage of coin value in each denomination, by tier. */
+export const COIN_MIX: Record<Tier, { cp: number; sp: number; gp: number; pp: number }> = {
+  1: { cp: 0.11, sp: 0.54, gp: 0.36, pp: 0.00 },
+  2: { cp: 0.00, sp: 0.18, gp: 0.54, pp: 0.27 },
+  3: { cp: 0.00, sp: 0.00, gp: 0.44, pp: 0.56 },
+  4: { cp: 0.00, sp: 0.00, gp: 0.13, pp: 0.87 },
+};
 
 // ---------------------------------------------------------------------------
 // Sourcebook priority system (STEPPER-DESIGN.md §Sources)

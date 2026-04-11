@@ -67,6 +67,10 @@ export interface CampaignSettings {
   dice3d: boolean;
   /** Whether to show item descriptions on result cards. */
   showItemDetails: boolean;
+  /** When true, trade up lower denominations to maximize gold. */
+  convertToGold: boolean;
+  /** When true, divide coins among party members. */
+  splitAmongParty: boolean;
 }
 
 /** Input for generating loot for a single creature. */
@@ -133,10 +137,25 @@ export interface MagicItemResult {
   salePrice?: number;
 }
 
+/** A single denomination's dice formula and rolled result. */
+export interface CoinDenom {
+  formula: string;
+  average: number;
+  rolled: number;
+}
+
+/** Coin breakdown by denomination. */
+export interface CoinBreakdown {
+  cp: CoinDenom;
+  sp: CoinDenom;
+  gp: CoinDenom;
+  pp: CoinDenom;
+}
+
 /** Complete loot result for a single creature. */
 export interface LootResult {
-  /** Coin award as a dice formula and its expected (average) value. */
-  coins: { formula: string; average: number; rolled: number };
+  /** Coin award broken down by denomination. */
+  coins: CoinBreakdown;
   /** Gem drops. */
   gems: TreasureItem[];
   /** Art object drops. */
@@ -227,7 +246,7 @@ export interface ResolvableMagicItem {
 
 /** Loot result with resolvable magic items for step-by-step mode. */
 export interface ResolvableLootResult {
-  coins: { formula: string; average: number; rolled: number };
+  coins: CoinBreakdown;
   gems: TreasureItem[];
   artObjects: TreasureItem[];
   magicItems: ResolvableMagicItem[];

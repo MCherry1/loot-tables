@@ -6,6 +6,8 @@
 export type {
   CampaignSettings,
   CategoryEntry,
+  CoinBreakdown,
+  CoinDenom,
   CreatureGroup,
   CreatureResult,
   CreatureRole,
@@ -66,6 +68,7 @@ export {
   weightToTier,
   DMG_VARIANCE,
   TIER_RANGES,
+  COIN_MIX,
   tierFromLevel,
   progressionMultiplier,
 } from './constants';

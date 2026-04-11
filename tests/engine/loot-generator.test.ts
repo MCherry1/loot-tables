@@ -12,8 +12,14 @@ describe('generateLoot', () => {
     expect(result).toHaveProperty('artObjects');
     expect(result).toHaveProperty('magicItems');
     expect(result).toHaveProperty('mundaneFinds');
-    expect(result.coins.average).toBeGreaterThan(0);
-    expect(typeof result.coins.formula).toBe('string');
+    // At least one denomination should have coins
+    const totalAvg = result.coins.cp.average / 100 + result.coins.sp.average / 10
+      + result.coins.gp.average + result.coins.pp.average * 10;
+    expect(totalAvg).toBeGreaterThan(0);
+    expect(result.coins).toHaveProperty('cp');
+    expect(result.coins).toHaveProperty('sp');
+    expect(result.coins).toHaveProperty('gp');
+    expect(result.coins).toHaveProperty('pp');
   });
 });
 
