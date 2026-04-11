@@ -394,6 +394,20 @@ const CampaignSettingsPanel: React.FC<Props> = ({ settings, onChange, adminMode,
               Show Item Details
             </label>
           </div>
+
+          <div className="field-row">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={settings.dice3d ?? false}
+                onChange={(e) => update({ dice3d: e.target.checked })}
+              />
+              Enable 3D Dice
+            </label>
+            <p className="field-hint">
+              Physics-based 3D dice animation when rolling on tables.
+            </p>
+          </div>
         </div>
       </section>
 

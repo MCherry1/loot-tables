@@ -85,6 +85,7 @@ export {
   getBookItemCounts,
   getBookDampFactors,
   ALL_TABLES,
+  getTablesForEdition,
 } from './roller';
 
 // Random

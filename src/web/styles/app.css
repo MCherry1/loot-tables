@@ -744,6 +744,29 @@ button {
 
 .loot-tables-card {
   padding: 1rem;
+  position: relative;
+}
+
+/* 3D Dice overlay */
+.dice-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.dice-overlay.visible {
+  pointer-events: auto;
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: inherit;
+}
+
+.dice-overlay canvas {
+  width: 100% !important;
+  height: 100% !important;
 }
 
 /* Section tabs (Magic Items / Spells / Equipment / Gems / Art) */
@@ -2176,6 +2199,22 @@ button {
   color: var(--ink-muted);
   line-height: 1.4;
   margin: 0;
+}
+
+.review-stats-mobile-summary {
+  display: none;
+  font-size: 0.78rem;
+  color: var(--ink-muted);
+  text-transform: capitalize;
+}
+
+@media (max-width: 640px) {
+  .review-stats-mobile-summary {
+    display: block;
+  }
+  .review-stats-full {
+    display: none;
+  }
 }
 
 /* View mode toggle */

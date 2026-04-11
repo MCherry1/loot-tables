@@ -340,6 +340,7 @@ export const DEFAULT_CAMPAIGN_SETTINGS: CampaignSettings = {
   theme: 'auto',
   aplAdjustment: 1.0,
   edition: '2014',
+  dice3d: false,
   showItemDetails: false,
 };
 

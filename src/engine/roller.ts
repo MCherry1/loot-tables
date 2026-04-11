@@ -4,6 +4,7 @@ import { SUPPLEMENTAL_TABLES } from '../data/supplemental';
 import { CUSTOM_GEMS } from '../data/gems';
 import { CUSTOM_ART } from '../data/art';
 import curationData from '../../data/curation.json';
+import curationData2024 from '../../data/curation-2024.json';
 import { cryptoRandom } from './random';
 import {
   PRIORITY_MULTIPLIER,
@@ -16,21 +17,22 @@ import type {
   ItemSegment,
   ResolvableMagicItem,
   SourceSettings,
+  Edition,
 } from './types';
 
 import { canonicalAcronym } from '../data/sourcebook-lookup';
 
 type MIEntry = { name: string; source: string; weight: number };
+type CurationData = Record<string, { weight?: number | null; status?: string }>;
 
-/** Merge all table sources (magic items, spells, supplemental) into one lookup. */
-function buildTableLookup(): Record<string, MIEntry[]> {
+/** Build the base table lookup (before curation overlay). */
+function buildBaseLookup(): Record<string, MIEntry[]> {
   const lookup = { ...(MAGIC_ITEMS as Record<string, MIEntry[]>) };
   for (const table of [...SPELL_TABLES, ...SUPPLEMENTAL_TABLES]) {
     lookup[table.name] = table.entries;
   }
 
   // Normalize legacy source abbreviations to canonical 5etools form.
-  // This ensures SOURCE_GROUPS (canonical) match data (possibly legacy).
   for (const [tableName, entries] of Object.entries(lookup)) {
     lookup[tableName] = entries.map((entry) => {
       const canonical = canonicalAcronym(entry.source);
@@ -40,10 +42,16 @@ function buildTableLookup(): Record<string, MIEntry[]> {
     });
   }
 
-  // Apply curation weight overrides (only approved items).
-  // Try both canonical and legacy keys since curation.json may use either.
-  const curation = curationData as Record<string, { weight?: number | null; status?: string }>;
-  for (const [tableName, entries] of Object.entries(lookup)) {
+  return lookup;
+}
+
+/** Apply curation weight overrides to a base lookup. */
+function applyCuration(
+  base: Record<string, MIEntry[]>,
+  curation: CurationData,
+): Record<string, MIEntry[]> {
+  const lookup: Record<string, MIEntry[]> = {};
+  for (const [tableName, entries] of Object.entries(base)) {
     lookup[tableName] = entries.map((entry) => {
       const key = `${entry.name}|${entry.source}`;
       const override = curation[key];
@@ -53,12 +61,27 @@ function buildTableLookup(): Record<string, MIEntry[]> {
       return entry;
     });
   }
-
   return lookup;
 }
 
-/** Unified lookup containing all rollable tables. */
-export const ALL_TABLES = buildTableLookup();
+const _baseLookup = buildBaseLookup();
+
+/** Unified lookup containing all rollable tables (2014 edition, default). */
+export const ALL_TABLES = applyCuration(_baseLookup, curationData as CurationData);
+
+/** Cached 2024 edition tables (built on first access). */
+let _tables2024: Record<string, MIEntry[]> | null = null;
+
+/** Get the table lookup for a specific edition. */
+export function getTablesForEdition(edition: Edition): Record<string, MIEntry[]> {
+  if (edition === '2024') {
+    if (!_tables2024) {
+      _tables2024 = applyCuration(_baseLookup, curationData2024 as CurationData);
+    }
+    return _tables2024;
+  }
+  return ALL_TABLES;
+}
 
 /** Maximum recursion depth when resolving nested table references. */
 const MAX_DEPTH = 5;
