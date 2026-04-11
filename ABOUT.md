@@ -1,30 +1,27 @@
-# About the Loot Generator
+# About
 
-## What This Is
+### The Problem with DMG Hoards
 
-A unified loot generation system for D&D 5e that replaces the DMG's big hoard tables with *per-creature probability*. Every monster you kill has a chance of dropping something — a few copper, a gem, an art object, or a magic item — scaled to its Challenge Rating and its role in the encounter. Over a full tier of play the numbers land in roughly the same place the DMG expects, but the rewards arrive in a rhythm the players can feel at the table.
+The Dungeon Master's Guide gives you four hoard tables (one per tier of play) that you roll on after your party clears a dungeon. This has issues:
 
-## How the Math Works
+**Timing.** The party fights twelve goblins, two bugbears, and a boss — then the DM has to figure out where the "hoard" is and roll on one table for the whole dungeon. The treasure feels disconnected from the creatures that were guarding it.
 
-Each creature starts with its XP value from the Monster Manual. That XP is multiplied by a **gp-per-xp ratio** specific to its tier of play, yielding a gold-piece budget. That budget is then scaled by the creature's **role** — the fraction of its budget that actually becomes loot.
+**Granularity.** A CR 1 bugbear and a CR 8 young dragon both contribute to the same Tier 2 hoard roll. There's no way to scale treasure to individual creatures.
 
-| Role | Share | Typical Creature |
-|------|-------|------------------|
-| Minion | 10% | Goblin, thug, kobold |
-| Elite | 30% | Ogre, veteran, hobgoblin captain |
-| Boss | 60% | Adult dragon, beholder, lich |
-| Vault | 100% | A full hoard with no owner |
+**Variance.** A single d100 roll on the hoard table can produce wildly different results — from a handful of coins to a legendary magic item. That's fine for drama but makes it hard for the DM to plan an economy.
 
-## Category Breakdown
+### What This Tool Does
 
-A creature's budget is split across four categories: coins, gems, art objects, and magic items. The split is tier-specific and derived from the DMG hoard tables: at tier 1 most of the value lives in coins and the cheapest magic item tables; at tier 4 it's dominated by Tables H and I. Each category rolls against a table sized to the tier — you never roll a 5,000 gp gem at tier 1.
+This generator assigns a gold-piece budget to every creature based on three inputs: **CR** (how much XP it's worth), **Tier** (what level of play the party is at), and **Role** (how important this creature is in the encounter hierarchy). The budget is then spent probabilistically across coins, gems, art objects, and magic items using the same category distributions as the DMG hoard tables.
 
-## Magic Item Tables
+A goblin minion might have 1-4 copper. A bugbear boss gets 50-150 gp and a shot at a magic item. An ancient dragon boss carries a fortune. The math balances over a campaign — but each individual roll has real variance because the dice are actually thrown, not averaged.
 
-The DMG organizes magic items into nine tables labelled A through I. A/B/C are the minor tables (potions, scrolls, common gear); D/E are their "Major" counterparts with rarer items. F/G/H/I are the "martial adventurer" tables — weapons, armor, and signature wondrous items whose average value climbs from 500 gp up to 500,000 gp.
+### Design Philosophy
 
-On top of the tables we add a **value score** pricing layer: when an item is picked, we roll 2d4 and multiply by the table's base number to get an individualized buy price. A longsword +1 and a wand of fireballs can both come off Table G but they cost wildly different amounts — the value score captures that spread without requiring a hand-priced database.
+**DMG-compatible, not DMG-replacing.** The GP/XP ratios, tier breakdowns, and magic item table distributions are all derived from the actual DMG hoard tables. If you ran a full campaign using this tool with default settings, your party would end up with roughly the same total wealth as the DMG intends.
 
-## DMG Balance Verification
+**Per-creature, not per-dungeon.** Every creature resolves independently. You can roll loot for a single random encounter or a 30-room dungeon and the economics scale correctly.
 
-At default settings, a full tier's worth of encounters produces treasure totals that match the DMG's expected hoard values to within a few percent. The engine's `economy-balance` test suite runs every category of drop across a statistically meaningful sample and asserts that the totals fall inside the DMG envelope. You can trust that tuning a campaign to these defaults won't quietly break the math.
+**Source-aware.** The magic item tables draw from 70+ sourcebooks (DMG, Xanathar's, Tasha's, Eberron, Fizban's, and dozens more). Each source can be toggled on/off or weighted by priority. Running an Eberron campaign? Crank Eberron sources to Emphasis and watch the item pool shift.
+
+**DM-controlled variance.** Magic Richness adjusts how much of the budget goes to magic items vs raw coin. The role multipliers control how steeply treasure concentrates on bosses vs minions. Every knob has a sensible default and a clear effect.
