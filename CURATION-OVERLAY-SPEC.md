@@ -48,6 +48,29 @@ function buildTableLookup(): Record<string, MIEntry[]> {
 - `src/engine/roller.ts` — import curation.json, apply overrides in `buildTableLookup()`
 - No other files change. `STEPPER_TABLES` in `stepperResolve.ts` inherits from `ALL_TABLES` automatically.
 
+### Edition-Aware Loading (future)
+
+When the 2024 pipeline is built, `buildTableLookup()` needs to pick the right curation file:
+
+```typescript
+// roller.ts will need the edition setting passed in or read globally
+import curation2014 from '../../data/curation.json';
+import curation2024 from '../../data/curation-2024.json';
+
+const curation = edition === '2024' ? curation2024 : curation2014;
+```
+
+Similarly, `LootTables.tsx` picks the right item-stats file:
+
+```typescript
+import stats2014 from '../../../data/item-stats.json';
+import stats2024 from '../../../data/item-stats-2024.json';
+
+const itemStats = settings.edition === '2024' ? stats2024 : stats2014;
+```
+
+Both files are static imports — Vite tree-shakes unused code but both editions ship in the bundle. If bundle size becomes a concern, switch to dynamic `import()` for the non-default edition.
+
 ---
 
 ## Item Stats Panel in Review UI

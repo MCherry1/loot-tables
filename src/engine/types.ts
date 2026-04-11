@@ -45,6 +45,8 @@ export interface CampaignSettings {
   edition: Edition;
   /** Enable 3D dice rolling animation. */
   dice3d: boolean;
+  /** Whether to show item descriptions on result cards. */
+  showItemDetails: boolean;
 }
 
 /** Input for generating loot for a single creature. */

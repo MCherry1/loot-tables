@@ -388,6 +388,17 @@ const CampaignSettingsPanel: React.FC<Props> = ({ settings, onChange, adminMode,
             <label className="checkbox-label">
               <input
                 type="checkbox"
+                checked={settings.showItemDetails ?? false}
+                onChange={(e) => update({ showItemDetails: e.target.checked })}
+              />
+              Show Item Details
+            </label>
+          </div>
+
+          <div className="field-row">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
                 checked={settings.dice3d ?? false}
                 onChange={(e) => update({ dice3d: e.target.checked })}
               />
