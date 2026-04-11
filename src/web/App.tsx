@@ -29,10 +29,6 @@ function loadSettings(): CampaignSettings {
     return {
       ...DEFAULT_CAMPAIGN_SETTINGS,
       ...parsed,
-      roleRatios: {
-        ...DEFAULT_CAMPAIGN_SETTINGS.roleRatios,
-        ...(parsed.roleRatios ?? {}),
-      },
       sourceSettings: { ...(parsed.sourceSettings ?? {}) },
     };
   } catch {

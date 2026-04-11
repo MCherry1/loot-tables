@@ -29,8 +29,6 @@ export interface CampaignSettings {
   partySize: number;
   /** Multiplier for magic item frequency (0.5-1.5, default 1.0). */
   magicRichness: number;
-  /** Fraction of total hoard value assigned to each creature role. */
-  roleRatios: Record<Role, number>;
   /** Whether to display gp values on results. */
   showValues: boolean;
   /** Whether to display sale (half) prices on results. */
@@ -43,8 +41,6 @@ export interface CampaignSettings {
   theme: ThemePref;
   /** APL adjustment multiplier on GP_PER_XP (0.7–1.3, default 1.0). */
   aplAdjustment: number;
-  /** Concentration: controls steepness of role multiplier ratios (1.5–5.0, default 3.0). */
-  concentration: number;
   /** D&D edition for item data (default '2014'). */
   edition: Edition;
 }

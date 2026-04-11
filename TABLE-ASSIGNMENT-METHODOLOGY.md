@@ -127,12 +127,19 @@ When 5etools provides an item without a `lootTables` assignment, its rarity is u
 
 Category assignment is the SECOND stage. It only runs after the table letter is determined. The available categories differ by table type.
 
-**Table A (Common):** Six categories on a d100. Practical items dominate (90%), fun trinkets round it out (10%).
-- Potions, Spell Scrolls, Gear (practical utility items), Arms & Armor, Spellcaster, Trinkets (flavor/fun catch-all)
+**Table A (Common):** Six categories on d100.
+- **Potions-A** (40%) — Potion of Healing dominates. All `type: P` items.
+- **Gear-A** (20%) — mechanically useful utility items (Bag of Holding, Driftglobe, Everbright Lantern). Items with concrete mechanical benefits.
+- **Spell-Scrolls-A** (10%) — cantrip/1st/2nd level spell scrolls and spellwrought tattoos.
+- **Arms-Armor-A** (10%) — common weapons, armor, ammunition, shields.
+- **Spellcaster-A** (10%) — common spellcasting foci, class-attuned items.
+- **Trinkets-A** (10%) — flavor/fun items with minimal mechanical impact (Cloak of Billowing, Wand of Smiles, Pipe of Smoke Monsters).
+
+The Gear vs Trinkets distinction is editorial: "does this item have meaningful mechanical utility?" There is no reliable 5etools field that encodes this. The auto-classifier should attempt a best-guess split (items with `charges`, `attachedSpells`, or utility-suggesting names → Gear; items from XGE's common magic items list that are primarily flavor → Trinkets) but **flag all Gear/Trinkets assignments as ready-for-review**. The reviewer confirms which bucket each item belongs in.
 
 **Tables B, C, D (Minor Uncommon/Rare/Very Rare):** Simplified. Only 5 categories:
-- **Potions** — one-shot drinkable liquids (potions, elixirs)
-- **Consumables** — multi-use items with charges that get expended (dusts, pigments, oils, ointments, roses, tablets, bags of beans, necklace of fireballs)
+- **Potions** — all items with 5etools `type: P`, including oils, philters, and bottled substances. Simpler than splitting by name; everything typed as a potion stays together.
+- **Consumables** — multi-use items with charges that get expended (dusts, pigments, roses, tablets, bags of beans, necklace of fireballs, ointments)
 - **Ammunition** — arrows, bolts, bullets, sling stones
 - **Spells** — spell scrolls
 - **Equipment** — everything else. No sub-classification. Apparel, jewelry, rods, wondrous items, armor without bonuses — all go here on minor tables.
@@ -144,9 +151,13 @@ Category assignment is the SECOND stage. It only runs after the table letter is 
 
 **Classification priority order for major tables (evaluate in this order, first match wins):**
 
-**Priority 1 — Class-specific attunement overrides everything.** If `reqAttuneTags` lists spellcaster classes (wizard, sorcerer, bard, cleric, druid, warlock, paladin, ranger) → **Spellcaster**. This beats keyword matching. A mask attuned to bard/sorcerer/warlock is Spellcaster, not Apparel. A mantle with druid/ranger focus is Spellcaster, not Apparel. If `reqAttune` contains "by a spellcaster" → also Spellcaster.
+**Priority 1 — Any spellcaster attunement → Spellcaster.** If `reqAttune` mentions ANY spellcaster class (wizard, sorcerer, bard, cleric, druid, warlock, paladin, ranger) OR the generic phrase "by a spellcaster" → **Spellcaster**. This overrides all keyword and type-based rules. A mask attuned to bard/sorcerer/warlock is Spellcaster, not Apparel. A wand that requires a spellcaster is Spellcaster, not Misc. A rod attuned to cleric/druid/paladin is Spellcaster, not Misc.
 
-**Priority 2 — "staff of" in name → Spellcaster.** Staves are spellcaster items even when 5etools types them as `none` (wondrous) rather than `M` (melee weapon). Many classic DMG staves (Staff of Fire, Staff of Frost, Staff of Power, Staff of the Magi) have `type: none` and no `focus` field — but they DO have `reqAttuneTags` with spellcaster classes, so Priority 1 catches most of them. Priority 2 is the safety net for any "staff of" items that slip through.
+Items within the Spellcaster category are then subdivided into sub-tables as needed: Wizard, Sorcerer, Bard, Wands (spellcaster-attuned wands), and general Spellcaster.
+
+Note: `reqAttune: true` (any creature, no class restriction) does NOT trigger this rule. Only explicit spellcaster class requirements or the generic "by a spellcaster" phrase.
+
+**Priority 2 — "staff of" in name → Spellcaster.** Safety net for staves that might lack `reqAttuneTags` in the 5etools data. Nearly all staves are spellcaster items. The rare exception (a staff that is purely a weapon with no spellcaster connection) goes to Arms — but this should be caught by Priority 1 first (most weapon-only staves don't require spellcaster attunement).
 
 **Priority 3 — Type-based rules:**
 
@@ -158,13 +169,12 @@ Category assignment is the SECOND stage. It only runs after the table letter is 
 | `M` or `R` (all other weapons) | Arms | |
 | `S` | Armor | Shields. Sub-table if enough exist on that table. |
 | `HA` / `MA` / `LA` | Armor | Heavy / Medium / Light |
-| `RD\|DMG` + has `focus` field | Spellcaster | Rods that are spellcasting foci |
-| `RD\|DMG` without `focus` | Misc | Rods without focus (Rod of Rulership, Rod of Security, etc.) |
-| `WD\|DMG` | Misc | Wands — not exclusive to spellcasters, anyone can use them |
+| `RD\|DMG` | Misc | Rods (without spellcaster attunement — those were caught by Priority 1) |
+| `WD\|DMG` + spellcaster attunement | Spellcaster | Wands sub-table under Spellcaster (caught by Priority 1) |
+| `WD\|DMG` without spellcaster attunement | Misc | Wands anyone can use (Wand of Fear, Wand of Enemy Detection, etc.) |
 | `SC\|DMG` | Misc | Non-spell scrolls on major tables (Tarrasque Summoning, etc.) |
 | `SCF` | Spellcaster | Spellcasting foci. Sub-route to Wizard/Sorcerer/Bard by `focus` field. |
-| `INS` + has `focus` field | Spellcaster | Instruments that are spellcasting foci (e.g. Bard instruments) |
-| `INS` without `focus` | Misc | Musical instruments not tied to spellcasting (Pipes of Haunting, War Horn, etc.) |
+| `INS` | Misc | Musical instruments (without spellcaster attunement — those were caught by Priority 1) |
 | `A` | Ammunition | (Rarely on major tables) |
 
 **Priority 4 — Keyword matching** (for `type: "none"` / wondrous items):
@@ -196,8 +206,8 @@ Category descriptions:
 - **Armor** — items requiring armor proficiency: heavy/medium/light armor, shields. Shields may have their own sub-table on tables with enough shields.
 - **Arms** — weapons and weapon-like items: swords, axes, bows, maces, plus gauntlets/bracers/wraps/tattoos that deal damage. Also quivers and weapon accessories.
 - **Jewelry** — rings, amulets, periapts, brooches, necklaces, pendants, medallions, circlets, talismans, scarabs, charms, ioun stones, gems (magic gem items like Shard Solitaire, Amethyst Lodestone)
-- **Spellcaster** — class-specific items: staves, spellcasting foci, items attuned to specific spellcaster classes. Sub-tables for Wizard, Sorcerer, Bard when enough items exist.
-- **Misc** — major-table catch-all: wands, rods (non-focus), instruments (non-focus), figurines, bowls/braziers/censers, decks, legendary scrolls, miscellaneous powerful items
+- **Spellcaster** — any item requiring spellcaster attunement: staves, spellcasting foci, wands with spellcaster attunement, rods with spellcaster attunement, class-attuned masks/mantles/bracers/cauldrons/etc. Sub-tables for Wizard, Sorcerer, Bard, and Wands when enough items exist.
+- **Misc** — major-table catch-all: wands without spellcaster attunement (Wand of Fear, Wand of Enemy Detection), rods without spellcaster attunement (Rod of Rulership, Rod of Security), instruments without spellcaster attunement (Pipes of Haunting, War Horn), figurines, bowls/braziers, decks, legendary scrolls, miscellaneous powerful items
 
 ### Rule 7: Sub-Table Refs
 

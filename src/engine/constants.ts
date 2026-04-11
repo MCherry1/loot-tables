@@ -1,6 +1,7 @@
 import type {
   CampaignSettings,
   CategoryEntry,
+  CreatureRole,
   ItemTier,
   MITable,
   Role,
@@ -85,55 +86,42 @@ export const VAULT_SIZE_MULTIPLIER: Record<VaultSize, number> = {
 } as const;
 
 // ---------------------------------------------------------------------------
-// Role ratios (fraction of per-creature hoard value)
+// Role multipliers (fraction of per-creature budget)
 // ---------------------------------------------------------------------------
 
-/** Default fraction of total hoard value that each role receives (legacy flat ratios). */
+/** Raw role weights (~3× geometric steps). */
+export const ROLE_RAW_WEIGHT: Record<CreatureRole, number> = {
+  minion: 1,
+  elite: 3,
+  'mini-boss': 9,
+  boss: 27,
+} as const;
+
+/** Pre-computed role multipliers. */
+export const ROLE_MULTIPLIER: Record<CreatureRole, number> = {
+  minion: 0.10,    // pocket change
+  elite: 0.30,     // personal belongings
+  'mini-boss': 0.90, // well-equipped
+  boss: 2.70,      // the big score
+} as const;
+
+/** Default role ratios for CampaignSettings (includes vault). */
 export const DEFAULT_ROLE_RATIOS: Record<Role, number> = {
   minion: 0.10,
   elite: 0.30,
-  'mini-boss': 0.45,
-  boss: 0.60,
+  'mini-boss': 0.90,
+  boss: 2.70,
   vault: 1.00,
 } as const;
 
 /**
  * Compute role multipliers from a concentration parameter.
- *
- * The concentration value controls the geometric step ratio between adjacent
- * roles.  At concentration=3 (default):  minion ~0.25×, elite ~0.83×,
- * mini-boss ~2.50×, boss ~7.50× their "fair share" of loot.
- *
- * Multipliers are normalized against an assumed campaign XP split so that the
- * weighted-average multiplier across all roles equals 1.0:
- *   50% minion XP, 30% elite, 12% mini-boss, 8% boss.
- *
- * Vault always returns 1.0 (standalone hoard, not role-based).
+ * @deprecated Use ROLE_MULTIPLIER directly. Kept for UI backward compatibility.
  */
 export function computeRoleMultipliers(concentration: number): Record<Role, number> {
-  const c = Math.max(1.01, concentration); // avoid division-by-zero at c=1
-
-  // Raw geometric weights: minion=1, elite=c, mini-boss=c², boss=c³
-  const raw = { minion: 1, elite: c, 'mini-boss': c * c, boss: c * c * c };
-
-  // Assumed campaign XP distribution by role
-  const xpSplit = { minion: 0.50, elite: 0.30, 'mini-boss': 0.12, boss: 0.08 };
-
-  // Weighted average of raw multipliers given the XP split
-  const weightedAvg =
-    raw.minion * xpSplit.minion +
-    raw.elite * xpSplit.elite +
-    raw['mini-boss'] * xpSplit['mini-boss'] +
-    raw.boss * xpSplit.boss;
-
-  // Normalize so that the weighted average across all roles = 1.0
-  return {
-    minion: raw.minion / weightedAvg,
-    elite: raw.elite / weightedAvg,
-    'mini-boss': raw['mini-boss'] / weightedAvg,
-    boss: raw.boss / weightedAvg,
-    vault: 1.0,
-  };
+  // New system uses fixed 3× steps, concentration parameter is ignored.
+  // TODO: remove once CampaignSettings UI is updated.
+  return { ...ROLE_MULTIPLIER, vault: 1.0 };
 }
 
 // ---------------------------------------------------------------------------
@@ -256,6 +244,50 @@ export const TIER_CATEGORIES: Record<Tier, CategoryEntry[]> = {
 } as const;
 
 // ---------------------------------------------------------------------------
+// DMG Hoard Table Variance Profile (100,000 Monte Carlo simulations)
+// ---------------------------------------------------------------------------
+//
+// These values capture the actual variance in the DMG's hoard tables.
+// Our per-creature fractional system should produce similar spread.
+//
+// Key insight: the DMG's variance comes from a two-layer structure:
+//   1. Coins = guaranteed floor (low variance, ±30% from dice)
+//   2. d100 "slot machine" = rare jackpots (magic items worth 10-100× the coins)
+// The median is always below the mean because most rolls are "normal"
+// and rare jackpots pull the average up. This right-skew is intentional
+// and creates the excitement of treasure hunting.
+
+export interface VarianceProfile {
+  mean: number;
+  median: number;
+  /** Coefficient of variation (stddev / mean). Higher = more variance. */
+  cv: number;
+  /** 90th percentile / 10th percentile. The "typical session spread." */
+  spread9010: number;
+  /** Percentiles in GP for a single DMG hoard roll. */
+  percentiles: { p5: number; p10: number; p25: number; p50: number; p75: number; p90: number; p95: number; p99: number };
+}
+
+export const DMG_VARIANCE: Record<Tier, VarianceProfile> = {
+  1: {
+    mean: 990, median: 569, cv: 1.21, spread9010: 12.1,
+    percentiles: { p5: 209, p10: 248, p25: 346, p50: 569, p75: 934, p90: 2997, p95: 3544, p99: 5931 },
+  },
+  2: {
+    mean: 6807, median: 5105, cv: 0.76, spread9010: 3.2,
+    percentiles: { p5: 3558, p10: 3856, p25: 4404, p50: 5105, p75: 6208, p90: 12253, p95: 18160, p99: 32507 },
+  },
+  3: {
+    mean: 89442, median: 46750, cv: 1.08, spread9010: 5.6,
+    percentiles: { p5: 29375, p10: 32125, p25: 37600, p50: 46750, p75: 90000, p90: 179000, p95: 367250, p99: 421500 },
+  },
+  4: {
+    mean: 715751, median: 557000, cv: 0.56, spread9010: 4.2,
+    percentiles: { p5: 305000, p10: 332750, p25: 389750, p50: 557000, p75: 994500, p90: 1406000, p95: 1526000, p99: 1610500 },
+  },
+} as const;
+
+// ---------------------------------------------------------------------------
 // Mundane finds (flavor items with no monetary value)
 // ---------------------------------------------------------------------------
 
@@ -301,14 +333,12 @@ export const MUNDANE_FINDS: readonly string[] = [
 export const DEFAULT_CAMPAIGN_SETTINGS: CampaignSettings = {
   partySize: 4,
   magicRichness: 1.0,
-  roleRatios: { ...DEFAULT_ROLE_RATIOS },
   showValues: true,
   showSalePrice: false,
   showMundane: true,
   sourceSettings: {},
   theme: 'auto',
   aplAdjustment: 1.0,
-  concentration: 3.0,
   edition: '2014',
 };
 
@@ -348,33 +378,31 @@ export function weightToTier(raw: number): ItemTier {
 
 /**
  * Source acronym groupings for the Settings UI (STEPPER-DESIGN.md §Sources).
+ * Must stay in sync with the `group` field in sourcebooks.ts.
  * Acronyms present in the data but not listed here fall into an "Other" group.
  */
 export const SOURCE_GROUPS = {
-  core: ['DMG', 'XGE', 'TCE', 'FTD', 'BGG', 'BMT'],
-  settings: ['ERLW', 'ExE', 'EGW', 'TDCS', 'MOT', 'GGR', 'SCC', 'AAG'],
+  core: ['DMG', 'XGE', 'TCE', 'FTD', 'BGG', 'BMT', 'MTF', 'VGM'],
+  settings: ['ERLW', 'EGW', 'MOT', 'GGR', 'SCC', 'AAG', 'VRGR', 'SatO', 'DSotDQ'],
   adventures: [
-    'ToD',
-    'WDH',
-    'WDMM',
-    'IWD',
-    'WBtW',
-    'TYP',
-    'SKT',
-    'PotA',
-    'LMoP',
-    'PaB',
-    'GoS',
-    'ToA',
-    'CM',
-    'CotN',
-    'OotA',
+    'HotDQ', 'RoT', 'PotA', 'CoS', 'SKT', 'TftYP', 'ToA',
+    'WDH', 'WDMM', 'GoS', 'BGDIA', 'IDRotF', 'CM', 'WBtW',
+    'CRCotN', 'KftGV', 'PaBTSO', 'CoA', 'OotA', 'LMoP',
+    'LLK', 'AI', 'IMR', 'VEoR', 'QftIS', 'DitLCoT', 'JttRC',
   ],
+  digital: [
+    'HAT-LMI', 'RoTOS', 'XMtS', 'SDW', 'DC', 'BAM', 'TTP',
+    'OGA', 'HftT', 'AitFR-AVT', 'AitFR-THP', 'NRH-AT',
+    'NRH-TLT', 'RMBRE', 'AZfyT', 'MCV2DC',
+  ],
+  thirdparty: ['ExE', 'TDCSR'],
 } as const;
 
 /** Labels for source groups, keyed by group name. */
 export const SOURCE_GROUP_LABELS: Record<keyof typeof SOURCE_GROUPS, string> = {
   core: 'Core Supplements',
-  settings: 'Settings',
+  settings: 'Campaign Settings',
   adventures: 'Adventures',
+  digital: 'Digital / Supplemental',
+  thirdparty: 'Third Party',
 } as const;

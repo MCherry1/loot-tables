@@ -436,15 +436,15 @@ Each group header has priority buttons (Off / Low / Normal / High / Emphasis) th
 
 **Note on source acronym expansion:** Throughout the rest of the UI (final result cards, result history, encounter builder results), display the **full source name** rather than the acronym. Use `SOURCEBOOKS` as the lookup. If an acronym isn't found in `SOURCEBOOKS` (there are a few in the data like `KGV`, `DL`, `SDW` that aren't in the list), display the acronym as-is.
 
-#### Role Ratios (existing, moved here)
-The existing role ratio adjustments (Minion / Elite / Boss / Vault percentages).
+#### Role Multipliers (fixed)
+Fixed role multipliers: Minion ×0.10, Elite ×0.30, Mini-boss ×0.90, Boss ×2.70. Vault is separate (placed treasure). Display-only in settings — no longer adjustable.
 
 ### About Tab
 
 A static page explaining how the system works. Content should be derived from `DESIGN.md` in the repo root, rendered as readable prose. Sections:
 
 1. **What This Is** — brief intro: a unified loot generation system for D&D 5e that replaces DMG hoard tables with per-creature probability.
-2. **How the Math Works** — explain the budget calculation: CR → XP → GP budget via tier-specific GP/XP ratios. Show the GP/XP table. Explain role percentages (Minion 10%, Elite 30%, Boss 60%, Vault 100%).
+2. **How the Math Works** — explain the budget calculation: CR → XP → GP budget via tier-specific GP/XP ratios. Show the GP/XP table. Explain role multipliers (Minion ×0.10, Elite ×0.30, Mini-boss ×0.90, Boss ×2.70, Vault separate).
 3. **Category Breakdown** — explain how the budget splits across coins, gems, art, and magic items using DMG-derived tier percentages.
 4. **Magic Item Tables** — explain the A–I table structure, Minor vs Major, rarity tiers, and the Value Score pricing system.
 5. **DMG Balance Verification** — explain that at default settings, a tier's worth of encounters produces treasure matching DMG expected values.
@@ -599,7 +599,7 @@ after each pick:
 | `src/web/styles/app.css` | Restyle table card, entry rows, header bar, action bar to match spec. Add: breadcrumb styles, context bar (`.context-bar`, `.ref-chip`), final result card (`.final-result-card`), result history section, page-turn transition keyframes, scan-sweep roll animation, gold glow pulse, final card entrance animation. Add full dark mode theme via CSS custom properties on `:root` and `:root[data-theme="dark"]`. |
 | `src/web/App.tsx` | Restructure top-level tabs to: Loot Tables, Encounter Builder, Settings, About. Lift encounter result state and settings state up to App level. Add `pendingResolve` state and pass it to `LootTables`. Wire tab switching so encounter-resolve triggers Loot Tables tab. Manage theme (dark/light/auto) from App level. |
 | `src/web/components/EncounterBuilder.tsx` | Remove embedded Campaign Settings panel (moved to Settings tab). Change magic item results from auto-resolved to unresolved clickable links. Add "Resolve All" button. Accept callback for resolved results. **Set auto-tier checkbox to unchecked by default.** |
-| `src/web/components/CampaignSettings.tsx` | Refactor into the **Settings tab**. Add **Sources section** with the full priority system: source groups (Core Supplements, Settings, Adventures) with batch priority buttons, per-source priority selector (Off/Low/Normal/High/Emphasis), item counts, dampening factor display, and a "Show Formula" toggle. Add **Theme toggle** (Auto/Light/Dark). Keep existing settings (party size, magic richness, show values, show sale price, show mundane, role ratios). |
+| `src/web/components/CampaignSettings.tsx` | Refactor into the **Settings tab**. Add **Sources section** with the full priority system: source groups (Core Supplements, Campaign Settings, Adventures, Digital/Supplemental, Third Party) with batch priority buttons, per-source priority selector (Off/Low/Normal/High/Emphasis), item counts, dampening factor display, and a "Show Formula" toggle. Add **Theme toggle** (Auto/Light/Dark). Keep existing settings (party size, magic richness, show values, show sale price, show mundane). Display fixed role multipliers (read-only). |
 | `src/web/components/About.tsx` | **New file.** Static content page explaining system math, derived from `DESIGN.md`. Sections: What This Is, How the Math Works, Category Breakdown, Magic Item Tables, DMG Balance Verification. Styled with parchment aesthetic, `Crimson Text`, generous line height, max-width ~650px. |
 | `src/engine/roller.ts` | Add `getEffectiveWeight(entry, sourceSettings)` function implementing the formula: `tierValue × bookMultiplier × clamp(√(20/bookItemCount), 0.4, 1.5)`. Add `getFilteredEntries(tableName, sourceSettings)` that computes effective weights for all entries, excludes zero-weight entries, and returns the filtered list. Empty-source structural entries (sub-table refs) pass through with raw weight. |
 | `src/engine/types.ts` | Add source settings types: `SourcePriority = 'off' \| 'low' \| 'normal' \| 'high' \| 'emphasis'`. `SourceSettings = Record<string, SourcePriority>`. `ItemTier = 'low' \| 'mid' \| 'high' \| 'vhigh'`. Add `sourceSettings: SourceSettings` to `CampaignSettings`. |

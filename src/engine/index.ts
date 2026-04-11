@@ -55,6 +55,8 @@ export {
   CR_TO_DEFAULT_TIER,
   crToDefaultTier,
   computeRoleMultipliers,
+  ROLE_MULTIPLIER,
+  ROLE_RAW_WEIGHT,
   VAULT_BUDGET_PER_TIER,
   VAULT_SIZE_MULTIPLIER,
   PRIORITY_MULTIPLIER,
@@ -62,8 +64,9 @@ export {
   SOURCE_GROUPS,
   SOURCE_GROUP_LABELS,
   weightToTier,
+  DMG_VARIANCE,
 } from './constants';
-export type { VaultSize } from './constants';
+export type { VaultSize, VarianceProfile } from './constants';
 
 // Table rollers
 export {

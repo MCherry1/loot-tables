@@ -6,7 +6,7 @@ import type {
   ResolvableEncounterResult,
   Tier,
 } from '@engine/index';
-import { generateEncounterV2, crToDefaultTier, computeRoleMultipliers } from '@engine/index';
+import { generateEncounterV2, crToDefaultTier, ROLE_MULTIPLIER } from '@engine/index';
 import EncounterResults from './EncounterResults';
 import { walkTableChain } from '../lib/stepperResolve';
 import type { ResolvedItem } from '../App';
@@ -15,9 +15,6 @@ const CREATURE_ROLES: CreatureRole[] = ['minion', 'elite', 'mini-boss', 'boss'];
 
 const APL_STOPS = [0.7, 0.85, 1.0, 1.15, 1.3];
 const APL_LABELS = ['Fresh', 'Below Avg', 'Standard', 'Above Avg', 'Veteran'];
-
-const CONC_STOPS = [1.5, 2.25, 3.0, 4.0, 5.0];
-const CONC_LABELS = ['Flat', 'Mild', 'Default', 'Steep', 'Hoarding'];
 
 const ROLE_DISPLAY: Record<CreatureRole, string> = {
   minion: 'Minion',
@@ -302,40 +299,14 @@ const EncounterBuilder: React.FC<Props> = ({
         </div>
       </div>
 
-      {/* Concentration */}
-      <div className="field-row">
-        <label className="field-label">
-          Concentration:{' '}
-          <span className="mono">
-            {CONC_LABELS[CONC_STOPS.indexOf(settings.concentration ?? 3.0)] ?? `${settings.concentration}×`}
-          </span>
-        </label>
-        <input
-          type="range"
-          className="slider"
-          min={0}
-          max={4}
-          step={1}
-          value={Math.max(0, CONC_STOPS.indexOf(settings.concentration ?? 3.0))}
-          onChange={(e) =>
-            onSettingsChange({ ...settings, concentration: CONC_STOPS[Number(e.target.value)] })
-          }
-        />
-        <div className="slider-labels">
-          {CONC_LABELS.map((label) => (
-            <span key={label}>{label}</span>
-          ))}
-        </div>
-      </div>
-
       {/* Role Multiplier Preview */}
       <div className="role-preview">
         {CREATURE_ROLES.map((role) => {
-          const mult = computeRoleMultipliers(settings.concentration ?? 3.0)[role];
+          const mult = ROLE_MULTIPLIER[role];
           return (
             <span key={role} className="role-preview-item">
               <span className="role-preview-label">{ROLE_DISPLAY[role]}</span>
-              <span className="mono">{mult.toFixed(2)}×</span>
+              <span className="mono">×{mult.toFixed(2)}</span>
             </span>
           );
         })}

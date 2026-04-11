@@ -10,7 +10,7 @@ import type {
 import {
   SOURCE_GROUPS,
   SOURCE_GROUP_LABELS,
-  computeRoleMultipliers,
+  ROLE_MULTIPLIER,
   getBookItemCounts,
   getBookDampFactors,
 } from '@engine/index';
@@ -21,9 +21,6 @@ const RICHNESS_LABELS = ['Scarce', 'Low', 'Standard', 'High', 'Abundant'];
 
 const APL_STOPS = [0.7, 0.85, 1.0, 1.15, 1.3];
 const APL_LABELS = ['Fresh', 'Below Avg', 'Standard', 'Above Avg', 'Veteran'];
-
-const CONC_STOPS = [1.5, 2.25, 3.0, 4.0, 5.0];
-const CONC_LABELS = ['Flat', 'Mild', 'Default', 'Steep', 'Hoarding'];
 
 const CREATURE_ROLES: CreatureRole[] = ['minion', 'elite', 'mini-boss', 'boss'];
 const ROLE_DISPLAY: Record<CreatureRole, string> = {
@@ -218,6 +215,8 @@ const CampaignSettingsPanel: React.FC<Props> = ({ settings, onChange, adminMode,
       ...SOURCE_GROUPS.core,
       ...SOURCE_GROUPS.settings,
       ...SOURCE_GROUPS.adventures,
+      ...SOURCE_GROUPS.digital,
+      ...SOURCE_GROUPS.thirdparty,
     ]);
     return Object.keys(counts)
       .filter((a) => !grouped.has(a))
@@ -344,31 +343,6 @@ const CampaignSettingsPanel: React.FC<Props> = ({ settings, onChange, adminMode,
           </div>
 
           <div className="field-row">
-            <label className="field-label">
-              Concentration:{' '}
-              <span className="mono">
-                {CONC_LABELS[CONC_STOPS.indexOf(settings.concentration ?? 3.0)] ?? `${settings.concentration}×`}
-              </span>
-            </label>
-            <input
-              type="range"
-              className="slider"
-              min={0}
-              max={4}
-              step={1}
-              value={Math.max(0, CONC_STOPS.indexOf(settings.concentration ?? 3.0))}
-              onChange={(e) =>
-                update({ concentration: CONC_STOPS[Number(e.target.value)] })
-              }
-            />
-            <div className="slider-labels">
-              {CONC_LABELS.map((label) => (
-                <span key={label}>{label}</span>
-              ))}
-            </div>
-          </div>
-
-          <div className="field-row">
             <label className="checkbox-label">
               <input
                 type="checkbox"
@@ -462,6 +436,24 @@ const CampaignSettingsPanel: React.FC<Props> = ({ settings, onChange, adminMode,
             showFormula={showFormula}
             onChange={updateSources}
           />
+          <SourceGroup
+            label={SOURCE_GROUP_LABELS.digital}
+            acronyms={SOURCE_GROUPS.digital}
+            settings={settings.sourceSettings}
+            counts={counts}
+            damps={damps}
+            showFormula={showFormula}
+            onChange={updateSources}
+          />
+          <SourceGroup
+            label={SOURCE_GROUP_LABELS.thirdparty}
+            acronyms={SOURCE_GROUPS.thirdparty}
+            settings={settings.sourceSettings}
+            counts={counts}
+            damps={damps}
+            showFormula={showFormula}
+            onChange={updateSources}
+          />
           {otherAcronyms.length > 0 && (
             <SourceGroup
               label="Other"
@@ -480,17 +472,17 @@ const CampaignSettingsPanel: React.FC<Props> = ({ settings, onChange, adminMode,
       <section className="card settings-section">
         <h2 className="card-title">Role Multipliers</h2>
         <p className="field-hint">
-          Derived from the Concentration slider above. Shows each
-          role&apos;s multiplier relative to &ldquo;fair share&rdquo; of loot.
+          Fixed ~3× geometric steps. Over a balanced campaign (25% XP per role),
+          total wealth distributed equals total XP budget.
         </p>
         <div className="role-ratios-grid">
           {CREATURE_ROLES.map((role) => {
-            const mult = computeRoleMultipliers(settings.concentration ?? 3.0)[role];
+            const mult = ROLE_MULTIPLIER[role];
             return (
               <div key={role} className="role-ratio-row">
                 <label className="field-label">{ROLE_DISPLAY[role]}</label>
                 <div className="role-ratio-input">
-                  <span className="mono">{mult.toFixed(2)}×</span>
+                  <span className="mono">×{mult.toFixed(2)}</span>
                 </div>
               </div>
             );

@@ -16,14 +16,13 @@ The system is economically balanced against the 2014 DMG: if a party fights a ti
 |------------------|----------------------------|-------------|
 | **CR**           | 0–30                       | Creature's Challenge Rating. Determines XP, which determines budget size. |
 | **Tier of Play** | 1, 2, 3, or 4              | The party's current tier. Determines GP/XP ratio AND which loot categories are available. Auto-detected from CR by default (CR 0-4→T1, 5-10→T2, 11-16→T3, 17+→T4) but manually overridable. |
-| **Role**         | Minion, Elite, Boss, Vault  | Creature's position in the hierarchy. Determines what fraction of their full budget they personally carry. |
+| **Role**         | Minion, Elite, Mini-boss, Boss (+ Vault separate) | Creature's position in the hierarchy. Determines what fraction of their full budget they personally carry. |
 
 ### Inputs (campaign settings, set once)
 
 | Input              | Values      | Default            | Description |
 |--------------------|-------------|--------------------|-------------|
 | **Magic Richness** | 0.5x – 1.5x | 1.0x (Standard)   | Multiplier on magic item probabilities. Labels: Scarce / Low / Standard / High / Abundant. |
-| **Role Ratios**    | Adjustable  | 10 / 30 / 60 / 100 | What percentage of full budget each role gets. |
 
 ### Output (per roll)
 
@@ -42,7 +41,7 @@ A loot result containing any/all of:
 
 ```
 full_budget = XP_BY_CR[cr] × GP_PER_XP[tier]
-role_budget = full_budget × ROLE_PCT[role]
+role_budget = full_budget × ROLE_MULTIPLIER[role]
 ```
 
 **GP/XP ratios** (derived from DMG hoard expected values ÷ tier XP):
@@ -68,14 +67,18 @@ Hoard averages include magic item value using the project's custom Value Score p
 | E     | 25,000 gp  | 125,000 gp  | Minor Legendary  |
 | I     | 100,000 gp | 500,000 gp  | Major Legendary  |
 
-**Role percentages:**
+**Role multipliers** (raw weights 1/3/9/27, ~3× geometric steps, normalized against 25/25/25/25 campaign XP split):
 
-| Role   | % of Budget | Description |
-|--------|-------------|-------------|
-| Minion | 10%         | Fodder, grunts. Pocket change. |
-| Elite  | 30%         | Lieutenant. Personal gear and stash. |
-| Boss   | 60%         | The leader. Best equipment, personal treasure. |
-| Vault  | 100%        | The group's accumulated wealth. The "hoard." |
+| Role      | Raw Weight | Multiplier | Description |
+|-----------|-----------|------------|-------------|
+| Minion    | 1         | ×0.10      | Fodder, grunts. Pocket change. |
+| Elite     | 3         | ×0.30      | Lieutenant. Personal gear and stash. |
+| Mini-boss | 9         | ×0.90      | Sub-boss. Well-equipped, significant personal treasure. |
+| Boss      | 27        | ×2.70      | The leader. The big score. Best equipment, personal hoard. |
+
+Vault is separate — it's placed treasure (dragon hoard, treasure chest), not a creature role. Sized via `calculateVaultBudget()` using per-tier fixed values.
+
+Over a balanced campaign (25% of XP from each role), the average multiplier is exactly 1.0 — total wealth distributed equals total XP budget. Individual encounters will over- or under-distribute depending on role composition (boss-heavy encounters are richer, minion-heavy encounters are leaner).
 
 ### Step 2: Category Breakdown
 
@@ -185,13 +188,15 @@ per_roll_chance = expected_count / num_rolls
 
 ## Role Descriptions
 
-**Minion (10%)** — Fodder, grunts. A few coins in their pocket. The goblin warrior, the skeleton guard.
+**Minion (×0.10)** — Fodder, grunts. A few coins in their pocket. The goblin warrior, the skeleton guard.
 
-**Elite (30%)** — Lieutenants, named NPCs. Personal stash worth searching. The goblin sergeant, the bandit captain.
+**Elite (×0.30)** — Lieutenants, named NPCs. Personal stash worth searching. The goblin sergeant, the bandit captain.
 
-**Boss (60%)** — The leader, the main threat. Best personal equipment, significant personal wealth. The bugbear chief, the dragon.
+**Mini-boss (×0.90)** — Sub-bosses, guardians. Well-equipped, significant personal treasure. The mage lieutenant, the ogre chieftain.
 
-**Vault (100%)** — The group's accumulated treasury. The locked chest, the dragon's pile. This is the DMG's "hoard" concept.
+**Boss (×2.70)** — The leader, the main threat. The big score. Best personal equipment, a personal hoard. The bugbear chief, the dragon.
+
+**Vault** (separate) — Placed treasure. The locked chest, the dragon's pile. Sized via per-tier fixed values, not creature CR. This is the DMG's "hoard" concept.
 
 -----
 
@@ -243,8 +248,17 @@ For very low budgets (< 1 gp coins), include a flavor item instead of "nothing."
 
 ## Verification Targets
 
-1. Tier totals at Vault (100%) across a tier's XP ≈ DMG expected hoard total
+1. Over a balanced campaign (25% XP per role), total wealth distributed ≈ total XP budget (avg multiplier = 1.0)
 2. Only MI tables appearing in the DMG hoard for that tier have nonzero probability
-3. At Richness 1.0x and default ratios, expected values match DMG baseline
-4. Typical dungeon (8m + 2e + 1b + 1v) ≈ 0.25–1.0 DMG hoards
-5. CR 4 solo boss (Tier 1) ≈ CR 4 regional elite (Tier 2) in personal wealth (~190 gp)
+3. At Richness 1.0x, expected values match DMG baseline per tier
+4. Typical dungeon (8 minions + 2 elites + 1 mini-boss + 1 boss) distributes ~115% of total XP budget (boss-heavy = richer, correct)
+5. DMG variance profile preserved: right-skewed distribution, CV 0.56–1.21 by tier, median < mean
+
+### DMG Hoard Variance Reference (100K Monte Carlo simulations)
+
+| Tier | Mean      | Median    | CV   | 90/10 Spread | Description |
+|------|-----------|-----------|------|-------------|-------------|
+| 1    | 990 gp    | 569 gp    | 1.21 | 12×         | Wild variance, jackpots dominate |
+| 2    | 6,807 gp  | 5,105 gp  | 0.76 | 3.2×        | Moderate, coins provide stable floor |
+| 3    | 89,442 gp | 46,750 gp | 1.08 | 5.6×        | High variance, legendary items swing |
+| 4    | 715,751 gp| 557,000 gp| 0.56 | 4.2×        | Tightest, massive coin floor |
