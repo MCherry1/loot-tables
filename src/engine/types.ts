@@ -43,6 +43,8 @@ export interface CampaignSettings {
   aplAdjustment: number;
   /** D&D edition for item data (default '2014'). */
   edition: Edition;
+  /** Whether to show item descriptions on result cards. */
+  showItemDetails: boolean;
 }
 
 /** Input for generating loot for a single creature. */

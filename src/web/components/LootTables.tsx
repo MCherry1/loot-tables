@@ -21,6 +21,35 @@ import {
   type StepRecord,
 } from '../lib/stepperResolve';
 import { expandSource } from '../../data/sourcebook-lookup';
+import itemStatsData from '../../../data/item-stats.json';
+
+const itemStats = itemStatsData as Record<string, { type: string; rarity: string; attune: string; desc: string }>;
+
+/** Strip sub-table refs from an item name: "Flame Tongue [Swords]" → "Flame Tongue" */
+function stripRefs(name: string): string {
+  return name.replace(/\s*\[[^\]]+\]/g, '').trim();
+}
+
+/**
+ * Look up item stats for a completed result.
+ * Tries: final name|source, then each step's entry name (refs stripped)|source.
+ */
+function lookupItemStats(result: CompletedResult): { type: string; rarity: string; attune: string; desc: string } | null {
+  // Try final composed name
+  const directKey = `${result.name}|${result.source}`;
+  if (itemStats[directKey]) return itemStats[directKey];
+
+  // Try each step's picked entry (stripped of sub-table refs)
+  for (const step of result.steps) {
+    const stripped = stripRefs(step.pickedEntry.name);
+    if (stripped) {
+      const key = `${stripped}|${step.pickedEntry.source}`;
+      if (itemStats[key]) return itemStats[key];
+    }
+  }
+
+  return null;
+}
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -582,11 +611,13 @@ function ContextBar({ composedName }: { composedName: string }) {
 function FinalResultCard({
   result,
   inResolveMode,
+  showItemDetails,
   onRollAgain,
   onDone,
 }: {
   result: CompletedResult;
   inResolveMode: boolean;
+  showItemDetails: boolean;
   onRollAgain: () => void;
   onDone: () => void;
 }) {
@@ -599,12 +630,29 @@ function FinalResultCard({
     })
     .join('');
 
+  const stats = showItemDetails ? lookupItemStats(result) : null;
+
   return (
     <div className="final-result-card">
       <div className="final-result-label">{'✦ Final Result ✦'}</div>
       <div className="final-result-name">{result.name}</div>
       {result.source && (
         <div className="final-result-source">{expandSource(result.source)}</div>
+      )}
+      {stats && (
+        <div className="final-result-details">
+          <div className="final-result-meta">
+            <span className="result-rarity">{stats.rarity}</span>
+            {stats.attune && stats.attune !== 'No' && (
+              <span className="result-attune">
+                Attunement{stats.attune !== 'true' && stats.attune !== 'True' ? `: ${stats.attune}` : ''}
+              </span>
+            )}
+          </div>
+          {stats.desc && (
+            <p className="final-result-desc">{stats.desc}</p>
+          )}
+        </div>
       )}
       <div className="final-result-chain">{chain}</div>
       <div className="final-result-actions">
@@ -1018,6 +1066,7 @@ const LootTables: React.FC<LootTablesProps> = ({
         <FinalResultCard
           result={finalResult}
           inResolveMode={inResolveMode}
+          showItemDetails={settings.showItemDetails ?? false}
           onRollAgain={handleRollAgain}
           onDone={handleDone}
         />

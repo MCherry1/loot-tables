@@ -383,6 +383,17 @@ const CampaignSettingsPanel: React.FC<Props> = ({ settings, onChange, adminMode,
               Show Mundane Finds
             </label>
           </div>
+
+          <div className="field-row">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={settings.showItemDetails ?? false}
+                onChange={(e) => update({ showItemDetails: e.target.checked })}
+              />
+              Show Item Details
+            </label>
+          </div>
         </div>
       </section>
 
