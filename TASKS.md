@@ -197,9 +197,59 @@ Done — `roller.ts` canonicalizes legacy abbreviations at startup. "Other" sour
 
 ---
 
-## Future Design Explorations
+## Public Launch (DEFERRED — implement when explicitly asked)
 
-### Class-Gated Categories Beyond Spellcaster
+The following items are planned but not active tasks. Implement only when the user explicitly requests it.
+
+### Two-Deployment Strategy
+Two separate GitHub Pages deployments from the same repo:
+
+**Personal deploy** (full features):
+- Item descriptions baked in (item-stats.json bundled)
+- Admin Review UI available
+- Accessed via a landing page with password gate
+- Password: `ebmontgomeryward` (all lowercase, no spaces — EB Montgomery Ward character name)
+- Landing page checks password client-side, stores in localStorage, redirects to the app
+- The app URL is not linked anywhere public, not indexed by search engines
+- `robots.txt` with `Disallow: /` (already in place)
+- This is where mom rolls on tables — no setup needed beyond entering the password once
+
+**Public deploy** (copyright-safe):
+- No item descriptions (item-stats.json excluded from bundle)
+- No admin UI
+- "Show Item Details" toggle prompts user to provide their own 5etools data
+- Table structure, weights, economy system all included (original work, not copyrighted)
+- Licensed under CC BY 4.0 (content/system) + MIT (code)
+
+**Implementation:**
+- `VITE_PUBLIC_BUILD=true` environment variable controls which build
+- Two GitHub Pages sites (e.g., main branch → public, deploy branch → personal)
+- Or: custom domain for personal, github.io for public
+- Landing page is a simple HTML file with password input + redirect
+
+### Custom Domain
+GitHub Pages + custom domain (~$12/year). Steps:
+1. Buy domain from Namecheap/Cloudflare
+2. Add `CNAME` file to repo
+3. Configure DNS → GitHub Pages
+4. HTTPS automatic
+
+### License
+- CC BY 4.0 for table system, weights, economy math (original creative work)
+- MIT for code (TypeScript, React components)
+
+### First-Time Tutorial
+Lightweight overlay on first visit for new DMs. Dismissable, localStorage flag.
+
+### URL-Shareable Source Configs
+Share source settings via URL params: `?sources=DMG,XGE&priority=ERLW:emphasis`
+
+### PWA / Offline Support
+Service worker cache for table use without WiFi. Web app manifest for mobile.
+
+### Future Design Explorations
+
+#### Class-Gated Categories Beyond Spellcaster
 The Spellcaster category successfully uses class-specific sub-tables (Wizard, Sorcerer, Bard) to balance class representation. This pattern could extend to other categories:
 
 **Armor — proficiency gating:** Light armor (rogues, bards, warlocks), medium armor (druids, rangers, clerics), heavy armor (fighters, paladins). The sub-tables already exist (`[Light-Armor]`, `[Medium-Armor]`, `[Heavy-Armor]`). A DM could say "my druid boss needs armor" and start at medium armor specifically.
@@ -221,75 +271,3 @@ Implement the draft + publish workflow for the admin/review UI:
 - Rebalancing proposals (highlighted diffs showing weight changes when new items added)
 - Weight-in-context panel showing sub-table siblings and die size
 - Source-batched review mode (review all items from one book at once)
-
----
-
-## Public Launch Checklist
-
-### Strip Copyrighted Item Descriptions from Public Build
-Item descriptions in `item-stats.json` are copyrighted WotC text pulled from 5etools. Fine for personal use (you own the books). Not fine for a public website.
-
-**Solution:** The public build ships without item descriptions baked in. The "Show Item Details" toggle becomes a "bring your own data" feature:
-- On first toggle, prompt the user to provide their own `item-stats.json` (loaded client-side from a URL or file upload)
-- The app stores the URL in localStorage and fetches descriptions on demand
-- The app itself never hosts or serves the copyrighted text
-- For the admin/personal deployment, keep everything as-is (descriptions baked in, admin mode available)
-
-This is the same pattern 5etools-adjacent tools use. Your table structure, weights, economy math, and source priority system are 100% your original work and not copyrightable by WotC.
-
-**Build flag:** Add a `VITE_PUBLIC_BUILD=true` environment variable that:
-- Excludes `item-stats.json` and `item-stats-2024.json` from the bundle
-- Changes the "Show Item Details" toggle to prompt for a data source
-- Hides the admin Review UI tab
-- Hides the GitHub Publish button
-
-### License the Project
-Add a `LICENSE` file with **Creative Commons Attribution 4.0 (CC BY 4.0)**. This covers:
-- Your table assignments and weight system (original work)
-- The economy math and budget formulas (original work)
-- The source priority and dampening system (original work)
-- The auto-classification heuristic (original work)
-- The UI and code (original work)
-
-Other DMs can use, modify, and share it. They credit you. Nobody can claim it as theirs.
-
-The code itself (TypeScript, React components) should be MIT licensed (standard for open-source apps). Add both licenses — CC BY 4.0 for the content/system, MIT for the code.
-
-### Custom Domain
-GitHub Pages is free hosting. For a custom domain:
-1. Buy a domain (~$12/year from Namecheap, Cloudflare, etc.)
-2. Add a `CNAME` file to the repo with the domain name
-3. Configure DNS to point to GitHub Pages
-4. GitHub handles HTTPS automatically
-
-No hosting costs. No server to maintain. The app is fully static.
-
-### First-Time Tutorial / Onboarding
-New DMs landing on the app need a quick orientation. Not a wall of text — a lightweight overlay on first visit:
-- "Pick a table letter (A-I) to browse magic items"
-- "Click Roll to randomly select, or click any item to choose it"
-- "Use the Encounter Builder to generate loot for a full fight"
-- "Customize sources and settings in the Settings tab"
-- Dismissable, doesn't show again (localStorage flag)
-
-### URL-Shareable Source Configs
-Let DMs share their source settings via URL parameters:
-- `?sources=DMG,XGE,TCE,ERLW&priority=ERLW:emphasis,TCE:high`
-- Loading a URL with source params applies them to Settings
-- A "Share Config" button in Settings generates the URL
-- Useful for: "Here's my Eberron campaign setup, paste this link"
-
-### PWA / Offline Support
-DMs use this at the table where WiFi is unreliable. Add a service worker that caches the app after first load:
-- All static assets cached (JS, CSS, fonts)
-- Table data cached (magic-items.ts is already bundled)
-- Works fully offline after first visit
-- Add a web app manifest for "Add to Home Screen" on mobile
-
-### Items to NOT block on for launch
-These are nice-to-have but should not delay making the app available:
-- 2024 edition toggle (data pipeline in progress, not needed for launch)
-- 3D dice roller (fun but CSS animation works fine)
-- Admin review UI (personal tool, not for public users)
-- GitHub publish integration (personal workflow)
-- Class-gated categories (future exploration)
