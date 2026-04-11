@@ -11,7 +11,7 @@ import { SUPPLEMENTAL_TABLES } from '../../data/supplemental';
 import { CUSTOM_GEMS } from '../../data/gems';
 import { CUSTOM_ART } from '../../data/art';
 import { weightedPick } from '@engine/index';
-import type { CampaignSettings, MITable, SourceSettings } from '@engine/index';
+import type { CampaignSettings, Edition, MITable, SourceSettings } from '@engine/index';
 import {
   applyPickPure,
   cleanDisplayName,
@@ -23,8 +23,11 @@ import {
 } from '../lib/stepperResolve';
 import { expandSource } from '../../data/sourcebook-lookup';
 import itemStatsData from '../../../data/item-stats.json';
+import itemStatsData2024 from '../../../data/item-stats-2024.json';
 
-const itemStats = itemStatsData as Record<string, { type: string; rarity: string; attune: string; desc: string }>;
+type ItemStatsMap = Record<string, { type: string; rarity: string; attune: string; desc: string }>;
+const itemStats2014 = itemStatsData as ItemStatsMap;
+const itemStats2024Map = itemStatsData2024 as ItemStatsMap;
 
 /** Strip sub-table refs from an item name: "Flame Tongue [Swords]" → "Flame Tongue" */
 function stripRefs(name: string): string {
@@ -35,17 +38,20 @@ function stripRefs(name: string): string {
  * Look up item stats for a completed result.
  * Tries: final name|source, then each step's entry name (refs stripped)|source.
  */
-function lookupItemStats(result: CompletedResult): { type: string; rarity: string; attune: string; desc: string } | null {
+function lookupItemStats(
+  result: CompletedResult,
+  stats: ItemStatsMap,
+): { type: string; rarity: string; attune: string; desc: string } | null {
   // Try final composed name
   const directKey = `${result.name}|${result.source}`;
-  if (itemStats[directKey]) return itemStats[directKey];
+  if (stats[directKey]) return stats[directKey];
 
   // Try each step's picked entry (stripped of sub-table refs)
   for (const step of result.steps) {
     const stripped = stripRefs(step.pickedEntry.name);
     if (stripped) {
       const key = `${stripped}|${step.pickedEntry.source}`;
-      if (itemStats[key]) return itemStats[key];
+      if (stats[key]) return stats[key];
     }
   }
 
@@ -192,7 +198,7 @@ type StepperAction =
   | { type: 'ROLL_START' }
   | { type: 'ADVANCE'; entries: Entry[] }
   | { type: 'COMMIT_PICK'; entry: Entry; idx: number; rolledNumber: number }
-  | { type: 'SKIP'; sourceSettings: SourceSettings }
+  | { type: 'SKIP'; sourceSettings: SourceSettings; edition?: Edition }
   | { type: 'START_OVER' }
   | { type: 'CLEAR_HISTORY' };
 
@@ -326,7 +332,7 @@ function stepperReducer(
       for (let i = 0; i < 32; i++) {
         if (working.finished) break;
         const entries =
-          getFilteredStepperTable(working.currentTable, action.sourceSettings) ??
+          getFilteredStepperTable(working.currentTable, action.sourceSettings, action.edition) ??
           [];
         if (entries.length === 0) break;
         const picked = weightedPick(entries);
@@ -613,12 +619,14 @@ function FinalResultCard({
   result,
   inResolveMode,
   showItemDetails,
+  itemStatsMap,
   onRollAgain,
   onDone,
 }: {
   result: CompletedResult;
   inResolveMode: boolean;
   showItemDetails: boolean;
+  itemStatsMap: ItemStatsMap;
   onRollAgain: () => void;
   onDone: () => void;
 }) {
@@ -631,7 +639,7 @@ function FinalResultCard({
     })
     .join('');
 
-  const stats = showItemDetails ? lookupItemStats(result) : null;
+  const stats = showItemDetails ? lookupItemStats(result, itemStatsMap) : null;
 
   return (
     <div className="final-result-card">
@@ -868,18 +876,21 @@ const LootTables: React.FC<LootTablesProps> = ({
     return () => { cancelled = true; };
   }, [settings.dice3d]);
 
+  const edition = settings.edition ?? '2014';
+  const currentItemStats = edition === '2024' ? itemStats2024Map : itemStats2014;
+
   // Raw entries (original weights) — full table before source filtering.
   const rawEntries = useMemo<Entry[]>(
-    () => getStepperTable(state.currentTable) ?? [],
-    [state.currentTable],
+    () => getStepperTable(state.currentTable, edition) ?? [],
+    [state.currentTable, edition],
   );
   // Filtered entries (effective weights from source priority) — used for
   // probability sampling via weightedPick.
   const currentEntries = useMemo<Entry[]>(
     () =>
-      getFilteredStepperTable(state.currentTable, settings.sourceSettings) ??
+      getFilteredStepperTable(state.currentTable, settings.sourceSettings, edition) ??
       [],
-    [state.currentTable, settings.sourceSettings],
+    [state.currentTable, settings.sourceSettings, edition],
   );
   // Display entries: when source filtering removes items, snap remaining
   // raw integer weights up to the next standard die for display.
@@ -975,7 +986,7 @@ const LootTables: React.FC<LootTablesProps> = ({
   }, [handleRoll]);
 
   const handleSkip = useCallback(() => {
-    dispatch({ type: 'SKIP', sourceSettings: settings.sourceSettings });
+    dispatch({ type: 'SKIP', sourceSettings: settings.sourceSettings, edition });
   }, [settings.sourceSettings]);
 
   const handleStartOver = useCallback(() => {
@@ -1136,6 +1147,7 @@ const LootTables: React.FC<LootTablesProps> = ({
           result={finalResult}
           inResolveMode={inResolveMode}
           showItemDetails={settings.showItemDetails ?? false}
+          itemStatsMap={currentItemStats}
           onRollAgain={handleRollAgain}
           onDone={handleDone}
         />

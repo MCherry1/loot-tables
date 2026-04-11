@@ -5,14 +5,23 @@
 
 import {
   ALL_TABLES,
+  getTablesForEdition,
   getFilteredEntries,
   weightedPick,
 } from '@engine/index';
-import type { SourceSettings } from '@engine/index';
+import type { Edition, SourceSettings } from '@engine/index';
 import { CUSTOM_GEMS } from '../../data/gems';
 import { CUSTOM_ART } from '../../data/art';
 
 export type Entry = { name: string; source?: string; weight: number };
+
+/** Build the extended stepper lookup from a base table set. */
+function buildStepperLookup(base: Record<string, Entry[]>): Record<string, Entry[]> {
+  const lookup: Record<string, Entry[]> = { ...base };
+  for (const t of CUSTOM_GEMS) lookup[t.name] = t.entries as Entry[];
+  for (const t of CUSTOM_ART) lookup[t.name] = t.entries as Entry[];
+  return lookup;
+}
 
 /**
  * Extended table lookup. Includes everything in `ALL_TABLES` (magic items,
@@ -20,16 +29,25 @@ export type Entry = { name: string; source?: string; weight: number };
  * does not put in `ALL_TABLES` because the loot generator rolls them via
  * dedicated `rollGem` / `rollArt` paths.
  */
-const STEPPER_TABLES: Record<string, Entry[]> = (() => {
-  const lookup: Record<string, Entry[]> = { ...ALL_TABLES };
-  for (const t of CUSTOM_GEMS) lookup[t.name] = t.entries as Entry[];
-  for (const t of CUSTOM_ART) lookup[t.name] = t.entries as Entry[];
-  return lookup;
-})();
+const STEPPER_TABLES: Record<string, Entry[]> = buildStepperLookup(ALL_TABLES);
+
+/** Cached 2024 stepper tables (built on first access). */
+let _stepperTables2024: Record<string, Entry[]> | null = null;
+
+/** Get the stepper lookup for a specific edition. */
+function getStepperLookup(edition?: Edition): Record<string, Entry[]> {
+  if (edition === '2024') {
+    if (!_stepperTables2024) {
+      _stepperTables2024 = buildStepperLookup(getTablesForEdition('2024'));
+    }
+    return _stepperTables2024;
+  }
+  return STEPPER_TABLES;
+}
 
 /** Look up a table by name from the extended (stepper-aware) lookup. */
-export function getStepperTable(name: string): Entry[] | null {
-  return STEPPER_TABLES[name] ?? null;
+export function getStepperTable(name: string, edition?: Edition): Entry[] | null {
+  return getStepperLookup(edition)[name] ?? null;
 }
 
 /**
@@ -39,8 +57,9 @@ export function getStepperTable(name: string): Entry[] | null {
 export function getFilteredStepperTable(
   name: string,
   sourceSettings: SourceSettings | undefined,
+  edition?: Edition,
 ): Entry[] | null {
-  const raw = STEPPER_TABLES[name];
+  const raw = getStepperLookup(edition)[name];
   if (!raw) return null;
   if (!sourceSettings) return raw;
   // getFilteredEntries expects required `source`; our stepper entries have

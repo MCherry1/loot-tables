@@ -4,8 +4,9 @@
  * Extracts type, rarity, attunement, and truncated description
  * for use in the admin Review UI's item stats panel.
  *
- * Usage: npx tsx scripts/generate-item-stats.ts [path/to/items.json]
- * Default: 5etools-mirror-3/5etools-2014-src/data/items.json
+ * Usage: npx tsx scripts/generate-item-stats.ts [path/to/items.json] [output-path]
+ * Default input: 5etools-mirror-3/5etools-2014-src/data/items.json
+ * Default output: data/item-stats.json
  */
 
 import { readFileSync, writeFileSync } from 'fs';
@@ -18,7 +19,7 @@ const DEFAULT_ITEMS_PATH = resolve(
   __dirname, '..', '5etools-mirror-3', '5etools-2014-src', 'data', 'items.json',
 );
 
-const OUTPUT_PATH = resolve(__dirname, '..', 'data', 'item-stats.json');
+const DEFAULT_OUTPUT_PATH = resolve(__dirname, '..', 'data', 'item-stats.json');
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -81,6 +82,9 @@ function flattenEntries(entries: unknown[]): string {
 // ---------------------------------------------------------------------------
 
 const itemsPath = process.argv[2] ?? DEFAULT_ITEMS_PATH;
+const OUTPUT_PATH = process.argv[3]
+  ? resolve(process.argv[3])
+  : DEFAULT_OUTPUT_PATH;
 const variantsPath = resolve(dirname(itemsPath), 'magicvariants.json');
 
 let rawData: { item: Array<Record<string, unknown>>; itemGroup?: Array<Record<string, unknown>> };
