@@ -25,22 +25,18 @@ describe('economy balance', () => {
     expect(mults.boss / mults.elite).toBeCloseTo(9, 1);
   });
 
-  it('flat concentration (1.5) produces much smaller boss/minion spread', () => {
+  it('fixed multipliers ignore concentration parameter', () => {
     const flat = computeRoleMultipliers(1.5);
     const steep = computeRoleMultipliers(5.0);
-    // Flat: boss/minion ratio should be c³ = 3.375
-    expect(flat.boss / flat.minion).toBeCloseTo(1.5 ** 3, 1);
-    // Steep: boss/minion ratio should be c³ = 125
-    expect(steep.boss / steep.minion).toBeCloseTo(5 ** 3, 0);
+    // computeRoleMultipliers is deprecated; always returns fixed 3× steps
+    expect(flat.boss / flat.minion).toBeCloseTo(27, 1);
+    expect(steep.boss / steep.minion).toBeCloseTo(27, 1);
   });
 
-  it('weighted average of multipliers is approximately 1.0', () => {
-    const xpSplit = { minion: 0.50, elite: 0.30, 'mini-boss': 0.12, boss: 0.08 };
-    const wavg =
-      mults.minion * xpSplit.minion +
-      mults.elite * xpSplit.elite +
-      mults['mini-boss'] * xpSplit['mini-boss'] +
-      mults.boss * xpSplit.boss;
-    expect(wavg).toBeCloseTo(1.0, 5);
+  it('role multipliers follow 3× progression', () => {
+    // Fixed multipliers: minion=0.10, elite=0.30, mini-boss=0.90, boss=2.70
+    expect(mults.elite / mults.minion).toBeCloseTo(3, 1);
+    expect(mults['mini-boss'] / mults.elite).toBeCloseTo(3, 1);
+    expect(mults.boss / mults['mini-boss']).toBeCloseTo(3, 1);
   });
 });
