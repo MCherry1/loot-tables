@@ -18,6 +18,8 @@ import type {
   SourceSettings,
 } from './types';
 
+import { canonicalAcronym } from '../data/sourcebook-lookup';
+
 type MIEntry = { name: string; source: string; weight: number };
 
 /** Merge all table sources (magic items, spells, supplemental) into one lookup. */
@@ -27,7 +29,19 @@ function buildTableLookup(): Record<string, MIEntry[]> {
     lookup[table.name] = table.entries;
   }
 
-  // Apply curation weight overrides (only approved items)
+  // Normalize legacy source abbreviations to canonical 5etools form.
+  // This ensures SOURCE_GROUPS (canonical) match data (possibly legacy).
+  for (const [tableName, entries] of Object.entries(lookup)) {
+    lookup[tableName] = entries.map((entry) => {
+      const canonical = canonicalAcronym(entry.source);
+      return canonical !== entry.source
+        ? { ...entry, source: canonical }
+        : entry;
+    });
+  }
+
+  // Apply curation weight overrides (only approved items).
+  // Try both canonical and legacy keys since curation.json may use either.
   const curation = curationData as Record<string, { weight?: number | null; status?: string }>;
   for (const [tableName, entries] of Object.entries(lookup)) {
     lookup[tableName] = entries.map((entry) => {
