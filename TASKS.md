@@ -103,15 +103,27 @@ If the review experience is clunky, it won't get done. Design priorities:
 
 ## Cleanup / Integration
 
-### Source Mapping Alignment
-`scripts/source-mapping.ts` still uses old bidirectional mapping. Should import from `src/data/sourcebooks.ts` `LEGACY_ACRONYM_MAP` and normalize TO 5etools abbreviations (not FROM). All internal data should use 5etools canonical abbreviations; legacy abbreviations only exist for importing from old hand-curated tables.
+### ~~Source Mapping Alignment~~ ✅
+Done — `source-mapping.ts` rewritten to use `LEGACY_ACRONYM_MAP`. `toCanonical()` normalizes to 5etools. Roller.ts canonicalizes at data boundary.
 
-### Auto-Classifier Rule Sync
-`scripts/auto-classify.ts` may need minor updates to match latest methodology spec:
-- Spellcaster-attuned wands → Spellcaster (Wands sub-table), not Misc
-- Generic "by a spellcaster" attunement → Spellcaster category
-- Oils/philters: `type: P` always → Potions (no split to Consumables on minor tables)
-- Verify all priority-ordered rules match TABLE-ASSIGNMENT-METHODOLOGY.md
+### ~~Auto-Classifier Rule Sync~~ ✅
+Done — added `spellcasting: true` tag check, artificer to SPELLCASTER_CLASSES, generic spellcaster attunement detection.
+
+### ~~Source Canonicalization~~ ✅
+Done — `roller.ts` canonicalizes legacy abbreviations at startup. "Other" source group eliminated.
+
+---
+
+## UI Tasks
+
+### "How it Works" Tab
+Wire a second info tab (alongside About) that renders from `HOW-IT-WORKS.md`. Same pattern as the existing About tab (`About.tsx` renders `ABOUT.md`). Create a `HowItWorks.tsx` component or extend `About.tsx` to accept a markdown source prop.
+
+### 3D Dice Roller
+Dice-box integration exists but may still need browser testing. Worker files (`world.offscreen.js`, `Dice.js`) have been copied to `public/assets/dice-box/`. The `dice3d` setting toggle is in place. If init still fails, check browser console for asset loading errors. See CURATION-OVERLAY-SPEC.md §3D Dice for full integration spec.
+
+### APL Hint Text
+Add a `field-hint` below the APL slider explaining what it does: "Adjusts treasure for party level within the tier. Fresh (×0.70) = just entered the tier. Veteran (×1.30) = near the top." Currently has labels but no explanation of the concept.
 
 ---
 
