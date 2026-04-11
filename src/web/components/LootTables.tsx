@@ -471,7 +471,7 @@ function TableCard({
         <span className="dice-badge">d{totalWeight}</span>
       </div>
 
-      <StackedBar entries={entries} highlightIdx={visualHighlight} />
+      <StackedBar entries={rawEntries} highlightIdx={visualHighlight} />
 
       <div className="action-bar">
         {hasResult && highlightedEntry ? (
@@ -1100,7 +1100,15 @@ const LootTables: React.FC<LootTablesProps> = ({
             <button
               key={l}
               className={`letter-tab${activeLetter === l ? ' active' : ''}`}
-              onClick={() => setActiveLetter(l)}
+              onClick={() => {
+                if (l === activeLetter) {
+                  // Already on this letter — reset stepper to root table
+                  setFlashIdx(null);
+                  dispatch({ type: 'SET_ROOT', rootTable: `Magic-Item-Table-${l}` });
+                } else {
+                  setActiveLetter(l);
+                }
+              }}
             >
               {l}
             </button>
