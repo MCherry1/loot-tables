@@ -19,35 +19,52 @@ Tracked design changes and implementation requests for the loot generator.
 
 ## Data / Content
 
-### ~~2014 / 2024 Rules Toggle~~ ✅ (UI only)
-UI toggle implemented in CampaignSettings. Data switching is wired but **2024 data is currently provisional** — `item-stats-2024.json` was generated from the same 2014 5etools source and shows identical descriptions for all shared items. The `curation-2024.json` has all items as `ready-for-review` with no real weight balancing.
+### 2024 Edition Pipeline — IMPLEMENT NOW
+The 2024 toggle is wired but the data behind it is just the 2014 data repackaged. This needs to be real.
 
-**2014 edition (current, default):**
-- Hand-curated tables from Excel + `curation.json` weight overrides
-- Keeps hand-applied rarity downgrades (sparingly — a few items moved to lower tables where the 2014 stats didn't justify their DMG placement)
-- Item stats/descriptions from `5etools-2014-src`
-- `data/curation.json` is the weight authority for reviewed items
+**Step 1: Get the 2024 5etools data**
+Clone the 2024 5etools mirror into the repo (gitignored):
+```bash
+cd 5etools-mirror-3  # or create this directory
+git clone --depth 1 https://github.com/5etools-mirror-3/5etools-src.git
+```
+This gives us `5etools-mirror-3/5etools-src/data/items.json` with 2024 item data (different descriptions, revised mechanics, new items, changed rarities).
 
-**2024 edition (to build):**
-- Tables 100% auto-generated from our heuristic (`auto-classify.ts` run against `5etools-src` 2024 data)
-- No manual rarity adjustments — 2024 specifically fixed the weak-for-tier items, so DMG placements are trusted
-- Item stats from `5etools-src` (different descriptions, some items changed/added/removed between editions)
-- Separate `data/curation-2024.json` seeded entirely from auto-classification
-- Separate `data/item-stats-2024.json` generated from 2024 dataset
+Add `5etools-mirror-3/5etools-src/` to `.gitignore` if not already there.
 
-**Current state:** Only `5etools-2014-src/` exists on disk. No 2024 5etools source data. The toggle currently just adds/removes ~568 newer-source items (XDMG etc.) but doesn't show real 2024 descriptions or mechanics.
+**Step 2: Generate 2024 item stats**
+```bash
+npx tsx scripts/generate-item-stats.ts 5etools-mirror-3/5etools-src/data/items.json
+```
+Move the output to `data/item-stats-2024.json` (the script currently writes to `data/item-stats.json` — either add an `--output` flag or rename after generation).
 
-**The toggle switches both:**
-1. Which curation file feeds the weight overlay in `roller.ts`
-2. Which `item-stats` JSON loads for descriptions on result cards
+**Step 3: Generate 2024 curation**
+Run auto-classify against 2024 items and seed a fresh curation file:
+```bash
+npx tsx scripts/merge-curation.ts --items-json 5etools-mirror-3/5etools-src/data/items.json --output data/curation-2024.json
+```
+If merge-curation doesn't support `--output`, extend it. The 2024 curation should be a separate file from the 2014 one. All items start as `ready-for-review` (auto-classify is trusted for table/category but weights need balancing). Set default weight=3 for all new items.
 
-**Implementation steps for 2024 pipeline:**
-0. Clone 5etools 2024 mirror into `5etools-src/` (or `5etools-mirror-3/5etools-src/`) — this is the prerequisite
-1. Run `generate-item-stats.ts` against `5etools-src/data/items.json` → `data/item-stats-2024.json`
-2. Run `auto-classify.ts` + `seed-curation.ts` against 2024 items → `data/curation-2024.json`
-3. Balance 2024 curation weights so sub-tables sum to standard dice (auto-script or manual review)
-4. No manual review needed for 2024 table assignments — auto-classify is trusted as-is
-5. Consider: add "2024 data is provisional" warning in Settings UI until steps 0-3 are complete
+**Step 4: Balance 2024 sub-table weights**
+After seeding, sub-table totals won't match standard dice. Write a one-time balancing script (or extend seed-curation) that:
+1. Groups items by table + category (same as sub-tables in magic-items.ts)
+2. For each sub-table, scales weights proportionally to the nearest standard die (d4/d6/d8/d10/d12/d20/d100) using the largest-remainder method
+3. Marks balanced items as `approved`
+
+**Step 5: Verify the toggle works end-to-end**
+- Switch to 2024 in Settings
+- Roll on Table G — items should come from the 2024 pool
+- Result card descriptions should show 2024 text (will differ from 2014 for revised items)
+- Switch back to 2014 — everything returns to the hand-curated tables
+
+**Key constraint:** The 2014 pipeline must not be affected. Separate curation files, separate item-stats files. The toggle in `roller.ts` and `LootTables.tsx` already switches between them — just make sure the 2024 files contain real data.
+
+**Files to modify:**
+- `scripts/generate-item-stats.ts` — add output path argument or edition flag
+- `scripts/merge-curation.ts` — add `--output` flag for writing to a different curation file
+- `data/item-stats-2024.json` — regenerate from real 2024 5etools data
+- `data/curation-2024.json` — regenerate from auto-classify against 2024 items, then balance
+- `.gitignore` — ensure 5etools-src is ignored
 
 ### ~~About Section from Editable Markdown~~ ✅
 ~~The About tab should render content from a markdown file in the repository.~~ Done — About.tsx renders from ABOUT.md. Edit ABOUT.md and rebuild.
