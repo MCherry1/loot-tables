@@ -39,7 +39,27 @@ export interface CampaignSettings {
   sourceSettings: SourceSettings;
   /** Color theme preference. */
   theme: ThemePref;
-  /** APL adjustment multiplier on GP_PER_XP (0.7–1.3, default 1.0). */
+  /**
+   * Party level (1-20, default 5).
+   * Used to auto-determine tier and compute progression multiplier.
+   */
+  partyLevel: number;
+  /**
+   * When true (default), tier is auto-determined from partyLevel.
+   * When false, the user picks tier manually via tier buttons.
+   */
+  autoTier: boolean;
+  /**
+   * When true (default), treasure scales within a tier based on partyLevel
+   * (×0.70 at tier start → ×1.30 at tier end, "Natural Progression").
+   * When false, treasure is flat ×1.00 across the entire tier.
+   */
+  tierProgression: boolean;
+  /**
+   * @deprecated Use partyLevel + tierProgression instead.
+   * Kept for backward compatibility with stored settings.
+   * Computed from partyLevel when tierProgression is true.
+   */
   aplAdjustment: number;
   /** D&D edition for item data (default '2014'). */
   edition: Edition;

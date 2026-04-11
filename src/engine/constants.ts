@@ -338,11 +338,58 @@ export const DEFAULT_CAMPAIGN_SETTINGS: CampaignSettings = {
   showMundane: true,
   sourceSettings: {},
   theme: 'auto',
+  partyLevel: 5,
+  autoTier: true,
+  tierProgression: true,
   aplAdjustment: 1.0,
   edition: '2014',
   dice3d: false,
   showItemDetails: true,
 };
+
+// ---------------------------------------------------------------------------
+// Tier ranges and progression
+// ---------------------------------------------------------------------------
+
+/** Level ranges for each tier of play. */
+export const TIER_RANGES: Record<Tier, { start: number; end: number }> = {
+  1: { start: 1, end: 4 },
+  2: { start: 5, end: 10 },
+  3: { start: 11, end: 16 },
+  4: { start: 17, end: 20 },
+};
+
+/** Determine tier from party level. */
+export function tierFromLevel(level: number): Tier {
+  if (level <= 4) return 1;
+  if (level <= 10) return 2;
+  if (level <= 16) return 3;
+  return 4;
+}
+
+/**
+ * Compute the progression multiplier for a party level within a tier.
+ *
+ * Scales linearly from 0.70 at tier start to 1.30 at tier end.
+ * If the party level is outside the tier (e.g., level 6 in tier 1 with
+ * autoTier off), clamps to the nearest tier boundary.
+ *
+ * Returns 1.0 when tierProgression is false (flat mode).
+ */
+export function progressionMultiplier(
+  level: number,
+  tier: Tier,
+  tierProgression: boolean,
+): number {
+  if (!tierProgression) return 1.0;
+
+  const range = TIER_RANGES[tier];
+  // Clamp level to tier boundaries
+  const clamped = Math.max(range.start, Math.min(range.end, level));
+  const span = range.end - range.start;
+  const progress = span === 0 ? 1.0 : (clamped - range.start) / span;
+  return 0.70 + progress * 0.60;
+}
 
 // ---------------------------------------------------------------------------
 // Sourcebook priority system (STEPPER-DESIGN.md §Sources)

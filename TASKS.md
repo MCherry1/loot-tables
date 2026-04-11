@@ -192,8 +192,57 @@ Done — `roller.ts` canonicalizes legacy abbreviations at startup. "Other" sour
 ### ~~3D Dice Roller~~ ✅
 ~~Dice-box integration exists but may still need browser testing.~~ Done — assets in place, initialization guarded with try/catch, graceful fallback to CSS animation when dice-box fails or total weight isn't a standard die.
 
-### ~~APL Hint Text~~ ✅
-~~Add a field-hint below the APL slider.~~ Done — hint text added in both CampaignSettings and EncounterBuilder.
+### ~~APL Hint Text~~ ✅ (superseded by Party Level redesign below)
+
+### Party Level & Tier Progression UI — IMPLEMENT NOW
+Replace the 5-stop APL slider with a cleaner system. The engine changes are done (`types.ts`, `constants.ts`). This task is the UI wiring.
+
+**New settings (already in CampaignSettings type):**
+- `partyLevel: number` (1-20, default 5) — number input with up/down arrows, or click to type
+- `autoTier: boolean` (default true) — "Use party level to determine tier" checkbox
+- `tierProgression: boolean` (default true) — "Natural Progression" vs "Flat" toggle
+
+**Party Level input:**
+- Number input, 1-20
+- Up/down arrow buttons (increment/decrement)
+- Can click and type directly
+- Shows in both CampaignSettings and EncounterBuilder
+
+**Tier buttons (1 / 2 / 3 / 4):**
+- Active tier has a **pop effect**: ~10% larger, subtle drop shadow, clearly "raised" from the surface
+- When `autoTier` is true (default):
+  - Tier is determined by `tierFromLevel(partyLevel)` — buttons are NOT clickable
+  - Non-active tiers are **faded** (reduced opacity, ~40-50%) so they look non-interactive
+  - Active tier is popped and full contrast
+- When `autoTier` is false:
+  - All tier buttons are **full contrast** (not faded) and clickable
+  - Active tier has the same pop effect
+  - Clicking a different tier selects it
+
+**"Use party level to determine tier" checkbox:**
+- Positioned next to the tier buttons
+- Default: checked
+- When unchecked, tier buttons become clickable, lose the fading
+
+**Tier Progression toggle:**
+- Two options: "Natural Progression" (default) and "Flat"
+- **Natural Progression:** multiplier scales linearly within the tier based on party level
+  - `multiplier = 0.70 + ((level - tier_start) / (tier_end - tier_start)) × 0.60`
+  - Level 5 in Tier 2: ×0.70 | Level 8: ×1.06 | Level 10: ×1.30
+- **Flat:** multiplier is always ×1.00 regardless of level
+- When `autoTier` is off and level is outside the selected tier:
+  - Clamp to tier boundary (level 6 in Tier 1 → treated as level 4 → ×1.30)
+  - Level 10 in Tier 3 → treated as level 11 → ×0.70
+
+**Display:** Show the computed multiplier somewhere visible (e.g., "×1.06" next to the progression toggle) so the DM can see exactly what's happening.
+
+**Engine integration:**
+- `progressionMultiplier(level, tier, tierProgression)` is already in `constants.ts`
+- `tierFromLevel(level)` is already in `constants.ts`
+- The budget calc in `budget.ts` uses `settings.aplAdjustment` — compute this from `progressionMultiplier()` before passing to the engine, OR update `budget.ts` to read the new fields directly
+- The old `aplAdjustment` field is kept for backward compatibility with stored localStorage settings — if `partyLevel` exists in stored settings, use the new system; if only `aplAdjustment` exists (old settings), use that as-is
+
+**Remove:** The old 5-stop APL slider and its labels (`×0.70 Fresh` through `×1.30 Veteran`). The APL_STOPS and APL_LABELS constants in EncounterBuilder.tsx and CampaignSettings.tsx can be deleted.
 
 ---
 

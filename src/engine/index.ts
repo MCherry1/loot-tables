@@ -65,6 +65,9 @@ export {
   SOURCE_GROUP_LABELS,
   weightToTier,
   DMG_VARIANCE,
+  TIER_RANGES,
+  tierFromLevel,
+  progressionMultiplier,
 } from './constants';
 export type { VaultSize, VarianceProfile } from './constants';
 
