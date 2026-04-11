@@ -20,7 +20,7 @@ Tracked design changes and implementation requests for the loot generator.
 ## Data / Content
 
 ### ~~2014 / 2024 Rules Toggle~~ ✅ (UI only)
-UI toggle implemented in CampaignSettings. Data switching to be wired when 2024 dataset is available.
+UI toggle implemented in CampaignSettings. Data switching is wired but **2024 data is currently provisional** — `item-stats-2024.json` was generated from the same 2014 5etools source and shows identical descriptions for all shared items. The `curation-2024.json` has all items as `ready-for-review` with no real weight balancing.
 
 **2014 edition (current, default):**
 - Hand-curated tables from Excel + `curation.json` weight overrides
@@ -35,16 +35,19 @@ UI toggle implemented in CampaignSettings. Data switching to be wired when 2024 
 - Separate `data/curation-2024.json` seeded entirely from auto-classification
 - Separate `data/item-stats-2024.json` generated from 2024 dataset
 
+**Current state:** Only `5etools-2014-src/` exists on disk. No 2024 5etools source data. The toggle currently just adds/removes ~568 newer-source items (XDMG etc.) but doesn't show real 2024 descriptions or mechanics.
+
 **The toggle switches both:**
 1. Which curation file feeds the weight overlay in `roller.ts`
 2. Which `item-stats` JSON loads for descriptions on result cards
 
 **Implementation steps for 2024 pipeline:**
+0. Clone 5etools 2024 mirror into `5etools-src/` (or `5etools-mirror-3/5etools-src/`) — this is the prerequisite
 1. Run `generate-item-stats.ts` against `5etools-src/data/items.json` → `data/item-stats-2024.json`
 2. Run `auto-classify.ts` + `seed-curation.ts` against 2024 items → `data/curation-2024.json`
-3. Update `roller.ts` to pick curation file based on `settings.edition`
-4. Update `LootTables.tsx` to pick item-stats file based on `settings.edition`
-5. No manual review needed for 2024 — auto-classify is trusted as-is
+3. Balance 2024 curation weights so sub-tables sum to standard dice (auto-script or manual review)
+4. No manual review needed for 2024 table assignments — auto-classify is trusted as-is
+5. Consider: add "2024 data is provisional" warning in Settings UI until steps 0-3 are complete
 
 ### ~~About Section from Editable Markdown~~ ✅
 ~~The About tab should render content from a markdown file in the repository.~~ Done — About.tsx renders from ABOUT.md. Edit ABOUT.md and rebuild.
