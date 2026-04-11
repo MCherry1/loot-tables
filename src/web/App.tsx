@@ -10,9 +10,10 @@ import VaultHoard from './components/VaultHoard';
 import CampaignSettingsPanel from './components/CampaignSettings';
 import LootTables from './components/LootTables';
 import About from './components/About';
+import HowItWorks from './components/HowItWorks';
 import ReviewUI from './components/ReviewUI';
 
-type Tab = 'tables' | 'encounter' | 'settings' | 'review' | 'about';
+type Tab = 'tables' | 'encounter' | 'settings' | 'review' | 'about' | 'how-it-works';
 
 export type ResolvedItem = { name: string; source: string };
 export type PendingResolve = { itemId: string; table: string };
@@ -171,6 +172,12 @@ const App: React.FC = () => {
         >
           About
         </button>
+        <button
+          className={`tab-btn ${activeTab === 'how-it-works' ? 'active' : ''}`}
+          onClick={() => setActiveTab('how-it-works')}
+        >
+          How it Works
+        </button>
       </div>
 
       {/* Tab Content */}
@@ -210,6 +217,8 @@ const App: React.FC = () => {
       {activeTab === 'review' && adminMode && <ReviewUI />}
 
       {activeTab === 'about' && <About />}
+
+      {activeTab === 'how-it-works' && <HowItWorks />}
     </div>
   );
 };
