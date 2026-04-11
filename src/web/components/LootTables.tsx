@@ -918,18 +918,23 @@ const LootTables: React.FC<LootTablesProps> = ({
       [],
     [state.currentTable, settings.sourceSettings, edition],
   );
-  // Display entries: when source filtering removes items, snap remaining
-  // raw integer weights up to the next standard die for display.
+  // Display entries: snap weights to next standard die for clean dice ranges.
+  // Curation overrides or source filtering can produce non-standard totals.
   const displayEntries = useMemo<Entry[]>(() => {
-    if (currentEntries.length === rawEntries.length) return rawEntries;
-    // Build survivor set from filtered entries (match by name|source key)
+    if (currentEntries.length === rawEntries.length) {
+      // No source filtering — use raw weights but snap if needed
+      const total = rawEntries.reduce((s, e) => s + e.weight, 0);
+      const target = nextDieUp(total);
+      if (total === target) return rawEntries;
+      return snapToStandardDie(rawEntries);
+    }
+    // Source filtering active — filter then snap
     const survivorKeys = new Set(
       currentEntries.map((e) => `${e.name}|${e.source ?? ''}`),
     );
     const filtered = rawEntries.filter(
       (e) => !e.source || survivorKeys.has(`${e.name}|${e.source ?? ''}`),
     );
-    if (filtered.length === rawEntries.length) return rawEntries;
     return snapToStandardDie(filtered);
   }, [rawEntries, currentEntries]);
   // Display dice ranges and total use snapped display weights.
