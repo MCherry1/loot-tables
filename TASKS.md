@@ -202,30 +202,64 @@ Done — `roller.ts` canonicalizes legacy abbreviations at startup. "Other" sour
 The following items are planned but not active tasks. Implement only when the user explicitly requests it.
 
 ### Two-Deployment Strategy
-Two separate GitHub Pages deployments from the same repo:
+One codebase, two builds. No code duplication. A `VITE_PUBLIC_BUILD` environment variable controls which version is built.
 
-**Personal deploy** (full features):
-- Item descriptions baked in (item-stats.json bundled)
-- Admin Review UI available
-- Accessed via a landing page with password gate
-- Password: `ebmontgomeryward` (all lowercase, no spaces — EB Montgomery Ward character name)
-- Landing page checks password client-side, stores in localStorage, redirects to the app
-- The app URL is not linked anywhere public, not indexed by search engines
-- `robots.txt` with `Disallow: /` (already in place)
-- This is where mom rolls on tables — no setup needed beyond entering the password once
+**The user flow:**
 
-**Public deploy** (copyright-safe):
-- No item descriptions (item-stats.json excluded from bundle)
-- No admin UI
-- "Show Item Details" toggle prompts user to provide their own 5etools data
-- Table structure, weights, economy system all included (original work, not copyrighted)
-- Licensed under CC BY 4.0 (content/system) + MIT (code)
+1. Visitor lands on the **public site** (e.g., `loot-tables.com`). This is the full app — tables, encounter builder, settings, source priorities — everything works. But no item descriptions. The "Show Item Details" toggle is hidden or says "Available in personal version."
 
-**Implementation:**
-- `VITE_PUBLIC_BUILD=true` environment variable controls which build
-- Two GitHub Pages sites (e.g., main branch → public, deploy branch → personal)
-- Or: custom domain for personal, github.io for public
-- Landing page is a simple HTML file with password input + redirect
+2. Somewhere in the app (probably Settings tab or a small link in the header), there's a **"Personal Login"** button.
+
+3. Clicking "Personal Login" takes you to a **password page** — a simple form that says "Enter your access code." The password is `ebmontgomeryward` (all lowercase, no spaces).
+
+4. Correct password → stores a flag in localStorage → redirects to the **personal site** (e.g., `loot-tables.com/personal/` or a subdomain like `personal.loot-tables.com` — a different URL where the full-featured build is deployed).
+
+5. The **personal site** looks identical but:
+   - Has a small banner or badge at the top (e.g., "✦ Full Edition" or "Personal Edition — Item Descriptions Enabled")
+   - "Show Item Details" toggle works and shows descriptions
+   - Admin Review UI is available
+   - The URL is not linked anywhere public, not indexed by search engines
+
+6. Subsequent visits: if the localStorage flag exists, the "Personal Login" button could say "Go to Personal Edition →" and skip the password prompt.
+
+**Why this is copyright-safe:**
+- The public site never loads, serves, or contains item descriptions. They're not in the JavaScript bundle.
+- The personal site lives at a separate URL that is not linked from any public page (only reachable via the password redirect).
+- `robots.txt` blocks search engine indexing on both sites.
+- The copyrighted text is genuinely not distributed — you have to know the password to reach the page where it exists.
+- Password: `ebmontgomeryward`
+
+**Implementation (same codebase, two builds):**
+```bash
+# Public build (no descriptions, no admin)
+VITE_PUBLIC_BUILD=true npm run build
+# Deploy to: main GitHub Pages URL
+
+# Personal build (full features)
+npm run build
+# Deploy to: /personal/ subdirectory or separate branch
+```
+
+**What `VITE_PUBLIC_BUILD=true` does:**
+- Excludes `item-stats.json` and `item-stats-2024.json` from the bundle
+- Hides "Show Item Details" toggle (or replaces with "Available in Personal Edition")
+- Hides admin Review UI tab
+- Adds "Personal Login" button linking to the password landing page
+
+**What the personal build includes (normal build, no flag):**
+- Item descriptions bundled
+- "Show Item Details" works
+- Admin UI available
+- Small "✦ Full Edition" badge in the header
+- Same everything else — same tables, same weights, same settings
+
+**The password landing page:**
+- A standalone HTML file (not part of the React app)
+- Simple centered form: "Enter your access code"
+- Checks password client-side (`ebmontgomeryward`)
+- On success: stores flag in localStorage, redirects to personal site URL
+- On failure: "Incorrect code" message
+- Deployed at a known path on the public site (e.g., `/login`)
 
 ### Custom Domain
 GitHub Pages + custom domain (~$12/year). Steps:
