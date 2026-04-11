@@ -5,6 +5,8 @@
 import type {
   CampaignSettings,
   CategoryEntry,
+  CoinBreakdown,
+  CoinDenom,
   CreatureResult,
   EncounterInput,
   EncounterInputV2,
@@ -26,9 +28,10 @@ import { calculateBudget, calculateVaultBudget } from './budget';
 import {
   MUNDANE_FINDS,
   TIER_CATEGORIES,
+  COIN_MIX,
   crToDefaultTier,
 } from './constants';
-import { gpToDiceFormula, evalDiceFormula } from './dice';
+import { coinCountToDiceFormula, evalDiceFormula } from './dice';
 import { cryptoRandom } from './random';
 import { applyRichness } from './richness';
 import {
@@ -68,6 +71,36 @@ function randomMundaneFind(): string {
   return MUNDANE_FINDS[Math.floor(cryptoRandom() * MUNDANE_FINDS.length)];
 }
 
+const ZERO_DENOM: CoinDenom = { formula: '0', average: 0, rolled: 0 };
+
+/** Compute the GP-equivalent average of a coin breakdown. */
+function coinBreakdownToGp(coins: CoinBreakdown): number {
+  return coins.cp.average / 100 + coins.sp.average / 10 + coins.gp.average + coins.pp.average * 10;
+}
+
+/** Convert a GP budget into a per-denomination coin breakdown. */
+function gpToCoinBreakdown(gpBudget: number, tier: Tier): CoinBreakdown {
+  if (gpBudget < 0.01) {
+    return { cp: { ...ZERO_DENOM }, sp: { ...ZERO_DENOM }, gp: { ...ZERO_DENOM }, pp: { ...ZERO_DENOM } };
+  }
+
+  const mix = COIN_MIX[tier];
+
+  function makeDenom(share: number, unitsPerGp: number): CoinDenom {
+    const coinCount = gpBudget * share * unitsPerGp;
+    if (coinCount < 1) return { ...ZERO_DENOM };
+    const dice = coinCountToDiceFormula(coinCount);
+    return { formula: dice.formula, average: dice.average, rolled: evalDiceFormula(dice.formula) };
+  }
+
+  return {
+    cp: makeDenom(mix.cp, 100),
+    sp: makeDenom(mix.sp, 10),
+    gp: makeDenom(mix.gp, 1),
+    pp: makeDenom(mix.pp, 0.1),
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
@@ -88,8 +121,7 @@ export function generateLoot(input: LootInput): LootResult {
 
   const categories = resolveCategories(roleBudget, tier, settings);
 
-  let coinsFormula = '0';
-  let coinsAverage = 0;
+  let coinGpBudget = 0;
   const gems: TreasureItem[] = [];
   const artObjects: TreasureItem[] = [];
   const magicItems: MagicItemResult[] = [];
@@ -100,16 +132,13 @@ export function generateLoot(input: LootInput): LootResult {
 
     switch (cat.type) {
       case 'coins': {
-        const diceInfo = gpToDiceFormula(categoryGp);
-        coinsFormula = diceInfo.formula;
-        coinsAverage = diceInfo.average;
+        coinGpBudget = categoryGp;
         break;
       }
 
       case 'gems': {
         if (!cat.unitValue || !cat.tableName) break;
         const probability = categoryGp / cat.unitValue;
-        // For probabilities >= 1, always drop at least one; fractional part is extra chance.
         const guaranteed = Math.floor(probability);
         const fractional = probability - guaranteed;
         const count = guaranteed + (probHit(fractional) ? 1 : 0);
@@ -159,13 +188,15 @@ export function generateLoot(input: LootInput): LootResult {
     }
   }
 
+  const coins = gpToCoinBreakdown(coinGpBudget, tier);
+
   // If coins are negligible and mundane finds are enabled, add flavor.
-  if (coinsAverage < 1 && settings.showMundane) {
+  if (coinBreakdownToGp(coins) < 1 && settings.showMundane) {
     mundaneFinds.push(randomMundaneFind());
   }
 
   return {
-    coins: { formula: coinsFormula, average: coinsAverage, rolled: evalDiceFormula(coinsFormula) },
+    coins,
     gems,
     artObjects,
     magicItems,
@@ -199,7 +230,7 @@ export function generateEncounter(input: EncounterInput): EncounterResult {
   }
 
   const totalCoinsAvg = creatures.reduce(
-    (sum, c) => sum + c.loot.coins.average,
+    (sum, c) => sum + coinBreakdownToGp(c.loot.coins),
     0,
   );
 
@@ -234,8 +265,7 @@ export function generateLootResolvable(
 
   const categories = resolveCategories(roleBudget, tier, settings);
 
-  let coinsFormula = '0';
-  let coinsAverage = 0;
+  let coinGpBudget = 0;
   const gems: TreasureItem[] = [];
   const artObjects: TreasureItem[] = [];
   const magicItems: ResolvableMagicItem[] = [];
@@ -246,9 +276,7 @@ export function generateLootResolvable(
 
     switch (cat.type) {
       case 'coins': {
-        const diceInfo = gpToDiceFormula(categoryGp);
-        coinsFormula = diceInfo.formula;
-        coinsAverage = diceInfo.average;
+        coinGpBudget = categoryGp;
         break;
       }
 
@@ -307,12 +335,14 @@ export function generateLootResolvable(
     }
   }
 
-  if (coinsAverage < 1 && settings.showMundane) {
+  const coins = gpToCoinBreakdown(coinGpBudget, tier);
+
+  if (coinBreakdownToGp(coins) < 1 && settings.showMundane) {
     mundaneFinds.push(randomMundaneFind());
   }
 
   return {
-    coins: { formula: coinsFormula, average: coinsAverage, rolled: evalDiceFormula(coinsFormula) },
+    coins,
     gems,
     artObjects,
     magicItems,
@@ -335,8 +365,7 @@ export function generateVaultLootResolvable(
 
   const categories = resolveCategories(roleBudget, tier, settings);
 
-  let coinsFormula = '0';
-  let coinsAverage = 0;
+  let coinGpBudget = 0;
   const gems: TreasureItem[] = [];
   const artObjects: TreasureItem[] = [];
   const magicItems: ResolvableMagicItem[] = [];
@@ -347,9 +376,7 @@ export function generateVaultLootResolvable(
 
     switch (cat.type) {
       case 'coins': {
-        const diceInfo = gpToDiceFormula(categoryGp);
-        coinsFormula = diceInfo.formula;
-        coinsAverage = diceInfo.average;
+        coinGpBudget = categoryGp;
         break;
       }
 
@@ -408,12 +435,14 @@ export function generateVaultLootResolvable(
     }
   }
 
-  if (coinsAverage < 1 && settings.showMundane) {
+  const coins = gpToCoinBreakdown(coinGpBudget, tier);
+
+  if (coinBreakdownToGp(coins) < 1 && settings.showMundane) {
     mundaneFinds.push(randomMundaneFind());
   }
 
   return {
-    coins: { formula: coinsFormula, average: coinsAverage, rolled: evalDiceFormula(coinsFormula) },
+    coins,
     gems,
     artObjects,
     magicItems,
@@ -466,7 +495,7 @@ export function generateEncounterV2(input: EncounterInputV2, resolveImmediately:
   }
 
   const totalCoinsAvg = creatures.reduce(
-    (sum, c) => sum + c.loot.coins.average,
+    (sum, c) => sum + coinBreakdownToGp(c.loot.coins),
     0,
   );
 

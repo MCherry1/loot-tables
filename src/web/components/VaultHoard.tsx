@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type {
   CampaignSettings,
+  CoinBreakdown,
   ResolvableLootResult,
   Tier,
   VaultSize,
@@ -32,6 +33,21 @@ const VAULT_SIZE_LABELS: Record<VaultSize, string> = {
   standard: 'Standard (1x)',
   major: 'Major (2x)',
 };
+
+function formatVaultCoins(coins: CoinBreakdown): string {
+  const parts: string[] = [];
+  if (coins.cp.rolled > 0) parts.push(`${coins.cp.rolled} cp`);
+  if (coins.sp.rolled > 0) parts.push(`${coins.sp.rolled} sp`);
+  if (coins.gp.rolled > 0) parts.push(`${coins.gp.rolled} gp`);
+  if (coins.pp.rolled > 0) parts.push(`${coins.pp.rolled} pp`);
+  if (parts.length > 0) return parts.join(', ');
+  // Fallback to averages
+  if (coins.cp.average > 0) parts.push(`${Math.round(coins.cp.average)} cp`);
+  if (coins.sp.average > 0) parts.push(`${Math.round(coins.sp.average)} sp`);
+  if (coins.gp.average > 0) parts.push(`${Math.round(coins.gp.average)} gp`);
+  if (coins.pp.average > 0) parts.push(`${Math.round(coins.pp.average)} pp`);
+  return parts.join(', ') || '0 gp';
+}
 
 function ResolvableItem({
   item,
@@ -220,7 +236,7 @@ const VaultHoard: React.FC<Props> = ({ settings }) => {
           <h3 className="results-title">Hoard Contents</h3>
           <div className="creature-line">
             <span className="creature-coins">
-              {Math.round(result.coins.average)} gp
+              {formatVaultCoins(result.coins)}
             </span>
             {result.gems.map((gem, i) => (
               <span key={`gem-${i}`}>

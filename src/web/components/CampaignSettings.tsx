@@ -454,6 +454,34 @@ const CampaignSettingsPanel: React.FC<Props> = ({ settings, onChange, adminMode,
             <label className="checkbox-label">
               <input
                 type="checkbox"
+                checked={settings.convertToGold ?? false}
+                onChange={(e) => update({ convertToGold: e.target.checked })}
+              />
+              Convert to Gold
+            </label>
+            <p className="field-hint">
+              Trade up lower denominations to maximize gold pieces.
+            </p>
+          </div>
+
+          <div className="field-row">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={settings.splitAmongParty ?? false}
+                onChange={(e) => update({ splitAmongParty: e.target.checked })}
+              />
+              Split Among Party
+            </label>
+            <p className="field-hint">
+              Divide coins evenly among party members, showing remainder.
+            </p>
+          </div>
+
+          <div className="field-row">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
                 checked={settings.showItemDetails ?? false}
                 onChange={(e) => update({ showItemDetails: e.target.checked })}
               />

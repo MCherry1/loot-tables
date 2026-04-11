@@ -1,6 +1,7 @@
 import React from 'react';
 import type {
   CampaignSettings,
+  CoinBreakdown,
   ResolvableEncounterResult,
   ResolvableMagicItem,
 } from '@engine/index';
@@ -16,6 +17,67 @@ interface Props {
 
 function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+/** Format a CoinBreakdown into a human-readable denomination string. */
+function formatCoins(coins: CoinBreakdown, convertToGold: boolean, splitAmongParty: boolean, partySize: number): string {
+  let { cp, sp, gp, pp } = {
+    cp: coins.cp.rolled,
+    sp: coins.sp.rolled,
+    gp: coins.gp.rolled,
+    pp: coins.pp.rolled,
+  };
+
+  // Use averages if nothing was rolled
+  if (cp === 0 && sp === 0 && gp === 0 && pp === 0) {
+    cp = Math.round(coins.cp.average);
+    sp = Math.round(coins.sp.average);
+    gp = Math.round(coins.gp.average);
+    pp = Math.round(coins.pp.average);
+  }
+
+  if (cp === 0 && sp === 0 && gp === 0 && pp === 0) return '';
+
+  if (convertToGold) {
+    gp += Math.floor(cp / 100);
+    cp = cp % 100;
+    gp += Math.floor(sp / 10);
+    sp = sp % 10;
+  }
+
+  const parts: string[] = [];
+  if (splitAmongParty && partySize > 1) {
+    if (cp > 0) {
+      const each = Math.floor(cp / partySize);
+      const rem = cp % partySize;
+      if (each > 0) parts.push(rem > 0 ? `${each} cp each (+${rem})` : `${each} cp each`);
+      else if (rem > 0) parts.push(`${rem} cp remainder`);
+    }
+    if (sp > 0) {
+      const each = Math.floor(sp / partySize);
+      const rem = sp % partySize;
+      if (each > 0) parts.push(rem > 0 ? `${each} sp each (+${rem})` : `${each} sp each`);
+      else if (rem > 0) parts.push(`${rem} sp remainder`);
+    }
+    if (gp > 0) {
+      const each = Math.floor(gp / partySize);
+      const rem = gp % partySize;
+      if (each > 0) parts.push(rem > 0 ? `${each} gp each (+${rem})` : `${each} gp each`);
+      else if (rem > 0) parts.push(`${rem} gp remainder`);
+    }
+    if (pp > 0) {
+      const each = Math.floor(pp / partySize);
+      const rem = pp % partySize;
+      if (each > 0) parts.push(rem > 0 ? `${each} pp each (+${rem})` : `${each} pp each`);
+      else if (rem > 0) parts.push(`${rem} pp remainder`);
+    }
+  } else {
+    if (cp > 0) parts.push(`${cp} cp`);
+    if (sp > 0) parts.push(`${sp} sp`);
+    if (gp > 0) parts.push(`${gp} gp`);
+    if (pp > 0) parts.push(`${pp} pp`);
+  }
+  return parts.join(', ');
 }
 
 /** Inline component for a single magic item — either an unresolved button
@@ -75,11 +137,12 @@ const EncounterResults: React.FC<Props> = ({
         {results.creatures.map((creature, ci) => {
           const label = `${capitalize(creature.role)} ${creature.index}`;
           const loot = creature.loot;
-          const coinText = loot.coins.rolled > 0
-            ? `${loot.coins.rolled} gp`
-            : loot.coins.average > 0
-              ? `${Math.round(loot.coins.average)} gp`
-              : '';
+          const coinText = formatCoins(
+            loot.coins,
+            settings.convertToGold ?? false,
+            settings.splitAmongParty ?? false,
+            settings.partySize,
+          );
 
           return (
             <div
