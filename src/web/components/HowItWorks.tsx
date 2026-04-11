@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
-import aboutMd from '../../../ABOUT.md?raw';
+import howItWorksMd from '../../../HOW-IT-WORKS.md?raw';
 import { markdownToHtml } from './markdownToHtml';
 
-const About: React.FC = () => {
-  const html = useMemo(() => markdownToHtml(aboutMd), []);
+const HowItWorks: React.FC = () => {
+  const html = useMemo(() => markdownToHtml(howItWorksMd), []);
 
   return (
     <article
@@ -13,4 +13,4 @@ const About: React.FC = () => {
   );
 };
 
-export default About;
+export default HowItWorks;

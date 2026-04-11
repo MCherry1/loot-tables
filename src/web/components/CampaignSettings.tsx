@@ -340,6 +340,9 @@ const CampaignSettingsPanel: React.FC<Props> = ({ settings, onChange, adminMode,
                 <span key={label}>{label}</span>
               ))}
             </div>
+            <p className="field-hint">
+              Adjusts treasure for party level within the tier. Fresh (×0.70) = just entered the tier. Veteran (×1.30) = near the top.
+            </p>
           </div>
 
           <div className="field-row">
