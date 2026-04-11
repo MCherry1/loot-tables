@@ -211,6 +211,62 @@ The dice-box integration works but needs three fixes:
 
 ### ~~APL Hint Text~~ ✅ (superseded by Party Level redesign below)
 
+### Coin Denomination Breakdown — IMPLEMENT NOW
+Currently all coins are converted to gold. A goblin dropping "3 gp" feels wrong — it should be "30 sp" or "2 sp, 14 cp" depending on the tier. The DMG hoard tables use specific denomination mixes per tier, and we should match them.
+
+**Denomination mix constants (from DMG hoard tables):**
+```typescript
+// Percentage of coin value in each denomination, by tier
+const COIN_MIX: Record<Tier, { cp: number; sp: number; gp: number; pp: number }> = {
+  1: { cp: 0.11, sp: 0.54, gp: 0.36, pp: 0.00 },  // mostly silver and copper
+  2: { cp: 0.00, sp: 0.18, gp: 0.54, pp: 0.27 },  // mostly gold, some silver and platinum
+  3: { cp: 0.00, sp: 0.00, gp: 0.44, pp: 0.56 },  // gold and platinum
+  4: { cp: 0.00, sp: 0.00, gp: 0.13, pp: 0.87 },  // mostly platinum
+};
+```
+
+**How it works:**
+1. Compute total coin budget in GP (same as now)
+2. Split by denomination mix for the current tier
+3. Convert each denomination's GP share into actual coins: cp share × 100, sp share × 10, gp share × 1, pp share ÷ 10
+4. Generate a dice formula for each non-zero denomination
+5. Roll each independently (variance per denomination)
+
+**Example:** CR 1 minion, Tier 1, coin budget = 1.1 gp
+- CP share: 1.1 × 0.11 × 100 = 12 cp → dice formula "2d6" (avg 7, close enough)
+- SP share: 1.1 × 0.54 × 10 = 5.9 sp → dice formula "1d10" or "1d12"
+- GP share: 1.1 × 0.36 = 0.4 gp → below threshold, skip or "0"
+- Result: "7 cp, 6 sp" instead of "1 gp"
+
+**Display:** Show each denomination separately: "12 cp, 6 sp, 2 gp" not "2.72 gp"
+
+**Three coin settings checkboxes (all off by default):**
+
+**☐ Use Electrum (off by default)**
+When on, adds EP to the denomination mix (1 EP = 5 SP = 0.5 GP). Splits some of the SP/GP allocation into EP. When off (default), any EP allocation converts to SP at 1 EP = 5 SP. Note: the DMG hoard tables don't use EP at all, so "off" matches the DMG.
+
+**☐ Convert to Gold (off by default)**
+When on, trades up lower denominations to maximize gold:
+- Every 100 cp → 1 gp (keep 0-99 cp remainder)
+- Every 10 sp → 1 gp (keep 0-9 sp remainder)
+- PP stays as PP (worth more than GP)
+- Result: single-digit cp, single-digit sp, piles of gp, possibly pp
+- Display: "3 cp, 7 sp, 42 gp, 2 pp"
+
+**☐ Split Among Party (off by default)**
+When on, divides each denomination by party size:
+- Shows: "X cp each (Y remainder), X sp each (Y remainder), X gp each (Y remainder)"
+- Uses `settings.partySize` for the divisor
+- Remainder is the indivisible portion (party decides who gets it)
+- Display format: "42 gp each, 1 gp remainder" or "42 gp each (+1)"
+
+**Engine changes needed:**
+- `LootResult.coins` type: change from `{ formula, average, rolled }` to `{ cp, sp, gp, pp }` where each is `{ formula, average, rolled }`
+- `COIN_MIX` constant in `constants.ts`
+- `gpToDiceFormula` may need a `denominationToDiceFormula` variant that works in cp/sp units
+- `EncounterResults.tsx` display: show denomination breakdown instead of flat GP
+- Three new boolean settings: `useElectrum`, `convertToGold`, `splitAmongParty`
+
 ### Party Level & Tier Progression UI — IMPLEMENT NOW
 Replace the 5-stop APL slider with a cleaner system. The engine changes are done (`types.ts`, `constants.ts`). This task is the UI wiring.
 
