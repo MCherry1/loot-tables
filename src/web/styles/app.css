@@ -1300,6 +1300,7 @@ button {
   margin: 0;
   max-height: 200px;
   overflow-y: auto;
+  white-space: pre-line;
 }
 
 .final-result-chain {
@@ -2231,6 +2232,7 @@ button {
   color: var(--ink-muted);
   line-height: 1.4;
   margin: 0;
+  white-space: pre-line;
 }
 
 .review-stats-mobile-summary {
