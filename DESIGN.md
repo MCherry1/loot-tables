@@ -262,3 +262,47 @@ For very low budgets (< 1 gp coins), include a flavor item instead of "nothing."
 | 2    | 6,807 gp  | 5,105 gp  | 0.76 | 3.2×        | Moderate, coins provide stable floor |
 | 3    | 89,442 gp | 46,750 gp | 1.08 | 5.6×        | High variance, legendary items swing |
 | 4    | 715,751 gp| 557,000 gp| 0.56 | 4.2×        | Tightest, massive coin floor |
+
+-----
+
+## Edition System (2014 / 2024)
+
+The app supports both the 2014 and 2024 versions of D&D 5e via a toggle in Settings. The toggle switches two things simultaneously: **which tables/weights are used** and **which item descriptions are shown**.
+
+### 2014 Edition (default)
+
+The 2014 tables are the hand-curated original product. They use:
+
+- `data/curation.json` — 743+ items with manually reviewed weights, table assignments, and category placements. Seeded from the original Excel tables and refined through the admin Review UI.
+- A small number of hand-applied rarity adjustments where 2014 item stats didn't justify their original DMG table placement (e.g., an item placed on Table H that's weaker than its peers was moved to Table G).
+- `data/item-stats.json` — item descriptions extracted from `5etools-2014-src`.
+
+The DM's reviewed weights are authoritative. `curation.json` overrides `magic-items.ts` at runtime via the weight overlay in `roller.ts`.
+
+### 2024 Edition
+
+The 2024 tables are 100% auto-generated from the classification heuristic. They use:
+
+- `data/curation-2024.json` — seeded entirely from `auto-classify.ts` run against `5etools-src` (2024 data). No manual rarity adjustments — 2024 specifically fixed the weak-for-tier problem that motivated our 2014 adjustments, so DMG placements are trusted as-is.
+- `data/item-stats-2024.json` — item descriptions extracted from `5etools-src`.
+
+Items may differ between editions: some were added, removed, or changed mechanics. The auto-classifier handles this naturally since it reads the 5etools data directly.
+
+### What the Toggle Controls
+
+| Component | 2014 | 2024 |
+|-----------|------|------|
+| Weight overlay | `curation.json` | `curation-2024.json` |
+| Item descriptions | `item-stats.json` | `item-stats-2024.json` |
+| Table assignments | Hand-curated + auto-classify | Auto-classify only |
+| Rarity adjustments | Sparse manual overrides | None (trust 2024 DMG) |
+
+### Data Pipeline
+
+```
+5etools-2014-src/data/items.json  →  generate-item-stats.ts  →  item-stats.json
+                                  →  auto-classify.ts        →  curation.json (seeded, then hand-reviewed)
+
+5etools-src/data/items.json       →  generate-item-stats.ts  →  item-stats-2024.json
+                                  →  auto-classify.ts        →  curation-2024.json (auto only, no review)
+```

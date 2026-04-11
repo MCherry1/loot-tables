@@ -19,10 +19,32 @@ Tracked design changes and implementation requests for the loot generator.
 
 ## Data / Content
 
-### ~~2014 / 2024 Rules Toggle~~ ✅ (UI)
-~~Add a toggle (in Settings) to switch between 2014 and 2024 item data.~~ UI toggle implemented in CampaignSettings. Data switching to be wired when 2024 dataset is available.
+### ~~2014 / 2024 Rules Toggle~~ ✅ (UI only)
+UI toggle implemented in CampaignSettings. Data switching to be wired when 2024 dataset is available.
 
-For 2024: probably keep DMG original table assignments without downgrading items, since 2024 specifically addressed the weak-for-tier problem.
+**2014 edition (current, default):**
+- Hand-curated tables from Excel + `curation.json` weight overrides
+- Keeps hand-applied rarity downgrades (sparingly — a few items moved to lower tables where the 2014 stats didn't justify their DMG placement)
+- Item stats/descriptions from `5etools-2014-src`
+- `data/curation.json` is the weight authority for reviewed items
+
+**2024 edition (to build):**
+- Tables 100% auto-generated from our heuristic (`auto-classify.ts` run against `5etools-src` 2024 data)
+- No manual rarity adjustments — 2024 specifically fixed the weak-for-tier items, so DMG placements are trusted
+- Item stats from `5etools-src` (different descriptions, some items changed/added/removed between editions)
+- Separate `data/curation-2024.json` seeded entirely from auto-classification
+- Separate `data/item-stats-2024.json` generated from 2024 dataset
+
+**The toggle switches both:**
+1. Which curation file feeds the weight overlay in `roller.ts`
+2. Which `item-stats` JSON loads for descriptions on result cards
+
+**Implementation steps for 2024 pipeline:**
+1. Run `generate-item-stats.ts` against `5etools-src/data/items.json` → `data/item-stats-2024.json`
+2. Run `auto-classify.ts` + `seed-curation.ts` against 2024 items → `data/curation-2024.json`
+3. Update `roller.ts` to pick curation file based on `settings.edition`
+4. Update `LootTables.tsx` to pick item-stats file based on `settings.edition`
+5. No manual review needed for 2024 — auto-classify is trusted as-is
 
 ### ~~About Section from Editable Markdown~~ ✅
 ~~The About tab should render content from a markdown file in the repository.~~ Done — About.tsx renders from ABOUT.md. Edit ABOUT.md and rebuild.
