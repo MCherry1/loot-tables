@@ -18,7 +18,7 @@ export interface FiveToolsItem {
   rarity?: string;
   type?: string;
   reqAttune?: string | boolean;
-  reqAttuneTags?: Array<{ class?: string; [k: string]: unknown }>;
+  reqAttuneTags?: Array<{ class?: string; spellcasting?: boolean; [k: string]: unknown }>;
   bonusWeapon?: string;
   bonusAc?: string;
   bonusSavingThrow?: string;
@@ -56,7 +56,7 @@ const RARITY_TO_TABLE_PAIR: Record<string, { minor: TableLetter; major: TableLet
 };
 
 const SPELLCASTER_CLASSES = new Set([
-  'wizard', 'sorcerer', 'bard', 'cleric', 'druid', 'warlock', 'paladin', 'ranger',
+  'wizard', 'sorcerer', 'bard', 'cleric', 'druid', 'warlock', 'paladin', 'ranger', 'artificer',
 ]);
 
 const APPAREL_KEYWORDS = [
@@ -155,10 +155,11 @@ function classifyMajorCategory(item: FiveToolsItem): string {
   const lower = item.name.toLowerCase();
   const type = item.type ?? '';
 
-  // Priority 1: Class-specific attunement → Spellcaster
+  // Priority 1: Any spellcaster attunement → Spellcaster
   if (item.reqAttuneTags) {
     const hasSpellcaster = item.reqAttuneTags.some(
-      (tag) => tag.class && SPELLCASTER_CLASSES.has(tag.class.toLowerCase()),
+      (tag) => (tag.class && SPELLCASTER_CLASSES.has(tag.class.toLowerCase())) ||
+               tag.spellcasting,
     );
     if (hasSpellcaster) return 'Spellcaster';
   }
@@ -241,7 +242,8 @@ function classifyCommonCategory(item: FiveToolsItem): string {
   // Spellcaster
   if (item.reqAttuneTags) {
     const hasSpellcaster = item.reqAttuneTags.some(
-      (tag) => tag.class && SPELLCASTER_CLASSES.has(tag.class.toLowerCase()),
+      (tag) => (tag.class && SPELLCASTER_CLASSES.has(tag.class.toLowerCase())) ||
+               tag.spellcasting,
     );
     if (hasSpellcaster) return 'Spellcaster';
   }

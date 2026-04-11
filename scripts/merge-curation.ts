@@ -14,7 +14,7 @@ import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import type { CurationEntry, CurationFile } from './curation-types';
 import { classify, type FiveToolsItem } from './auto-classify';
-import { normalizeSource } from './source-mapping';
+import { toCanonical, toLegacy } from './source-mapping';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const CURATION_PATH = resolve(__dirname, '..', 'data', 'curation.json');
@@ -54,12 +54,15 @@ function mergeItems(curation: CurationFile, items: FiveToolsItem[]): {
   let failed = 0;
 
   for (const rawItem of items) {
-    // Normalize the source abbreviation
-    const item = { ...rawItem, source: normalizeSource(rawItem.source) };
-    const key = `${item.name}|${item.source}`;
+    // 5etools items arrive with canonical abbreviations.
+    // Curation keys may use legacy abbreviations (from original Excel seed).
+    // Try both when looking up existing entries.
+    const canonicalKey = `${rawItem.name}|${rawItem.source}`;
+    const legacyKey = `${rawItem.name}|${toLegacy(rawItem.source)}`;
+    const item = rawItem; // source stays canonical
 
-    // Skip if already in curation
-    const existing = curation[key];
+    // Skip if already in curation (check both key forms)
+    const existing = curation[canonicalKey] ?? curation[legacyKey];
     if (existing) {
       if (existing.status === 'approved') {
         skippedApproved++;
@@ -84,7 +87,7 @@ function mergeItems(curation: CurationFile, items: FiveToolsItem[]): {
       added++;
     }
 
-    curation[key] = result.entry;
+    curation[canonicalKey] = result.entry;
   }
 
   return { added, skippedApproved, skippedExisting, excluded, failed };
