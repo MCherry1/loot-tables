@@ -26,31 +26,31 @@
   "Potion of Greater Healing|DMG": {
     "table": "A",
     "category": "Potions",
-    "weight": 1,
+    "weight": null,
     "status": "approved"
   },
   "Bag of Holding|DMG": {
     "table": "A",
     "category": "Gear",
-    "weight": 2,
+    "weight": null,
     "status": "approved"
   },
   "Driftglobe|DMG": {
     "table": "A",
     "category": "Gear",
-    "weight": 1,
+    "weight": 5,
     "status": "approved"
   },
   "Everbright Lantern|ERLW": {
     "table": "A",
     "category": "Gear",
-    "weight": 1,
+    "weight": 5,
     "status": "approved"
   },
   "Lantern of Tracking [Creature-Type-A]|IWD": {
     "table": "A",
     "category": "Gear",
-    "weight": 1,
+    "weight": 4,
     "status": "approved",
     "refs": [
       "Creature-Type-A"
@@ -59,97 +59,97 @@
   "Breathing Bubble|EGW": {
     "table": "A",
     "category": "Gear",
-    "weight": 1,
+    "weight": 4,
     "status": "approved"
   },
   "Feather Token|ERLW": {
     "table": "A",
     "category": "Gear",
-    "weight": 1,
+    "weight": 5,
     "status": "approved"
   },
   "Thermal Cube|IWD": {
     "table": "A",
     "category": "Gear",
-    "weight": 1,
+    "weight": 5,
     "status": "approved"
   },
   "Rope of Mending|XGE": {
     "table": "A",
     "category": "Gear",
-    "weight": 1,
+    "weight": 4,
     "status": "approved"
   },
   "Horn of Silent Alarm|XGE": {
     "table": "A",
     "category": "Gear",
-    "weight": 1,
+    "weight": 5,
     "status": "approved"
   },
   "Clockwork Amulet|XGE": {
     "table": "A",
     "category": "Gear",
-    "weight": 1,
+    "weight": 5,
     "status": "approved"
   },
   "Lock of Trickery|XGE": {
     "table": "A",
     "category": "Gear",
-    "weight": 1,
+    "weight": 4,
     "status": "approved"
   },
   "Chest of Preserving|WDMM": {
     "table": "A",
     "category": "Gear",
-    "weight": 1,
+    "weight": 4,
     "status": "approved"
   },
   "Orb of Direction|XGE": {
     "table": "A",
     "category": "Gear",
-    "weight": 1,
+    "weight": 4,
     "status": "approved"
   },
   "Orb of Time|XGE": {
     "table": "A",
     "category": "Gear",
-    "weight": 1,
+    "weight": 4,
     "status": "approved"
   },
   "Ear Horn of Hearing|XGE": {
     "table": "A",
     "category": "Gear",
-    "weight": 1,
+    "weight": 4,
     "status": "approved"
   },
   "Coin of Delving|EGW": {
     "table": "A",
     "category": "Gear",
-    "weight": 1,
+    "weight": 4,
     "status": "approved"
   },
   "Vox Seeker|EGW": {
     "table": "A",
     "category": "Gear",
-    "weight": 1,
+    "weight": 4,
     "status": "approved"
   },
   "Shiftweave|ERLW": {
     "table": "A",
     "category": "Gear",
-    "weight": 1,
+    "weight": 5,
     "status": "approved"
   },
   "Spellshard|ERLW": {
     "table": "A",
     "category": "Gear",
-    "weight": 1,
+    "weight": 4,
     "status": "approved"
   },
   "Cleansing Stone|ERLW": {
     "table": "A",
     "category": "Gear",
-    "weight": 1,
+    "weight": 4,
     "status": "approved"
   },
   "Ersatz Eye|XGE": {
@@ -209,13 +209,13 @@
   "Mystery Key|XGE": {
     "table": "A",
     "category": "Gear",
-    "weight": 1,
+    "weight": 4,
     "status": "approved"
   },
   "Integrated [Tools]|ExE": {
     "table": "A",
     "category": "Gear",
-    "weight": 1,
+    "weight": 4,
     "status": "approved",
     "refs": [
       "Tools"
@@ -242,7 +242,7 @@
   "Spell Scroll ([Spells-Level-2])|DMG": {
     "table": "A",
     "category": "Spell-Scrolls",
-    "weight": 2,
+    "weight": null,
     "status": "approved",
     "refs": [
       "Spells-Level-2"
@@ -278,7 +278,7 @@
   "[Weapons]|": {
     "table": "A",
     "category": "Arms-Armor",
-    "weight": 9,
+    "weight": 5,
     "status": "approved",
     "refs": [
       "Weapons"
@@ -287,7 +287,7 @@
   "Moon-Touched [Swords]|XGE": {
     "table": "A",
     "category": "Arms-Armor",
-    "weight": 3,
+    "weight": 2,
     "status": "approved",
     "refs": [
       "Swords"
@@ -296,7 +296,7 @@
   "Cast-Off Armor ([Cast-Off-Armor])|XGE": {
     "table": "A",
     "category": "Arms-Armor",
-    "weight": 3,
+    "weight": 2,
     "status": "approved",
     "refs": [
       "Cast-Off-Armor"
@@ -305,7 +305,7 @@
   "[Metal-Armor] of Gleaming|XGE": {
     "table": "A",
     "category": "Arms-Armor",
-    "weight": 2,
+    "weight": 1,
     "status": "approved",
     "refs": [
       "Metal-Armor"
@@ -314,7 +314,7 @@
   "Smoldering [Smoldering-Armor] Armor|XGE": {
     "table": "A",
     "category": "Arms-Armor",
-    "weight": 2,
+    "weight": 1,
     "status": "approved",
     "refs": [
       "Smoldering-Armor"
@@ -323,7 +323,7 @@
   "[Ammunition]|": {
     "table": "A",
     "category": "Arms-Armor",
-    "weight": 2,
+    "weight": 1,
     "status": "approved",
     "refs": [
       "Ammunition"
@@ -341,7 +341,7 @@
   "Armblade ([Armblades])|ERLW": {
     "table": "A",
     "category": "Arms-Armor",
-    "weight": 2,
+    "weight": 1,
     "status": "approved",
     "refs": [
       "Armblades"
@@ -396,7 +396,7 @@
   "Imbued [Imbued-Wood] ([Planar-Wood])|ERLW": {
     "table": "A",
     "category": "Spellcaster",
-    "weight": 4,
+    "weight": 3,
     "status": "approved",
     "refs": [
       "Imbued-Wood",
@@ -463,253 +463,253 @@
   "Clothes of Mending|XGE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 2,
     "status": "approved"
   },
   "Common Glamerweave|ERLW": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 2,
     "status": "approved"
   },
   "Uncommon Glamerweave|ERLW": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": null,
     "status": "approved"
   },
   "Masquerade Tattoo|TCE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 2,
     "status": "approved"
   },
   "Gem of Light|": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 2,
     "status": "approved"
   },
   "Masque Charm|SCC": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 2,
     "status": "approved"
   },
   "[[4d4]] Beads of Refreshment|XGE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 2,
     "status": "approved"
   },
   "[[1d4]] Beads of Nourishment|XGE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 2,
     "status": "approved"
   },
   "Bottle of Boundless Coffee|SCC": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 2,
     "status": "approved"
   },
   "Tankard of Plenty|ToD": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 2,
     "status": "approved"
   },
   "Heward's Handy Spice Pouch|XGE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 2,
     "status": "approved"
   },
   "Tankard of Sobriety|XGE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 2,
     "status": "approved"
   },
   "Charlatan's Gloves|ExE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 2,
     "status": "approved"
   },
   "Drybrooch|ExE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 2,
     "status": "approved"
   },
   "Duster|ExE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 2,
     "status": "approved"
   },
   "Lamplighter|ExE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 2,
     "status": "approved"
   },
   "Spark|ExE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 2,
     "status": "approved"
   },
   "Talking Wand|ExE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 2,
     "status": "approved"
   },
   "Thurimbar Rod|ExE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 2,
     "status": "approved"
   },
   "Boots of False Tracks|XGE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 2,
     "status": "approved"
   },
   "Candle of the Deep|XGE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 2,
     "status": "approved"
   },
   "Charlatan's Die|XGE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 3,
     "status": "approved"
   },
   "Cloak of Billowing|XGE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 3,
     "status": "approved"
   },
   "Cloak of Many Fashions|XGE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 3,
     "status": "approved"
   },
   "Doublet of Dramatic Demise|TDCS": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 2,
     "status": "approved"
   },
   "Dread Helm|XGE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 2,
     "status": "approved"
   },
   "Hat of Vermin|XGE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 3,
     "status": "approved"
   },
   "Illuminator's Tattoo|TCE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 2,
     "status": "approved"
   },
   "Perfume of Bewitching|XGE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 3,
     "status": "approved"
   },
   "Pipe of Remembrance|GoS": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 2,
     "status": "approved"
   },
   "Pipe of Smoke Monsters|XGE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 3,
     "status": "approved"
   },
   "Pole of Angling|XGE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 3,
     "status": "approved"
   },
   "Pole of Collapsing|XGE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 2,
     "status": "approved"
   },
   "Pot of Awakening|XGE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 3,
     "status": "approved"
   },
   "Staff of Adornment|XGE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 3,
     "status": "approved"
   },
   "Staff of Birdcalls|XGE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 3,
     "status": "approved"
   },
   "Staff of Flowers|XGE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 3,
     "status": "approved"
   },
   "Talking Doll|XGE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": 3,
     "status": "approved"
   },
   "Wand of Conducting|XGE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": null,
     "status": "approved"
   },
   "Wand of Pyrotechnics|XGE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": null,
     "status": "approved"
   },
   "Wand of Scowls|XGE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": null,
     "status": "approved"
   },
   "Wand of Smiles|XGE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 1,
+    "weight": null,
     "status": "approved"
   },
   "[Ammunition], +1|DMG": {
@@ -949,13 +949,13 @@
   "Wand of Magic Detection|DMG": {
     "table": "B",
     "category": "Items",
-    "weight": 3,
+    "weight": null,
     "status": "approved"
   },
   "Wand of Secrets|DMG": {
     "table": "B",
     "category": "Items",
-    "weight": 3,
+    "weight": null,
     "status": "approved"
   },
   "Alchemy Jug|DMG": {
@@ -1450,7 +1450,7 @@
   "Potion of Supreme Healing|DMG": {
     "table": "D",
     "category": "Potions",
-    "weight": 4,
+    "weight": null,
     "status": "approved"
   },
   "Potion of Cloud Giant Strength|DMG": {
@@ -1522,7 +1522,7 @@
   "Spell Scroll ([Spells-Level-8])|DMG": {
     "table": "D",
     "category": "Spells",
-    "weight": 2,
+    "weight": null,
     "status": "approved",
     "refs": [
       "Spells-Level-8"
@@ -2211,13 +2211,13 @@
   "Wand of Magic Missiles|DMG": {
     "table": "F",
     "category": "Misc",
-    "weight": 3,
+    "weight": null,
     "status": "approved"
   },
   "Wand of Web|DMG": {
     "table": "F",
     "category": "Misc",
-    "weight": 3,
+    "weight": null,
     "status": "approved"
   },
   "War Horn of Valor|BGG": {
