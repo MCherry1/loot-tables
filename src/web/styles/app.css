@@ -1275,6 +1275,8 @@ button {
   line-height: 1.5;
   color: var(--ink);
   margin: 0;
+  max-height: 200px;
+  overflow-y: auto;
 }
 
 .final-result-chain {
