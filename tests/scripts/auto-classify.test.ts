@@ -213,7 +213,7 @@ describe('auto-classify', () => {
       expect(result.classified).toBe(true);
       if (result.classified) {
         expect(result.entry.status).toBe('ready-for-review');
-        expect(result.entry.weight).toBe(3);
+        expect(result.entry.weight).toBeNull();
       }
     });
   });
