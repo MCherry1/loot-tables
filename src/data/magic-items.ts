@@ -876,13 +876,13 @@ export const MAGIC_ITEMS = {
   ],
   "Spellcaster-A": [
     {
-      "name": "[Orb-of-Shielding] of Shielding ([Planar-Stone])",
-      "source": "ERLW",
+      "name": "[Orb-of-Shielding]",
+      "source": "",
       "weight": 4
     },
     {
-      "name": "Imbued [Imbued-Wood] ([Planar-Wood])",
-      "source": "ERLW",
+      "name": "[Imbued-Wood-Focus]",
+      "source": "",
       "weight": 3
     },
     {
@@ -933,113 +933,84 @@ export const MAGIC_ITEMS = {
   ],
   "Orb-of-Shielding": [
     {
-      "name": "Crystal",
-      "source": "",
-      "weight": 2
-    },
-    {
-      "name": "Orb",
-      "source": "",
-      "weight": 2
-    }
-  ],
-  "Planar-Stone": [
-    {
-      "name": "Fernian Basalt - Fire",
+      "name": "Orb of Shielding (Fernian Basalt)",
       "source": "ERLW",
       "weight": 1
     },
     {
-      "name": "Irian Quartz - Radiant",
+      "name": "Orb of Shielding (Irian Quartz)",
       "source": "ERLW",
       "weight": 1
     },
     {
-      "name": "Kythrian Skarn - Acid and Poison",
+      "name": "Orb of Shielding (Kythrian Skarn)",
       "source": "ERLW",
       "weight": 1
     },
     {
-      "name": "Lamannian Flint - Lightning and Thunder",
+      "name": "Orb of Shielding (Lamannian Flint)",
       "source": "ERLW",
       "weight": 1
     },
     {
-      "name": "Mabaran Obsidian - Necrotic",
+      "name": "Orb of Shielding (Mabaran Obsidian)",
       "source": "ERLW",
       "weight": 1
     },
     {
-      "name": "Risian Shale - Cold",
+      "name": "Orb of Shielding (Risian Shale)",
       "source": "ERLW",
       "weight": 1
     },
     {
-      "name": "Shavarran Chert - Force",
+      "name": "Orb of Shielding (Shavarran Chert)",
       "source": "ERLW",
       "weight": 1
     },
     {
-      "name": "Xorian Marble - Psychic",
+      "name": "Orb of Shielding (Xorian Marble)",
       "source": "ERLW",
       "weight": 1
     }
   ],
-  "Imbued-Wood": [
+  "Imbued-Wood-Focus": [
     {
-      "name": "Rod",
-      "source": "",
-      "weight": 2
-    },
-    {
-      "name": "Staff",
-      "source": "",
-      "weight": 2
-    },
-    {
-      "name": "Wand",
-      "source": "",
-      "weight": 2
-    }
-  ],
-  "Planar-Wood": [
-    {
-      "name": "Fernian Ash - Fire",
+      "name": "Imbued Wood (Fernian Ash)",
       "source": "ERLW",
       "weight": 1
     },
     {
-      "name": "Irian Rosewood - Radiant",
+      "name": "Imbued Wood (Irian Rosewood)",
       "source": "ERLW",
       "weight": 1
     },
     {
-      "name": "Kythrian Manchineel - Acid and Poison",
+      "name": "Imbued Wood (Kythrian Manchineel)",
       "source": "ERLW",
       "weight": 1
     },
     {
-      "name": "Lamannian Oak - Lightning and Thunder",
+      "name": "Imbued Wood (Lamannian Oak)",
       "source": "ERLW",
       "weight": 1
     },
     {
-      "name": "Mabaran Ebony - Necrotic",
+      "name": "Imbued Wood (Mabaran Ebony)",
       "source": "ERLW",
       "weight": 1
     },
     {
-      "name": "Risian Pine - Cold",
+      "name": "Imbued Wood (Risian Pine)",
       "source": "ERLW",
       "weight": 1
     },
     {
-      "name": "Shavarran Birch - Force",
+      "name": "Imbued Wood (Shavarran Birch)",
       "source": "ERLW",
       "weight": 1
     },
     {
-      "name": "Xorian Wenge - Psychic",
+      "name": "Imbued Wood (Xorian Wenge)",
       "source": "ERLW",
       "weight": 1
     }

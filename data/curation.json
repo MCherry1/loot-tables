@@ -383,26 +383,6 @@
       "Ammunition"
     ]
   },
-  "[Orb-of-Shielding] of Shielding ([Planar-Stone])|ERLW": {
-    "table": "A",
-    "category": "Spellcaster",
-    "weight": 4,
-    "status": "approved",
-    "refs": [
-      "Orb-of-Shielding",
-      "Planar-Stone"
-    ]
-  },
-  "Imbued [Imbued-Wood] ([Planar-Wood])|ERLW": {
-    "table": "A",
-    "category": "Spellcaster",
-    "weight": 3,
-    "status": "approved",
-    "refs": [
-      "Imbued-Wood",
-      "Planar-Wood"
-    ]
-  },
   "Battle Rod|ExE": {
     "table": "A",
     "category": "Spellcaster",
@@ -4839,6 +4819,102 @@
   },
   "Tome of the Stilled Tongue|DMG": {
     "table": "I",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Orb of Shielding (Fernian Basalt)|ERLW": {
+    "table": "A",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Orb of Shielding (Irian Quartz)|ERLW": {
+    "table": "A",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Orb of Shielding (Kythrian Skarn)|ERLW": {
+    "table": "A",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Orb of Shielding (Lamannian Flint)|ERLW": {
+    "table": "A",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Orb of Shielding (Mabaran Obsidian)|ERLW": {
+    "table": "A",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Orb of Shielding (Risian Shale)|ERLW": {
+    "table": "A",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Orb of Shielding (Shavarran Chert)|ERLW": {
+    "table": "A",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Orb of Shielding (Xorian Marble)|ERLW": {
+    "table": "A",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Imbued Wood (Fernian Ash)|ERLW": {
+    "table": "A",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Imbued Wood (Irian Rosewood)|ERLW": {
+    "table": "A",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Imbued Wood (Kythrian Manchineel)|ERLW": {
+    "table": "A",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Imbued Wood (Lamannian Oak)|ERLW": {
+    "table": "A",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Imbued Wood (Mabaran Ebony)|ERLW": {
+    "table": "A",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Imbued Wood (Risian Pine)|ERLW": {
+    "table": "A",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Imbued Wood (Shavarran Birch)|ERLW": {
+    "table": "A",
+    "category": "Spellcaster",
+    "weight": 1,
+    "status": "approved"
+  },
+  "Imbued Wood (Xorian Wenge)|ERLW": {
+    "table": "A",
     "category": "Spellcaster",
     "weight": 1,
     "status": "approved"
