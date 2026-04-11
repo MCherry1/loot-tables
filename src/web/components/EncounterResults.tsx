@@ -75,7 +75,11 @@ const EncounterResults: React.FC<Props> = ({
         {results.creatures.map((creature, ci) => {
           const label = `${capitalize(creature.role)} ${creature.index}`;
           const loot = creature.loot;
-          const coinText = `${Math.round(loot.coins.average)} gp`;
+          const coinText = loot.coins.rolled > 0
+            ? `${loot.coins.rolled} gp`
+            : loot.coins.average > 0
+              ? `${Math.round(loot.coins.average)} gp`
+              : '';
 
           return (
             <div
@@ -88,7 +92,7 @@ const EncounterResults: React.FC<Props> = ({
                 <span key={`gem-${i}`}>
                   {', '}
                   <span className="creature-item">
-                    {gem.name} ({gem.baseValue} gp)
+                    {gem.name} ({gem.value} gp)
                   </span>
                 </span>
               ))}
@@ -96,7 +100,7 @@ const EncounterResults: React.FC<Props> = ({
                 <span key={`art-${i}`}>
                   {', '}
                   <span className="creature-item">
-                    {art.name} ({art.baseValue} gp)
+                    {art.name} ({art.value} gp)
                   </span>
                 </span>
               ))}

@@ -6,6 +6,7 @@ import { CUSTOM_ART } from '../data/art';
 import curationData from '../../data/curation.json';
 import curationData2024 from '../../data/curation-2024.json';
 import { cryptoRandom } from './random';
+import { rollDice } from './dice';
 import {
   PRIORITY_MULTIPLIER,
   TIER_VALUE,
@@ -244,7 +245,11 @@ export function rollGem(tableName: string): TreasureItem {
   }
 
   const picked = weightedPick(table.entries);
-  return { name: picked.name, baseValue: table.baseValue, tableName: table.name };
+  // Value scoring: 2d4 (range 2-8, avg 5) as a quality multiplier.
+  // A "50 gp gem" ranges from 20-80 gp depending on cut/clarity.
+  const score = rollDice(2, 4);
+  const value = Math.round(table.baseValue * (score / 5));
+  return { name: picked.name, baseValue: table.baseValue, value, tableName: table.name };
 }
 
 /**
@@ -258,7 +263,9 @@ export function rollArt(tableName: string): TreasureItem {
   }
 
   const picked = weightedPick(table.entries);
-  return { name: picked.name, baseValue: table.baseValue, tableName: table.name };
+  const score = rollDice(2, 4);
+  const value = Math.round(table.baseValue * (score / 5));
+  return { name: picked.name, baseValue: table.baseValue, value, tableName: table.name };
 }
 
 // ---------------------------------------------------------------------------

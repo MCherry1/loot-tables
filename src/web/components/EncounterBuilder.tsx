@@ -14,7 +14,7 @@ import type { ResolvedItem } from '../App';
 const CREATURE_ROLES: CreatureRole[] = ['minion', 'elite', 'mini-boss', 'boss'];
 
 const APL_STOPS = [0.7, 0.85, 1.0, 1.15, 1.3];
-const APL_LABELS = ['Fresh', 'Below Avg', 'Standard', 'Above Avg', 'Veteran'];
+const APL_LABELS = ['×0.70 Fresh', '×0.85 Low', '×1.00 Standard', '×1.15 High', '×1.30 Veteran'];
 
 const ROLE_DISPLAY: Record<CreatureRole, string> = {
   minion: 'Minion',

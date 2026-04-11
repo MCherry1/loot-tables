@@ -165,7 +165,7 @@ export function generateLoot(input: LootInput): LootResult {
   }
 
   return {
-    coins: { formula: coinsFormula, average: coinsAverage },
+    coins: { formula: coinsFormula, average: coinsAverage, rolled: evalDiceFormula(coinsFormula) },
     gems,
     artObjects,
     magicItems,
@@ -312,7 +312,7 @@ export function generateLootResolvable(
   }
 
   return {
-    coins: { formula: coinsFormula, average: coinsAverage },
+    coins: { formula: coinsFormula, average: coinsAverage, rolled: evalDiceFormula(coinsFormula) },
     gems,
     artObjects,
     magicItems,
@@ -413,7 +413,7 @@ export function generateVaultLootResolvable(
   }
 
   return {
-    coins: { formula: coinsFormula, average: coinsAverage },
+    coins: { formula: coinsFormula, average: coinsAverage, rolled: evalDiceFormula(coinsFormula) },
     gems,
     artObjects,
     magicItems,

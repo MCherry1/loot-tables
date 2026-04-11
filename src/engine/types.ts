@@ -91,6 +91,8 @@ export interface TreasureItem {
   name: string;
   /** The tier's base gp value for this category. */
   baseValue: number;
+  /** Actual value after quality scoring (2d4/5 × baseValue). */
+  value: number;
   /** Reference table name (e.g. "Gems-3-125-gp"). */
   tableName: string;
 }
@@ -114,7 +116,7 @@ export interface MagicItemResult {
 /** Complete loot result for a single creature. */
 export interface LootResult {
   /** Coin award as a dice formula and its expected (average) value. */
-  coins: { formula: string; average: number };
+  coins: { formula: string; average: number; rolled: number };
   /** Gem drops. */
   gems: TreasureItem[];
   /** Art object drops. */
@@ -205,7 +207,7 @@ export interface ResolvableMagicItem {
 
 /** Loot result with resolvable magic items for step-by-step mode. */
 export interface ResolvableLootResult {
-  coins: { formula: string; average: number };
+  coins: { formula: string; average: number; rolled: number };
   gems: TreasureItem[];
   artObjects: TreasureItem[];
   magicItems: ResolvableMagicItem[];
