@@ -4,6 +4,7 @@ import React, {
   useMemo,
   useRef,
   useCallback,
+  useState,
 } from 'react';
 import { SPELL_TABLES } from '../../data/spells';
 import { SUPPLEMENTAL_TABLES } from '../../data/supplemental';
@@ -784,6 +785,41 @@ const LootTables: React.FC<LootTablesProps> = ({
     };
   }, []);
 
+  // ---- 3D Dice (dice-box) ----
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const diceBoxRef = useRef<any>(null);
+  const diceBoxInitRef = useRef(false);
+  const [showDiceOverlay, setShowDiceOverlay] = useState(false);
+
+  useEffect(() => {
+    if (!settings.dice3d || diceBoxInitRef.current) return;
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const mod = await import('@3d-dice/dice-box');
+        const DiceBox = mod.default;
+        const basePath = import.meta.env.BASE_URL || '/loot-tables/';
+        const box = new DiceBox({
+          container: '#dice-overlay',
+          assetPath: `${basePath}assets/dice-box/`,
+          scale: 6,
+          theme: 'default',
+          offscreen: true,
+        });
+        await box.init();
+        if (!cancelled) {
+          diceBoxRef.current = box;
+          diceBoxInitRef.current = true;
+        }
+      } catch (err) {
+        console.warn('[dice-box] Failed to initialize 3D dice:', err);
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [settings.dice3d]);
+
   // Raw entries (original weights) — full table before source filtering.
   const rawEntries = useMemo<Entry[]>(
     () => getStepperTable(state.currentTable) ?? [],
@@ -823,6 +859,34 @@ const LootTables: React.FC<LootTablesProps> = ({
 
   const handleRoll = useCallback(() => {
     if (state.rolling || currentEntries.length === 0) return;
+
+    // 3D dice path: roll a physical die and map the result to an entry
+    if (settings.dice3d && diceBoxRef.current && STANDARD_DICE.includes(totalWeight)) {
+      dispatch({ type: 'ROLL_START' });
+      setShowDiceOverlay(true);
+      const box = diceBoxRef.current;
+      box.onRollComplete = (results: { value: number }[]) => {
+        const rolledNumber = results[0]?.value ?? 1;
+        // Map rolled number to entry via dice ranges
+        let hitIdx = 0;
+        for (let i = 0; i < diceRanges.length; i++) {
+          if (rolledNumber >= diceRanges[i].lo && rolledNumber <= diceRanges[i].hi) {
+            hitIdx = i;
+            break;
+          }
+        }
+        rollTimerRef.current = window.setTimeout(() => {
+          rollTimerRef.current = null;
+          setShowDiceOverlay(false);
+          box.clear();
+          dispatch({ type: 'HIGHLIGHT', idx: hitIdx, rolledNumber });
+        }, 800);
+      };
+      box.roll(`1d${totalWeight}`);
+      return;
+    }
+
+    // Fallback: CSS animation path
     const picked = weightedPick(currentEntries);
     const idx = currentEntries.indexOf(picked);
     const rolledNumber = randomInRange(diceRanges[idx]);
@@ -834,7 +898,7 @@ const LootTables: React.FC<LootTablesProps> = ({
       rollTimerRef.current = null;
       dispatch({ type: 'HIGHLIGHT', idx, rolledNumber });
     }, 400);
-  }, [state.rolling, currentEntries, diceRanges]);
+  }, [state.rolling, currentEntries, diceRanges, settings.dice3d, totalWeight]);
 
   const handlePick = useCallback(
     (entry: Entry, idx: number) => {
@@ -898,6 +962,11 @@ const LootTables: React.FC<LootTablesProps> = ({
 
   return (
     <div className="card loot-tables-card">
+      {/* 3D dice overlay */}
+      <div
+        id="dice-overlay"
+        className={`dice-overlay${showDiceOverlay ? ' visible' : ''}`}
+      />
       {/* Section tabs */}
       <div className="section-tabs">
         <button

@@ -43,6 +43,8 @@ export interface CampaignSettings {
   aplAdjustment: number;
   /** D&D edition for item data (default '2014'). */
   edition: Edition;
+  /** Enable 3D dice rolling animation. */
+  dice3d: boolean;
 }
 
 /** Input for generating loot for a single creature. */
