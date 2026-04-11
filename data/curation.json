@@ -484,12 +484,6 @@
     "weight": 2,
     "status": "approved"
   },
-  "Gem of Light|": {
-    "table": "A",
-    "category": "Trinkets",
-    "weight": 2,
-    "status": "approved"
-  },
   "Masque Charm|SCC": {
     "table": "A",
     "category": "Trinkets",
@@ -595,7 +589,7 @@
   "Cloak of Billowing|XGE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 3,
+    "weight": 4,
     "status": "approved"
   },
   "Cloak of Many Fashions|XGE": {
@@ -685,7 +679,7 @@
   "Talking Doll|XGE": {
     "table": "A",
     "category": "Trinkets",
-    "weight": 3,
+    "weight": 4,
     "status": "approved"
   },
   "Wand of Conducting|XGE": {

@@ -526,7 +526,7 @@ export const MAGIC_ITEMS = {
     {
       "name": "Cloak of Billowing",
       "source": "XGE",
-      "weight": 3
+      "weight": 4
     },
     {
       "name": "Wand of Smiles",
@@ -541,7 +541,7 @@ export const MAGIC_ITEMS = {
     {
       "name": "Talking Doll",
       "source": "XGE",
-      "weight": 3
+      "weight": 4
     },
     {
       "name": "Cloak of Many Fashions",
@@ -621,11 +621,6 @@ export const MAGIC_ITEMS = {
     {
       "name": "Masquerade Tattoo",
       "source": "TCE",
-      "weight": 2
-    },
-    {
-      "name": "Gem of Light",
-      "source": "",
       "weight": 2
     },
     {
