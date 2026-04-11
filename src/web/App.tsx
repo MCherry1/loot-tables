@@ -11,9 +11,10 @@ import CampaignSettingsPanel from './components/CampaignSettings';
 import LootTables from './components/LootTables';
 import About from './components/About';
 import HowItWorks from './components/HowItWorks';
+import DDesign from './components/DDesign';
 import ReviewUI from './components/ReviewUI';
 
-type Tab = 'tables' | 'encounter' | 'settings' | 'review' | 'about' | 'how-it-works';
+type Tab = 'tables' | 'encounter' | 'settings' | 'review' | 'about' | 'how-it-works' | 'ddesign';
 
 export type ResolvedItem = { name: string; source: string };
 export type PendingResolve = { itemId: string; table: string };
@@ -178,6 +179,12 @@ const App: React.FC = () => {
         >
           How it Works
         </button>
+        <button
+          className={`tab-btn ${activeTab === 'ddesign' ? 'active' : ''}`}
+          onClick={() => setActiveTab('ddesign')}
+        >
+          D&amp;Design
+        </button>
       </div>
 
       {/* Tab Content */}
@@ -219,6 +226,8 @@ const App: React.FC = () => {
       {activeTab === 'about' && <About />}
 
       {activeTab === 'how-it-works' && <HowItWorks />}
+
+      {activeTab === 'ddesign' && <DDesign />}
     </div>
   );
 };
