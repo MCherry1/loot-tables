@@ -2,7 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { calculateBudget } from '../../src/engine/budget';
 import { DEFAULT_CAMPAIGN_SETTINGS, computeRoleMultipliers } from '../../src/engine/constants';
 
-const settings = { ...DEFAULT_CAMPAIGN_SETTINGS };
+// Use flat progression so budget tests verify role math in isolation.
+const settings = { ...DEFAULT_CAMPAIGN_SETTINGS, tierProgression: false };
 const mults = computeRoleMultipliers(3.0);
 
 describe('economy balance', () => {
