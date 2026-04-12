@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import howItWorksMd from '../../../HOW-IT-WORKS.md?raw';
+import howItWorksMd from '../../../HOWTO.md?raw';
 import { markdownToHtml } from './markdownToHtml';
 
 const HowItWorks: React.FC = () => {

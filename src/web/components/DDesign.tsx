@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import ddesignMd from '../../../DDESIGN.md?raw';
+import ddesignMd from '../../../DESIGN.md?raw';
 import { markdownToHtml } from './markdownToHtml';
 
 const DDesign: React.FC = () => {
