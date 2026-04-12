@@ -56,38 +56,76 @@ function lookupItemStats(
   stats: ItemStatsMap,
   normalizedIndex: Map<string, string>,
 ): { type: string; rarity: string; attune: string; desc: string } | null {
-  // Try final composed name — direct match
-  const directKey = `${result.name}|${result.source}`;
-  if (stats[directKey]) return stats[directKey];
+  // Helper: try a key directly, then normalized
+  const tryKey = (name: string, source: string): typeof stats[string] | null => {
+    const key = `${name}|${source}`;
+    if (stats[key]) return stats[key];
+    const norm = key.toLowerCase().replace(/[(),]/g, '').replace(/\s+/g, ' ').trim();
+    const mapped = normalizedIndex.get(norm);
+    if (mapped && stats[mapped]) return stats[mapped];
+    return null;
+  };
 
-  // Try normalized match on final name
-  const normalizedDirect = directKey.toLowerCase().replace(/[(),]/g, '').replace(/\s+/g, ' ').trim();
-  const mappedDirect = normalizedIndex.get(normalizedDirect);
-  if (mappedDirect && stats[mappedDirect]) return stats[mappedDirect];
+  // Helper: try a name against multiple sources
+  const tryAnySrc = (name: string): typeof stats[string] | null => {
+    // Try specified source first, then common sources
+    const sources = [result.source, 'DMG', 'XGE', 'TCE', 'ERLW', 'FTD', 'TftYP', 'CM', 'BGG', 'KftGV', 'MOT', 'EGW', 'BMT', 'IDRotF'];
+    for (const src of sources) {
+      const found = tryKey(name, src);
+      if (found) return found;
+    }
+    return null;
+  };
 
-  // Try parentheses → comma format: "Foo (Bar)" → "Foo, Bar"
+  // 1. Try final composed name — direct match
+  const direct = tryKey(result.name, result.source);
+  if (direct) return direct;
+
+  // 2. Try parentheses → comma format: "Foo (Bar)" → "Foo, Bar"
   const parenMatch = result.name.match(/^(.+?)\s*\(([^)]+)\)$/);
   if (parenMatch) {
-    const commaName = `${parenMatch[1]}, ${parenMatch[2]}`;
-    const commaKey = `${commaName}|${result.source}`;
-    if (stats[commaKey]) return stats[commaKey];
-    // Try case-insensitive via normalized index
-    const normalizedComma = commaKey.toLowerCase().replace(/[(),]/g, '').replace(/\s+/g, ' ').trim();
-    const mappedComma = normalizedIndex.get(normalizedComma);
-    if (mappedComma && stats[mappedComma]) return stats[mappedComma];
+    const variant = parenMatch[2];
+    // Strip embedded dice formulas from variant: "[[34-1d20-1]] cards" → "cards"
+    const cleanVariant = variant.replace(/\[\[[^\]]+\]\]\s*/g, '').trim();
+    if (cleanVariant) {
+      const commaResult = tryAnySrc(`${parenMatch[1]}, ${cleanVariant}`);
+      if (commaResult) return commaResult;
+    }
+    // Also try the base name without variant: "Deck of Illusions"
+    const baseResult = tryAnySrc(parenMatch[1].trim());
+    if (baseResult) return baseResult;
   }
 
-  // Try each step's picked entry (stripped of sub-table refs)
+  // 3. Try stripping embedded dice formulas from the full name
+  const diceStripped = result.name.replace(/\[\[[^\]]+\]\]\s*/g, '').trim();
+  if (diceStripped !== result.name) {
+    const diceResult = tryAnySrc(diceStripped);
+    if (diceResult) return diceResult;
+  }
+
+  // 4. Try each step's picked entry (stripped of sub-table refs)
   for (const step of result.steps) {
     const stripped = stripRefs(step.pickedEntry.name);
     if (stripped) {
-      const key = `${stripped}|${step.pickedEntry.source}`;
-      if (stats[key]) return stats[key];
+      const stepResult = tryAnySrc(stripped);
+      if (stepResult) return stepResult;
 
-      const normalizedStep = key.toLowerCase().replace(/[(),]/g, '').replace(/\s+/g, ' ').trim();
-      const mappedStep = normalizedIndex.get(normalizedStep);
-      if (mappedStep && stats[mappedStep]) return stats[mappedStep];
+      // Also try parens→comma on step entries
+      const stepParen = stripped.match(/^(.+?)\s*\(([^)]+)\)$/);
+      if (stepParen) {
+        const stepComma = tryAnySrc(`${stepParen[1]}, ${stepParen[2]}`);
+        if (stepComma) return stepComma;
+        // Try base name
+        const stepBase = tryAnySrc(stepParen[1].trim());
+        if (stepBase) return stepBase;
+      }
     }
+  }
+
+  // 5. Try the result name against any source (source mismatch fallback)
+  if (result.source) {
+    const anyResult = tryAnySrc(result.name);
+    if (anyResult) return anyResult;
   }
 
   return null;
@@ -903,7 +941,7 @@ const LootTables: React.FC<LootTablesProps> = ({
         const box = new DiceBox({
           container: '#dice-overlay',
           assetPath: `${basePath}assets/dice-box/`,
-          scale: 32,
+          scale: 16,
           gravity: 3,
           theme: 'default',
           offscreen: true,
