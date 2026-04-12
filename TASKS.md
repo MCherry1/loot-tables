@@ -459,6 +459,55 @@ Implement the draft + publish workflow for the admin/review UI:
 ### ~~CR-to-Tier Boundary Mismatch~~ ✅
 Done — `crToDefaultTier()` in `src/engine/constants.ts` now uses the DMG-aligned boundaries (CR 0–4 → Tier 1, 5–10 → Tier 2, 11–16 → Tier 3, 17+ → Tier 4). Covered by `tests/engine/constants.test.ts`.
 
+### 3D Dice Too Small
+
+**File:** `src/web/components/LootTables.tsx` — dice-box init
+
+**Problem:** Dice are comically small. They used to scale with window size (which caused distortion), but now the `scale: 4` setting produces dice that are too tiny to see.
+
+**Fix:** Increase `scale` value and/or make it responsive to container dimensions. The dice-box library supports dynamic resizing — may need to call `box.updateConfig({ scale: N })` on window resize, or use a scale that works well at common screen sizes (try `scale: 6` or `scale: 8` as starting points).
+
+### Spell Tables Exempt from Dice Snapping
+
+**File:** `src/web/components/LootTables.tsx` — `STANDARD_DICE` / `snapToDie()`
+
+**Problem:** Spell tables have irregular total weights (e.g., d67) and there's no clean way to rebalance them to standard dice without making judgment calls about which spells are more popular. Currently they may be getting snapped to d100 which distorts probabilities.
+
+**Fix:** Add an exemption — when the active table is a Spell table, skip the `snapToDie()` logic entirely. A d67 is fine for spells. All spells within a level should have equal weight. The 3D dice roller can skip the visual die roll for non-standard totals and just use the numeric result.
+
+### Item Description Formatting Lost
+
+**File:** `src/web/components/LootTables.tsx` line ~690, `scripts/generate-item-stats.ts`
+
+**Problem:** Item descriptions from 5etools have bullet points, paragraph breaks, and structure. The `flattenEntries()` function in `generate-item-stats.ts` converts these to `• ` prefixed lines joined with `\n`, but the UI renders them in a single `<p>` tag which collapses all newlines.
+
+**Fix (two parts):**
+1. **CSS:** Add `white-space: pre-wrap` to `.final-result-desc` so newlines in the text are preserved.
+2. **Or JSX:** Split `stats.desc` on `\n` and render each line as a separate element: `{stats.desc.split('\n').map(line => <p>{line}</p>)}`.
+
+Option 2 is better because it allows proper paragraph spacing and keeps bullet points as distinct lines.
+
+### Variant Item Stats Lookup Failure (43 items affected)
+
+**File:** `src/web/components/LootTables.tsx` — `lookupItemStats()`
+
+**Problem:** Items with parenthetical variants in `magic-items.ts` use format `"Foo (Bar)"` but `item-stats.json` uses comma format `"Foo, Bar"`. The lookup function doesn't try the comma-format conversion, so 43 items have no description.
+
+**Affected item families:**
+- Instrument of the Bards (all 7 variants) — also has spelling errors: "Ollahm" should be "Ollamh", "Mac-Fuimidh" should be "Mac-Fuirmidh"
+- Ioun Stone (4 variants: awareness, protection, reserve, sustenance)
+- Bag of Tricks (3 variants: gray, rust, tan) — also case mismatch
+- Spell Scrolls (all 10 level variants)
+- Alchemy Jug (Blue, Orange) — source mismatch (CM vs DMG)
+- Potion of Mind Control (3 variants) — case mismatch
+- Plus others: Deck of Illusions, Rod of the Vonindod, Shard Solitaire
+
+**Fix (multi-step):**
+1. In `lookupItemStats()`, add a fallback that converts `"Foo (Bar)"` to `"Foo, Bar"` before lookup
+2. Fix spelling errors in `magic-items.ts`: "Ollahm" → "Ollamh", "Mac-Fuimidh" → "Mac-Fuirmidh"
+3. Add case-insensitive matching for the variant portion
+4. For items with sub-table refs like `"Armblade ([Armblades])"`, the existing `stripRefs()` handles the brackets but the resulting name "Armblade" needs to match against "Armblade|ERLW"
+
 ---
 
 ## Gem & Art Object System
@@ -492,12 +541,23 @@ Implemented per `GEM-SYSTEM-SPEC.md` §6 (cleaner schedule than the earlier bull
 
 Steal value is deducted from the vault's coin budget before coins are rolled (spec §6 rule 3). Exact value, no value score, no quality — a fixed-specimen drop. Covered by `tests/engine/loot-generator.test.ts`.
 
+### Art Object System Implementation
+See `ART-SYSTEM-SPEC.md` for full design specification.
+1. 10 art categories with continuous value ranges and log-scale rolling
+2. Descriptor generation: material (scaled by value) + form (random) + detail (scaled by value)
+3. DMG named items as occasional verbatim drops (~10% chance)
+4. Same per-creature probability and budget system as gems
+5. Art budgets: 40/560/2,500/3,712 gp by tier
+
+
 ### Crafting System Integration (Future — Needs Discussion)
 Crafting tab design for the web app. Key topics to resolve:
 - Gemcutter improving value scores (VS increase → gem value increase proportionally toward gem's max)
-- Artisan tools creating art objects
+- Artisan tools creating art objects (no improvement — create from scratch)
 - 2× base value raw materials + 2× base value specific materials cost structure
 - Magic item crafting (cold damage sword needing a special cold flower, etc.)
 - Cap system: skill check + fame/reputation gating progression to higher tiers
+- Revenue model: market-dependent pricing, reputation building
+- User mentioned a complete Roll20 crafting system to upload as reference
 - User mentioned a complete Roll20 crafting system to upload as reference
 - How value score decouples "current worth" from "potential" enables the improvement mechanic
