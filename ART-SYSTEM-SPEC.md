@@ -292,55 +292,204 @@ Same 15-gem threshold applies. Low-value art objects consolidated as: "A collect
 
 ---
 
-## 5. Output Examples
+## 5. Evocative Description Assembly
+
+The generator should aim for DMG-quality specificity. Instead of just "[material] [form] [detail]", combine elements into mini-narratives:
+
+**Generic (avoid):** "Gold ring with a gem"
+**Evocative (aim for):** "Gold signet ring bearing a dragon crest, set with a single blood-red garnet"
+
+### Assembly Rules
+
+1. **Add a subject/motif** when the form supports it: combs get animal shapes, brooches get heraldic devices, tapestries get scenes, sculptures get subjects
+2. **Name the gem specifically** when jewelry or metalwork references gems — pull from the gem roster: "set with a cabochon moonstone" not "set with a gem"
+3. **Add a functional hint** when possible: "ceremonial dagger" not just "dagger", "prayer scroll" not just "scroll", "merchant's ledger" not just "book"
+4. **Keep it to one sentence** — evocative but scannable in a loot list
+
+### Motifs Pool (for decorative elements)
+
+Animals: dragon, lion, serpent, eagle, wolf, stag, raven, owl, phoenix, griffin, unicorn, bear, hawk, fish, spider, horse, swan, turtle, boar, fox
+
+Heraldic: crossed swords, crown and scepter, shield and lance, tower, tree of life, rising sun, crescent moon, star, anchor, key, hammer and anvil, scales of justice, open hand, closed fist
+
+Nature: vine and leaf, thorned rose, oak branch, flowering tree, wave pattern, mountain peak, flame motif, snowflake, cloud and lightning, wheat sheaf
+
+Religious/Mystical: holy symbol, prayer beads, all-seeing eye, celestial sigil, arcane runes, ouroboros, angel wings, demon face, skull and bones, hourglass
+
+### Scene Pool (for paintings, tapestries, murals — expanded to 40+)
+
+Epic: A great battle between armies, a dragon's assault on a castle, a ship in a terrible storm, a volcanic eruption consuming a city, a titan wrestling a kraken, a siege of a mountain fortress
+
+Noble: A royal coronation ceremony, a king holding court, a noble wedding feast, a knight receiving accolades, a merchant prince's banquet, a duke's hunting party
+
+Pastoral: A peaceful village at harvest time, a shepherd in rolling hills, a fishing village at dawn, a market day in a small town, monks tending a garden, children playing by a river
+
+Mythological: A goddess emerging from the sea, a hero slaying a hydra, angels descending from clouds, a wizard opening a portal, the creation of the world, a phoenix rising from flames
+
+Adventure: A party of adventurers entering a dungeon, a rogue picking a lock, a wizard in a tower library, a ranger tracking through a forest, a paladin facing undead, a bard performing for a crowd
+
+Dark: A ruined city overgrown with vines, a cemetery at midnight, a shadowy figure on a throne, a ghost ship on a fog-bound sea, a battlefield aftermath with crows, a lonely watchtower in rain
+
+---
+
+## 6. Output Examples (with evocative descriptions)
 
 ### Low Tier (CR 0–4, 40 gp budget)
 ```
-Copper bracelet with etched patterns — 8 gp
-Terracotta vase with simple glaze — 4 gp
-Charcoal portrait on parchment, faded but recognizable — 12 gp
-Dyed cotton purse with brass buckle — 3 gp
-Carved pine chess piece of a knight — 6 gp
-Pewter candlestick with maker's mark — 7 gp
+Copper ring engraved with a coiled serpent — 8 gp
+Terracotta jug with a simple harvest-scene glaze — 5 gp
+Charcoal sketch of a harbor at dawn on parchment — 7 gp
+Dyed wool sash with geometric border stitching — 4 gp
+Pine pipe carved in the shape of a dragon's head — 6 gp
+Pewter candlestick with a maker's mark shaped like a hammer — 10 gp
 ```
 
 ### Mid Tier (CR 5–10, 560 gp budget)
 ```
-Silver necklace with filigree set with a small garnet — 280 gp
-Oil portrait of a noble family in a carved frame — 120 gp
-Glazed porcelain vase with painted hunting scene — 85 gp
-Fine calfskin journal with silver clasps — 45 gp
-Mahogany lute with ivory inlay — 30 gp
+Silver pendant shaped like a crescent moon, set with a small cabochon moonstone — 240 gp
+Oil painting of a merchant ship at full sail in a carved oak frame — 130 gp
+Fine porcelain teapot with painted herons and gold-leaf rim — 90 gp
+Embossed calfskin journal with silver wolf-head clasps — 55 gp
+Rosewood lute with ivory pegs and mother-of-pearl inlay — 45 gp
 ```
 
 ### High Tier (CR 11–16, 2,500 gp budget)
 ```
-Gold bracelet set with sapphires — 1,200 gp
-Silk tapestry with gold thread depicting a royal coronation — 650 gp
-Masterwork marble bust of a king, exquisitely detailed — 400 gp
-Crystal goblet with gold filigree cage — 180 gp
-Illuminated manuscript page with gold-leaf borders — 70 gp
+Gold choker set with a row of matched oval-cut sapphires — 1,100 gp
+Silk wall hanging with gold thread depicting a royal coronation — 580 gp
+Alabaster bust of a stern-faced general with obsidian eyes — 420 gp
+Leaded crystal decanter etched with a vineyard scene, gold stopper — 250 gp
+Illuminated bestiary page with gold-leaf borders and vivid painted wyvern — 150 gp
 ```
 
 ### Legendary (CR 17+, 3,712 gp budget)
 ```
-Platinum circlet set with a large emerald — 1,800 gp
-Oil painting of a legendary battle by a renowned artist in a gilded frame — 900 gp
-Ebony chess set with gold and silver pieces — 450 gp
-Gold-threaded silk cloak with jeweled clasps — 380 gp
-Fine crystal decanter with platinum stopper — 182 gp
+Platinum diadem set with a large cushion-cut emerald and diamond accents — 1,600 gp
+Masterwork oil painting of a dragon's assault on a castle, in a gilded frame — 950 gp
+Gold censer with platinum filigree depicting celestial sigils — 520 gp
+Cloth-of-gold ceremonial tabard embroidered with a phoenix in silver thread — 380 gp
+Ironwood chess set with gold and silver pieces, board inlaid with jet and ivory — 262 gp
 ```
 
 ---
 
-## 6. Crafting Integration (Future — see TASKS.md)
+## 6. DMG Named Items
+
+The 48 DMG art objects are included as "named" entries within their categories. When the generator produces an item in the matching category and value range, there is a small chance (~10%) it produces the DMG item verbatim instead of assembling a description. This prevents duplicate one-of-a-kind items — each named item can only appear once per hoard.
+
+### Jewelry (14 DMG items)
+| Value Range | DMG Item |
+|---|---|
+| ~25 gp | Small gold bracelet |
+| ~25 gp | Gold locket with a painted portrait inside |
+| ~250 gp | Gold ring set with bloodstones |
+| ~250 gp | Large gold bracelet |
+| ~250 gp | Silver necklace with a gemstone pendant |
+| ~250 gp | Bronze crown |
+| ~750 gp | Silver and gold brooch |
+| ~2,500 gp | Fine gold chain set with a fire opal |
+| ~2,500 gp | Platinum bracelet set with a sapphire |
+| ~2,500 gp | Jeweled anklet |
+| ~2,500 gp | Gold circlet set with four aquamarines |
+| ~2,500 gp | A necklace string of small pink pearls |
+| ~7,500 gp | Jeweled gold crown |
+| ~7,500 gp | Jeweled platinum ring |
+
+### Metalwork (7 DMG items)
+| Value Range | DMG Item |
+|---|---|
+| ~25 gp | Silver ewer |
+| ~25 gp | Copper chalice with silver filigree |
+| ~250 gp | Brass mug with jade inlay |
+| ~750 gp | Silver chalice set with moonstones |
+| ~750 gp | Bottle stopper cork embossed with gold leaf and set with amethysts |
+| ~7,500 gp | Gold cup set with emeralds |
+| ~7,500 gp | Bejeweled ivory drinking horn with gold filigree |
+
+### Sculpture (6 DMG items)
+| Value Range | DMG Item |
+|---|---|
+| ~25 gp | Carved bone statuette |
+| ~250 gp | Carved ivory statuette |
+| ~250 gp | Box of turquoise animal figurines |
+| ~750 gp | Small gold idol |
+| ~750 gp | Obsidian statuette with gold fittings and inlay |
+| ~7,500 gp | Small gold statuette set with rubies |
+
+### Textile (7 DMG items)
+| Value Range | DMG Item |
+|---|---|
+| ~25 gp | Cloth-of-gold vestments |
+| ~25 gp | Black velvet mask stitched with silver thread |
+| ~25 gp | Embroidered silk handkerchief |
+| ~250 gp | Silk robe with gold embroidery |
+| ~250 gp | Large well-made tapestry |
+| ~2,500 gp | Embroidered silk and velvet mantle set with numerous moonstones |
+| ~2,500 gp | Embroidered glove set with jewel chips |
+
+### Painting (2 DMG items)
+| Value Range | DMG Item |
+|---|---|
+| ~25 gp | Small mirror set in a painted wooden frame |
+| ~2,500 gp | Old masterpiece painting |
+
+### Woodwork (2 DMG items)
+| Value Range | DMG Item |
+|---|---|
+| ~750 gp | Carved harp of exotic wood with ivory inlay and zircon gems |
+| ~7,500 gp | Jade game board with solid gold playing pieces |
+
+### Metalwork/Mask (3 DMG items)
+| Value Range | DMG Item |
+|---|---|
+| ~750 gp | Gold dragon comb set with red garnets as eyes |
+| ~750 gp | Painted gold war mask |
+| ~2,500 gp | Eye patch with a mock eye set in blue sapphire and moonstone |
+
+### Weapon (2 DMG items)
+| Value Range | DMG Item |
+|---|---|
+| ~750 gp | Silver-plated steel longsword with jet set in hilt |
+| ~750 gp | Ceremonial electrum dagger with a black pearl in the pommel |
+
+### Music (2 DMG items)
+| Value Range | DMG Item |
+|---|---|
+| ~2,500 gp | Gold music box |
+
+### Container (3 DMG items)
+| Value Range | DMG Item |
+|---|---|
+| ~250 gp | Gold bird cage with electrum filigree |
+| ~7,500 gp | Gold jewelry box with platinum filigree |
+| ~7,500 gp | Painted gold child's sarcophagus |
+
+### Game/Curiosity (1 DMG item)
+| Value Range | DMG Item |
+|---|---|
+| ~25 gp | Pair of engraved bone dice |
+
+---
+
+## 7. Crafting Integration (Future — see TASKS.md)
 
 Each category maps to an artisan tool. The crafting system will allow players to:
-- Create art objects using the appropriate tool + materials
-- Value scales with check result and material quality
-- No "improvement" mechanic like gems — you create, you don't upgrade
-- Higher artisan proficiency unlocks access to higher-value materials/techniques
-- Revenue system: selling crafted art in different markets at different prices
+
+**Requirements for crafting art objects:**
+- **Tool proficiency:** Must be proficient with the relevant artisan tools
+- **Raw materials:** Value of materials scales with intended piece value (roughly 50% of target value)
+- **Skill check:** Artisan tool check determines quality/execution — higher roll = closer to target value
+- **Renown:** Higher-tier pieces (500+ gp) require the crafter to have established reputation — sold X pieces, completed commissions, been recognized by a guild. This gates progression naturally
+- **Time:** More valuable pieces take longer to craft
+
+**Revenue model:**
+- Crafted art sells at market value in appropriate markets
+- A dwarven metalwork piece sells better in a dwarven city
+- A painting sells better in a wealthy human court
+- Haggling mechanics apply (same as gem/item haggling from the Value Score system)
+- Renown builds with each successful sale, unlocking access to higher-value commissions
+
+**Key difference from gems:** No "improvement" mechanic. You create a new piece from scratch, not upgrade an existing one. A painter doesn't improve someone else's painting — they make their own. A smith doesn't improve a chalice — they forge a new one.
 
 This is separate from the loot generation system. Art objects found as loot are finished pieces — their value is what it is.
 
