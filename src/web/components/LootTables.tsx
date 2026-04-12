@@ -738,8 +738,12 @@ function FinalResultCard({
           </div>
           {stats.desc && (
             <div className="final-result-desc">
-              {stats.desc.split('\n').map((line, i) => (
-                <p key={i}>{line}</p>
+              {stats.desc.split('\n\n').map((para, pi) => (
+                <div key={pi} className="desc-paragraph">
+                  {para.split('\n').map((line, li) => (
+                    <p key={li}>{line}</p>
+                  ))}
+                </div>
               ))}
             </div>
           )}

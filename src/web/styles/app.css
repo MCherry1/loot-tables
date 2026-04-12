@@ -1522,10 +1522,18 @@ button {
 }
 
 .final-result-desc p {
-  margin: 0 0 0.4em 0;
+  margin: 0 0 0.15em 0;
 }
 
 .final-result-desc p:last-child {
+  margin-bottom: 0;
+}
+
+.final-result-desc .desc-paragraph {
+  margin-bottom: 0.7em;
+}
+
+.final-result-desc .desc-paragraph:last-child {
   margin-bottom: 0;
 }
 
