@@ -29,6 +29,7 @@ import {
   MUNDANE_FINDS,
   TIER_CATEGORIES,
   COIN_MIX,
+  HOARD_SPELL_COMPONENT_STEALS,
   crToDefaultTier,
 } from './constants';
 import { coinCountToDiceFormula, evalDiceFormula } from './dice';
@@ -64,6 +65,26 @@ function resolveCategories(
 /** Roll a probability check: returns true with the given probability (0-1). */
 function probHit(probability: number): boolean {
   return cryptoRandom() < probability;
+}
+
+/**
+ * Roll the per-hoard spell-component steal for a given tier.
+ *
+ * Returns a fixed-value TreasureItem (e.g. a 100 gp Pearl) when the tier's
+ * probability hits, or null otherwise. Used by vault generation only — the
+ * caller is responsible for deducting `item.value` from the coin budget so
+ * the hoard's total gp doesn't inflate (GEM-SYSTEM-SPEC.md §6).
+ */
+function rollHoardSteal(tier: Tier): TreasureItem | null {
+  const entry = HOARD_SPELL_COMPONENT_STEALS[tier];
+  if (!entry || cryptoRandom() >= entry.probability) return null;
+  return {
+    name: entry.gem,
+    baseValue: entry.value,
+    value: entry.value,
+    tableName: 'hoard-steal',
+    // No valueScore/quality/improvable — steals are exact-value specimens.
+  };
 }
 
 /** Pick a random mundane find. */
@@ -433,6 +454,14 @@ export function generateVaultLootResolvable(
         break;
       }
     }
+  }
+
+  // Hoard spell-component steal (vault-only). Deduct from the coin budget
+  // before coin dice are built, so the total gp for the hoard stays stable.
+  const steal = rollHoardSteal(tier);
+  if (steal) {
+    coinGpBudget = Math.max(0, coinGpBudget - steal.value);
+    gems.push(steal);
   }
 
   const coins = gpToCoinBreakdown(coinGpBudget, tier);

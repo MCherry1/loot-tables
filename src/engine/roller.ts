@@ -15,6 +15,7 @@ import {
 import type {
   MITable,
   TreasureItem,
+  GemQuality,
   ItemSegment,
   ResolvableMagicItem,
   SourceSettings,
@@ -235,8 +236,50 @@ export function rollMagicItem(table: MITable): { name: string; source: string } 
 }
 
 /**
+ * Gem quality labels by 2d4 value score (GEM-SYSTEM-SPEC.md §3).
+ * Score of 2 is the worst specimen; 8 is flawless and cannot be improved.
+ */
+export const GEM_QUALITY_LABELS: Record<number, GemQuality> = {
+  2: 'Cloudy',
+  3: 'Rough',
+  4: 'Flawed',
+  5: 'Standard',
+  6: 'Fine',
+  7: 'Brilliant',
+  8: 'Flawless',
+};
+
+/**
+ * Organic gems cannot be improved by a gemcutter (GEM-SYSTEM-SPEC.md §1).
+ * These are flagged `improvable: false` when rolled.
+ */
+export const ORGANIC_GEMS: ReadonlySet<string> = new Set([
+  'Pearl',
+  'Black Pearl',
+  'Jet',
+  'Amber',
+  'Coral',
+]);
+
+/**
+ * Apply a ±10% jitter to values ≥ 100 gp so that identical (score, baseValue)
+ * pairs don't always round to the same display value. Values below 100 gp are
+ * left alone so cheap gems stay readable. Uses cryptoRandom for consistency
+ * with the rest of the engine.
+ */
+export function applyJitter(value: number): number {
+  if (value < 100) return value;
+  const jittered = value * (0.9 + cryptoRandom() * 0.2);
+  return Math.round(jittered);
+}
+
+/**
  * Roll on a gem table by name (e.g. "Gems-3-125-gp").
  * Looks up in CUSTOM_GEMS, does a weighted pick, returns the gem as a TreasureItem.
+ *
+ * Value = round(baseValue × 2d4/5), jittered ±10% for values ≥ 100 gp.
+ * Also stores the raw 2d4 value score, its quality label, and whether the
+ * specimen is improvable (organic gems aren't).
  */
 export function rollGem(tableName: string): TreasureItem {
   const table = CUSTOM_GEMS.find((t) => t.name === tableName);
@@ -248,13 +291,25 @@ export function rollGem(tableName: string): TreasureItem {
   // Value scoring: 2d4 (range 2-8, avg 5) as a quality multiplier.
   // A "50 gp gem" ranges from 20-80 gp depending on cut/clarity.
   const score = rollDice(2, 4);
-  const value = Math.round(table.baseValue * (score / 5));
-  return { name: picked.name, baseValue: table.baseValue, value, tableName: table.name };
+  const raw = Math.round(table.baseValue * (score / 5));
+  const value = applyJitter(raw);
+  return {
+    name: picked.name,
+    baseValue: table.baseValue,
+    value,
+    tableName: table.name,
+    valueScore: score,
+    quality: GEM_QUALITY_LABELS[score],
+    improvable: !ORGANIC_GEMS.has(picked.name),
+  };
 }
 
 /**
  * Roll on an art table by name (e.g. "Art-2-500-gp").
  * Looks up in CUSTOM_ART, does a weighted pick, returns the art object as a TreasureItem.
+ *
+ * Same 2d4 formula as gems, with jitter applied. Art has no quality label
+ * or improvable flag (GEM-SYSTEM-SPEC.md §7).
  */
 export function rollArt(tableName: string): TreasureItem {
   const table = CUSTOM_ART.find((t) => t.name === tableName);
@@ -264,8 +319,15 @@ export function rollArt(tableName: string): TreasureItem {
 
   const picked = weightedPick(table.entries);
   const score = rollDice(2, 4);
-  const value = Math.round(table.baseValue * (score / 5));
-  return { name: picked.name, baseValue: table.baseValue, value, tableName: table.name };
+  const raw = Math.round(table.baseValue * (score / 5));
+  const value = applyJitter(raw);
+  return {
+    name: picked.name,
+    baseValue: table.baseValue,
+    value,
+    tableName: table.name,
+    valueScore: score,
+  };
 }
 
 // ---------------------------------------------------------------------------

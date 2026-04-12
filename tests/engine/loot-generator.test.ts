@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { generateLoot, generateEncounter } from '../../src/engine/loot-generator';
+import {
+  generateLoot,
+  generateEncounter,
+  generateVaultLootResolvable,
+} from '../../src/engine/loot-generator';
 import { DEFAULT_CAMPAIGN_SETTINGS } from '../../src/engine/constants';
 
 const settings = { ...DEFAULT_CAMPAIGN_SETTINGS };
@@ -56,5 +60,43 @@ describe('generateEncounter', () => {
 
     expect(bosses).toHaveLength(1);
     expect(bosses[0].index).toBe(1);
+  });
+});
+
+describe('hoard spell-component steals (vault)', () => {
+  it('tier 1 vault always includes a 100 gp Pearl', () => {
+    // Probability is 1.0 — should hit every time.
+    for (let i = 0; i < 10; i++) {
+      const loot = generateVaultLootResolvable(
+        { tier: 1, size: 'standard', settings },
+        true,
+      );
+      const pearl = loot.gems.find((g) => g.name === 'Pearl' && g.value === 100);
+      expect(pearl).toBeDefined();
+    }
+  });
+
+  it('tier 4 vault includes 5000 gp Diamonds at roughly 1/7 probability', () => {
+    let diamondHits = 0;
+    const runs = 400;
+    for (let i = 0; i < runs; i++) {
+      const loot = generateVaultLootResolvable(
+        { tier: 4, size: 'standard', settings },
+        true,
+      );
+      if (loot.gems.some((g) => g.name === 'Diamond' && g.value === 5000 && g.tableName === 'hoard-steal')) {
+        diamondHits++;
+      }
+    }
+    // Expected ~57 hits (400/7). Allow a generous band for flakiness.
+    expect(diamondHits).toBeGreaterThan(20);
+    expect(diamondHits).toBeLessThan(100);
+  });
+
+  it('non-vault generateLoot never produces a hoard-steal gem', () => {
+    for (let i = 0; i < 50; i++) {
+      const loot = generateLoot({ cr: 3, tier: 1, role: 'boss', settings });
+      expect(loot.gems.every((g) => g.tableName !== 'hoard-steal')).toBe(true);
+    }
   });
 });

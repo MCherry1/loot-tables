@@ -160,9 +160,9 @@ export const MI_AVG_VALUES: Record<MITable, number> = {
 
 /** Derive the default tier of play from a creature's CR. */
 export function crToDefaultTier(cr: number): Tier {
-  if (cr <= 5) return 1;
+  if (cr <= 4) return 1;
   if (cr <= 10) return 2;
-  if (cr <= 15) return 3;
+  if (cr <= 16) return 3;
   return 4;
 }
 
@@ -403,6 +403,37 @@ export const COIN_MIX: Record<Tier, { cp: number; sp: number; gp: number; pp: nu
   2: { cp: 0.00, sp: 0.18, gp: 0.54, pp: 0.27 },
   3: { cp: 0.00, sp: 0.00, gp: 0.44, pp: 0.56 },
   4: { cp: 0.00, sp: 0.00, gp: 0.13, pp: 0.87 },
+};
+
+// ---------------------------------------------------------------------------
+// Hoard spell-component auto-steals (GEM-SYSTEM-SPEC.md §6)
+// ---------------------------------------------------------------------------
+
+/** A fixed-value spell-component gem that a vault hoard may auto-include. */
+export interface SpellComponentSteal {
+  /** Gem name (exact specimen — no random type roll). */
+  gem: string;
+  /** Exact gp value — no log-scale rolling, no value score, no quality. */
+  value: number;
+  /** Probability a vault of this tier includes the steal. */
+  probability: number;
+}
+
+/**
+ * Per-tier spell-component steals applied to vault hoards only.
+ *
+ * Rules (from GEM-SYSTEM-SPEC.md §6):
+ * 1. Always exact value — no log-scale rolling, no value score, no quality.
+ * 2. Always the specific gem — not a random type.
+ * 3. Deducted from coin budget before coins are generated.
+ * 4. Cumulative with normal gem generation.
+ * 5. No spell-component labeling in output.
+ */
+export const HOARD_SPELL_COMPONENT_STEALS: Record<Tier, SpellComponentSteal> = {
+  1: { gem: 'Pearl', value: 100, probability: 1.0 },        // Identify (reusable)
+  2: { gem: 'Diamond', value: 500, probability: 2 / 7 },    // Raise Dead (consumed)
+  3: { gem: 'Diamond', value: 1000, probability: 2 / 7 },   // Resurrection (consumed)
+  4: { gem: 'Diamond', value: 5000, probability: 1 / 7 },   // Gate (reusable)
 };
 
 // ---------------------------------------------------------------------------
