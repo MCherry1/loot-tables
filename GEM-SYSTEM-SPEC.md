@@ -314,17 +314,17 @@ interface RolledArt {
 ## 9. Open Items
 
 **Shipped (April 2026):**
-- Value scoring formula (2d4 × baseValue / 5) for both gems and art objects — `roller.ts`
-- Quality labels (Cloudy/Rough/Flawed/Standard/Fine/Brilliant/Flawless) derived from 2d4 score — `GEM_QUALITY_LABELS` in `roller.ts`
-- ±10% jitter on values ≥ 100 gp — `applyJitter()` in `roller.ts`
-- Organic-gem `improvable: false` flag (Pearl, Black Pearl, Jet, Amber, Coral) — `ORGANIC_GEMS` in `roller.ts`
-- Hoard spell-component steals per §6 — `rollHoardSteal()` + `HOARD_SPELL_COMPONENT_STEALS` (vault-only, deducts from coin budget)
+- Value scoring formula, quality labels, ±10% jitter on legacy tier tables, organic-gem flag, hoard spell-component steals — `roller.ts`, `gem-generator.ts`.
+- **Continuous log-scale gem roster** (§1, §2) — 33 gems with `{min, max, weight, organic, improvable}` in `src/data/gem-definitions.ts`.
+- **Log-scale value rolling + binning** (`GEM-BUDGET-ALGORITHM.md` §3) — `rollGemValue()` and `applyBinning()` in `src/engine/gem-generator.ts`.
+- **Budget-loop gem generation** — `generateGemBudget(budget)` in `src/engine/gem-generator.ts`.
+- **Descriptor generation** (§4, `GEM-DESCRIPTORS.md` §1-§5) — `generateGemDescriptor()` assembles size / quality / cut / cutQuality / color / legendary and produces a human-readable `description`.
+- **Per-creature probability** (`GEM-BUDGET-ALGORITHM.md` §7) — `gemsFromShare()` in `loot-generator.ts` with `GEM_MEANINGFUL_MIN` constants.
+- **Art object category system** (§7, `ART-SYSTEM-SPEC.md`) — 10-category roster in `src/data/art-definitions.ts` with `generateArtBudget()` / `generateArtDescriptor()` in `src/engine/art-generator.ts`.
+- **UI descriptor rendering** — `EncounterResults.tsx` prefers `description` when present.
 
 **Still outstanding:**
-1. **Continuous log-scale gem roster:** Current code still uses the legacy 8-tier `CUSTOM_GEMS` buckets. §1/§2 call for a 33-gem flat roster with `{min, max, weight, organic}` metadata and log-scale value generation. Pending a regeneration of `src/data/gems.ts`.
-2. **Descriptor generation:** Size / quality / cut / color / legendary names per `GEM-DESCRIPTORS.md` are not wired into `TreasureItem` output yet.
-3. **Consolidation:** Fold cheap gems into a single "pouch" line when a hoard produces 15+ gems. Not implemented.
-4. **Art object item lists:** DMG art tables need extraction and integration. Current code reuses the legacy `CUSTOM_ART` tables.
-5. **Crafting system integration:** Future tab. Gemcutter VS improvement, artisan tool creation, material cost structure. See TASKS.md.
-6. **Weight tuning:** Current weights are reasonable based on simulation. May need adjustment after playtesting.
-7. **Consolidation threshold:** When implemented, may need per-tier thresholds (e.g., consolidate below 50 gp at CR 11–16, below 200 gp at CR 17+).
+1. **Consolidation:** Fold cheap gems/art into a single "pouch of assorted stones" line when a hoard produces 15+ items. Algorithm design is in `GEM-BUDGET-ALGORITHM.md` §4; not yet implemented.
+2. **Per-tier consolidation thresholds:** May need per-tier detail thresholds (e.g. consolidate below 50 gp at CR 11–16, below 500 gp at CR 17+).
+3. **Crafting system integration:** Future tab. Gemcutter VS improvement, artisan tool creation, material cost structure. See TASKS.md.
+4. **Weight tuning:** Current weights mirror the spec simulation. May need adjustment after playtesting.
