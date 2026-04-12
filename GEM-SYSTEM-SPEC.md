@@ -313,7 +313,18 @@ interface RolledArt {
 
 ## 9. Open Items
 
-1. **Art object system detail:** DMG art tables need extraction and integration. Value scoring formula is defined; item lists need data entry.
-2. **Crafting system integration:** Future tab. Gemcutter VS improvement, artisan tool creation, material cost structure. See TASKS.md.
-3. **Weight tuning:** Current weights are reasonable based on simulation. May need adjustment after playtesting.
-4. **Consolidation threshold:** Currently set at 15 gems. May need per-tier thresholds (e.g., consolidate below 50 gp at CR 11–16, below 200 gp at CR 17+).
+**Shipped (April 2026):**
+- Value scoring formula (2d4 × baseValue / 5) for both gems and art objects — `roller.ts`
+- Quality labels (Cloudy/Rough/Flawed/Standard/Fine/Brilliant/Flawless) derived from 2d4 score — `GEM_QUALITY_LABELS` in `roller.ts`
+- ±10% jitter on values ≥ 100 gp — `applyJitter()` in `roller.ts`
+- Organic-gem `improvable: false` flag (Pearl, Black Pearl, Jet, Amber, Coral) — `ORGANIC_GEMS` in `roller.ts`
+- Hoard spell-component steals per §6 — `rollHoardSteal()` + `HOARD_SPELL_COMPONENT_STEALS` (vault-only, deducts from coin budget)
+
+**Still outstanding:**
+1. **Continuous log-scale gem roster:** Current code still uses the legacy 8-tier `CUSTOM_GEMS` buckets. §1/§2 call for a 33-gem flat roster with `{min, max, weight, organic}` metadata and log-scale value generation. Pending a regeneration of `src/data/gems.ts`.
+2. **Descriptor generation:** Size / quality / cut / color / legendary names per `GEM-DESCRIPTORS.md` are not wired into `TreasureItem` output yet.
+3. **Consolidation:** Fold cheap gems into a single "pouch" line when a hoard produces 15+ gems. Not implemented.
+4. **Art object item lists:** DMG art tables need extraction and integration. Current code reuses the legacy `CUSTOM_ART` tables.
+5. **Crafting system integration:** Future tab. Gemcutter VS improvement, artisan tool creation, material cost structure. See TASKS.md.
+6. **Weight tuning:** Current weights are reasonable based on simulation. May need adjustment after playtesting.
+7. **Consolidation threshold:** When implemented, may need per-tier thresholds (e.g., consolidate below 50 gp at CR 11–16, below 200 gp at CR 17+).
