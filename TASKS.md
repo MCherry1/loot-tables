@@ -533,3 +533,59 @@ Crafting tab design for the web app. Key topics to resolve:
 - Revenue model: market-dependent pricing, reputation building
 - User mentioned a complete Roll20 crafting system to upload as reference
 - How value score decouples "current worth" from "potential" enables the improvement mechanic
+
+---
+
+## UI Features
+
+### Color Themes (4 themes, light/dark/auto each)
+
+Current CSS uses custom properties (`--bg-start`, `--ink`, `--accent`, etc.) with `[data-theme='dark']` override. Extend to support 4 theme palettes, each with light and dark variants.
+
+**Themes:**
+
+1. **Treasure** (current default) — Brown and gold. Parchment-toned backgrounds, warm gold accents. Evokes treasure chests and old maps.
+   - Light: warm parchment (#f5ede0), brown ink (#2a1f14), gold accent (#c9943a)
+   - Dark: dark brown (#1a1410), cream ink (#e8dcc8), gold accent (#c9943a)
+
+2. **Stone** — Dark gray and white. Highest contrast option. Clean and modern. Evokes dungeon stone.
+   - Light: cool white (#f0f0f0), charcoal ink (#1a1a1a), slate accent (#607080)
+   - Dark: deep charcoal (#1a1a1e), white ink (#e8e8ec), silver accent (#8890a0)
+
+3. **Verdant** — Green and gold. Evokes elven craftsmanship and forest settings.
+   - Light: pale sage (#eef2e8), forest ink (#1a2a1a), emerald accent (#3a7a3a)
+   - Dark: deep forest (#0e1a0e), mint ink (#c8e0c8), gold-green accent (#7aaa3a)
+
+4. **Arcane** — Purple and blue. Evokes magic, arcana, and the Weave.
+   - Light: lavender mist (#f0eaf8), deep indigo ink (#1a1028), violet accent (#6a3a9a)
+   - Dark: deep midnight (#12101e), pale violet ink (#d0c0e8), electric blue accent (#5a6aee)
+
+**Implementation:**
+- Add `data-palette` attribute alongside existing `data-theme` (light/dark/auto)
+- CSS: `:root[data-palette='stone']`, `:root[data-palette='verdant']`, etc.
+- Settings UI: 4 palette swatches (small colored circles), keep existing light/dark/auto toggle
+- Store in localStorage alongside existing theme preference
+
+### Dice Colors (12 options)
+
+The dice-box library supports `theme` and color customization. Add a dice color picker to settings.
+
+**Palette (12 colors):**
+1. Classic Ivory (default)
+2. Obsidian Black
+3. Ruby Red
+4. Sapphire Blue
+5. Emerald Green
+6. Amethyst Purple
+7. Gold Metallic
+8. Silver Metallic
+9. Copper/Bronze
+10. Frost White (with blue tint)
+11. Crimson & Gold (sparkle)
+12. Midnight Blue (sparkle)
+
+**Implementation:**
+- dice-box config supports `themeColor` for face/pip colors
+- Settings UI: row of 12 small color circles
+- Store preference in localStorage
+- Apply via `diceBoxRef.current.updateConfig({ themeColor: '#...' })` on change
