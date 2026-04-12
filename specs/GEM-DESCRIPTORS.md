@@ -1,6 +1,6 @@
 # Gem Descriptor System
 
-*Companion to GEM-SYSTEM-SPEC.md*
+*Companion to specs/GEM-SYSTEM-SPEC.md*
 
 ---
 

@@ -1,308 +1,93 @@
-# Unified D&D 5e Treasure Economy
+# Design
 
-## Overview
+The thinking behind how the tables are built and how the loot system works. This isn't a math document — it's about the decisions and why they make sense for your game. If you want the raw formulas, those live in the `specs/` folder.
 
-Build a unified loot generation system for D&D 5e that replaces the DMG's hoard tables with a per-creature probability system. Every creature in the game resolves to a simple probability table based on three inputs: **CR**, **Tier of Play**, and **Role**. Two campaign-level sliders adjust the economy globally.
+---
 
-The system is economically balanced against the 2014 DMG: if a party fights a tier's worth of encounters and collects all the loot, the total equals what the DMG expects from its prescribed number of hoards.
+## Item Tables
 
------
+### Why Categories?
 
-## Architecture
+The DMG's magic item tables are flat lists. Table G has 80-something items in one giant pool — swords next to cloaks next to wands next to potions. That creates two problems.
 
-### Inputs (per roll)
+The first is balance. When a new sourcebook comes out and adds fifteen wands but only two swords, the wands dominate the table. The probability of rolling a sword drops because the total pool got bigger, even though swords aren't any less interesting. By splitting items into categories — Arms, Armor, Potions, Spellcaster, and so on — each category maintains its own weight relative to the others. Adding fifteen new wands makes the Spellcaster sub-table bigger, but it doesn't crowd out swords from the Arms sub-table.
 
-| Input            | Values                     | Description |
-|------------------|----------------------------|-------------|
-| **CR**           | 0–30                       | Creature's Challenge Rating. Determines XP, which determines budget size. |
-| **Tier of Play** | 1, 2, 3, or 4              | The party's current tier. Determines GP/XP ratio AND which loot categories are available. Auto-detected from CR by default (CR 0-4→T1, 5-10→T2, 11-16→T3, 17+→T4) but manually overridable. |
-| **Role**         | Minion, Elite, Mini-boss, Boss (+ Vault separate) | Creature's position in the hierarchy. Determines what fraction of their full budget they personally carry. |
+The second is usability. When you're a DM and you know the party just killed a hobgoblin war chief, you want to be able to say "this guy should have a weapon" and roll specifically on the Arms table. Or if your wizard player hasn't found anything good in a while, you want to browse the Spellcaster items and pick something. Categories let you roll randomly when you want surprise, choose deliberately when you want control, and switch between the two at any step as you walk through the tables.
 
-### Inputs (campaign settings, set once)
+### How Items Are Categorized
 
-| Input              | Values      | Default            | Description |
-|--------------------|-------------|--------------------|-------------|
-| **Magic Richness** | 0.5x – 1.5x | 1.0x (Standard)   | Multiplier on magic item probabilities. Labels: Scarce / Low / Standard / High / Abundant. |
+The categories map roughly to what a creature might be carrying or what a player might want:
 
-### Output (per roll)
+**Arms** covers weapons — swords, axes, bows, and anything you swing or shoot. Within Arms, there are sub-tables for weapon types (swords, axes, martial melee, simple melee, ranged). The weights between these reflect how common each type would be in a fantasy world. There are more daggers and longswords than greatswords, because that's what most armed creatures actually carry. A greatsword is a specialized weapon — it should feel special when one shows up.
 
-A loot result containing any/all of:
-
-- **Coins** (expressed as dice formulas)
-- **Gems** (from custom gem tables)
-- **Art Objects** (from custom art tables)
-- **Magic Items** (from expanded item tables A-I)
-
------
-
-## Core Math
-
-### Step 1: Budget Calculation
-
-```
-full_budget = XP_BY_CR[cr] × GP_PER_XP[tier]
-role_budget = full_budget × ROLE_MULTIPLIER[role]
-```
-
-**GP/XP ratios** (derived from DMG hoard expected values ÷ tier XP):
-
-| Tier | Levels | Hoards | Avg Hoard   | Total Treasure  | Total XP | GP/XP  |
-|------|--------|--------|-------------|-----------------|----------|--------|
-| 1    | 1–5    | 7      | 1,077 gp    | 7,540 gp        | 26,000   | 0.2900 |
-| 2    | 5–10   | 18     | 7,419 gp    | 133,544 gp      | 230,000  | 0.5806 |
-| 3    | 10–16  | 12     | 105,922 gp  | 1,271,070 gp    | 524,000  | 2.4257 |
-| 4    | 16–20  | 8      | 710,512 gp  | 5,684,100 gp    | 640,000  | 8.8814 |
-
-Hoard averages include magic item value using the project's custom Value Score pricing (Base × 5 average):
-
-| Table | Base       | Avg Value   | Type             |
-|-------|------------|-------------|------------------|
-| A     | 10 gp      | 50 gp       | Minor Common     |
-| B     | 25 gp      | 125 gp      | Minor Uncommon   |
-| F     | 100 gp     | 500 gp      | Major Uncommon   |
-| C     | 250 gp     | 1,250 gp    | Minor Rare       |
-| G     | 1,000 gp   | 5,000 gp    | Major Rare       |
-| D     | 2,500 gp   | 12,500 gp   | Minor Very Rare  |
-| H     | 10,000 gp  | 50,000 gp   | Major Very Rare  |
-| E     | 25,000 gp  | 125,000 gp  | Minor Legendary  |
-| I     | 100,000 gp | 500,000 gp  | Major Legendary  |
-
-**Role multipliers** (raw weights 1/3/9/27, ~3× geometric steps, normalized against 25/25/25/25 campaign XP split):
-
-| Role      | Raw Weight | Multiplier | Description |
-|-----------|-----------|------------|-------------|
-| Minion    | 1         | ×0.10      | Fodder, grunts. Pocket change. |
-| Elite     | 3         | ×0.30      | Lieutenant. Personal gear and stash. |
-| Mini-boss | 9         | ×0.90      | Sub-boss. Well-equipped, significant personal treasure. |
-| Boss      | 27        | ×2.70      | The leader. The big score. Best equipment, personal hoard. |
-
-Vault is separate — it's placed treasure (dragon hoard, treasure chest), not a creature role. Sized via `calculateVaultBudget()` using per-tier fixed values.
-
-Over a balanced campaign (25% of XP from each role), the average multiplier is exactly 1.0 — total wealth distributed equals total XP budget. Individual encounters will over- or under-distribute depending on role composition (boss-heavy encounters are richer, minion-heavy encounters are leaner).
-
-### Step 2: Category Breakdown
-
-Each tier has a fixed percentage breakdown across loot categories, derived from the actual DMG hoard table probability weights.
-
-**Tier 1:**
-
-| Category  | % of Hoard Value |
-|-----------|------------------|
-| Coins     | 18.2%            |
-| 10gp gems | 1.7%             |
-| 25gp art  | 3.9%             |
-| 50gp gems | 11.0%            |
-| Table A   | 3.9%             |
-| Table B   | 4.4%             |
-| Table C   | 29.0%            |
-| Table F   | 13.9%            |
-| Table G   | 13.9%            |
+**Armor** splits by proficiency tier — light, medium, heavy — which naturally maps to character classes. A rogue finds light armor useful. A paladin wants heavy armor. When you're rolling for an enemy, the same split works: a bandit scout wears light armor, a knight wears heavy.
 
-**Tier 2:**
-
-| Category   | % of Hoard Value |
-|------------|------------------|
-| Coins      | 52.0%            |
-| 25gp art   | 0.4%             |
-| 50gp gems  | 1.7%             |
-| 100gp gems | 3.5%             |
-| 250gp art  | 3.9%             |
-| Table A    | 0.4%             |
-| Table B    | 0.8%             |
-| Table C    | 4.6%             |
-| Table D    | 10.1%            |
-| Table F    | 2.4%             |
-| Table G    | 6.7%             |
-| Table H    | 13.5%            |
+**Spellcaster** items require attunement by a spellcaster — wands, staffs, robes, and similar. This category grew the most as sourcebooks were published. Without category separation, the sheer number of spellcaster items would have drowned out everything else.
 
-**Tier 3:**
+**Potions** are consumable liquids. They're separated from other items because they're fundamentally different — you use them once and they're gone. Balancing potions against permanent items within the same pool doesn't make sense; they serve different roles in the game's economy.
 
-| Category    | % of Hoard Value |
-|-------------|------------------|
-| Coins       | 29.7%            |
-| 250gp art   | 0.3%             |
-| 500gp gems  | 1.1%             |
-| 750gp art   | 0.9%             |
-| 1000gp gems | 2.3%             |
-| Table A     | <0.1%            |
-| Table B     | 0.1%             |
-| Table C     | 0.9%             |
-| Table D     | 4.7%             |
-| Table E     | 9.4%             |
-| Table F     | <0.1%            |
-| Table G     | 0.9%             |
-| Table H     | 11.8%            |
-| Table I     | 37.8%            |
-
-**Tier 4:**
-
-| Category    | % of Hoard Value |
-|-------------|------------------|
-| Coins       | 45.3%            |
-| 1000gp gems | 0.4%             |
-| 2500gp art  | 0.5%             |
-| 5000gp gems | 0.8%             |
-| 7500gp art  | 0.6%             |
-| Table C     | 0.1%             |
-| Table D     | 2.0%             |
-| Table E     | 13.5%            |
-| Table G     | 0.1%             |
-| Table H     | 1.6%             |
-| Table I     | 35.2%            |
+**Spells** (for scroll tables) are kept at perfectly equal weight within each spell level. There's no good way to say "Fireball should be more common than Fly" without making judgment calls that every DM would disagree on. So all spells at a given level have the same probability. The tables use whatever die size falls out naturally — a d67 is fine for spells.
 
-### Step 3: Convert Budget to Probabilities
+**Equipment / Gear** in the minor tables is a catch-all for items that aren't consumable but aren't powerful enough for a major table category. There aren't enough minor apparel items or minor arms to justify separate sub-tables, so they share a pool.
 
-For each category:
+**Miscellaneous** is the catch-all for major items that don't fit elsewhere — Bags of Holding, Portable Holes, Decanters of Endless Water. Things that are useful to anyone regardless of class.
 
-```
-category_budget = role_budget × (category_pct / 100)
-```
+### Sourcebook Weighting
 
-- **Coins**: Always present. Convert to a dice formula (NdM × mult) that averages near the budget.
-- **Gems/Art**: `expected_count = category_budget / unit_value`. If ≥ 1, roll that many. If < 1, treat as percentage chance.
-- **Magic Items**: `chance = category_budget / MI_AVG[table]`. If ≥ 1, use split rolls. If < 1, percentage chance.
+Every item tracks which book it comes from. You can toggle books on or off (don't own Fizban's? turn it off) or set priority levels — Low, Normal, High, Emphasis. Running an Eberron campaign? Set Eberron sources to Emphasis and they'll appear more frequently without completely replacing everything else.
 
-### Step 4: Apply Magic Richness Slider
+When a source is toggled off, its items disappear and the remaining items redistribute proportionally. No probability is lost — every surviving item gets a fair boost.
 
-```
-adjusted_mi_pct = original_mi_pct × richness_slider
-coin_adjustment = sum(original_mi_pcts) - sum(adjusted_mi_pcts)
-adjusted_coin_pct = original_coin_pct + coin_adjustment
-```
+There's also a dampening formula that prevents any single large sourcebook from dominating just by having more items. A book with 300 items doesn't get 10× the representation of a book with 30 items. The dampening scales by the square root of item count, so larger books still have more presence, just not linearly more.
 
-### Step 5: Variance
+---
 
-Natural variance through three layers:
-1. **Coin dice** — NdM formulas give ~6x spread
-2. **Category probability** — percentage chances create excitement
-3. **Item table internal weights** — different items from the same table
+## Monster Loot & Hoards
 
-### Multiple Items Over 100% Probability
+### The Core Idea
 
-```
-num_rolls = ceil(expected_count)
-per_roll_chance = expected_count / num_rolls
-```
+The DMG gives you four hoard tables (one per tier of play) and expects you to roll once after clearing a dungeon. That works, but it means treasure is disconnected from individual creatures. This system fixes that by converting hoard-level treasure into per-creature probabilities.
 
------
+Here's the logic: the DMG expects about 7 hoards across Tier 1 (levels 1–4), and the party earns about 6,500 XP to get through that tier. Each hoard has an expected gold value. So the total treasure across the tier is known, and the total XP is known. Divide the first by the second and you get a gold-per-XP ratio. Now every creature with an XP value has a proportional share of the tier's total treasure.
 
-## Role Descriptions
+A CR 1 goblin (200 XP) gets a small share. A CR 4 owlbear (1,100 XP) gets a bigger share. A boss creature gets even more because of the role multiplier — bosses are worth 2.7× their base share, minions are worth 0.1×.
 
-**Minion (×0.10)** — Fodder, grunts. A few coins in their pocket. The goblin warrior, the skeleton guard.
+### Roles
 
-**Elite (×0.30)** — Lieutenants, named NPCs. Personal stash worth searching. The goblin sergeant, the bandit captain.
+Every creature in an encounter has a role that determines its treasure share:
 
-**Mini-boss (×0.90)** — Sub-bosses, guardians. Well-equipped, significant personal treasure. The mage lieutenant, the ogre chieftain.
+**Minion (×0.10)** — the fodder. A goblin, a skeleton, a guard. They have pocket change. Maybe a few copper coins.
 
-**Boss (×2.70)** — The leader, the main threat. The big score. Best personal equipment, a personal hoard. The bugbear chief, the dragon.
+**Elite (×0.30)** — a creature worth looting. A hobgoblin sergeant, a bandit captain, a veteran. Personal belongings, maybe a gem or a minor item.
 
-**Vault** (separate) — Placed treasure. The locked chest, the dragon's pile. Sized via per-tier fixed values, not creature CR. This is the DMG's "hoard" concept.
+**Mini-boss (×0.90)** — well-equipped and dangerous. A mage, a vampire spawn, a young dragon. Significant treasure, real chance of magic items.
 
------
+**Boss (×2.70)** — the big score. An adult dragon, an archdevil's lieutenant, the final villain. This is where the real loot lives.
 
-## Key Design Insight: Tier vs CR
+The multipliers follow a 3× geometric progression (1, 3, 9, 27 → normalized to 0.10, 0.30, 0.90, 2.70). Over a balanced campaign where XP is spread roughly equally across roles, the weighted average is exactly 1.0 — no treasure is created or lost compared to what the DMG expects.
 
-**Tier** controls: GP/XP ratio + which loot categories are available.
-**CR** controls: How much XP the creature is worth (budget size).
+### Tier Progression
 
-The same CR 5 creature produces different loot depending on tier context.
+Within each tier, treasure scales from 0.70× at the start to 1.30× at the end. A level 5 party fighting CR 6 creatures gets leaner hoards than a level 10 party fighting the same creatures. This late-loads treasure — published adventures tend to reserve richer rewards for later in each tier, and the progression multiplier captures that pattern automatically.
 
------
+### Gems
 
-## Value Score System
+Gems use a continuous value system instead of the DMG's fixed-value buckets. In the DMG, every gem at a given tier is worth exactly the same amount — every "100 gp gem" is 100 gp, no exceptions. That's boring and unrealistic.
 
-Every magic item has a Value Score (0–10), default 2d4.
+In this system, each of the 33 gem types has a natural value range. A diamond can be worth anywhere from 10 gp (a tiny, cloudy chip) to 100,000 gp (a legendary stone). Values are rolled on a logarithmic scale, which means most gems cluster toward the cheap end — just like in real life. You find a lot of small diamonds and very few large ones.
 
-- **Buy price** = Value Score × Base Number
-- **Sale price** = floor(Value Score ÷ 2) × Base Number
+Every gem gets a full description: size, quality, cut style, and color. A "Large but poorly cut oval ruby — 820 gp" tells a story that "500 gp gem" doesn't. The quality score also feeds into a future crafting system — a gem with low quality but high value means a jeweler could significantly improve it.
 
-| Score | Weight (2d4) | Category   |
-|-------|-------------|------------|
-| 0     | 0           | Broken     |
-| 1     | 0           | Worthless  |
-| 2     | 1           | Low        |
-| 3     | 2           | Low        |
-| 4     | 3           | Medium     |
-| 5     | 4           | Medium     |
-| 6     | 3           | Medium     |
-| 7     | 2           | High       |
-| 8     | 1           | High       |
-| 9     | 0           | Luxury     |
-| 10    | 0           | Masterwork |
+Gem budgets for each hoard tier are derived from the DMG's expected values. For individual creatures, the system fractionalizes the probability rather than the budget — a goblin has a 7% chance of carrying 100 gp worth of gems, rather than always carrying 7 gp of gravel. When gems are present, they're interesting. When they're not, the creature just had coins.
 
------
+Spell components that require specific gems — like the 100 gp pearl for Identify or the 500 gp diamond for Raise Dead — are handled separately. They're automatically included in hoards at the appropriate tier, deducted from the coin budget. Players don't need to go shopping for Identify pearls; the loot system delivers them. Other grindable components (diamond dust for Revivify, Stoneskin, Greater Restoration) accumulate naturally because diamonds are the most commonly generated gem.
 
-## Party Size Adjustment
+### Art Objects
 
-```
-adjusted_gp_per_xp = base_gp_per_xp × (4 / party_size)
-```
+Art objects follow the same continuous-value, budget-based approach as gems. Ten categories — Jewelry, Metalwork, Sculpture, Textile, Painting, Pottery, Glasswork, Woodwork, Leatherwork, and Calligraphy — each produce descriptive items assembled from material, form, and detail pools. "Copper chalice with silver filigree" at the low end. "Platinum diadem set with a large cushion-cut emerald" at the high end.
 
------
+Each category maps to an artisan tool, which matters for a future crafting system. The 48 specific art objects from the DMG show up as occasional named drops — you might find the exact "Gold locket with a painted portrait inside" from the DMG, but you'll also find generated items that are just as evocative.
 
-## Mundane Finds
+### Vault Hoards
 
-For very low budgets (< 1 gp coins), include a flavor item instead of "nothing."
-
------
-
-## Verification Targets
-
-1. Over a balanced campaign (25% XP per role), total wealth distributed ≈ total XP budget (avg multiplier = 1.0)
-2. Only MI tables appearing in the DMG hoard for that tier have nonzero probability
-3. At Richness 1.0x, expected values match DMG baseline per tier
-4. Typical dungeon (8 minions + 2 elites + 1 mini-boss + 1 boss) distributes ~115% of total XP budget (boss-heavy = richer, correct)
-5. DMG variance profile preserved: right-skewed distribution, CV 0.56–1.21 by tier, median < mean
-
-### DMG Hoard Variance Reference (100K Monte Carlo simulations)
-
-| Tier | Mean      | Median    | CV   | 90/10 Spread | Description |
-|------|-----------|-----------|------|-------------|-------------|
-| 1    | 990 gp    | 569 gp    | 1.21 | 12×         | Wild variance, jackpots dominate |
-| 2    | 6,807 gp  | 5,105 gp  | 0.76 | 3.2×        | Moderate, coins provide stable floor |
-| 3    | 89,442 gp | 46,750 gp | 1.08 | 5.6×        | High variance, legendary items swing |
-| 4    | 715,751 gp| 557,000 gp| 0.56 | 4.2×        | Tightest, massive coin floor |
-
------
-
-## Edition System (2014 / 2024)
-
-The app supports both the 2014 and 2024 versions of D&D 5e via a toggle in Settings. The toggle switches two things simultaneously: **which tables/weights are used** and **which item descriptions are shown**.
-
-### 2014 Edition (default)
-
-The 2014 tables are the hand-curated original product. They use:
-
-- `data/curation.json` — 743+ items with manually reviewed weights, table assignments, and category placements. Seeded from the original Excel tables and refined through the admin Review UI.
-- A small number of hand-applied rarity adjustments where 2014 item stats didn't justify their original DMG table placement (e.g., an item placed on Table H that's weaker than its peers was moved to Table G).
-- `data/item-stats.json` — item descriptions extracted from `5etools-2014-src`.
-
-The DM's reviewed weights are authoritative. `curation.json` overrides `magic-items.ts` at runtime via the weight overlay in `roller.ts`.
-
-### 2024 Edition
-
-The 2024 tables are 100% auto-generated from the classification heuristic. They use:
-
-- `data/curation-2024.json` — seeded entirely from `auto-classify.ts` run against `5etools-src` (2024 data). No manual rarity adjustments — 2024 specifically fixed the weak-for-tier problem that motivated our 2014 adjustments, so DMG placements are trusted as-is.
-- `data/item-stats-2024.json` — item descriptions extracted from `5etools-src`.
-
-Items may differ between editions: some were added, removed, or changed mechanics. The auto-classifier handles this naturally since it reads the 5etools data directly.
-
-### What the Toggle Controls
-
-| Component | 2014 | 2024 |
-|-----------|------|------|
-| Weight overlay | `curation.json` | `curation-2024.json` |
-| Item descriptions | `item-stats.json` | `item-stats-2024.json` |
-| Table assignments | Hand-curated + auto-classify | Auto-classify only |
-| Rarity adjustments | Sparse manual overrides | None (trust 2024 DMG) |
-
-### Data Pipeline
-
-```
-5etools-2014-src/data/items.json  →  generate-item-stats.ts  →  item-stats.json
-                                  →  auto-classify.ts        →  curation.json (seeded, then hand-reviewed)
-
-5etools-src/data/items.json       →  generate-item-stats.ts  →  item-stats-2024.json
-                                  →  auto-classify.ts        →  curation-2024.json (auto only, no review)
-```
+For placed treasure that isn't tied to a specific creature — a dragon's pile, a locked chest, a bandit camp treasury — the Vault rolls the full hoard budget for a tier at once. This is the closest equivalent to the DMG's hoard tables, but with all the improvements: continuous gem values, descriptive art objects, sourcebook filtering on magic items, and spell component inclusion.

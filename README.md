@@ -8,11 +8,13 @@ Over a full campaign the total treasure matches what the DMG expects. But instea
 
 ---
 
-The app has three info sections, each available as a tab in the app and as a standalone markdown file in this repo:
+The app has three info tabs, each available as a standalone markdown file in this repo:
 
 - **[About](ABOUT.md)** — What this is and why it exists
-- **[How This Works](HOW-IT-WORKS.md)** — Usage guide for DMs (how to use the tables, encounter builder, and settings)
-- **[D&Design](DDESIGN.md)** — Technical math, variance analysis, auto-classification heuristic, and system design
+- **[Design](DESIGN.md)** — Design philosophy: item table categories, monster loot, gems, art objects
+- **[How to Use](HOWTO.md)** — Practical guide for DMs: rolling, choosing, encounter building, settings
+
+Technical specs (formulas, algorithms, data models) are in the **[specs/](specs/)** folder.
 
 ---
 

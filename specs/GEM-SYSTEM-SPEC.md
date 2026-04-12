@@ -1,7 +1,7 @@
 # Gem & Art Object System — Final Spec
 
 *Last updated: April 11, 2026*
-*Companion docs: GEM-DESCRIPTORS.md (descriptor tables), GEM-BUDGET-ALGORITHM.md (generation algorithm)*
+*Companion docs: specs/GEM-DESCRIPTORS.md (descriptor tables), specs/GEM-BUDGET-ALGORITHM.md (generation algorithm)*
 
 ---
 
@@ -116,7 +116,7 @@ After a gem's gold value is determined, roll 2d4 (range 2–8, average 5) for it
 
 ## 4. Descriptors
 
-See **GEM-DESCRIPTORS.md** for complete tables. Summary of how descriptors are generated:
+See **specs/GEM-DESCRIPTORS.md** for complete tables. Summary of how descriptors are generated:
 
 ### Size (from value ÷ valueScore)
 
@@ -168,7 +168,7 @@ Sizable standard carved jade figurine — 340 gp
 
 ## 5. Hoard Gem Budgets
 
-See **GEM-BUDGET-ALGORITHM.md** for the full algorithm and simulation results.
+See **specs/GEM-BUDGET-ALGORITHM.md** for the full algorithm and simulation results.
 
 ### DMG-Derived Budgets
 
@@ -322,7 +322,7 @@ interface RolledArt {
 
 **Still outstanding:**
 1. **Continuous log-scale gem roster:** Current code still uses the legacy 8-tier `CUSTOM_GEMS` buckets. §1/§2 call for a 33-gem flat roster with `{min, max, weight, organic}` metadata and log-scale value generation. Pending a regeneration of `src/data/gems.ts`.
-2. **Descriptor generation:** Size / quality / cut / color / legendary names per `GEM-DESCRIPTORS.md` are not wired into `TreasureItem` output yet.
+2. **Descriptor generation:** Size / quality / cut / color / legendary names per `specs/GEM-DESCRIPTORS.md` are not wired into `TreasureItem` output yet.
 3. **Consolidation:** Fold cheap gems into a single "pouch" line when a hoard produces 15+ gems. Not implemented.
 4. **Art object item lists:** DMG art tables need extraction and integration. Current code reuses the legacy `CUSTOM_ART` tables.
 5. **Crafting system integration:** Future tab. Gemcutter VS improvement, artisan tool creation, material cost structure. See TASKS.md.

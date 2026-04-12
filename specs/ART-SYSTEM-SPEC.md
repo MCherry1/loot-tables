@@ -259,7 +259,7 @@ Illuminated manuscript page, map, letter of marque, royal decree (copy), prayer 
 
 ## 4. Generation Algorithm
 
-Identical to gems (see GEM-BUDGET-ALGORITHM.md):
+Identical to gems (see specs/GEM-BUDGET-ALGORITHM.md):
 
 1. Start with art budget
 2. Pick a category (weighted random; only categories with min ≤ remaining budget)
