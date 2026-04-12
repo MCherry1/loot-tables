@@ -211,7 +211,10 @@ export function generateGemDescriptor(
     parts.push(modifier);
   }
   if (cut) parts.push(cut);
-  if (color) parts.push(color);
+  // Skip color if the gem name already contains it (e.g., "Black Pearl")
+  if (color && !gem.name.toLowerCase().includes(color.toLowerCase())) {
+    parts.push(color);
+  }
   parts.push(gem.name.toLowerCase());
 
   const baseDesc = parts.join(' ').replace(/\s+/g, ' ').trim();
