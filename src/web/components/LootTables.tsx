@@ -272,6 +272,7 @@ type StepperAction =
   | { type: 'ADVANCE'; entries: Entry[] }
   | { type: 'COMMIT_PICK'; entry: Entry; idx: number; rolledNumber: number }
   | { type: 'SKIP'; sourceSettings: SourceSettings; edition?: Edition }
+  | { type: 'STEP_BACK' }
   | { type: 'START_OVER' }
   | { type: 'CLEAR_HISTORY' };
 
@@ -417,6 +418,25 @@ function stepperReducer(
       return working;
     }
 
+    case 'STEP_BACK': {
+      if (state.steps.length === 0) return state;
+      // Replay all steps except the last one from scratch
+      const prevSteps = state.steps.slice(0, -1);
+      let working: StepperState = {
+        ...makeInitialState(state.rootTable),
+        resultHistory: state.resultHistory,
+      };
+      for (const step of prevSteps) {
+        working = commitPick(
+          working,
+          step.pickedEntry as Entry,
+          step.pickedIdx,
+          step.rolledNumber,
+        );
+      }
+      return working;
+    }
+
     case 'START_OVER':
       return {
         ...makeInitialState(state.rootTable),
@@ -488,6 +508,7 @@ function TableCard({
   onContinue,
   onSkip,
   onStartOver,
+  onStepBack,
 }: {
   tableName: string;
   entries: Entry[];
@@ -502,6 +523,7 @@ function TableCard({
   onContinue: () => void;
   onSkip: () => void;
   onStartOver: () => void;
+  onStepBack: () => void;
 }) {
   const cleanedTitle = cleanDisplayName(tableName);
   const showStartOver = state.steps.length > 0;
@@ -536,6 +558,11 @@ function TableCard({
               Re-roll
             </button>
             {showStartOver && (
+              <button className="btn-step-back" onClick={onStepBack}>
+                {'← Back'}
+              </button>
+            )}
+            {showStartOver && (
               <button className="btn-start-over" onClick={onStartOver}>
                 {'↺ Start Over'}
               </button>
@@ -553,6 +580,11 @@ function TableCard({
             <button className="btn-skip" onClick={onSkip}>
               {'Skip ▸▸'}
             </button>
+            {showStartOver && (
+              <button className="btn-step-back" onClick={onStepBack}>
+                {'← Back'}
+              </button>
+            )}
             {showStartOver && (
               <button className="btn-start-over" onClick={onStartOver}>
                 {'↺ Start Over'}
@@ -1104,6 +1136,10 @@ const LootTables: React.FC<LootTablesProps> = ({
     dispatch({ type: 'START_OVER' });
   }, []);
 
+  const handleStepBack = useCallback(() => {
+    dispatch({ type: 'STEP_BACK' });
+  }, []);
+
   const handleClearHistory = useCallback(() => {
     dispatch({ type: 'CLEAR_HISTORY' });
   }, []);
@@ -1287,6 +1323,7 @@ const LootTables: React.FC<LootTablesProps> = ({
             onContinue={handleContinue}
             onSkip={handleSkip}
             onStartOver={handleStartOver}
+            onStepBack={handleStepBack}
           />
         )
       )}

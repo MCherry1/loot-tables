@@ -1407,19 +1407,32 @@ button {
   border-color: var(--accent);
 }
 
-.btn-start-over {
-  margin-left: auto;
+.btn-start-over,
+.btn-step-back {
   padding: 6px 10px;
   background: none;
   border: none;
-  color: var(--danger);
   font-family: 'Crimson Text', Georgia, serif;
   font-size: 13px;
   cursor: pointer;
 }
 
-.btn-start-over:hover {
+.btn-start-over {
+  margin-left: auto;
+  color: var(--danger);
+}
+
+.btn-step-back {
+  color: var(--ink-faint);
+}
+
+.btn-start-over:hover,
+.btn-step-back:hover {
   text-decoration: underline;
+}
+  font-family: 'Crimson Text', Georgia, serif;
+  font-size: 13px;
+  cursor: pointer;
 }
 
 /* =========================================================================

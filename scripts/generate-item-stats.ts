@@ -74,7 +74,7 @@ function flattenEntries(entries: unknown[]): string {
     }
   }
 
-  return parts.join(' ');
+  return parts.join('\n\n');
 }
 
 // ---------------------------------------------------------------------------
