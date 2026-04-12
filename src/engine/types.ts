@@ -119,15 +119,29 @@ export type GemQuality =
   | 'Brilliant'
   | 'Flawless';
 
+/** Gem size descriptor derived from `value / valueScore` percentile. */
+export type GemSize =
+  | 'Tiny'
+  | 'Small'
+  | 'Modest'
+  | 'Sizable'
+  | 'Large'
+  | 'Impressive'
+  | 'Massive';
+
 /** A single gem or art object result. */
 export interface TreasureItem {
-  /** Display name (e.g. "Star rose quartz"). */
+  /** Display name (e.g. "Star rose quartz", "Gold locket"). */
   name: string;
-  /** The tier's base gp value for this category. */
+  /**
+   * Category/tier base reference:
+   * - Legacy tier-bucket system: the sub-table's baseValue (e.g. 100 gp for Gems-4-500-gp).
+   * - Continuous-value system: equal to `value` (no separate base concept).
+   */
   baseValue: number;
-  /** Actual value after quality scoring (2d4/5 × baseValue, jittered ≥100 gp). */
+  /** Actual value after all scoring / jitter / binning, in gp. */
   value: number;
-  /** Reference table name (e.g. "Gems-3-125-gp"). */
+  /** Reference table / source identifier (e.g. "Gems-3-125-gp", "gem-budget", "art-budget"). */
   tableName: string;
   /** 2d4 roll (2–8). Present for gems and art; absent for fixed-value hoard steals. */
   valueScore?: number;
@@ -135,6 +149,22 @@ export interface TreasureItem {
   quality?: GemQuality;
   /** False for organic gems (Pearl, Black Pearl, Jet, Amber, Coral). Gems only. */
   improvable?: boolean;
+  /** Size descriptor derived from value / valueScore percentile. Gems only (continuous system). */
+  size?: GemSize;
+  /** Cut or shape rolled from the gem's cut table (e.g. "oval-cut", "carved figurine"). Gems only. */
+  cut?: string;
+  /** Cut-quality modifier from valueScore (e.g. "poorly cut", "expertly cut"). Gems only. */
+  cutQuality?: string;
+  /** Color variant when the gem type has multiple (e.g. "deep green", "pigeon blood"). Gems only. */
+  color?: string;
+  /** Legendary name assigned when the specimen lands in the top 5% of its max value. Gems only. */
+  legendary?: string;
+  /** Pre-assembled display string produced by the descriptor generator. */
+  description?: string;
+  /** Art-object category (e.g. "Jewelry", "Textile"). Art only. */
+  category?: string;
+  /** Artisan tool associated with the category (for future crafting tab). Art only. */
+  artisanTool?: string;
 }
 
 /** A single magic item result. */

@@ -437,6 +437,35 @@ export const HOARD_SPELL_COMPONENT_STEALS: Record<Tier, SpellComponentSteal> = {
 };
 
 // ---------------------------------------------------------------------------
+// Continuous-value gem / art meaningful minimums
+// ---------------------------------------------------------------------------
+
+/**
+ * Meaningful minimum gem budget per tier (GEM-BUDGET-ALGORITHM.md §7).
+ * If a creature's gem share is below this, it becomes a probability roll:
+ * with probability = share / minimum, the creature gets a full `minimum`
+ * budget of gems; otherwise it gets none. This preserves expected value
+ * while making low-CR gem drops feel meaningful when they happen.
+ */
+export const GEM_MEANINGFUL_MIN: Record<Tier, number> = {
+  1: 100,
+  2: 250,
+  3: 1500,
+  4: 4000,
+};
+
+/**
+ * Meaningful minimum art budget per tier (ART-SYSTEM-SPEC.md §4).
+ * Slightly lower than gems — art objects are more common at low values.
+ */
+export const ART_MEANINGFUL_MIN: Record<Tier, number> = {
+  1: 50,
+  2: 200,
+  3: 1000,
+  4: 3000,
+};
+
+// ---------------------------------------------------------------------------
 // Sourcebook priority system (STEPPER-DESIGN.md §Sources)
 // ---------------------------------------------------------------------------
 
