@@ -23,9 +23,20 @@ Examples:
 
 ## 1. Size Descriptors
 
-Derived from where the gem's value falls within its type's range, on a log scale.
+Derived from the gem's "raw material" size — which is `value / valueScore`. This creates an inverse relationship between size and quality at the same price point: a large cloudy gem and a tiny flawless gem can be worth the same amount.
 
-| Percentile in Range | Size Term |
+```typescript
+// rawSize represents how big the stone is before quality is considered
+const rawSize = value / valueScore;
+// Then map rawSize to the gem's range to get a percentile
+const logMin = Math.log10(gem.min);
+const logMax = Math.log10(gem.max);
+const logSize = Math.log10(rawSize);
+const percentile = (logSize - logMin) / (logMax - logMin);
+// percentile → size term
+```
+
+| Percentile | Size Term |
 |---|---|
 | 0–10% | Tiny |
 | 10–25% | Small |
@@ -35,15 +46,17 @@ Derived from where the gem's value falls within its type's range, on a log scale
 | 78–92% | Impressive |
 | 92–100% | Massive |
 
-Since values are log-distributed, most gems cluster toward Tiny/Small/Modest. "Massive" is genuinely rare.
+**Example:** A 70 gp diamond with VS 3 → rawSize = 70/3 ≈ 23 → that's large for a cheap diamond. A 70 gp diamond with VS 7 → rawSize = 70/7 = 10 → that's tiny. Same price, different story.
 
 ---
 
-## 2. Quality Descriptors
+## 2. Quality and Cut Quality
 
-Directly from the 2d4 value score.
+The value score (2d4) drives TWO things: the quality label AND the cut quality adjective. The cut SHAPE (oval, cushion, brilliant, etc.) is still rolled randomly from the gem's table, but the cut EXECUTION comes from VS.
 
-| Value Score | Quality Term | Improvement Headroom |
+### Quality Labels (from VS)
+
+| Value Score | Quality Label | Improvement Headroom |
 |---|---|---|
 | 2 | Cloudy | Significant (jeweler sees major upside) |
 | 3 | Rough | Substantial |
@@ -53,12 +66,45 @@ Directly from the 2d4 value score.
 | 7 | Brilliant | Very little room |
 | 8 | Flawless | None (ceiling reached) |
 
-When quality is low but size is large, add "but" phrasing:
-- "Large but cloudy cushion-cut diamond"
-- "Impressive but rough emerald-cut emerald"
+### Cut Execution (from VS)
 
-When quality is high and size is small, no special phrasing:
-- "Small flawless brilliant-cut diamond" (tiny perfect gem — valuable for its size)
+The cut shape is random (oval, cushion, etc.), but how WELL it's cut depends on VS:
+
+| Value Score | Cut Execution | Example Output |
+|---|---|---|
+| 2–3 | "rough", "uncut", "poorly cut", "crudely shaped" | "Large but poorly cut oval ruby" |
+| 4 | "asymmetric", "shallow-cut" | "Sizable asymmetric cushion-cut diamond" |
+| 5 | (no modifier — standard execution) | "Modest oval-cut sapphire" |
+| 6 | "well-proportioned", "cleanly cut" | "Small well-proportioned emerald-cut emerald" |
+| 7 | "expertly cut", "precise" | "Tiny expertly cut brilliant diamond" |
+| 8 | "exquisite", "masterfully cut", "museum-quality" | "Small exquisite princess-cut diamond" |
+
+### Organic Gems (Pearl, Amber, Coral, Jet, Black Pearl)
+
+Organic gems have no cut — VS maps to natural quality instead:
+
+| Value Score | Organic Quality | Example |
+|---|---|---|
+| 2 | "misshapen", "dull" | "Large misshapen pearl" |
+| 3 | "irregular", "matte" | "Sizable irregular baroque pearl" |
+| 4 | "uneven" | "Modest uneven drop pearl" |
+| 5 | (no modifier) | "Modest round pearl" |
+| 6 | "smooth", "lustrous" | "Small lustrous round pearl" |
+| 7 | "radiant", "luminous" | "Tiny luminous round pearl" |
+| 8 | "perfect", "immaculate" | "Tiny perfect round pearl" |
+
+### The Narrative Logic
+
+Size and quality are inversely correlated at the same price. This creates four interesting archetypes:
+
+| Size | Quality | Story | Jeweler's Reaction |
+|---|---|---|---|
+| Large | Low VS | Big stone, poorly worked | "I can do a LOT with this" |
+| Large | High VS | Big AND perfect — jackpot | "This belongs in a crown" |
+| Small | Low VS | Tiny and bad — worthless | "Not worth my time" |
+| Small | High VS | Tiny but perfect | "Exquisite, but there's nothing to improve" |
+
+The value score is always calculated and stored as metadata, even when the crafting system is not active. The descriptors make it narratively visible without exposing the number.
 
 ---
 
@@ -439,41 +485,50 @@ When a gem's rolled value exceeds 95% of its type's maximum, it gets a legendary
 
 ## 6. Full Output Examples
 
-### Low Tier (Tier 1 Hoard)
+### Low Tier (CR 0–4, 137 gp budget)
 ```
-Tiny tumbled moss agate — 2 gp
-Small polished tiger eye — 8 gp
-Modest cabochon turquoise — 35 gp
-Small round cream pearl — 40 gp
-Tiny rough diamond — 15 gp
-```
-
-### Mid Tier (Tier 2 Hoard)
-```
-Sizable fine oval-cut ruby — 820 gp
-Modest standard cushion-cut aquamarine — 180 gp
-Small polished carved jade — 65 gp
-Large but flawed cabochon moonstone — 140 gp
-Modest oval white pearl — 90 gp
+Modest tumbled moss agate — 8 gp
+Large but poorly cut oval ruby — 55 gp
+Tiny lustrous round cream pearl — 15 gp
+Small standard cabochon turquoise — 20 gp
+Sizable but rough polished quartz — 12 gp
+Tiny well-proportioned faceted citrine — 10 gp
+Small tumbled obsidian — 3 gp
 ```
 
-### High Tier (Tier 3 Hoard)
+### Mid Tier (CR 5–10, 388 gp budget)
 ```
-Large brilliant emerald-cut emerald — 4,200 gp
-Impressive fine cushion-cut diamond — 3,600 gp
-Sizable standard oval-cut sapphire — 1,800 gp
-Modest cabochon fire opal — 380 gp
-Sizable round iridescent black pearl — 950 gp
+Large but rough uncut diamond — 100 gp
+Small expertly cut cushion-cut sapphire — 130 gp
+Modest standard oval-cut garnet — 45 gp
+Sizable but flawed cabochon moonstone — 50 gp
+Tiny flawless round white pearl — 40 gp
+Small standard polished jade — 20 gp
+Tiny luminous drop pearl — 15 gp
 ```
 
-### Legendary (Tier 4 Hoard)
+### High Tier (CR 11–16, 3,622 gp budget)
 ```
-Massive flawless brilliant-cut diamond — "The Eternal Heart" — 72,000 gp
-Impressive brilliant star sapphire — 10,400 gp
-Large fine oval-cut ruby — 8,800 gp
-Massive flawless emerald-cut emerald — "Tear of Kings" — 9,600 gp
-Sizable fine cabochon black opal — 2,400 gp
+Impressive but rough emerald-cut emerald — 1,500 gp
+Small exquisite brilliant-cut diamond — 1,100 gp
+Sizable but cloudy oval-cut sapphire — 670 gp
+Large standard cushion-cut ruby — 650 gp
+Modest well-proportioned cabochon fire opal — 380 gp
+Tiny perfect round iridescent black pearl — 280 gp
+Pouch of assorted semi-precious stones (18 gems) — 542 gp total
 ```
+
+### Legendary (CR 17+, 8,025 gp budget)
+```
+Massive but cloudy oval-cut ruby — "The Crimson Fist" — 4,100 gp
+Sizable expertly cut cushion-cut sapphire — 1,100 gp
+Impressive standard emerald-cut emerald — 1,600 gp
+Large fine brilliant-cut diamond — 1,500 gp
+Modest standard oval-cut jacinth — 1,000 gp
+Pouch of assorted gems (28 gems) — 1,725 gp total
+```
+
+Note the narrative tension: "Massive but cloudy ruby" tells a story. It's huge and valuable, but a jeweler could make it worth much more. "Small exquisite diamond" is the opposite — tiny but perfect, nothing left to improve.
 
 ---
 
