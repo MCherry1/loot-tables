@@ -281,48 +281,68 @@ Opal is never faceted — always cabochon or polished to show play of color. App
 | 1 | Polished |
 | 2 | Tumbled |
 | 3 | Cabochon |
-| 4 | Carved |
+| 4 | Carved cameo |
 | 5 | Sliced (showing bands) |
+| 6 | Bead |
+| 7 | Carved figurine |
 
-Append variety: "banded", "moss", "fire", "eye" — randomly selected.
+Append variety: "banded", "moss", "fire", "eye", "blue lace" — randomly selected. Fire agate at higher values (top 30% of range). Agates have been carved into cameos and seals for millennia.
 
 **Bloodstone:**
 | Roll | Shape |
 |---|---|
 | 1 | Polished |
 | 2 | Cabochon |
-| 3 | Tumbled |
+| 3 | Carved seal |
+| 4 | Tumbled |
+
+Bloodstone was traditionally used for signet rings and seals — the red flecks were said to represent Christ's blood in medieval Europe.
 
 **Carnelian:**
 | Roll | Shape |
 |---|---|
 | 1 | Polished |
 | 2 | Cabochon |
-| 3 | Carved |
+| 3 | Carved seal |
+| 4 | Intaglio (engraved) |
+| 5 | Bead |
+
+Carnelian was the Romans' preferred seal stone — carved intaglios are traditional.
 
 **Lapis Lazuli:**
 | Roll | Shape |
 |---|---|
 | 1 | Polished |
 | 2 | Cabochon |
-| 3 | Carved |
-| 4 | Tumbled |
+| 3 | Carved scarab |
+| 4 | Carved seal |
+| 5 | Bead strand |
+| 6 | Inlay piece |
+| 7 | Tumbled |
+
+Lapis has been carved into seals and scarabs since antiquity. At higher values: "flecked with gold pyrite."
 
 **Malachite:**
 | Roll | Shape |
 |---|---|
 | 1 | Polished |
 | 2 | Cabochon |
-| 3 | Carved |
+| 3 | Carved figurine |
 | 4 | Sliced (showing bands) |
+| 5 | Inlay piece |
+| 6 | Small carved box |
 
 **Obsidian:**
 | Roll | Shape |
 |---|---|
 | 1 | Polished |
 | 2 | Tumbled |
-| 3 | Carved |
-| 4 | Knapped (arrowhead shape) |
+| 3 | Carved figurine |
+| 4 | Knapped arrowhead |
+| 5 | Ritual blade |
+| 6 | Polished mirror |
+
+Obsidian mirrors and ritual blades have deep cultural significance. At higher values, "volcanic glass with rainbow sheen" (rainbow obsidian).
 
 **Quartz:**
 | Roll | Shape |
@@ -347,28 +367,39 @@ Append variety: "clear", "smoky", "rose", "star" — star quartz at value score 
 |---|---|
 | 1 | Cabochon |
 | 2 | Polished |
-| 3 | Carved |
-| 4 | Tumbled |
+| 3 | Carved pendant |
+| 4 | Inlay piece |
+| 5 | Bead strand |
+| 6 | Tumbled |
+
+Turquoise is traditionally set as inlay or strung as beads rather than faceted.
 
 **Onyx:**
 | Roll | Shape |
 |---|---|
 | 1 | Polished |
 | 2 | Cabochon |
-| 3 | Carved |
-| 4 | Faceted |
+| 3 | Carved cameo |
+| 4 | Carved figurine |
+| 5 | Faceted |
+| 6 | Seal stone |
 
-Append: "black onyx" at value score 5+ (spell component quality).
+Append: "black onyx" at value score 5+ (spell component quality). Onyx cameos use the layered black-and-white banding for contrast.
 
 **Jade:**
 | Roll | Shape |
 |---|---|
-| 1 | Polished |
+| 1 | Polished stone |
 | 2 | Cabochon |
-| 3 | Carved |
-| 4 | Tumbled |
+| 3 | Carved figurine |
+| 4 | Carved seal |
+| 5 | Bangle |
+| 6 | Pendant |
+| 7 | Circlet |
+| 8 | Bead strand |
+| 9 | Tumbled |
 
-Append variety: "nephrite" (common, green-gray) or "jadeite" (rarer, vivid green). Jadeite at higher values (top 40% of range). At very high values (1,000+ gp), "imperial jadeite."
+Jade is carved, never faceted. Append variety: "nephrite" (common, green-gray) or "jadeite" (rarer, vivid green). Jadeite at higher values (top 40% of range). At very high values (1,000+ gp), "imperial jadeite." The circlet form appears naturally and can reach 1,500+ gp at high rolls — matching what certain spells require.
 
 ### Organic Gems (not cut — natural shapes)
 
@@ -396,32 +427,38 @@ Always described as black. At very high values: "iridescent black" or "peacock b
 **Amber:**
 | Roll | Shape |
 |---|---|
-| 1 | Polished |
+| 1 | Polished nugget |
 | 2 | Cabochon |
-| 3 | Tumbled |
-| 4 | Carved |
+| 3 | Pendant |
+| 4 | Carved figurine |
+| 5 | Bead strand |
+| 6 | Tumbled |
 
-At value score 6+, append: "with preserved insect" or "with plant inclusion." This is a fun loot detail.
+At value score 6+, append: "with preserved insect" or "with plant inclusion." This is a fun loot detail — amber with a perfectly preserved ancient beetle is both valuable and evocative.
 
 **Coral:**
 | Roll | Shape |
 |---|---|
 | 1 | Polished branch |
 | 2 | Cabochon |
-| 3 | Carved |
-| 4 | Tumbled bead |
+| 3 | Carved figurine |
+| 4 | Bead strand |
+| 5 | Brooch piece |
+| 6 | Tumbled |
 
-Append color: "crimson", "salmon pink", "deep red", "orange-red."
+Append color: "crimson", "salmon pink", "deep red", "orange-red." Crimson at higher values.
 
 **Jet:**
 | Roll | Shape |
 |---|---|
 | 1 | Polished |
-| 2 | Carved |
-| 3 | Tumbled |
+| 2 | Carved cameo |
+| 3 | Bead strand |
 | 4 | Cabochon |
+| 5 | Mourning brooch |
+| 6 | Carved pendant |
 
-Always black. At higher values: "deeply polished" or "mirror-black."
+Always black. Jet has a long tradition in mourning jewelry and carved ornaments. At higher values: "deeply polished" or "mirror-black."
 
 ---
 

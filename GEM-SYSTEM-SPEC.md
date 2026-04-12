@@ -269,22 +269,20 @@ The iconic spell gets the iconic steal. Everything else (1,000–5,000 gp: Gate,
 3. Steal entries appear as a **d100 percentage chance** per hoard, independent of other gem/art rolls
 4. When a steal entry hits, it displaces coin value equivalently (the coin dice are pre-reduced to account for the expected value)
 5. Steal entries are **cumulative** — a hoard can produce normal gems AND steal gems in the same roll
-6. Display: "Pearl — 100 gp (spell component)" or "Diamond — 300 gp (spell component)" with a tag indicating purpose
+6. Display: just the gem and value, no special labeling — "Round white pearl — 100 gp" or "Diamond — 500 gp"
 
 ### Hoard Roll Procedure
 
-When a hoard entry says "2d6 50 gp gems":
-1. Roll 2d6 for count
-2. For each gem: weighted pick from Tier 2 table
-3. Roll 2d4 for value score → rawValue = 10 × score
-4. Add jitter (if ≥ 100 gp)
-5. Output: "Flawed Amethyst — 42 gp"
+See GEM-BUDGET-ALGORITHM.md for the full generation algorithm. Summary:
+1. Determine gem budget from DMG-derived averages
+2. Generate gems using log-scale budget-filling algorithm
+3. Each gem gets a type, value, value score, and descriptors
 
 Steal entries roll separately:
 1. Roll d100 against steal chance
 2. If hit: add exactly 1 of the specific gem at exact value
-3. No value score, no jitter, no quality label
-4. Output: "Pearl — 100 gp (spell component)"
+3. No value score, no quality label — just the gem and its price
+4. Output: "Round white pearl — 100 gp"
 
 ---
 
