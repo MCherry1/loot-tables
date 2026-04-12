@@ -122,7 +122,21 @@ function lookupItemStats(
     }
   }
 
-  // 5. Try the result name against any source (source mismatch fallback)
+  // 5. Try "Foo of Bar" → "Foo, Bar" (e.g. "Ioun Stone of Agility" → "Ioun Stone, Agility")
+  const ofMatch = result.name.match(/^(.+?)\s+of\s+(.+)$/);
+  if (ofMatch) {
+    const commaOfResult = tryAnySrc(`${ofMatch[1]}, ${ofMatch[2]}`);
+    if (commaOfResult) return commaOfResult;
+  }
+
+  // 6. Try "Foo, +N" → "+N Foo" (e.g. "Wand of the War Mage, +1" → "+1 Wand of the War Mage")
+  const plusMatch = result.name.match(/^(.+),\s*(\+\d+)$/);
+  if (plusMatch) {
+    const prefixResult = tryAnySrc(`${plusMatch[2]} ${plusMatch[1]}`);
+    if (prefixResult) return prefixResult;
+  }
+
+  // 7. Try the result name against any source (source mismatch fallback)
   if (result.source) {
     const anyResult = tryAnySrc(result.name);
     if (anyResult) return anyResult;
