@@ -28,7 +28,13 @@ The Encounter Builder generates loot for an entire encounter at once.
 - **Mini-boss** (×0.90) — well-equipped, significant personal treasure.
 - **Boss** (×2.70) — the big score. Best gear and a real hoard.
 
-**Rolling:** Click "Roll Encounter" and every creature generates its loot independently. Coins are rolled (not averaged), gems and art get quality scores, and magic items are drawn from the weighted tables.
+**Rolling:** Click "Roll Encounter" and every creature generates its loot independently. Coins are rolled (not averaged), gems get full descriptions (type, size, cut, quality, color, and gold value), art objects are generated with evocative detail, and magic items are drawn from the weighted tables.
+
+**Gems:** Each creature has a probability of carrying gems based on its XP share. When gems are present, they're drawn from a budget using 33 real-world gem types with log-scale value rolling — most are small and common, but occasionally something valuable shows up. Gem descriptions include size, quality, cut style, and color: "Sizable fine oval-cut ruby — 820 gp."
+
+**Art objects:** Same probability system. 10 categories (jewelry, metalwork, sculpture, textile, etc.) produce descriptive items like "Copper chalice with silver filigree — 25 gp" or "Gold circlet set with four aquamarines — 2,500 gp."
+
+**Spell components:** Certain critical spell components (Identify's pearl, Raise Dead's diamond, Resurrection's diamond, Gate's diamond) are automatically included in hoards at the appropriate tier, deducted from the coin budget. Players don't need to buy these separately — the loot system delivers them.
 
 **Resolving magic items:** Magic items initially show as unresolved table references (e.g., "Table G"). Click any unresolved item to jump to the Loot Tables stepper and walk through the resolution. When you're done, you're returned to the encounter with the resolved item filled in.
 
@@ -38,7 +44,11 @@ The Encounter Builder generates loot for an entire encounter at once.
 
 **Magic Richness** — Multiplier on magic item probabilities (0.5×–1.5×). At "Scarce" your party finds fewer magic items but more coins. At "Abundant" magic items rain down.
 
-**APL Adjustment** — Adjusts treasure for party level within the tier. "×0.70 Fresh" means your party just entered the tier and should find less. "×1.30 Veteran" means they're near the top and treasure is richer.
+**Party Level** — Number input (1–20). Used with Auto Tier to automatically select the correct hoard tier, and with Tier Progression to scale treasure within the tier.
+
+**Auto Tier** — When enabled, the tier is automatically determined from Party Level (levels 1–4 = Tier 1, 5–10 = Tier 2, 11–16 = Tier 3, 17–20 = Tier 4). When disabled, you can manually select any tier.
+
+**Tier Progression** — When enabled, treasure scales from 0.70× at the start of a tier to 1.30× at the end. A level 11 party gets leaner hoards than a level 16 party, even fighting the same monsters. This late-loads treasure within each tier, matching how published adventures tend to pace their rewards. When disabled, treasure is flat across the tier.
 
 **Show Item Details** — When enabled, result cards display the item's full description, rarity, and attunement requirement.
 

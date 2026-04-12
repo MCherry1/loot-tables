@@ -82,7 +82,29 @@ Every magic item gets a Value Score: 2d4 (range 2-8, average 5).
 - **Buy price** = Value Score × Base Number
 - **Sale price** = floor(Value Score ÷ 2) × Base Number
 
-Gems and art use the same 2d4 as a quality multiplier: `actual_value = base_value × (score / 5)`. A "50 gp gem" ranges 20-80 gp.
+Gems and art use the same 2d4 for magic item value scoring. Gem and art object generation is a separate, more detailed system — see below.
+
+### Gem System (Continuous Values)
+
+Full spec: **GEM-SYSTEM-SPEC.md**, **GEM-DESCRIPTORS.md**, **GEM-BUDGET-ALGORITHM.md**
+
+Each of the 33 gem types has a natural value range (e.g., Diamond 10–100,000 gp, Pearl 10–500 gp, Obsidian 1–30 gp). Individual gem values are rolled on a **log scale** within their range, producing a realistic distribution where most specimens are cheap and common, with rare exceptional ones near the top.
+
+**Value score** (2d4) is independent quality metadata — it doesn't change the gem's price, but represents how close to its potential the gem is. VS 3 = "large but poorly cut" (room for a jeweler to improve). VS 7 = "tiny but expertly cut" (near its ceiling). Size and quality are inversely correlated at the same price point.
+
+**Hoards specify a GP budget** (137/388/3,622/8,025 gp by tier, derived from DMG averages). The algorithm generates gems until the budget is spent. Per-creature encounters fractionalize the probability, not the budget — a CR ¼ goblin has a 7.4% chance of carrying 100 gp of gems, rather than always carrying 7 gp of gravel.
+
+**Spell components** that require a specific single gem (Identify's pearl, Raise Dead's diamond) are auto-purchased from the gold budget. Grindable components (diamond dust for Revivify, Stoneskin) accumulate naturally because diamond is the highest-weighted gem.
+
+### Art Object System (Category-Based Continuous Values)
+
+Full spec: **ART-SYSTEM-SPEC.md**
+
+10 categories (Jewelry, Metalwork, Sculpture, Textile, Painting, Pottery, Glasswork, Woodwork, Leatherwork, Calligraphy), each with a value range and descriptor pools. Same log-scale generation and per-creature probability as gems. Art budgets: 40/560/2,500/3,712 gp by tier. Each category maps to an artisan tool for future crafting integration. DMG's 48 named art objects appear as occasional verbatim drops.
+
+### Tier Progression
+
+Party Level drives a multiplier within each tier: 0.70× at tier start → 1.30× at tier end, linear. This late-loads treasure — a level 11 party fighting CR 12 creatures gets less than a level 16 party fighting the same creatures. The challenge rating already scales the base budget; progression adds an additional layer so loot improves even at fixed CR.
 
 ### Source Priority Formula
 

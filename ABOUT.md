@@ -27,3 +27,7 @@ But now a goblin minion has 1-4 copper in its pocket. A bugbear boss has 50-150 
 **Source-aware.** 70+ sourcebooks with per-book priority controls. Running an Eberron campaign? Crank Eberron to Emphasis. Don't own Fizban's? Turn it off.
 
 **Real variance.** Coins are dice formulas that roll differently each time. Gems and art objects have quality scores. Magic items have value scores. Two identical goblins carry different loot.
+
+**Gems that matter.** 33 real-world gem types, each with a natural value range. A diamond can be a 15 gp chip or a 72,000 gp legendary stone. Spell components show up organically — your wizard accumulates diamonds for Revivify just by adventuring, and the Identify pearl is guaranteed in early hoards. Every gem gets a size, cut, quality, and color that tells a story: "Large but poorly cut oval ruby — 820 gp" means a jeweler could do something special with it.
+
+**Art objects that feel real.** 10 categories of art (jewelry, metalwork, sculpture, textile, painting, pottery, glasswork, woodwork, leatherwork, calligraphy) generate evocative descriptions: "Silver pendant shaped like a crescent moon, set with a small cabochon moonstone — 240 gp." Each category maps to an artisan tool for future crafting integration.
