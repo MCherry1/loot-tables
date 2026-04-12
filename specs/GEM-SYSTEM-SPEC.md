@@ -1,7 +1,7 @@
 # Gem & Art Object System — Final Spec
 
 *Last updated: April 11, 2026*
-*Companion docs: GEM-DESCRIPTORS.md (descriptor tables), GEM-BUDGET-ALGORITHM.md (generation algorithm)*
+*Companion docs: specs/GEM-DESCRIPTORS.md (descriptor tables), specs/GEM-BUDGET-ALGORITHM.md (generation algorithm)*
 
 ---
 
@@ -116,7 +116,7 @@ After a gem's gold value is determined, roll 2d4 (range 2–8, average 5) for it
 
 ## 4. Descriptors
 
-See **GEM-DESCRIPTORS.md** for complete tables. Summary of how descriptors are generated:
+See **specs/GEM-DESCRIPTORS.md** for complete tables. Summary of how descriptors are generated:
 
 ### Size (from value ÷ valueScore)
 
@@ -168,7 +168,7 @@ Sizable standard carved jade figurine — 340 gp
 
 ## 5. Hoard Gem Budgets
 
-See **GEM-BUDGET-ALGORITHM.md** for the full algorithm and simulation results.
+See **specs/GEM-BUDGET-ALGORITHM.md** for the full algorithm and simulation results.
 
 ### DMG-Derived Budgets
 

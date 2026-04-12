@@ -1,33 +1,7 @@
 # About
 
-This is a loot generator for D&D 5e that gives every creature its own treasure drop — scaled to its Challenge Rating, tier of play, and role in the encounter.
+A unified loot generator for D&D 5e that does two things the Dungeon Master's Guide doesn't.
 
-### Why Not Just Use the DMG Hoard Tables?
+First, it puts every magic item from every sourcebook onto one set of weighted tables — organized by category, balanced against each other, and filterable by which books you actually use at your table. You can roll randomly or choose deliberately, switching between the two as you step through the tables. No more flipping between six books to find out what's on Table G.
 
-The DMG gives you four hoard tables that you roll on after clearing a dungeon. They work, but they have friction:
-
-**The treasure feels disconnected.** Your party fights twelve goblins, two bugbears, and a boss — then you have to figure out where the "hoard" is and roll one table for the whole dungeon. Did the goblins have anything? Did the boss have better stuff? The table doesn't say.
-
-**There's no creature-level granularity.** A CR 1 bugbear and a CR 8 young dragon both feed into the same Tier 2 hoard roll. You can't express that the dragon should have more treasure than the bugbear.
-
-**Planning is hard.** A single d100 roll can produce a handful of coins or a legendary magic item. That variance is fun for drama but makes it difficult to pace an economy across a campaign.
-
-### What This Does Instead
-
-This generator gives every creature a gold-piece budget based on its CR and role, then rolls that budget against probability tables for coins, gems, art objects, and magic items. The probabilities are derived from the same DMG hoard tables — so over a full campaign, the total treasure matches what the DMG expects.
-
-But now a goblin minion has 1-4 copper in its pocket. A bugbear boss has 50-150 gp and a real shot at a magic item. Three goblins of the same CR get three different coin amounts because the dice are actually thrown, not averaged.
-
-### Design Philosophy
-
-**DMG-compatible, not DMG-replacing.** Default settings produce the same total wealth the DMG intends across a tier. The math is verified.
-
-**Per-creature, not per-dungeon.** Every creature resolves independently. Works for a single random encounter or a 30-room dungeon.
-
-**Source-aware.** 70+ sourcebooks with per-book priority controls. Running an Eberron campaign? Crank Eberron to Emphasis. Don't own Fizban's? Turn it off.
-
-**Real variance.** Coins are dice formulas that roll differently each time. Gems and art objects have quality scores. Magic items have value scores. Two identical goblins carry different loot.
-
-**Gems that matter.** 33 real-world gem types, each with a natural value range. A diamond can be a 15 gp chip or a 72,000 gp legendary stone. Spell components show up organically — your wizard accumulates diamonds for Revivify just by adventuring, and the Identify pearl is guaranteed in early hoards. Every gem gets a size, cut, quality, and color that tells a story: "Large but poorly cut oval ruby — 820 gp" means a jeweler could do something special with it.
-
-**Art objects that feel real.** 10 categories of art (jewelry, metalwork, sculpture, textile, painting, pottery, glasswork, woodwork, leatherwork, calligraphy) generate evocative descriptions: "Silver pendant shaped like a crescent moon, set with a small cabochon moonstone — 240 gp." Each category maps to an artisan tool for future crafting integration.
+Second, it breaks treasure down to the individual creature. Instead of rolling one hoard table after clearing a dungeon, every creature you kill has its own loot — scaled to its Challenge Rating, its role in the encounter (minion, elite, or boss), and your party's level. The goblin has a few coins in its pocket. The hobgoblin captain has a pouch of gems. The dragon has the real treasure. Over a full campaign, the total wealth matches what the DMG expects — it's just distributed creature by creature, in a rhythm your players can feel at the table.

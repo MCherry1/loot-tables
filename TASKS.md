@@ -475,19 +475,19 @@ Fixed — Added parentheses→comma fallback in `lookupItemStats()`: `"Foo (Bar)
 
 ## Gem & Art Object System
 
-See `GEM-SYSTEM-SPEC.md` for the full design specification. Status of implementation tasks:
+See `specs/GEM-SYSTEM-SPEC.md` for the full design specification. Status of implementation tasks:
 
 ### ~~Gem System Implementation — Continuous Value Rewrite~~ ✅
 Done. Continuous log-scale value system wired into the encounter + vault generators.
 Implementation landed April 2026; see commits on `claude/tackle-new-tasks-ZFlB6`.
 
 **What shipped:**
-- `src/data/gem-definitions.ts` — 33-gem roster with `{min, max, weight, organic, improvable}`, plus `GEM_CUTS`, `GEM_COLORS`, and legendary name pools (per `GEM-SYSTEM-SPEC.md` §1, `GEM-DESCRIPTORS.md` §3-§5).
+- `src/data/gem-definitions.ts` — 33-gem roster with `{min, max, weight, organic, improvable}`, plus `GEM_CUTS`, `GEM_COLORS`, and legendary name pools (per `specs/GEM-SYSTEM-SPEC.md` §1, `specs/GEM-DESCRIPTORS.md` §3-§5).
 - `src/engine/gem-generator.ts`:
   - `rollGemValue(min, max)` — log-scale value rolling with binning
-  - `applyBinning(value)` — clean-number rules (`GEM-BUDGET-ALGORITHM.md` §3)
+  - `applyBinning(value)` — clean-number rules (`specs/GEM-BUDGET-ALGORITHM.md` §3)
   - `generateGemDescriptor(gem, value, vs)` — size/quality/cut/cutQuality/color/legendary
-  - `generateGemBudget(budget)` — full budget-loop algorithm (`GEM-BUDGET-ALGORITHM.md` §3)
+  - `generateGemBudget(budget)` — full budget-loop algorithm (`specs/GEM-BUDGET-ALGORITHM.md` §3)
 - `src/engine/types.ts` — `TreasureItem` extended with optional `size`, `cut`, `cutQuality`, `color`, `legendary`, `description`, `category`, `artisanTool`.
 - `src/engine/constants.ts` — `GEM_MEANINGFUL_MIN` (Tier 1=100, 2=250, 3=1500, 4=4000).
 - `src/engine/loot-generator.ts` — per-creature `gemsFromShare()` helper: if share ≥ minimum, spend the full share; otherwise probability-roll the minimum. Applied to `generateLoot`, `generateLootResolvable`, and `generateVaultLootResolvable`.
@@ -503,7 +503,7 @@ Implementation landed April 2026; see commits on `claude/tackle-new-tasks-ZFlB6`
 Done. Same continuous-value pattern as gems, organized by craft category.
 
 **What shipped:**
-- `src/data/art-definitions.ts` — 10 art categories (Jewelry, Metalwork, Sculpture, Textile, Painting, Pottery, Glasswork, Woodwork, Leatherwork, Calligraphy) with scaled material/detail pools and form lists (per `ART-SYSTEM-SPEC.md` §2-§3). Plus `DMG_NAMED_ART` with 40+ verbatim DMG items.
+- `src/data/art-definitions.ts` — 10 art categories (Jewelry, Metalwork, Sculpture, Textile, Painting, Pottery, Glasswork, Woodwork, Leatherwork, Calligraphy) with scaled material/detail pools and form lists (per `specs/ART-SYSTEM-SPEC.md` §2-§3). Plus `DMG_NAMED_ART` with 40+ verbatim DMG items.
 - `src/engine/art-generator.ts`:
   - `generateArtDescriptor(category, value)` — material/form/detail assembly with ~10% chance of a verbatim DMG named item when the value matches
   - `generateArtBudget(budget)` — shared log-scale budget loop (reuses `rollGemValue`/`applyBinning`)
@@ -512,7 +512,7 @@ Done. Same continuous-value pattern as gems, organized by craft category.
 - Tests: `tests/engine/art-generator.test.ts` (10 cases).
 
 ### ~~Hoard Spell Component Steals~~ ✅
-Implemented per `GEM-SYSTEM-SPEC.md` §6 — applied to vault hoards only via `rollHoardSteal()` in `loot-generator.ts`:
+Implemented per `specs/GEM-SYSTEM-SPEC.md` §6 — applied to vault hoards only via `rollHoardSteal()` in `loot-generator.ts`:
 
 | Tier | Gem | Value | Probability |
 |------|-----|-------|-------------|

@@ -1,6 +1,6 @@
 # Gem Budget Generation Algorithm
 
-*Companion to GEM-SYSTEM-SPEC.md and GEM-DESCRIPTORS.md*
+*Companion to specs/GEM-SYSTEM-SPEC.md and specs/GEM-DESCRIPTORS.md*
 
 ---
 
