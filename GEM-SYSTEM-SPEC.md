@@ -1,154 +1,265 @@
-# Gem & Art Object System Spec
+# Gem & Art Object System — Final Spec
 
 *Last updated: April 11, 2026*
+*Companion docs: GEM-DESCRIPTORS.md (descriptor tables), GEM-BUDGET-ALGORITHM.md (generation algorithm)*
 
 ---
 
-## 1. Decisions (Locked In)
+## Design Summary
 
-- **Gems:** Use custom gem roster (with spell-component weighting) on DMG-aligned value tiers
-- **Art objects:** Use DMG item lists, but apply value scoring (base = face value ÷ 5, multiply by 2d4)
-- **Value scoring:** Universal system — `base × 2d4` — applied to both gems and art objects
-- **Gem tiers:** 8 tiers following the DMG's ×5/×2 progression pattern, extending beyond DMG for epic play
-- **Jitter:** Small detail modifier on final values (100 gp+) to break up round numbers
-- **Quality labels:** Cloudy / Flawed / Standard / Fine / Flawless derived from the 2d4 score
-- **Organic gems** (Pearl, Amber, Coral, Jet): Narrower value band concept preserved, not improvable by gemcutter
-- **Crafting/improvement:** Future tab, separate from loot — gemcutter tools can improve gem value scores
+Gems use a **continuous value system** — each gem type has a natural value range (min to max gp), and individual specimens roll on a log scale within that range. There are no quantized tiers or buckets. Hoards specify a **GP budget** for gems rather than "X gems of tier Y." The system produces naturally varied treasure where most gems are cheap and common, with occasional valuable specimens.
+
+**Value score** (2d4) is rolled independently as quality metadata — it doesn't determine price. It represents how close to its potential a gem is, which matters for the future crafting/jeweler improvement system.
+
+**Art objects** use DMG item lists with value scoring applied (face value ÷ 5 × 2d4).
+
+**Spell components** that require a specific single gem (Identify's pearl, Raise Dead's diamond, etc.) are auto-purchased from gold at fixed rates. Grindable components (diamond dust, ruby dust, etc.) are handled naturally by gem accumulation.
 
 ---
 
-## 2. The 8-Tier System
+## 1. Gem Roster (33 gems)
 
-### ×5/×2 Progression (DMG-aligned)
+Each gem has a natural value range, a selection weight, and an organic flag.
 
-Tiers 1–6 match the DMG exactly. Tiers 7–8 extend the pattern for epic-tier play and True Resurrection.
+| # | Gem | Min | Max | Weight | Organic | Recognition |
+|---|-----|-----|-----|--------|---------|-------------|
+| 1 | Agate | 1 | 1,500 | 5 | N | Well-known |
+| 2 | Alexandrite | 50 | 3,000 | 2 | N | Niche |
+| 3 | Amber | 5 | 200 | 3 | Y | Universal |
+| 4 | Amethyst | 5 | 300 | 5 | N | Universal |
+| 5 | Aquamarine | 20 | 1,500 | 4 | N | Well-known |
+| 6 | Black Pearl | 50 | 2,000 | 2 | Y | Well-known |
+| 7 | Bloodstone | 2 | 80 | 3 | N | Niche |
+| 8 | Carnelian | 2 | 80 | 3 | N | Niche |
+| 9 | Citrine | 2 | 120 | 5 | N | Well-known |
+| 10 | Coral | 5 | 250 | 2 | Y | Well-known |
+| 11 | Diamond | 10 | 100,000 | 8 | N | Universal |
+| 12 | Emerald | 50 | 10,000 | 4 | N | Universal |
+| 13 | Garnet | 5 | 400 | 5 | N | Universal |
+| 14 | Jacinth | 50 | 5,000 | 2 | N | Niche (D&D) |
+| 15 | Jade | 10 | 2,000 | 5 | N | Universal |
+| 16 | Jet | 2 | 80 | 3 | Y | Niche |
+| 17 | Lapis Lazuli | 3 | 100 | 4 | N | Well-known |
+| 18 | Malachite | 1 | 50 | 3 | N | Well-known |
+| 19 | Moonstone | 5 | 250 | 3 | N | Well-known |
+| 20 | Obsidian | 1 | 30 | 3 | N | Universal |
+| 21 | Onyx | 5 | 200 | 4 | N | Universal |
+| 22 | Opal | 20 | 3,000 | 3 | N | Universal |
+| 23 | Pearl | 10 | 500 | 5 | Y | Universal |
+| 24 | Peridot | 10 | 400 | 4 | N | Well-known |
+| 25 | Quartz | 1 | 150 | 5 | N | Universal |
+| 26 | Ruby | 50 | 15,000 | 6 | N | Universal |
+| 27 | Sapphire | 50 | 12,000 | 5 | N | Universal |
+| 28 | Spinel | 10 | 500 | 4 | N | Niche |
+| 29 | Tiger Eye | 1 | 60 | 3 | N | Well-known |
+| 30 | Topaz | 10 | 600 | 4 | N | Universal |
+| 31 | Tourmaline | 10 | 500 | 4 | N | Niche |
+| 32 | Turquoise | 3 | 120 | 4 | N | Universal |
+| 33 | Zircon | 5 | 300 | 3 | N | Niche |
 
-| Tier | Face Value | Step | Base (÷5) | 2d4 Range | Average |
-|------|-----------|------|-----------|-----------|---------|
-| 1 | 10 gp | — | 2 | 4–16 gp | 10 gp |
-| 2 | 50 gp | ×5 | 10 | 20–80 gp | 50 gp |
-| 3 | 100 gp | ×2 | 20 | 40–160 gp | 100 gp |
-| 4 | 500 gp | ×5 | 100 | 200–800 gp | 500 gp |
-| 5 | 1,000 gp | ×2 | 200 | 400–1,600 gp | 1,000 gp |
-| 6 | 5,000 gp | ×5 | 1,000 | 2,000–8,000 gp | 5,000 gp |
-| 7 | 10,000 gp | ×2 | 2,000 | 4,000–16,000 gp | 10,000 gp |
-| 8 | 50,000 gp | ×5 | 10,000 | 20,000–80,000 gp | 50,000 gp |
+15 universally known, 10 well-known, 8 niche. Every color of the rainbow is covered.
 
-### Value Score Formula
+**Diamond at weight 8** (~6.5% of all gems) is heaviest because diamonds are genuinely common in the real world and because players need them for grindable spell components (Revivify, Stoneskin, Greater Restoration). Most rolled diamonds are cheap (10–100 gp) due to log-scale clustering.
+
+**Organic gems** (Pearl, Black Pearl, Amber, Coral, Jet) cannot be improved by a gemcutter. They are flagged `improvable: false`.
+
+---
+
+## 2. Value Generation
+
+### Log-Scale Rolling
+
+Each gem's value is rolled on a logarithmic scale between its min and max. This produces a realistic distribution: most specimens cluster near the low end, with rare exceptional ones near the top.
+
+```typescript
+function rollGemValue(min: number, max: number): number {
+  const logMin = Math.log10(min);
+  const logMax = Math.log10(max);
+  const logVal = logMin + Math.random() * (logMax - logMin);
+  return applyBinning(Math.pow(10, logVal));
+}
+```
+
+Example — Diamond (10–100,000 gp): ~40% of rolls land below 100 gp, ~60% below 1,000 gp. A 10,000+ gp diamond is roughly a 1-in-5 roll.
+
+### Binning
+
+Values are rounded to clean numbers appropriate to their scale:
+
+| Value Range | Rounds To | Examples |
+|---|---|---|
+| < 10 gp | Nearest 1 | 1, 2, 3, 7, 9 |
+| 10–99 gp | Nearest 5 | 10, 15, 25, 45, 80 |
+| 100–999 gp | Nearest 10 | 100, 130, 250, 670 |
+| 1,000–9,999 gp | Nearest 100 | 1,100, 2,300, 5,600 |
+| 10,000+ gp | Nearest 1,000 | 12,000, 37,000, 72,000 |
+
+---
+
+## 3. Value Score (Quality Metadata)
+
+After a gem's gold value is determined, roll 2d4 (range 2–8, average 5) for its value score. **This does NOT change the gem's price.** It represents the gem's quality relative to its potential:
+
+| VS | Quality | Meaning |
+|---|---|---|
+| 2 | Cloudy | Rough, unworked — major improvement potential |
+| 3 | Rough | Substantial room for a jeweler |
+| 4 | Flawed | Moderate improvement possible |
+| 5 | Standard | Some room |
+| 6 | Fine | Minor room |
+| 7 | Brilliant | Very little room |
+| 8 | Flawless | Perfect — cannot be improved |
+
+**Crafting connection (future):** When a jeweler improves a gem's VS, its value increases proportionally toward the gem type's max. A 70 gp amethyst (max 300) with VS 3 has lots of headroom. The same amethyst with VS 7 is near its ceiling. The VS is always calculated and stored even when crafting isn't active.
+
+---
+
+## 4. Descriptors
+
+See **GEM-DESCRIPTORS.md** for complete tables. Summary of how descriptors are generated:
+
+### Size (from value ÷ valueScore)
+
+Size represents the gem's raw material bulk before quality is factored in. This creates an inverse correlation: a large cloudy gem and a tiny flawless gem can be worth the same amount.
 
 ```
-base = faceValue / 5
-score = roll(2d4)          // range 2–8, average 5
-rawValue = base × score    // average = faceValue
+rawSize = value / valueScore
+→ map to percentile within gem's range
+→ Tiny / Small / Modest / Sizable / Large / Impressive / Massive
 ```
 
-This replaces the old `5+1d6-1d6` system from the Excel. The 2d4 approach is cleaner:
-- Minimum: base × 2 = 40% of face value
-- Maximum: base × 8 = 160% of face value
-- Average: base × 5 = face value exactly
+### Cut Quality (from valueScore)
 
-### Organic Gem Exception
+The cut SHAPE is random per gem type (oval, cushion, brilliant, cabochon, etc.). The cut EXECUTION depends on VS:
 
-Pearl, Black Pearl, Jet, Amber, and Coral use the same 2d4 formula but are flagged as `improvable: false` for the future crafting system. A gemcutter cannot cut or facet them. Pearls can be polished slightly, but there's no meaningful improvement possible.
+- VS 2–3: "rough", "uncut", "poorly cut"
+- VS 4: "asymmetric", "shallow-cut"
+- VS 5: standard (no modifier)
+- VS 6: "well-proportioned", "cleanly cut"
+- VS 7: "expertly cut", "precise"
+- VS 8: "exquisite", "masterfully cut"
 
----
+Organic gems use natural quality terms instead: "misshapen" → "lustrous" → "perfect."
 
-## 3. Gem Roster
+### Color Variants
 
-### Current Roster (19 gems from Excel)
+Most gems have multiple color options rolled randomly (e.g., tourmaline: green, pink, watermelon, blue; sapphire: blue, yellow, pink, green, padparadscha).
 
-Agate, Amethyst, Aquamarine, Citrine, Diamond, Emerald, Garnet, Jacinth, Jade, Jet, Onyx, Opal, Pearl/Black Pearl, Peridot, Quartz, Ruby, Sapphire, Spinel, Topaz, Tourmaline.
+### Shaped Forms (non-faceted gems)
 
-### Proposed Expansion (~33 gems)
+Jade, obsidian, lapis lazuli, malachite, onyx, and other traditionally carved gems have expanded shape tables including figurines, seals, circlets, bangles, inlay pieces, ritual blades, etc.
 
-Adding recognizable gems from the DMG lists plus real-world stones for full color coverage. New additions marked ★. Every color is represented: red (Ruby, Garnet, Carnelian, Bloodstone), blue (Sapphire, Lapis Lazuli, Turquoise, Aquamarine, Zircon), green (Emerald, Jade, Malachite, Peridot, Tourmaline), yellow/gold (Citrine, Topaz, Amber, Tiger Eye), purple (Amethyst), black (Onyx, Jet, Obsidian), white/clear (Quartz, Moonstone, Pearl, Diamond, Opal), orange (Jacinth, Carnelian).
+### Legendary Names (top 5% of max value)
 
-### Spell Component Weighting
+Generated from generic templates: "The [Adjective] [Noun]" — e.g., "The Sovereign Heart", "The Twilight Eye." No setting-specific references.
 
-Gems that serve as spell components get boosted weights at the tiers matching their spell costs:
+### Example Output
 
-| Gem | Spell | Component Cost | Boosted At Tier |
-|-----|-------|---------------|-----------------|
-| Diamond | Chromatic Orb | 50 gp | Tier 2 |
-| Diamond | Nondetection (dust) | 25 gp | Tier 2 |
-| Diamond | Glyph of Warding (dust) | 200 gp | Tier 4 |
-| Diamond | Revivify | 300 gp | Tier 4 |
-| Diamond | Stoneskin (dust) | 250 gp | Tier 4 |
-| Diamond | Raise Dead | 500 gp | Tier 4 |
-| Diamond | Resurrection | 1,000 gp | Tier 5 |
-| Diamond | Clone | 1,000 gp | Tier 5 |
-| Diamond | Gate | 5,000 gp | Tier 6 |
-| Diamond | Sequester (dust) | 5,000 gp | Tier 6 |
-| Diamond | True Resurrection | 25,000 gp | Tier 8 |
-| Ruby | Continual Flame (dust) | 50 gp | Tier 2 |
-| Ruby | Sequester (dust) | 5,000 gp | Tier 6 |
-| Pearl | Identify | 100 gp | Tier 3 |
-| Black Pearl | Circle of Death (powder) | 500 gp | Tier 4 |
-| Onyx | Animate Dead | 50 gp (×25 for 150 gp) | Tier 3 |
-| Jade | Magic Mouth (dust) | 10 gp | Tier 1 |
-| Jade | Shapechange (circlet) | 1,500 gp | Tier 5 |
-| Jacinth | Astral Projection | 1,000 gp | Tier 5 |
-| Sapphire | Sequester (dust) | 5,000 gp | Tier 6 |
-| Emerald | Sequester (dust) | 5,000 gp | Tier 6 |
-| Opal | Symbol (with diamond) | 1,000 gp | Tier 5 |
-
-### Phase-In/Phase-Out Rules
-
-- **Tiers 1–2 only:** Malachite, Obsidian, Tiger Eye
-- **Tiers 1–3 only:** Lapis Lazuli, Turquoise, Carnelian, Bloodstone, Jet
-- **Tiers 2–4 only:** Moonstone, Amber, Coral, Zircon
-- **Tiers 1–3 → replaced at Tier 4:** Pearl → Black Pearl
-- **Tiers 4+ only:** Alexandrite
-- **Tiers 5+ only:** Jacinth
-- **All tiers:** Diamond, Ruby, Sapphire, Emerald, Agate, Amethyst, Aquamarine, Citrine, Garnet, Jade, Opal, Peridot, Quartz, Spinel, Topaz, Tourmaline
-
-### Proposed Weight Matrix
-
-**bold** = spell component boost. 0 = absent. ★ = new gem.
-
-| # | Gem | Organic? | T1 | T2 | T3 | T4 | T5 | T6 | T7 | T8 |
-|---|-----|----------|----|----|----|----|----|----|----|----|
-| 1 | Agate | N | 4 | 4 | 4 | 2 | **15** | 3 | 1 | 1 |
-| 2 | Amethyst | N | 4 | 4 | 5 | 5 | 3 | 5 | 1 | 1 |
-| 3 | Aquamarine | N | 4 | 4 | 4 | 4 | 3 | 4 | 1 | 1 |
-| 4 | Citrine | N | 4 | 4 | 3 | 3 | 2 | 4 | 1 | 1 |
-| 5 | Diamond | N | **24** | **20** | 4 | **25** | **25** | **25** | 2 | **5** |
-| 6 | Emerald | N | 4 | 4 | 5 | 5 | 3 | **10** | 1 | 1 |
-| 7 | Garnet | N | 4 | 4 | 4 | 3 | 0 | 3 | 1 | 1 |
-| 8 | Jacinth | N | 0 | 0 | 0 | 0 | **10** | 0 | 1 | 1 |
-| 9 | Jade | N | **10** | **10** | 4 | 3 | **8** | 4 | 1 | 1 |
-| 10 | Jet | Y | 3 | 3 | 0 | 0 | 0 | 0 | 0 | 0 |
-| 11 | Onyx | N | 4 | 3 | **10** | 2 | 0 | 0 | 1 | 1 |
-| 12 | Opal | N | 4 | 4 | 4 | 3 | **5** | 4 | 1 | 1 |
-| 13 | Pearl | Y | 4 | 4 | **25** | 0 | 0 | 0 | 0 | 0 |
-| 14 | Black Pearl | Y | 0 | 0 | 0 | **15** | 2 | 0 | 0 | 0 |
-| 15 | Peridot | N | 4 | 3 | 3 | 2 | 0 | 3 | 1 | 1 |
-| 16 | Quartz | N | 3 | 3 | 3 | 2 | 0 | 0 | 1 | 1 |
-| 17 | Ruby | N | 4 | **10** | 5 | **10** | **15** | **10** | 1 | 1 |
-| 18 | Sapphire | N | 4 | 4 | 5 | 5 | **15** | **10** | 1 | 1 |
-| 19 | Spinel | N | 4 | 4 | 4 | 3 | 2 | 4 | 1 | 1 |
-| 20 | Topaz | N | 4 | 4 | 5 | 5 | 3 | 5 | 1 | 1 |
-| 21 | Tourmaline | N | 4 | 4 | 3 | 3 | 0 | 4 | 1 | 1 |
-| 22 | ★ Lapis Lazuli | N | 4 | 3 | 2 | 0 | 0 | 0 | 0 | 0 |
-| 23 | ★ Turquoise | N | 4 | 3 | 2 | 0 | 0 | 0 | 0 | 0 |
-| 24 | ★ Malachite | N | 3 | 2 | 0 | 0 | 0 | 0 | 0 | 0 |
-| 25 | ★ Obsidian | N | 3 | 2 | 0 | 0 | 0 | 0 | 0 | 0 |
-| 26 | ★ Moonstone | N | 0 | 3 | 4 | 3 | 0 | 0 | 0 | 0 |
-| 27 | ★ Amber | Y | 0 | 3 | 3 | 2 | 0 | 0 | 0 | 0 |
-| 28 | ★ Coral | Y | 0 | 3 | 3 | 2 | 0 | 0 | 0 | 0 |
-| 29 | ★ Alexandrite | N | 0 | 0 | 0 | 3 | 3 | 3 | 1 | 1 |
-| 30 | ★ Bloodstone | N | 3 | 3 | 2 | 0 | 0 | 0 | 0 | 0 |
-| 31 | ★ Zircon | N | 0 | 3 | 3 | 2 | 0 | 0 | 0 | 0 |
-| 32 | ★ Tiger Eye | N | 3 | 2 | 0 | 0 | 0 | 0 | 0 | 0 |
-| 33 | ★ Carnelian | N | 3 | 3 | 2 | 0 | 0 | 0 | 0 | 0 |
+```
+Large but poorly cut oval ruby — 820 gp
+Tiny exquisite brilliant-cut diamond — 70 gp
+Modest standard round white pearl — 85 gp
+Impressive but rough emerald-cut emerald — 1,500 gp
+Small polished mirror-black obsidian — 12 gp
+Sizable standard carved jade figurine — 340 gp
+```
 
 ---
 
-## 4. Art Objects
+## 5. Hoard Gem Budgets
+
+See **GEM-BUDGET-ALGORITHM.md** for the full algorithm and simulation results.
+
+### DMG-Derived Budgets
+
+Calculated by multiplying each DMG hoard entry's d100 probability × average gem count × face value, summed across all entries:
+
+| Hoard | CR Range | Gem Budget |
+|-------|----------|------------|
+| 1 | CR 0–4 | 137 gp |
+| 2 | CR 5–10 | 388 gp |
+| 3 | CR 11–16 | 3,622 gp |
+| 4 | CR 17+ | 8,025 gp |
+
+### Generation Algorithm
+
+1. Start with gem budget
+2. Pick a gem type (weighted random; only gems with min ≤ remaining budget eligible)
+3. Roll value on log scale between [gem min, min(gem max, remaining budget)]
+4. Apply binning
+5. Roll 2d4 for value score
+6. Generate descriptors (size, quality, cut, color)
+7. Subtract value from budget
+8. Repeat until budget < 1 gp
+
+### Consolidation
+
+When a hoard produces 15+ gems, the cheapest are consolidated: "Pouch of assorted semi-precious stones (24 gems) — 1,989 gp total." Individual gems above a tier-appropriate detail threshold are always listed.
+
+### Simulation Results
+
+| Tier | Budget | Avg Gems | Character |
+|------|--------|----------|-----------|
+| CR 0–4 | 137 gp | 6–8 | Mostly tiny cheap stones, occasionally one mid-value piece |
+| CR 5–10 | 388 gp | 9–12 | Mix of cheap and mid-range; pearls, rubies start appearing |
+| CR 11–16 | 3,622 gp | 25–30 | Big stones (1,000+ gp) with many smaller gems |
+| CR 17+ | 8,025 gp | 35–40 | Individual gems worth 2,000–5,000 gp regularly |
+
+---
+
+## 6. Spell Component Auto-Purchase
+
+Completely separate from the gem generation system. Specific high-impact spell components are auto-deducted from gold coin budgets and included as treasure items. No special labeling — a pearl is just a pearl.
+
+### Gated vs. Grindable
+
+**Gated** (need a specific single gem): "a diamond worth at least 500 gp" — these are the ones we auto-purchase.
+
+**Grindable** (dust/powder/plural): "diamonds worth 300 gp", "diamond dust worth 100 gp" — handled naturally by gem accumulation. Diamond at weight 8 ensures steady supply.
+
+Key finding: **Revivify says "diamonds" (plural)** — it's grindable, not gated. Players can combine small diamonds. Same for True Resurrection.
+
+### Auto-Purchase Schedule
+
+| Tier | Component | Exact Value | Frequency | Spell |
+|------|-----------|------------|-----------|-------|
+| 1 (CR 0–4) | Pearl | 100 gp | Every hoard | Identify (reusable) |
+| 2 (CR 5–10) | Diamond | 500 gp | ~2 of 7 hoards | Raise Dead (consumed) |
+| 3 (CR 11–16) | Diamond | 1,000 gp | ~2 of 7 hoards | Resurrection (consumed) |
+| 4 (CR 17+) | Diamond | 5,000 gp | ~1 of 7 hoards | Gate (reusable) |
+
+Rules:
+1. Always exact value — no log-scale rolling, no value score, no quality descriptor
+2. Always the specific gem — not a random type
+3. Deducted from coin budget before coins are generated
+4. Cumulative with normal gem generation — a hoard can have both
+5. No spell component labeling in output
+
+### All Other Spell Components
+
+The continuous gem system covers the rest organically:
+
+| Gem | Spell Components Covered | How |
+|-----|-------------------------|-----|
+| Diamond | Revivify (300, grindable), Stoneskin (100, dust), Greater Restoration (100, dust), Gate (5,000), True Resurrection (25,000, grindable) | Weight 8 + wide range = steady accumulation |
+| Ruby | Continual Flame (50, dust), Infernal Calling (999), Forbiddance (1,000, dust), Simulacrum (1,500, dust) | Weight 6 + range to 15,000 |
+| Sapphire | Instant Summons (1,000), Sequester (5,000, dust) | Weight 5 + range to 12,000 |
+| Emerald | Sequester (5,000, dust) | Range to 10,000 |
+| Pearl | Identify (100, but auto-purchased at Tier 1) | Range to 500, shows up organically at higher tiers |
+| Jade | Magic Mouth (10, dust), Shapechange (1,500, circlet form) | Range to 2,000, circlet in shape table |
+| Onyx | Animate Dead (25), Create Undead (150) | Range covers both |
+| Jacinth | Astral Projection (1,000) | Range to 5,000 |
+| Opal | Symbol (1,000, with diamond) | Range to 3,000 |
+| Agate | Awaken (1,000) | Range extended to 1,500 for this |
+| Black Pearl | Circle of Death (500, powder) | Range to 2,000 |
+
+---
+
+## 7. Art Objects
 
 ### Decision: DMG Item Lists + Value Scoring
 
-Art objects use the DMG's existing item descriptions but apply value scoring so values aren't flat.
+Art objects use the DMG's existing item descriptions (golden locket, silk robe, etc.) but apply value scoring so values aren't flat.
 
 | DMG Face Value | Base (÷5) | 2d4 Range | Average |
 |---------------|-----------|-----------|---------|
@@ -158,211 +269,51 @@ Art objects use the DMG's existing item descriptions but apply value scoring so 
 | 2,500 gp | 500 | 1,000–4,000 gp | 2,500 gp |
 | 7,500 gp | 1,500 | 3,000–12,000 gp | 7,500 gp |
 
-### Display
+Display: description + value only. No tier label, no quality label.
 
-Description + value only. No mention of the base tier.
+Example: *"Gold locket with a painted portrait of a noblewoman — 280 gp"*
 
-Example: *"Gold locket with a painted portrait of a noblewoman — 180 gp"*
-
-### No Improvement Mechanic (for now)
-
-Art objects are NOT improvable in the loot system. The crafting tab (future) may address this separately.
+Art objects are NOT improvable. The crafting system (future tab) may address artisan tool creation separately.
 
 ---
 
-## 5. Quality Labels
-
-Derived from the 2d4 score. Cosmetic/narrative — the score already drives the price.
-
-| 2d4 Score | Quality Label | Gemcutter Improvement (Future) |
-|-----------|--------------|-------------------------------|
-| 2 | Cloudy | Can improve (VS +1d4) |
-| 3–4 | Flawed | Can improve (VS +1d3 / +1d2) |
-| 5–6 | Standard | Modest improvement possible |
-| 7 | Fine | Minor improvement (+1) |
-| 8 | Flawless | Cannot be improved further |
-
-Organic gems: no quality label displayed. Art objects: no quality label.
-
----
-
-## 6. Jitter (Detail Modifier)
-
-Applied after value scoring to break up round numbers. Only for values ≥ 100 gp.
-
-```typescript
-function addJitter(value: number): number {
-  if (value < 100) return value;
-  const magnitude = Math.pow(10, Math.floor(Math.log10(value)));
-  const step = magnitude / 10;
-  const jitter = (rollDie(4) - rollDie(4)) * step;  // ±3 steps
-  return Math.max(1, value + jitter);
-}
-```
-
-| Value | Step | Output Range |
-|-------|------|-------------|
-| 100 gp | 10 gp | 70–130 gp |
-| 500 gp | 10 gp | 470–530 gp |
-| 1,000 gp | 100 gp | 700–1,300 gp |
-| 5,000 gp | 100 gp | 4,700–5,300 gp |
-| 10,000 gp | 1,000 gp | 7,000–13,000 gp |
-| 50,000 gp | 1,000 gp | 47,000–53,000 gp |
-
----
-
-## 7. DMG Hoard Integration
-
-### Gem Tier Mapping (2 per hoard tier)
-
-| DMG Hoard | CR Range | Gem Tiers | Key Spell Components |
-|-----------|----------|-----------|---------------------|
-| Hoard 1 | CR 0–4 | T1–T2 (10, 50 gp) | Chromatic Orb (50gp diamond), Continual Flame (50gp ruby) |
-| Hoard 2 | CR 5–10 | T2–T3 (50, 100 gp) | Identify (100gp pearl) |
-| Hoard 3 | CR 11–16 | T4–T5 (500, 1000 gp) | Revivify, Raise Dead, Resurrection, Astral Projection |
-| Hoard 4 | CR 17+ | T5–T6 (1000, 5000 gp) | Gate, Sequester |
-| (Epic) | CR 20+/Epic | T7–T8 (10000, 50000 gp) | True Resurrection |
-
-### Spell Component Steal Entries
-
-Each hoard gets additional entries for spell components that players NEED at that play tier but that the DMG's gem tiers don't naturally provide. These steals have **no value score variance** — the gem is always worth exactly the listed value, and it's always the specific gem type (not a random roll on the tier table). A small amount of coin value is reduced to compensate.
-
-**Hoard 1 (CR 0–4) — 1 steal:**
-
-| Entry | Gem | Exact Value | Spell | Chance | Coin Reduction |
-|-------|-----|------------|-------|--------|---------------|
-| 100 gp Pearl | Pearl | 100 gp | Identify (lvl 1, reusable) | ~15–20% | Reduce gp from 2d6×10 to ~1d6×10 |
-
-This is the most important steal. Identify uses a 100 gp pearl and is cast nearly every session by wizards. Fortune's Favor (EGW) also uses a 100 gp white pearl (consumed).
-
-**Hoard 2 (CR 5–10) — 2 steals:**
-
-| Entry | Gem | Exact Value | Spell | Chance | Coin Reduction |
-|-------|-----|------------|-------|--------|---------------|
-| 300 gp Diamond | Diamond | 300 gp | Revivify (lvl 3, consumed) | ~15% | Negligible (~85 gp expected |
-| 500 gp Diamond | Diamond | 500 gp | Raise Dead (lvl 5, consumed) | ~8% | from ~3,857 gp total coins) |
-
-Revivify is the most critical consumed spell in the game. Players learn it at level 5 (start of this tier). The 300 gp diamond also satisfies Glyph of Warding ("worth at least 200 gp"). Raise Dead at 500 gp is the next step up. Niche components (1,000 gp Agate for Awaken, 999 gp Ruby for Infernal Calling) are skipped — too niche for dedicated steal slots; they can appear naturally in T5 gems at higher tiers.
-
-**Hoard 3 (CR 11–16) — 1 steal:**
-
-| Entry | Gem | Exact Value | Spell | Chance | Coin Reduction |
-|-------|-----|------------|-------|--------|---------------|
-| 5,000 gp gem dust (mixed) | Diamond+Emerald+Ruby+Sapphire | 5,000 gp | Sequester (lvl 7, consumed) | ~10% | Negligible (~500 gp expected |
-| | | | | | from ~31,500 gp total coins) |
-
-Everything else at this tier (500–1,500 gp components: Resurrection, Simulacrum, Forcecage, Clone) is naturally available in T4–T5 gems. Create Undead's 150 gp Black Onyx fits in T3 range which overlaps from prior hoards.
-
-**Hoard 4 (CR 17+) — 1 steal:**
-
-| Entry | Gem | Exact Value | Spell | Chance | Coin Reduction |
-|-------|-----|------------|-------|--------|---------------|
-| 25,000 gp Diamond | Diamond | 25,000 gp | True Resurrection (lvl 9, consumed) | ~5% | Negligible (~1,250 gp expected |
-| | | | | | from ~322,000 gp total coins) |
-
-The iconic spell gets the iconic steal. Everything else (1,000–5,000 gp: Gate, Astral Projection, Shapechange, Time Ravage) is naturally available in T5–T6.
-
-### Steal Entry Rules
-
-1. Steal entries are **always exact value** — no 2d4 value score, no jitter
-2. Steal entries are **always the specific gem** listed — no random tier table roll
-3. Steal entries appear as a **d100 percentage chance** per hoard, independent of other gem/art rolls
-4. When a steal entry hits, it displaces coin value equivalently (the coin dice are pre-reduced to account for the expected value)
-5. Steal entries are **cumulative** — a hoard can produce normal gems AND steal gems in the same roll
-6. Display: just the gem and value, no special labeling — "Round white pearl — 100 gp" or "Diamond — 500 gp"
-
-### Hoard Roll Procedure
-
-See GEM-BUDGET-ALGORITHM.md for the full generation algorithm. Summary:
-1. Determine gem budget from DMG-derived averages
-2. Generate gems using log-scale budget-filling algorithm
-3. Each gem gets a type, value, value score, and descriptors
-
-Steal entries roll separately:
-1. Roll d100 against steal chance
-2. If hit: add exactly 1 of the specific gem at exact value
-3. No value score, no quality label — just the gem and its price
-4. Output: "Round white pearl — 100 gp"
-
----
-
-## 8. Code Changes Required
-
-### Bug Fix in roller.ts
-
-Current (wrong):
-```typescript
-const score = rollDice(2, 4);
-const value = Math.round(table.baseValue * (score / 5));
-```
-
-Correct:
-```typescript
-const base = tier.faceValue / 5;
-const score = rollDice(2, 4);
-const rawValue = base * score;
-const finalValue = addJitter(rawValue);
-```
-
-### Data Model
+## 8. Data Model
 
 ```typescript
 interface GemDefinition {
   name: string;
-  organic: boolean;
-  improvable: boolean;
-}
-
-interface GemTier {
-  tier: number;               // 1–8
-  faceValue: number;          // 10, 50, 100, 500, 1000, 5000, 10000, 50000
-  entries: { gem: string; weight: number }[];
+  min: number;              // minimum gp value
+  max: number;              // maximum gp value
+  weight: number;           // selection probability weight
+  organic: boolean;         // true = Pearl, Black Pearl, Jet, Amber, Coral
+  improvable: boolean;      // false for organic gems
 }
 
 interface RolledGem {
   name: string;
-  quality: "Cloudy" | "Flawed" | "Standard" | "Fine" | "Flawless" | null;
-  valueScore: number;
-  faceValue: number;
-  rawValue: number;
-  finalValue: number;
+  value: number;            // the gold piece price (after binning)
+  valueScore: number;       // 2d4 roll (2–8), quality metadata
+  size: string;             // "Tiny" through "Massive"
+  quality: string;          // "Cloudy" through "Flawless"
+  cut: string;              // "oval-cut", "cabochon", "carved figurine", etc.
+  cutQuality: string;       // "poorly cut", "standard", "expertly cut", etc.
+  color: string;            // gem-specific color variant
+  legendary: string | null; // legendary name if top 5% of max
   improvable: boolean;
 }
 
 interface RolledArt {
-  name: string;
-  description: string;
-  faceValue: number;
-  rawValue: number;
-  finalValue: number;
+  description: string;      // DMG item description
+  faceValue: number;        // DMG tier value
+  value: number;            // (faceValue / 5) × 2d4
 }
 ```
 
 ---
 
-## 9. Display Examples
+## 9. Open Items
 
-### Gem Output
-```
-Flawed Diamond — 620 gp
-Standard Ruby — 510 gp
-Pearl — 38 gp
-Cloudy Tourmaline — 8 gp
-Flawless Emerald — 8,200 gp
-```
-
-### Art Object Output
-```
-Gold locket with a painted portrait of a noblewoman — 280 gp
-Embroidered silk handkerchief — 210 gp
-Carved bone statuette with gold inlay — 1,340 gp
-```
-
----
-
-## 10. Open Items
-
-1. **Expanded gem roster sign-off:** 33 gems proposed. Need confirmation on which to keep/cut.
-2. **Per-gem value score overrides:** Old Excel had fixed scores at specific tiers. Preserve any with the new 2d4 system, or let everything float?
-3. **Tier 7–8 in hoards:** Only in custom Epic Vault hoards, or can per-creature probability drop them at high CR?
-4. **Crafting tab design:** Future work. Gemcutter improving value scores, artisan tools creating items. You mentioned uploading your Roll20 crafting system.
+1. **Art object system detail:** DMG art tables need extraction and integration. Value scoring formula is defined; item lists need data entry.
+2. **Crafting system integration:** Future tab. Gemcutter VS improvement, artisan tool creation, material cost structure. See TASKS.md.
+3. **Weight tuning:** Current weights are reasonable based on simulation. May need adjustment after playtesting.
+4. **Consolidation threshold:** Currently set at 15 gems. May need per-tier thresholds (e.g., consolidate below 50 gp at CR 11–16, below 200 gp at CR 17+).
