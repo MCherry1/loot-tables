@@ -65,6 +65,18 @@ function lookupItemStats(
   const mappedDirect = normalizedIndex.get(normalizedDirect);
   if (mappedDirect && stats[mappedDirect]) return stats[mappedDirect];
 
+  // Try parentheses → comma format: "Foo (Bar)" → "Foo, Bar"
+  const parenMatch = result.name.match(/^(.+?)\s*\(([^)]+)\)$/);
+  if (parenMatch) {
+    const commaName = `${parenMatch[1]}, ${parenMatch[2]}`;
+    const commaKey = `${commaName}|${result.source}`;
+    if (stats[commaKey]) return stats[commaKey];
+    // Try case-insensitive via normalized index
+    const normalizedComma = commaKey.toLowerCase().replace(/[(),]/g, '').replace(/\s+/g, ' ').trim();
+    const mappedComma = normalizedIndex.get(normalizedComma);
+    if (mappedComma && stats[mappedComma]) return stats[mappedComma];
+  }
+
   // Try each step's picked entry (stripped of sub-table refs)
   for (const step of result.steps) {
     const stripped = stripRefs(step.pickedEntry.name);
@@ -687,7 +699,11 @@ function FinalResultCard({
             )}
           </div>
           {stats.desc && (
-            <p className="final-result-desc">{stats.desc}</p>
+            <div className="final-result-desc">
+              {stats.desc.split('\n').map((line, i) => (
+                <p key={i}>{line}</p>
+              ))}
+            </div>
           )}
         </div>
       )}
@@ -887,7 +903,7 @@ const LootTables: React.FC<LootTablesProps> = ({
         const box = new DiceBox({
           container: '#dice-overlay',
           assetPath: `${basePath}assets/dice-box/`,
-          scale: 4,
+          scale: 32,
           gravity: 3,
           theme: 'default',
           offscreen: true,
@@ -924,7 +940,13 @@ const LootTables: React.FC<LootTablesProps> = ({
   );
   // Display entries: snap weights to next standard die for clean dice ranges.
   // Curation overrides or source filtering can produce non-standard totals.
+  // EXCEPTION: Spell tables are exempt — all spells have equal weight,
+  // and non-standard totals (e.g., d67) are fine.
   const displayEntries = useMemo<Entry[]>(() => {
+    if (activeSection === 'spells') {
+      // No snapping for spell tables — equal weight, non-standard dice OK
+      return currentEntries;
+    }
     if (currentEntries.length === rawEntries.length) {
       // No source filtering — use raw weights but snap if needed
       const total = rawEntries.reduce((s, e) => s + e.weight, 0);
@@ -940,7 +962,7 @@ const LootTables: React.FC<LootTablesProps> = ({
       (e) => !e.source || survivorKeys.has(`${e.name}|${e.source ?? ''}`),
     );
     return snapToStandardDie(filtered);
-  }, [rawEntries, currentEntries]);
+  }, [rawEntries, currentEntries, activeSection]);
   // Display dice ranges and total use snapped display weights.
   const diceRanges = useMemo(
     () => computeDiceRanges(displayEntries),

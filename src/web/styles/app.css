@@ -1351,7 +1351,14 @@ button {
   margin: 0;
   max-height: 200px;
   overflow-y: auto;
-  white-space: pre-line;
+}
+
+.final-result-desc p {
+  margin: 0 0 0.4em 0;
+}
+
+.final-result-desc p:last-child {
+  margin-bottom: 0;
 }
 
 .final-result-chain {

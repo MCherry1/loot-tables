@@ -2178,7 +2178,7 @@ export const MAGIC_ITEMS = {
       "weight": 3
     },
     {
-      "name": "Instrument of the Bards (Mac-Fuimidh Cittern)",
+      "name": "Instrument of the Bards (Mac-Fuirmidh Cittern)",
       "source": "DMG",
       "weight": 3
     },
@@ -5166,7 +5166,7 @@ export const MAGIC_ITEMS = {
       "weight": 1
     },
     {
-      "name": "Instrument of the Bards (Ollahm Harp)",
+      "name": "Instrument of the Bards (Ollamh Harp)",
       "source": "DMG",
       "weight": 1
     },

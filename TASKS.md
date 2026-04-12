@@ -459,54 +459,17 @@ Implement the draft + publish workflow for the admin/review UI:
 ### ~~CR-to-Tier Boundary Mismatch~~ ✅
 Done — `crToDefaultTier()` in `src/engine/constants.ts` now uses the DMG-aligned boundaries (CR 0–4 → Tier 1, 5–10 → Tier 2, 11–16 → Tier 3, 17+ → Tier 4). Covered by `tests/engine/constants.test.ts`.
 
-### 3D Dice Too Small
+### ~~3D Dice Too Small~~ ✅
+Fixed — `scale` changed from 4 to 32 in dice-box init (`LootTables.tsx`). May need further tuning after testing.
 
-**File:** `src/web/components/LootTables.tsx` — dice-box init
+### ~~Spell Tables Exempt from Dice Snapping~~ ✅
+Fixed — `displayEntries` useMemo now returns `currentEntries` unsnapped when `activeSection === 'spells'`. Dependency array updated. Non-standard dice totals (d67, etc.) preserved as-is.
 
-**Problem:** Dice are comically small. They used to scale with window size (which caused distortion), but now the `scale: 4` setting produces dice that are too tiny to see.
+### ~~Item Description Formatting Lost~~ ✅
+Fixed — Changed from single `<p>` to `<div>` with `stats.desc.split('\n').map(line => <p>)`. CSS updated: removed `white-space: pre-line`, added per-paragraph margin (0.4em). Bullet points and paragraph breaks now render correctly.
 
-**Fix:** Increase `scale` value and/or make it responsive to container dimensions. The dice-box library supports dynamic resizing — may need to call `box.updateConfig({ scale: N })` on window resize, or use a scale that works well at common screen sizes (try `scale: 6` or `scale: 8` as starting points).
-
-### Spell Tables Exempt from Dice Snapping
-
-**File:** `src/web/components/LootTables.tsx` — `STANDARD_DICE` / `snapToDie()`
-
-**Problem:** Spell tables have irregular total weights (e.g., d67) and there's no clean way to rebalance them to standard dice without making judgment calls about which spells are more popular. Currently they may be getting snapped to d100 which distorts probabilities.
-
-**Fix:** Add an exemption — when the active table is a Spell table, skip the `snapToDie()` logic entirely. A d67 is fine for spells. All spells within a level should have equal weight. The 3D dice roller can skip the visual die roll for non-standard totals and just use the numeric result.
-
-### Item Description Formatting Lost
-
-**File:** `src/web/components/LootTables.tsx` line ~690, `scripts/generate-item-stats.ts`
-
-**Problem:** Item descriptions from 5etools have bullet points, paragraph breaks, and structure. The `flattenEntries()` function in `generate-item-stats.ts` converts these to `• ` prefixed lines joined with `\n`, but the UI renders them in a single `<p>` tag which collapses all newlines.
-
-**Fix (two parts):**
-1. **CSS:** Add `white-space: pre-wrap` to `.final-result-desc` so newlines in the text are preserved.
-2. **Or JSX:** Split `stats.desc` on `\n` and render each line as a separate element: `{stats.desc.split('\n').map(line => <p>{line}</p>)}`.
-
-Option 2 is better because it allows proper paragraph spacing and keeps bullet points as distinct lines.
-
-### Variant Item Stats Lookup Failure (43 items affected)
-
-**File:** `src/web/components/LootTables.tsx` — `lookupItemStats()`
-
-**Problem:** Items with parenthetical variants in `magic-items.ts` use format `"Foo (Bar)"` but `item-stats.json` uses comma format `"Foo, Bar"`. The lookup function doesn't try the comma-format conversion, so 43 items have no description.
-
-**Affected item families:**
-- Instrument of the Bards (all 7 variants) — also has spelling errors: "Ollahm" should be "Ollamh", "Mac-Fuimidh" should be "Mac-Fuirmidh"
-- Ioun Stone (4 variants: awareness, protection, reserve, sustenance)
-- Bag of Tricks (3 variants: gray, rust, tan) — also case mismatch
-- Spell Scrolls (all 10 level variants)
-- Alchemy Jug (Blue, Orange) — source mismatch (CM vs DMG)
-- Potion of Mind Control (3 variants) — case mismatch
-- Plus others: Deck of Illusions, Rod of the Vonindod, Shard Solitaire
-
-**Fix (multi-step):**
-1. In `lookupItemStats()`, add a fallback that converts `"Foo (Bar)"` to `"Foo, Bar"` before lookup
-2. Fix spelling errors in `magic-items.ts`: "Ollahm" → "Ollamh", "Mac-Fuimidh" → "Mac-Fuirmidh"
-3. Add case-insensitive matching for the variant portion
-4. For items with sub-table refs like `"Armblade ([Armblades])"`, the existing `stripRefs()` handles the brackets but the resulting name "Armblade" needs to match against "Armblade|ERLW"
+### ~~Variant Item Stats Lookup Failure~~ ✅ (partial)
+Fixed — Added parentheses→comma fallback in `lookupItemStats()`: `"Foo (Bar)"` → `"Foo, Bar"` with case-insensitive normalized index lookup. Fixed spelling: "Ollahm" → "Ollamh", "Mac-Fuimidh" → "Mac-Fuirmidh" in `magic-items.ts`. Remaining edge cases (source mismatches like Alchemy Jug CM vs DMG, sub-table ref items) may need further testing.
 
 ---
 
@@ -514,23 +477,85 @@ Option 2 is better because it allows proper paragraph spacing and keeps bullet p
 
 See `GEM-SYSTEM-SPEC.md` for the full design specification. Status of implementation tasks:
 
-### Gem System Implementation
-- [x] ~~Fix value scoring in `src/engine/roller.ts` — `baseValue * (score / 5)` where score = 2d4~~ ✅
-- [x] ~~Add quality labels (Cloudy/Rough/Flawed/Standard/Fine/Brilliant/Flawless) derived from 2d4 score~~ ✅ (`GEM_QUALITY_LABELS` in `roller.ts`)
-- [x] ~~Add jitter function for values ≥ 100 gp~~ ✅ (`applyJitter()` in `roller.ts`)
-- [x] ~~Flag organic gems (Pearl, Black Pearl, Jet, Amber, Coral) as not improvable~~ ✅ (`ORGANIC_GEMS` in `roller.ts`; `TreasureItem.improvable`)
-- [ ] Expand gem roster from 19 to ~33 gems with per-tier weight matrix (pending full log-scale rewrite — see `GEM-SYSTEM-SPEC.md` §1)
-- [ ] Replace tier-bucket `CUSTOM_GEMS` with continuous log-scale value generation (`GEM-SYSTEM-SPEC.md` §2). Requires regenerating `src/data/gems.ts` with `{min, max, weight, organic}` rows.
-- [ ] Descriptor generation (size / quality / cut / color / legendary names) per `GEM-DESCRIPTORS.md`
-- [ ] Consolidation: fold cheap gems into a single "pouch" line when hoards produce 15+
+### Gem System Implementation — Continuous Value Rewrite
 
-### Art Object Value Scoring
-- [x] ~~Apply value scoring to DMG art tables: `base = faceValue / 5`, `value = base × 2d4`~~ ✅
-- [x] ~~Add jitter for values ≥ 100 gp~~ ✅
-- [x] ~~Display as description + final value only (no tier/quality label)~~ ✅
+**Status:** Partial. Quality labels, jitter, organic flags, value scoring are done. The fundamental architecture change (tier buckets → continuous ranges) is NOT done.
+
+**What exists now:** `src/data/gems.ts` has `CUSTOM_GEMS` — 8 tier-based tables (Gems-1 through Gems-8) with 19 gems. `rollGem()` in `roller.ts` picks a tier table, does a weighted pick within it, applies `baseValue * (score / 5)`.
+
+**What needs to happen:** Replace the entire gem generation pipeline. Read `GEM-SYSTEM-SPEC.md` §1-§4, `GEM-BUDGET-ALGORITHM.md` §2-§3, and `GEM-DESCRIPTORS.md` §1-§4 BEFORE starting.
+
+**Step-by-step:**
+
+1. **New data file: `src/data/gem-definitions.ts`**
+   - Export `GEM_DEFINITIONS`: array of 33 gems, each with `{ name, min, max, weight, organic, improvable }`
+   - Values are in `GEM-SYSTEM-SPEC.md` §1 table (Agate 1–1500, Diamond 10–100000, etc.)
+   - Export `GEM_CUTS`: per-gem-type cut/shape tables from `GEM-DESCRIPTORS.md` §3
+   - Export `GEM_COLORS`: per-gem-type color variants from `GEM-DESCRIPTORS.md` §4
+
+2. **New function: `rollGemValue(min, max)` in `roller.ts`**
+   - Log-scale: `10 ^ (uniform random between log10(min) and log10(max))`
+   - Apply binning: <10→round to 1, 10-99→round to 5, 100-999→round to 10, etc.
+   - See `GEM-BUDGET-ALGORITHM.md` §3
+
+3. **New function: `generateGemBudget(budget)` in `roller.ts` or new file**
+   - Loop: pick gem (weighted, eligible if min ≤ remaining), roll value (log-scale, capped at remaining), roll 2d4 for VS, subtract, repeat until budget < 1
+   - Returns array of `RolledGem` objects
+   - See `GEM-BUDGET-ALGORITHM.md` §3 for exact algorithm
+
+4. **New function: `generateGemDescriptor(gem, value, vs)` in `roller.ts` or new file**
+   - Size from `value / vs` mapped to percentile in gem's range → Tiny/Small/Modest/Sizable/Large/Impressive/Massive
+   - Quality from VS → Cloudy/Rough/Flawed/Standard/Fine/Brilliant/Flawless
+   - Cut quality from VS → "poorly cut"/"asymmetric"/standard/"well-proportioned"/"expertly cut"/"exquisite"
+   - Cut shape: random from gem's cut table
+   - Color: random from gem's color table
+   - Organic gems: natural quality terms instead of cut quality
+   - See `GEM-DESCRIPTORS.md` §1-§2
+
+5. **Update `loot-generator.ts`**
+   - Per-creature gems: compute `perCreatureShare = totalGemValue * (creatureXP / tierXP)`, then `probability = share / meaningfulMinimum`, roll chance, if hit call `generateGemBudget(meaningfulMinimum or share)`
+   - Meaningful minimums: Tier 1=100, Tier 2=250, Tier 3=1500, Tier 4=4000
+   - See `GEM-BUDGET-ALGORITHM.md` §7
+
+6. **Update `TreasureItem` type** in `types.ts`
+   - Add: `size?: string`, `cut?: string`, `cutQuality?: string`, `color?: string`, `legendary?: string`
+
+7. **Update UI** to display new gem descriptors in encounter results
+
+8. **Keep old `CUSTOM_GEMS` temporarily** for the Loot Tables tab stepper (which still uses tier tables for manual rolling). The encounter builder uses the new budget system.
+
+### Art Object System Implementation — Category-Based Rewrite
+
+**Status:** Value scoring and jitter are done on existing DMG art tables. The category-based descriptor system is NOT done.
+
+**Read `ART-SYSTEM-SPEC.md` entirely BEFORE starting.**
+
+**Step-by-step:**
+
+1. **New data file: `src/data/art-definitions.ts`**
+   - Export `ART_CATEGORIES`: 10 categories with `{ name, artisanTool, min, max, weight }`
+   - Export `ART_MATERIALS`, `ART_FORMS`, `ART_DETAILS`: per-category descriptor pools (from `ART-SYSTEM-SPEC.md` §3)
+   - Export `ART_SCENES`: shared scene pool for paintings/tapestries
+   - Export `ART_MOTIFS`: animal/heraldic/nature/mystical motif pools
+   - Export `DMG_NAMED_ART`: the 48 DMG items categorized with value ranges
+
+2. **New function: `generateArtBudget(budget)` — same algorithm as gems**
+   - Pick category (weighted), roll value (log-scale), generate descriptors, subtract, repeat
+
+3. **New function: `generateArtDescriptor(category, value)`**
+   - Material: pick from category's material pool, scaled by value
+   - Form: random from category's form pool
+   - Detail: pick from category's detail pool, scaled by value
+   - Scene/motif: for paintings/tapestries/sculpture, add a subject
+   - DMG named item: ~10% chance of producing verbatim DMG item when value matches
+   - Assemble: "[material] [form] [detail]" → evocative sentence
+
+4. **Update `loot-generator.ts`** — same per-creature probability pattern as gems
+   - Art meaningful minimums: Tier 1=50, Tier 2=200, Tier 3=1000, Tier 4=3000
+   - Art budgets: 40/560/2500/3712 gp by tier
 
 ### ~~Hoard Spell Component Steals~~ ✅
-Implemented per `GEM-SYSTEM-SPEC.md` §6 (cleaner schedule than the earlier bullet list) — applied to vault hoards only via `rollHoardSteal()` in `loot-generator.ts`:
+Implemented per `GEM-SYSTEM-SPEC.md` §6 — applied to vault hoards only via `rollHoardSteal()` in `loot-generator.ts`:
 
 | Tier | Gem | Value | Probability |
 |------|-----|-------|-------------|
@@ -539,16 +564,7 @@ Implemented per `GEM-SYSTEM-SPEC.md` §6 (cleaner schedule than the earlier bull
 | 3 | Diamond | 1,000 gp | 2/7 ≈ 0.286 |
 | 4 | Diamond | 5,000 gp | 1/7 ≈ 0.143 |
 
-Steal value is deducted from the vault's coin budget before coins are rolled (spec §6 rule 3). Exact value, no value score, no quality — a fixed-specimen drop. Covered by `tests/engine/loot-generator.test.ts`.
-
-### Art Object System Implementation
-See `ART-SYSTEM-SPEC.md` for full design specification.
-1. 10 art categories with continuous value ranges and log-scale rolling
-2. Descriptor generation: material (scaled by value) + form (random) + detail (scaled by value)
-3. DMG named items as occasional verbatim drops (~10% chance)
-4. Same per-creature probability and budget system as gems
-5. Art budgets: 40/560/2,500/3,712 gp by tier
-
+Steal value is deducted from the vault's coin budget before coins are rolled. Exact value, no value score, no quality — a fixed-specimen drop. Covered by `tests/engine/loot-generator.test.ts`.
 
 ### Crafting System Integration (Future — Needs Discussion)
 Crafting tab design for the web app. Key topics to resolve:
@@ -558,6 +574,5 @@ Crafting tab design for the web app. Key topics to resolve:
 - Magic item crafting (cold damage sword needing a special cold flower, etc.)
 - Cap system: skill check + fame/reputation gating progression to higher tiers
 - Revenue model: market-dependent pricing, reputation building
-- User mentioned a complete Roll20 crafting system to upload as reference
 - User mentioned a complete Roll20 crafting system to upload as reference
 - How value score decouples "current worth" from "potential" enables the improvement mechanic
