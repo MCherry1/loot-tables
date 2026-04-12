@@ -483,3 +483,13 @@ See `GEM-SYSTEM-SPEC.md` for the full design specification. Summary of implement
 4. Hoard 3 (CR 11–16): 5,000 gp mixed gem dust (Sequester), ~10%
 5. Hoard 4 (CR 17+): 25,000 gp Diamond (True Resurrection), ~5%
 6. Reduce coin dice proportionally to offset expected steal value
+
+### Crafting System Integration (Future — Needs Discussion)
+Crafting tab design for the web app. Key topics to resolve:
+- Gemcutter improving value scores (VS increase → gem value increase proportionally toward gem's max)
+- Artisan tools creating art objects
+- 2× base value raw materials + 2× base value specific materials cost structure
+- Magic item crafting (cold damage sword needing a special cold flower, etc.)
+- Cap system: skill check + fame/reputation gating progression to higher tiers
+- User mentioned a complete Roll20 crafting system to upload as reference
+- How value score decouples "current worth" from "potential" enables the improvement mechanic
