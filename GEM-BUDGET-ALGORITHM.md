@@ -192,3 +192,99 @@ The algorithm always exhausts the budget (leftover < 1 gp). Value matching is ex
 - Precious gems (ruby, sapphire, emerald) appear less frequently but at higher individual values
 - Organic gems (pearl, amber, coral, jet) appear at appropriate rates and values
 - No two hoards look alike — high variance in composition, consistent in total value
+
+---
+
+## 7. Per-Creature Gem Generation (Encounter Builder Integration)
+
+### The Problem
+
+If a CR ¼ goblin has a 7 gp gem budget, every goblin drops malachite chips. That's worse than the DMG.
+
+### The Solution: Fractionalize Probability, Not Budget
+
+Each creature gets a **chance** of carrying gems. When gems ARE present, the budget is large enough to be interesting.
+
+### Formula
+
+```typescript
+// Total gem value across the entire tier
+const totalGemValue = gemBudget * HOARDS_PER_TIER;  // e.g., 137 * 7 = 959 gp
+
+// This creature's fair share based on XP
+const perCreatureShare = totalGemValue * (creatureXP / tierTotalXP);
+
+// Meaningful minimum: enough gems to be worth listing
+const meaningfulMinimum = MEANINGFUL_MIN[tier];
+
+// Convert to probability × budget
+if (perCreatureShare >= meaningfulMinimum) {
+  // Strong creature: always has gems, full budget
+  probability = 1.0;
+  actualBudget = perCreatureShare;
+} else {
+  // Weak creature: chance of having gems, but when present they're real
+  probability = perCreatureShare / meaningfulMinimum;
+  actualBudget = meaningfulMinimum;
+}
+
+// Roll
+if (Math.random() < probability) {
+  generateGems(actualBudget);
+} else {
+  // No gems — coins only
+}
+```
+
+### Meaningful Minimums
+
+The budget floor — enough to produce at least one interesting gem:
+
+| Tier | Meaningful Minimum | Rationale |
+|------|-------------------|-----------|
+| 1 (CR 0–4) | 100 gp | A pearl, a small ruby, or a handful of semi-precious stones |
+| 2 (CR 5–10) | 250 gp | A couple decent stones — garnet, amethyst, small diamond |
+| 3 (CR 11–16) | 1,500 gp | A real find — sapphire, emerald, significant diamond |
+| 4 (CR 17+) | 4,000 gp | Something impressive — large ruby, major diamond |
+
+### Per-CR Probability Table
+
+| CR | XP | Tier | Fair Share | Probability | Budget When Present |
+|----|-----|------|-----------|-------------|-------------------|
+| 0 | 10 | 1 | 1 gp | 1.5% | 100 gp |
+| ⅛ | 25 | 1 | 4 gp | 3.7% | 100 gp |
+| ¼ | 50 | 1 | 7 gp | 7.4% | 100 gp |
+| ½ | 100 | 1 | 15 gp | 14.8% | 100 gp |
+| 1 | 200 | 1 | 30 gp | 29.5% | 100 gp |
+| 2 | 450 | 1 | 66 gp | 66.4% | 100 gp |
+| 3 | 700 | 1 | 103 gp | 100% | 103 gp |
+| 4 | 1,100 | 1 | 162 gp | 100% | 162 gp |
+| 5 | 1,800 | 2 | 118 gp | 47.1% | 250 gp |
+| 7 | 2,900 | 2 | 190 gp | 75.9% | 250 gp |
+| 10 | 5,900 | 2 | 386 gp | 100% | 386 gp |
+| 11 | 7,200 | 3 | 1,242 gp | 82.8% | 1,500 gp |
+| 13 | 10,000 | 3 | 1,725 gp | 100% | 1,725 gp |
+| 16 | 15,000 | 3 | 2,587 gp | 100% | 2,587 gp |
+| 17 | 18,000 | 4 | 6,320 gp | 100% | 6,320 gp |
+| 20 | 25,000 | 4 | 8,777 gp | 100% | 8,777 gp |
+
+### Expected Value Verification
+
+For every CR, `probability × actualBudget = perCreatureShare`. The expected gem value exactly equals the creature's fair share — the economics are preserved while the output is interesting.
+
+### Encounter Example: 5 Goblins + 1 Hobgoblin Captain
+
+```
+Goblin (CR ¼): no gems (coins only)
+Goblin (CR ¼): 9 gems worth 100 gp
+    Fine Diamond (35 gp), Rough Diamond (25 gp),
+    Cloudy Diamond (15 gp), Flawed Onyx (8 gp), ...
+Goblin (CR ¼): no gems (coins only)
+Goblin (CR ¼): no gems (coins only)
+Goblin (CR ¼): no gems (coins only)
+Hobgoblin Captain (CR 3): 7 gems worth 103 gp
+    Standard Topaz (30 gp), Brilliant Diamond (30 gp),
+    Flawed Topaz (20 gp), ...
+```
+
+Goblins have a 7.4% chance each — typically 0–1 out of 5 will have gems. The captain (CR 3, 100% probability) always has gems. When a goblin DOES have gems, it's a real 100 gp find — a small pouch of stones worth looting, not worthless pebbles.
