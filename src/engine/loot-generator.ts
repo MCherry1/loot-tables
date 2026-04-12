@@ -30,6 +30,8 @@ import {
   TIER_CATEGORIES,
   COIN_MIX,
   HOARD_SPELL_COMPONENT_STEALS,
+  GEM_MEANINGFUL_MIN,
+  ART_MEANINGFUL_MIN,
   crToDefaultTier,
 } from './constants';
 import { coinCountToDiceFormula, evalDiceFormula } from './dice';
@@ -39,10 +41,9 @@ import {
   rollMagicItem,
   rollMagicItemResolvable,
   resolveAllRefs,
-  segmentsToString,
-  rollGem,
-  rollArt,
 } from './roller';
+import { generateGemBudget } from './gem-generator';
+import { generateArtBudget } from './art-generator';
 import { priceItem } from './value-score';
 
 // ---------------------------------------------------------------------------
@@ -65,6 +66,38 @@ function resolveCategories(
 /** Roll a probability check: returns true with the given probability (0-1). */
 function probHit(probability: number): boolean {
   return cryptoRandom() < probability;
+}
+
+/**
+ * Turn a gem-share gp amount into a list of gems using the continuous
+ * log-scale budget algorithm (GEM-BUDGET-ALGORITHM.md §3, §7).
+ *
+ * For shares at or above the tier's meaningful minimum, the full share
+ * is spent. For smaller shares, probability = share / minimum and the
+ * actual budget is the minimum — preserving expected value while
+ * producing meaningful drops when they happen.
+ */
+function gemsFromShare(share: number, tier: Tier): TreasureItem[] {
+  if (share <= 0) return [];
+  const minimum = GEM_MEANINGFUL_MIN[tier];
+  if (share >= minimum) {
+    return generateGemBudget(share);
+  }
+  const probability = share / minimum;
+  if (!probHit(probability)) return [];
+  return generateGemBudget(minimum);
+}
+
+/** Same as gemsFromShare but for art (ART-SYSTEM-SPEC.md §4). */
+function artFromShare(share: number, tier: Tier): TreasureItem[] {
+  if (share <= 0) return [];
+  const minimum = ART_MEANINGFUL_MIN[tier];
+  if (share >= minimum) {
+    return generateArtBudget(share);
+  }
+  const probability = share / minimum;
+  if (!probHit(probability)) return [];
+  return generateArtBudget(minimum);
 }
 
 /**
@@ -143,8 +176,8 @@ export function generateLoot(input: LootInput): LootResult {
   const categories = resolveCategories(roleBudget, tier, settings);
 
   let coinGpBudget = 0;
-  const gems: TreasureItem[] = [];
-  const artObjects: TreasureItem[] = [];
+  let gemGpShare = 0;
+  let artGpShare = 0;
   const magicItems: MagicItemResult[] = [];
   const mundaneFinds: string[] = [];
 
@@ -158,26 +191,15 @@ export function generateLoot(input: LootInput): LootResult {
       }
 
       case 'gems': {
-        if (!cat.unitValue || !cat.tableName) break;
-        const probability = categoryGp / cat.unitValue;
-        const guaranteed = Math.floor(probability);
-        const fractional = probability - guaranteed;
-        const count = guaranteed + (probHit(fractional) ? 1 : 0);
-        for (let i = 0; i < count; i++) {
-          gems.push(rollGem(cat.tableName));
-        }
+        // Continuous-value system: accumulate total gem gp share here;
+        // gems are rolled once after the loop via gemsFromShare().
+        gemGpShare += categoryGp;
         break;
       }
 
       case 'art': {
-        if (!cat.unitValue || !cat.tableName) break;
-        const probability = categoryGp / cat.unitValue;
-        const guaranteed = Math.floor(probability);
-        const fractional = probability - guaranteed;
-        const count = guaranteed + (probHit(fractional) ? 1 : 0);
-        for (let i = 0; i < count; i++) {
-          artObjects.push(rollArt(cat.tableName));
-        }
+        // Continuous-value system: accumulate total art gp share here.
+        artGpShare += categoryGp;
         break;
       }
 
@@ -208,6 +230,9 @@ export function generateLoot(input: LootInput): LootResult {
       }
     }
   }
+
+  const gems: TreasureItem[] = gemsFromShare(gemGpShare, tier);
+  const artObjects: TreasureItem[] = artFromShare(artGpShare, tier);
 
   const coins = gpToCoinBreakdown(coinGpBudget, tier);
 
@@ -287,8 +312,8 @@ export function generateLootResolvable(
   const categories = resolveCategories(roleBudget, tier, settings);
 
   let coinGpBudget = 0;
-  const gems: TreasureItem[] = [];
-  const artObjects: TreasureItem[] = [];
+  let gemGpShare = 0;
+  let artGpShare = 0;
   const magicItems: ResolvableMagicItem[] = [];
   const mundaneFinds: string[] = [];
 
@@ -302,26 +327,12 @@ export function generateLootResolvable(
       }
 
       case 'gems': {
-        if (!cat.unitValue || !cat.tableName) break;
-        const probability = categoryGp / cat.unitValue;
-        const guaranteed = Math.floor(probability);
-        const fractional = probability - guaranteed;
-        const count = guaranteed + (probHit(fractional) ? 1 : 0);
-        for (let i = 0; i < count; i++) {
-          gems.push(rollGem(cat.tableName));
-        }
+        gemGpShare += categoryGp;
         break;
       }
 
       case 'art': {
-        if (!cat.unitValue || !cat.tableName) break;
-        const probability = categoryGp / cat.unitValue;
-        const guaranteed = Math.floor(probability);
-        const fractional = probability - guaranteed;
-        const count = guaranteed + (probHit(fractional) ? 1 : 0);
-        for (let i = 0; i < count; i++) {
-          artObjects.push(rollArt(cat.tableName));
-        }
+        artGpShare += categoryGp;
         break;
       }
 
@@ -355,6 +366,9 @@ export function generateLootResolvable(
       }
     }
   }
+
+  const gems: TreasureItem[] = gemsFromShare(gemGpShare, tier);
+  const artObjects: TreasureItem[] = artFromShare(artGpShare, tier);
 
   const coins = gpToCoinBreakdown(coinGpBudget, tier);
 
@@ -387,8 +401,8 @@ export function generateVaultLootResolvable(
   const categories = resolveCategories(roleBudget, tier, settings);
 
   let coinGpBudget = 0;
-  const gems: TreasureItem[] = [];
-  const artObjects: TreasureItem[] = [];
+  let gemGpShare = 0;
+  let artGpShare = 0;
   const magicItems: ResolvableMagicItem[] = [];
   const mundaneFinds: string[] = [];
 
@@ -402,26 +416,12 @@ export function generateVaultLootResolvable(
       }
 
       case 'gems': {
-        if (!cat.unitValue || !cat.tableName) break;
-        const probability = categoryGp / cat.unitValue;
-        const guaranteed = Math.floor(probability);
-        const fractional = probability - guaranteed;
-        const count = guaranteed + (probHit(fractional) ? 1 : 0);
-        for (let i = 0; i < count; i++) {
-          gems.push(rollGem(cat.tableName));
-        }
+        gemGpShare += categoryGp;
         break;
       }
 
       case 'art': {
-        if (!cat.unitValue || !cat.tableName) break;
-        const probability = categoryGp / cat.unitValue;
-        const guaranteed = Math.floor(probability);
-        const fractional = probability - guaranteed;
-        const count = guaranteed + (probHit(fractional) ? 1 : 0);
-        for (let i = 0; i < count; i++) {
-          artObjects.push(rollArt(cat.tableName));
-        }
+        artGpShare += categoryGp;
         break;
       }
 
@@ -455,6 +455,9 @@ export function generateVaultLootResolvable(
       }
     }
   }
+
+  const gems: TreasureItem[] = gemsFromShare(gemGpShare, tier);
+  const artObjects: TreasureItem[] = artFromShare(artGpShare, tier);
 
   // Hoard spell-component steal (vault-only). Deduct from the coin budget
   // before coin dice are built, so the total gp for the hoard stays stable.

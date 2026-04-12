@@ -155,7 +155,7 @@ const EncounterResults: React.FC<Props> = ({
                 <span key={`gem-${i}`}>
                   {', '}
                   <span className="creature-item">
-                    {gem.name} ({gem.value} gp)
+                    {gem.description ?? gem.name} ({gem.value} gp)
                   </span>
                 </span>
               ))}
@@ -163,7 +163,7 @@ const EncounterResults: React.FC<Props> = ({
                 <span key={`art-${i}`}>
                   {', '}
                   <span className="creature-item">
-                    {art.name} ({art.value} gp)
+                    {art.description ?? art.name} ({art.value} gp)
                   </span>
                 </span>
               ))}

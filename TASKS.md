@@ -477,82 +477,39 @@ Fixed — Added parentheses→comma fallback in `lookupItemStats()`: `"Foo (Bar)
 
 See `specs/GEM-SYSTEM-SPEC.md` for the full design specification. Status of implementation tasks:
 
-### Gem System Implementation — Continuous Value Rewrite
+### ~~Gem System Implementation — Continuous Value Rewrite~~ ✅
+Done. Continuous log-scale value system wired into the encounter + vault generators.
+Implementation landed April 2026; see commits on `claude/tackle-new-tasks-ZFlB6`.
 
-**Status:** Partial. Quality labels, jitter, organic flags, value scoring are done. The fundamental architecture change (tier buckets → continuous ranges) is NOT done.
+**What shipped:**
+- `src/data/gem-definitions.ts` — 33-gem roster with `{min, max, weight, organic, improvable}`, plus `GEM_CUTS`, `GEM_COLORS`, and legendary name pools (per `specs/GEM-SYSTEM-SPEC.md` §1, `specs/GEM-DESCRIPTORS.md` §3-§5).
+- `src/engine/gem-generator.ts`:
+  - `rollGemValue(min, max)` — log-scale value rolling with binning
+  - `applyBinning(value)` — clean-number rules (`specs/GEM-BUDGET-ALGORITHM.md` §3)
+  - `generateGemDescriptor(gem, value, vs)` — size/quality/cut/cutQuality/color/legendary
+  - `generateGemBudget(budget)` — full budget-loop algorithm (`specs/GEM-BUDGET-ALGORITHM.md` §3)
+- `src/engine/types.ts` — `TreasureItem` extended with optional `size`, `cut`, `cutQuality`, `color`, `legendary`, `description`, `category`, `artisanTool`.
+- `src/engine/constants.ts` — `GEM_MEANINGFUL_MIN` (Tier 1=100, 2=250, 3=1500, 4=4000).
+- `src/engine/loot-generator.ts` — per-creature `gemsFromShare()` helper: if share ≥ minimum, spend the full share; otherwise probability-roll the minimum. Applied to `generateLoot`, `generateLootResolvable`, and `generateVaultLootResolvable`.
+- `src/web/components/EncounterResults.tsx` — renders `gem.description` when present (e.g. "Large but poorly cut oval-cut deep-red ruby — 820 gp").
+- Legacy `CUSTOM_GEMS` kept in `src/data/gems.ts` for the Loot Tables stepper tab (manual rolls).
+- Tests: `tests/engine/gem-generator.test.ts` (19 cases).
 
-**What exists now:** `src/data/gems.ts` has `CUSTOM_GEMS` — 8 tier-based tables (Gems-1 through Gems-8) with 19 gems. `rollGem()` in `roller.ts` picks a tier table, does a weighted pick within it, applies `baseValue * (score / 5)`.
+**Still pending (future work):**
+- Consolidation of 15+ gems into a "pouch of assorted semi-precious stones" line
+- Per-tier detail thresholds for consolidation (50 gp at CR 11-16, 500 gp at CR 17+)
 
-**What needs to happen:** Replace the entire gem generation pipeline. Read `specs/GEM-SYSTEM-SPEC.md` §1-§4, `specs/GEM-BUDGET-ALGORITHM.md` §2-§3, and `specs/GEM-DESCRIPTORS.md` §1-§4 BEFORE starting.
+### ~~Art Object System Implementation — Category-Based Rewrite~~ ✅
+Done. Same continuous-value pattern as gems, organized by craft category.
 
-**Step-by-step:**
-
-1. **New data file: `src/data/gem-definitions.ts`**
-   - Export `GEM_DEFINITIONS`: array of 33 gems, each with `{ name, min, max, weight, organic, improvable }`
-   - Values are in `specs/GEM-SYSTEM-SPEC.md` §1 table (Agate 1–1500, Diamond 10–100000, etc.)
-   - Export `GEM_CUTS`: per-gem-type cut/shape tables from `specs/GEM-DESCRIPTORS.md` §3
-   - Export `GEM_COLORS`: per-gem-type color variants from `specs/GEM-DESCRIPTORS.md` §4
-
-2. **New function: `rollGemValue(min, max)` in `roller.ts`**
-   - Log-scale: `10 ^ (uniform random between log10(min) and log10(max))`
-   - Apply binning: <10→round to 1, 10-99→round to 5, 100-999→round to 10, etc.
-   - See `specs/GEM-BUDGET-ALGORITHM.md` §3
-
-3. **New function: `generateGemBudget(budget)` in `roller.ts` or new file**
-   - Loop: pick gem (weighted, eligible if min ≤ remaining), roll value (log-scale, capped at remaining), roll 2d4 for VS, subtract, repeat until budget < 1
-   - Returns array of `RolledGem` objects
-   - See `specs/GEM-BUDGET-ALGORITHM.md` §3 for exact algorithm
-
-4. **New function: `generateGemDescriptor(gem, value, vs)` in `roller.ts` or new file**
-   - Size from `value / vs` mapped to percentile in gem's range → Tiny/Small/Modest/Sizable/Large/Impressive/Massive
-   - Quality from VS → Cloudy/Rough/Flawed/Standard/Fine/Brilliant/Flawless
-   - Cut quality from VS → "poorly cut"/"asymmetric"/standard/"well-proportioned"/"expertly cut"/"exquisite"
-   - Cut shape: random from gem's cut table
-   - Color: random from gem's color table
-   - Organic gems: natural quality terms instead of cut quality
-   - See `specs/GEM-DESCRIPTORS.md` §1-§2
-
-5. **Update `loot-generator.ts`**
-   - Per-creature gems: compute `perCreatureShare = totalGemValue * (creatureXP / tierXP)`, then `probability = share / meaningfulMinimum`, roll chance, if hit call `generateGemBudget(meaningfulMinimum or share)`
-   - Meaningful minimums: Tier 1=100, Tier 2=250, Tier 3=1500, Tier 4=4000
-   - See `specs/GEM-BUDGET-ALGORITHM.md` §7
-
-6. **Update `TreasureItem` type** in `types.ts`
-   - Add: `size?: string`, `cut?: string`, `cutQuality?: string`, `color?: string`, `legendary?: string`
-
-7. **Update UI** to display new gem descriptors in encounter results
-
-8. **Keep old `CUSTOM_GEMS` temporarily** for the Loot Tables tab stepper (which still uses tier tables for manual rolling). The encounter builder uses the new budget system.
-
-### Art Object System Implementation — Category-Based Rewrite
-
-**Status:** Value scoring and jitter are done on existing DMG art tables. The category-based descriptor system is NOT done.
-
-**Read `specs/ART-SYSTEM-SPEC.md` entirely BEFORE starting.**
-
-**Step-by-step:**
-
-1. **New data file: `src/data/art-definitions.ts`**
-   - Export `ART_CATEGORIES`: 10 categories with `{ name, artisanTool, min, max, weight }`
-   - Export `ART_MATERIALS`, `ART_FORMS`, `ART_DETAILS`: per-category descriptor pools (from `specs/ART-SYSTEM-SPEC.md` §3)
-   - Export `ART_SCENES`: shared scene pool for paintings/tapestries
-   - Export `ART_MOTIFS`: animal/heraldic/nature/mystical motif pools
-   - Export `DMG_NAMED_ART`: the 48 DMG items categorized with value ranges
-
-2. **New function: `generateArtBudget(budget)` — same algorithm as gems**
-   - Pick category (weighted), roll value (log-scale), generate descriptors, subtract, repeat
-
-3. **New function: `generateArtDescriptor(category, value)`**
-   - Material: pick from category's material pool, scaled by value
-   - Form: random from category's form pool
-   - Detail: pick from category's detail pool, scaled by value
-   - Scene/motif: for paintings/tapestries/sculpture, add a subject
-   - DMG named item: ~10% chance of producing verbatim DMG item when value matches
-   - Assemble: "[material] [form] [detail]" → evocative sentence
-
-4. **Update `loot-generator.ts`** — same per-creature probability pattern as gems
-   - Art meaningful minimums: Tier 1=50, Tier 2=200, Tier 3=1000, Tier 4=3000
-   - Art budgets: 40/560/2500/3712 gp by tier
+**What shipped:**
+- `src/data/art-definitions.ts` — 10 art categories (Jewelry, Metalwork, Sculpture, Textile, Painting, Pottery, Glasswork, Woodwork, Leatherwork, Calligraphy) with scaled material/detail pools and form lists (per `specs/ART-SYSTEM-SPEC.md` §2-§3). Plus `DMG_NAMED_ART` with 40+ verbatim DMG items.
+- `src/engine/art-generator.ts`:
+  - `generateArtDescriptor(category, value)` — material/form/detail assembly with ~10% chance of a verbatim DMG named item when the value matches
+  - `generateArtBudget(budget)` — shared log-scale budget loop (reuses `rollGemValue`/`applyBinning`)
+- `src/engine/constants.ts` — `ART_MEANINGFUL_MIN` (Tier 1=50, 2=200, 3=1000, 4=3000).
+- `src/engine/loot-generator.ts` — `artFromShare()` helper mirrors `gemsFromShare()`, wired into all three generator entry points.
+- Tests: `tests/engine/art-generator.test.ts` (10 cases).
 
 ### ~~Hoard Spell Component Steals~~ ✅
 Implemented per `specs/GEM-SYSTEM-SPEC.md` §6 — applied to vault hoards only via `rollHoardSteal()` in `loot-generator.ts`:
