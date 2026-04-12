@@ -29,6 +29,7 @@ export type {
   SourcePriority,
   SourceSettings,
   ThemePref,
+  Palette,
   Tier,
   TreasureItem,
   VaultLootInput,

@@ -3,6 +3,7 @@ import type {
   CampaignSettings,
   CreatureRole,
   Edition,
+  Palette,
   SourcePriority,
   SourceSettings,
   ThemePref,
@@ -49,6 +50,28 @@ const THEME_OPTIONS: { value: ThemePref; label: string }[] = [
   { value: 'auto', label: 'Auto' },
   { value: 'light', label: 'Light' },
   { value: 'dark', label: 'Dark' },
+];
+
+const PALETTE_OPTIONS: { value: Palette; label: string; swatch: string }[] = [
+  { value: 'treasure', label: 'Treasure', swatch: '#c9943a' },
+  { value: 'stone',    label: 'Stone',    swatch: '#607080' },
+  { value: 'verdant',  label: 'Verdant',  swatch: '#4a7a3a' },
+  { value: 'arcane',   label: 'Arcane',   swatch: '#6a3a9a' },
+];
+
+const DICE_COLORS: { label: string; color: string; pip?: string }[] = [
+  { label: 'Ivory',       color: '#f5ede0', pip: '#2a1f14' },
+  { label: 'Obsidian',    color: '#1a1a22', pip: '#e0e0e8' },
+  { label: 'Ruby',        color: '#a82020', pip: '#f8d8d0' },
+  { label: 'Sapphire',    color: '#2040a0', pip: '#d0d8f8' },
+  { label: 'Emerald',     color: '#1a6a30', pip: '#d0f0d8' },
+  { label: 'Amethyst',    color: '#6a30a0', pip: '#e8d0f8' },
+  { label: 'Gold',        color: '#c9943a', pip: '#1a1208' },
+  { label: 'Silver',      color: '#a8b0b8', pip: '#1a1a22' },
+  { label: 'Copper',      color: '#b06830', pip: '#f8e8d0' },
+  { label: 'Frost',       color: '#d0e8f8', pip: '#1a3050' },
+  { label: 'Crimson & Gold', color: '#8a1818', pip: '#f0c848' },
+  { label: 'Midnight',    color: '#101840', pip: '#90a8e0' },
 ];
 
 interface Props {
@@ -259,6 +282,54 @@ const CampaignSettingsPanel: React.FC<Props> = ({ settings, onChange, adminMode,
                 >
                   {opt.label}
                 </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="field-row">
+            <label className="field-label">
+              Palette:{' '}
+              <span className="mono">
+                {PALETTE_OPTIONS.find((p) => p.value === (settings.palette ?? 'treasure'))?.label}
+              </span>
+            </label>
+            <div className="palette-swatches">
+              {PALETTE_OPTIONS.map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  className={`palette-swatch ${
+                    (settings.palette ?? 'treasure') === opt.value ? 'active' : ''
+                  }`}
+                  style={{ backgroundColor: opt.swatch }}
+                  onClick={() => update({ palette: opt.value })}
+                  title={opt.label}
+                  aria-label={`${opt.label} palette`}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="field-row">
+            <label className="field-label">
+              Dice:{' '}
+              <span className="mono">
+                {DICE_COLORS.find((d) => d.color === (settings.diceColor ?? '#f5ede0'))?.label ?? 'Ivory'}
+              </span>
+            </label>
+            <div className="dice-color-swatches">
+              {DICE_COLORS.map((dc) => (
+                <button
+                  key={dc.color}
+                  type="button"
+                  className={`dice-swatch ${
+                    (settings.diceColor ?? '#f5ede0') === dc.color ? 'active' : ''
+                  }`}
+                  style={{ backgroundColor: dc.color, borderColor: dc.pip }}
+                  onClick={() => update({ diceColor: dc.color })}
+                  title={dc.label}
+                  aria-label={`${dc.label} dice`}
+                />
               ))}
             </div>
           </div>

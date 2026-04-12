@@ -338,6 +338,8 @@ export const DEFAULT_CAMPAIGN_SETTINGS: CampaignSettings = {
   showMundane: true,
   sourceSettings: {},
   theme: 'auto',
+  palette: 'treasure',
+  diceColor: '#f5ede0',
   partyLevel: 5,
   autoTier: true,
   tierProgression: true,

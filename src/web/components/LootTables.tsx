@@ -944,6 +944,7 @@ const LootTables: React.FC<LootTablesProps> = ({
           scale: 16,
           gravity: 3,
           theme: 'default',
+          themeColor: settings.diceColor ?? '#f5ede0',
           offscreen: true,
         });
         await box.init();
@@ -958,6 +959,17 @@ const LootTables: React.FC<LootTablesProps> = ({
 
     return () => { cancelled = true; };
   }, [settings.dice3d]);
+
+  // Update dice color when setting changes
+  useEffect(() => {
+    if (diceBoxRef.current && settings.diceColor) {
+      try {
+        diceBoxRef.current.updateConfig({ themeColor: settings.diceColor });
+      } catch {
+        // dice-box may not support updateConfig in all versions
+      }
+    }
+  }, [settings.diceColor]);
 
   const edition = settings.edition ?? '2014';
   const currentItemStats = edition === '2024' ? itemStats2024Map : itemStats2014;

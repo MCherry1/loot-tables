@@ -19,6 +19,7 @@ export type SourceSettings = Record<string, SourcePriority>;
 
 /** User-chosen color theme preference. */
 export type ThemePref = 'auto' | 'light' | 'dark';
+export type Palette = 'treasure' | 'stone' | 'verdant' | 'arcane';
 
 /** D&D edition for item data and table assignments. */
 export type Edition = '2014' | '2024';
@@ -39,6 +40,10 @@ export interface CampaignSettings {
   sourceSettings: SourceSettings;
   /** Color theme preference. */
   theme: ThemePref;
+  /** Color palette. */
+  palette: Palette;
+  /** Dice color (hex). */
+  diceColor: string;
   /**
    * Party level (1-20, default 5).
    * Used to auto-determine tier and compute progression multiplier.

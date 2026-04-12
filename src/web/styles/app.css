@@ -65,6 +65,174 @@
 }
 
 /* --- Reset & Base --- */
+
+/* --- Palette: Stone (high contrast, dungeon stone) --- */
+[data-palette='stone'] {
+  --bg-start: #f0f0f2;
+  --bg-end: #e4e4e8;
+  --bg-card: #f6f6f8;
+  --bg-card-soft: #fafafe;
+  --bg-raised: #e0e0e6;
+  --ink: #1a1a22;
+  --ink-strong: #0a0a10;
+  --ink-muted: #5a5a68;
+  --ink-faint: #8888a0;
+  --ink-fainter: #a0a0b0;
+  --ink-inverse: #f0f0f2;
+  --border: #c8c8d4;
+  --border-soft: #e0e0e8;
+  --border-muted: #b0b0c0;
+  --accent: #546878;
+  --accent-dark: #3a4a5a;
+  --accent-darker: #2a3a4a;
+  --accent-gold: #8890a0;
+  --accent-gold-dark: #6a7080;
+  --accent-gold-darker: #505868;
+  --header-start: #2a2a38;
+  --header-end: #1a1a22;
+  --danger: #c05050;
+  --shadow: rgba(20, 20, 30, 0.08);
+  --shadow-strong: rgba(20, 20, 30, 0.2);
+}
+[data-palette='stone'][data-theme='dark'] {
+  --bg-start: #1a1a1e;
+  --bg-end: #121216;
+  --bg-card: #22222a;
+  --bg-card-soft: #2a2a34;
+  --bg-raised: #2a2a34;
+  --ink: #e0e0e8;
+  --ink-strong: #f0f0f6;
+  --ink-muted: #a0a0b0;
+  --ink-faint: #7878a0;
+  --ink-fainter: #606088;
+  --ink-inverse: #1a1a1e;
+  --border: #3a3a48;
+  --border-soft: #2a2a34;
+  --border-muted: #4a4a5a;
+  --accent: #7888a0;
+  --accent-dark: #546878;
+  --accent-darker: #3a4a5a;
+  --accent-gold: #9098a8;
+  --accent-gold-dark: #7078a0;
+  --accent-gold-darker: #505868;
+  --header-start: #22222a;
+  --header-end: #18181e;
+  --danger: #d06060;
+  --shadow: rgba(0, 0, 0, 0.4);
+  --shadow-strong: rgba(0, 0, 0, 0.6);
+}
+
+/* --- Palette: Verdant (elven, forest, green & gold) --- */
+[data-palette='verdant'] {
+  --bg-start: #eef3e8;
+  --bg-end: #e0ebd6;
+  --bg-card: #f4f8ef;
+  --bg-card-soft: #f8fbf4;
+  --bg-raised: #dce8d0;
+  --ink: #1a2a18;
+  --ink-strong: #0e1a0c;
+  --ink-muted: #567050;
+  --ink-faint: #7a9a70;
+  --ink-fainter: #98b090;
+  --ink-inverse: #eef3e8;
+  --border: #c0d4b0;
+  --border-soft: #d8e8cc;
+  --border-muted: #aac498;
+  --accent: #4a7a3a;
+  --accent-dark: #356828;
+  --accent-darker: #2a5020;
+  --accent-gold: #b09830;
+  --accent-gold-dark: #8a7a20;
+  --accent-gold-darker: #706418;
+  --header-start: #2a4020;
+  --header-end: #1a2a14;
+  --danger: #b85040;
+  --shadow: rgba(26, 42, 24, 0.08);
+  --shadow-strong: rgba(26, 42, 24, 0.2);
+}
+[data-palette='verdant'][data-theme='dark'] {
+  --bg-start: #0e1a0e;
+  --bg-end: #0a140a;
+  --bg-card: #162016;
+  --bg-card-soft: #1e2a1e;
+  --bg-raised: #1e2a1e;
+  --ink: #c8e0c0;
+  --ink-strong: #e0f0d8;
+  --ink-muted: #90b088;
+  --ink-faint: #6a8a60;
+  --ink-fainter: #507848;
+  --ink-inverse: #0e1a0e;
+  --border: #2a4028;
+  --border-soft: #1e2a1e;
+  --border-muted: #3a5034;
+  --accent: #60a848;
+  --accent-dark: #4a8a38;
+  --accent-darker: #3a7028;
+  --accent-gold: #c8a840;
+  --accent-gold-dark: #a08830;
+  --accent-gold-darker: #807020;
+  --header-start: #1a2a18;
+  --header-end: #0e1a0c;
+  --danger: #d06050;
+  --shadow: rgba(0, 0, 0, 0.4);
+  --shadow-strong: rgba(0, 0, 0, 0.6);
+}
+
+/* --- Palette: Arcane (magic, purple & blue) --- */
+[data-palette='arcane'] {
+  --bg-start: #f0eaf8;
+  --bg-end: #e6daf2;
+  --bg-card: #f6f0fc;
+  --bg-card-soft: #faf6fe;
+  --bg-raised: #e0d4ee;
+  --ink: #1e1430;
+  --ink-strong: #0e0820;
+  --ink-muted: #6a5a80;
+  --ink-faint: #9088a8;
+  --ink-fainter: #a8a0b8;
+  --ink-inverse: #f0eaf8;
+  --border: #d0c0e0;
+  --border-soft: #e4d8f0;
+  --border-muted: #b8a8d0;
+  --accent: #6a3a9a;
+  --accent-dark: #4a2878;
+  --accent-darker: #381e5a;
+  --accent-gold: #8878c0;
+  --accent-gold-dark: #6860a0;
+  --accent-gold-darker: #504888;
+  --header-start: #2a1840;
+  --header-end: #1e1030;
+  --danger: #c04878;
+  --shadow: rgba(30, 20, 48, 0.08);
+  --shadow-strong: rgba(30, 20, 48, 0.2);
+}
+[data-palette='arcane'][data-theme='dark'] {
+  --bg-start: #14101e;
+  --bg-end: #0e0a18;
+  --bg-card: #1c1628;
+  --bg-card-soft: #241c34;
+  --bg-raised: #241c34;
+  --ink: #d0c0e8;
+  --ink-strong: #e8d8f8;
+  --ink-muted: #a090c0;
+  --ink-faint: #7868a8;
+  --ink-fainter: #605090;
+  --ink-inverse: #14101e;
+  --border: #302448;
+  --border-soft: #241c34;
+  --border-muted: #403060;
+  --accent: #8868c8;
+  --accent-dark: #6a4aa8;
+  --accent-darker: #503888;
+  --accent-gold: #7080e0;
+  --accent-gold-dark: #5868c0;
+  --accent-gold-darker: #4050a0;
+  --header-start: #1e1430;
+  --header-end: #140e22;
+  --danger: #d05888;
+  --shadow: rgba(0, 0, 0, 0.4);
+  --shadow-strong: rgba(0, 0, 0, 0.6);
+}
 *,
 *::before,
 *::after {
@@ -1621,6 +1789,54 @@ button {
 .segmented-btn.active {
   background: var(--accent);
   color: var(--ink-inverse);
+}
+
+/* --- Palette swatches --- */
+.palette-swatches,
+.dice-color-swatches {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.palette-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  padding: 0;
+}
+
+.palette-swatch:hover {
+  transform: scale(1.15);
+}
+
+.palette-swatch.active {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 2px var(--ink), 0 0 8px var(--shadow-strong);
+  transform: scale(1.1);
+}
+
+.dice-swatch {
+  width: 26px;
+  height: 26px;
+  border-radius: 4px;
+  border: 2px solid var(--border);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  padding: 0;
+}
+
+.dice-swatch:hover {
+  transform: scale(1.15);
+}
+
+.dice-swatch.active {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 2px var(--ink), 0 0 6px var(--shadow-strong);
+  transform: scale(1.1);
 }
 
 /* --- Sources section --- */

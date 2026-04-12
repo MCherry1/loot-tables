@@ -89,6 +89,7 @@ const App: React.FC = () => {
     if (typeof document === 'undefined') return;
     const apply = () => {
       document.documentElement.dataset.theme = resolveTheme(settings.theme);
+      document.documentElement.dataset.palette = settings.palette ?? 'treasure';
     };
     apply();
     if (settings.theme !== 'auto') return;
@@ -96,7 +97,7 @@ const App: React.FC = () => {
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
     mq.addEventListener('change', apply);
     return () => mq.removeEventListener('change', apply);
-  }, [settings.theme]);
+  }, [settings.theme, settings.palette]);
 
   // When pendingResolve is set (because user clicked an unresolved item in
   // the encounter), force-switch to the Loot Tables tab.
