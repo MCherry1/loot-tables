@@ -424,3 +424,62 @@ Implement the draft + publish workflow for the admin/review UI:
 - Rebalancing proposals (highlighted diffs showing weight changes when new items added)
 - Weight-in-context panel showing sub-table siblings and die size
 - Source-batched review mode (review all items from one book at once)
+
+---
+
+## Bug Fixes
+
+### CR-to-Tier Boundary Mismatch (constants.ts)
+
+**File:** `src/engine/constants.ts` — `crToDefaultTier()` and `TIER_RANGES`
+
+**Problem:** The `crToDefaultTier()` function puts CR 5 in Tier 1 and CR 16 in Tier 4. The DMG hoard boundaries (and `TIER_RANGES` for player levels) put CR 5 in Tier 2 and CR 16 in Tier 3. This means auto-tier selection gives the wrong hoard tier for CR 5 creatures and CR 16 creatures.
+
+**Current (wrong):**
+```typescript
+export function crToDefaultTier(cr: number): Tier {
+  if (cr <= 5) return 1;   // CR 5 → Tier 1 (should be Tier 2)
+  if (cr <= 10) return 2;
+  if (cr <= 15) return 3;  // CR 16 → Tier 4 (should be Tier 3)
+  return 4;
+}
+```
+
+**Correct:**
+```typescript
+export function crToDefaultTier(cr: number): Tier {
+  if (cr <= 4) return 1;   // CR 0-4 → Tier 1
+  if (cr <= 10) return 2;  // CR 5-10 → Tier 2
+  if (cr <= 16) return 3;  // CR 11-16 → Tier 3
+  return 4;                // CR 17+ → Tier 4
+}
+```
+
+This aligns with `TIER_RANGES` (levels 1–4, 5–10, 11–16, 17–20) and the DMG hoard tiers (CR 0–4, 5–10, 11–16, 17+).
+
+---
+
+## Gem & Art Object System
+
+See `GEM-SYSTEM-SPEC.md` for the full design specification. Summary of implementation tasks:
+
+### Gem System Implementation
+1. Update `src/data/gems.ts` — replace old 8-tier system (non-DMG-aligned base values) with DMG-aligned 8-tier ×5/×2 progression (face values: 10, 50, 100, 500, 1000, 5000, 10000, 50000 gp)
+2. Expand gem roster from 19 to ~33 gems with per-tier weight matrix
+3. Fix value scoring in `src/engine/roller.ts` — change from `baseValue * (score / 5)` to `(faceValue / 5) * score` where score = 2d4
+4. Add quality labels (Cloudy/Flawed/Standard/Fine/Flawless) derived from 2d4 score
+5. Add jitter function for values ≥ 100 gp
+6. Flag organic gems (Pearl, Black Pearl, Jet, Amber, Coral) as not improvable
+
+### Art Object Value Scoring
+1. Apply value scoring to DMG art tables: `base = faceValue / 5`, `value = base × 2d4`
+2. Add jitter for values ≥ 100 gp
+3. Display as description + final value only (no tier label, no quality label)
+
+### Hoard Spell Component Steals
+1. Add steal entries to each hoard tier — exact value, specific gem, no variance
+2. Hoard 1 (CR 0–4): 100 gp Pearl (Identify), ~15–20% chance
+3. Hoard 2 (CR 5–10): 300 gp Diamond (Revivify) ~15%, 500 gp Diamond (Raise Dead) ~8%
+4. Hoard 3 (CR 11–16): 5,000 gp mixed gem dust (Sequester), ~10%
+5. Hoard 4 (CR 17+): 25,000 gp Diamond (True Resurrection), ~5%
+6. Reduce coin dice proportionally to offset expected steal value
