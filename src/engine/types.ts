@@ -109,16 +109,32 @@ export interface EncounterInput {
   settings: CampaignSettings;
 }
 
+/** Gem quality label derived from the 2d4 value score (GEM-SYSTEM-SPEC.md §3). */
+export type GemQuality =
+  | 'Cloudy'
+  | 'Rough'
+  | 'Flawed'
+  | 'Standard'
+  | 'Fine'
+  | 'Brilliant'
+  | 'Flawless';
+
 /** A single gem or art object result. */
 export interface TreasureItem {
   /** Display name (e.g. "Star rose quartz"). */
   name: string;
   /** The tier's base gp value for this category. */
   baseValue: number;
-  /** Actual value after quality scoring (2d4/5 × baseValue). */
+  /** Actual value after quality scoring (2d4/5 × baseValue, jittered ≥100 gp). */
   value: number;
   /** Reference table name (e.g. "Gems-3-125-gp"). */
   tableName: string;
+  /** 2d4 roll (2–8). Present for gems and art; absent for fixed-value hoard steals. */
+  valueScore?: number;
+  /** Quality label derived from valueScore. Gems only. */
+  quality?: GemQuality;
+  /** False for organic gems (Pearl, Black Pearl, Jet, Amber, Coral). Gems only. */
+  improvable?: boolean;
 }
 
 /** A single magic item result. */

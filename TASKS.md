@@ -19,8 +19,11 @@ Tracked design changes and implementation requests for the loot generator.
 
 ## Data / Content
 
-### 2024 Edition Pipeline — IMPLEMENT NOW
-The 2024 toggle is wired but the data behind it is just the 2014 data repackaged. This needs to be real.
+### ~~2024 Edition Pipeline~~ ✅
+Done — `data/item-stats-2024.json` (1,810 items) and `data/curation-2024.json` contain real 2024 5etools data. Toggle wired in `roller.ts:78-82` and `LootTables.tsx:909-910`. Sync pipeline in `scripts/sync.ts` + `npm run sync:2024`.
+
+<details>
+<summary>Original implementation notes (kept for reference)</summary>
 
 **Step 1: Get the 2024 5etools data**
 Clone the 2024 5etools mirror into the repo (gitignored):
@@ -73,6 +76,8 @@ After seeding, sub-table totals won't match standard dice. Write a one-time bala
 ```bash
 npm run sync:2024
 ```
+
+</details>
 
 ### ~~About Section from Editable Markdown~~ ✅
 ~~The About tab should render content from a markdown file in the repository.~~ Done — About.tsx renders from ABOUT.md. Edit ABOUT.md and rebuild.
@@ -191,7 +196,12 @@ Done — `roller.ts` canonicalizes legacy abbreviations at startup. "Other" sour
 
 ### ~~3D Dice Roller~~ ✅ (basic integration done, tuning needed below)
 
-### 3D Dice Tuning — IMPLEMENT NOW
+### ~~3D Dice Tuning~~ ✅
+Done — `gravity: 3`, `scale: 4`, 400ms post-roll timeout, `max-height: 300px` on `.dice-overlay`, rolled number displayed in `rolled-badge`. See `LootTables.tsx:880-895,1069` and commit `bd2dfdf`.
+
+<details>
+<summary>Original implementation notes (kept for reference)</summary>
+
 The dice-box integration works but needs three fixes:
 
 **1. Speed up the roll:**
@@ -209,9 +219,17 @@ The dice-box integration works but needs three fixes:
 - After a roll completes and the entry is highlighted, show the rolled value somewhere visible — e.g., a small badge next to the dice range like "Rolled: 14" or inside the action bar.
 - The value is already available: `state.rolledNumber` in the `HIGHLIGHT` state. Just needs JSX.
 
+</details>
+
 ### ~~APL Hint Text~~ ✅ (superseded by Party Level redesign below)
 
-### Coin Denomination Breakdown — IMPLEMENT NOW
+### ~~Coin Denomination Breakdown~~ ✅
+Done — `COIN_MIX` in `constants.ts:401`, `CoinBreakdown`/`CoinDenom` in `types.ts:140-153`, per-denom formulas and `formatCoins()` in `EncounterResults.tsx:23-68`, `convertToGold` and `splitAmongParty` settings in place.
+
+<details>
+<summary>Original implementation notes (kept for reference)</summary>
+
+
 Currently all coins are converted to gold. A goblin dropping "3 gp" feels wrong — it should be "30 sp" or "2 sp, 14 cp" depending on the tier. The DMG hoard tables use specific denomination mixes per tier, and we should match them.
 
 **Denomination mix constants (from DMG hoard tables):**
@@ -264,7 +282,14 @@ When on, divides each denomination by party size:
 - `EncounterResults.tsx` display: show denomination breakdown instead of flat GP
 - Two new boolean settings: `convertToGold`, `splitAmongParty`
 
-### Party Level & Tier Progression UI — IMPLEMENT NOW
+</details>
+
+### ~~Party Level & Tier Progression UI~~ ✅
+Done — party level input (1-20), tier buttons with pop/fade, `autoTier` checkbox, "Natural Progression"/"Flat" toggle, APL_STOPS/LABELS removed. See `CampaignSettings.tsx:206-404` and `EncounterBuilder.tsx:108-301`.
+
+<details>
+<summary>Original implementation notes (kept for reference)</summary>
+
 Replace the 5-stop APL slider with a cleaner system. The engine changes are done (`types.ts`, `constants.ts`). This task is the UI wiring.
 
 **New settings (already in CampaignSettings type):**
@@ -313,6 +338,8 @@ Replace the 5-stop APL slider with a cleaner system. The engine changes are done
 - The old `aplAdjustment` field is kept for backward compatibility with stored localStorage settings — if `partyLevel` exists in stored settings, use the new system; if only `aplAdjustment` exists (old settings), use that as-is
 
 **Remove:** The old 5-stop APL slider and its labels (`×0.70 Fresh` through `×1.30 Veteran`). The APL_STOPS and APL_LABELS constants in EncounterBuilder.tsx and CampaignSettings.tsx can be deleted.
+
+</details>
 
 ---
 
@@ -429,60 +456,41 @@ Implement the draft + publish workflow for the admin/review UI:
 
 ## Bug Fixes
 
-### CR-to-Tier Boundary Mismatch (constants.ts)
-
-**File:** `src/engine/constants.ts` — `crToDefaultTier()` and `TIER_RANGES`
-
-**Problem:** The `crToDefaultTier()` function puts CR 5 in Tier 1 and CR 16 in Tier 4. The DMG hoard boundaries (and `TIER_RANGES` for player levels) put CR 5 in Tier 2 and CR 16 in Tier 3. This means auto-tier selection gives the wrong hoard tier for CR 5 creatures and CR 16 creatures.
-
-**Current (wrong):**
-```typescript
-export function crToDefaultTier(cr: number): Tier {
-  if (cr <= 5) return 1;   // CR 5 → Tier 1 (should be Tier 2)
-  if (cr <= 10) return 2;
-  if (cr <= 15) return 3;  // CR 16 → Tier 4 (should be Tier 3)
-  return 4;
-}
-```
-
-**Correct:**
-```typescript
-export function crToDefaultTier(cr: number): Tier {
-  if (cr <= 4) return 1;   // CR 0-4 → Tier 1
-  if (cr <= 10) return 2;  // CR 5-10 → Tier 2
-  if (cr <= 16) return 3;  // CR 11-16 → Tier 3
-  return 4;                // CR 17+ → Tier 4
-}
-```
-
-This aligns with `TIER_RANGES` (levels 1–4, 5–10, 11–16, 17–20) and the DMG hoard tiers (CR 0–4, 5–10, 11–16, 17+).
+### ~~CR-to-Tier Boundary Mismatch~~ ✅
+Done — `crToDefaultTier()` in `src/engine/constants.ts` now uses the DMG-aligned boundaries (CR 0–4 → Tier 1, 5–10 → Tier 2, 11–16 → Tier 3, 17+ → Tier 4). Covered by `tests/engine/constants.test.ts`.
 
 ---
 
 ## Gem & Art Object System
 
-See `GEM-SYSTEM-SPEC.md` for the full design specification. Summary of implementation tasks:
+See `GEM-SYSTEM-SPEC.md` for the full design specification. Status of implementation tasks:
 
 ### Gem System Implementation
-1. Update `src/data/gems.ts` — replace old 8-tier system (non-DMG-aligned base values) with DMG-aligned 8-tier ×5/×2 progression (face values: 10, 50, 100, 500, 1000, 5000, 10000, 50000 gp)
-2. Expand gem roster from 19 to ~33 gems with per-tier weight matrix
-3. Fix value scoring in `src/engine/roller.ts` — change from `baseValue * (score / 5)` to `(faceValue / 5) * score` where score = 2d4
-4. Add quality labels (Cloudy/Flawed/Standard/Fine/Flawless) derived from 2d4 score
-5. Add jitter function for values ≥ 100 gp
-6. Flag organic gems (Pearl, Black Pearl, Jet, Amber, Coral) as not improvable
+- [x] ~~Fix value scoring in `src/engine/roller.ts` — `baseValue * (score / 5)` where score = 2d4~~ ✅
+- [x] ~~Add quality labels (Cloudy/Rough/Flawed/Standard/Fine/Brilliant/Flawless) derived from 2d4 score~~ ✅ (`GEM_QUALITY_LABELS` in `roller.ts`)
+- [x] ~~Add jitter function for values ≥ 100 gp~~ ✅ (`applyJitter()` in `roller.ts`)
+- [x] ~~Flag organic gems (Pearl, Black Pearl, Jet, Amber, Coral) as not improvable~~ ✅ (`ORGANIC_GEMS` in `roller.ts`; `TreasureItem.improvable`)
+- [ ] Expand gem roster from 19 to ~33 gems with per-tier weight matrix (pending full log-scale rewrite — see `GEM-SYSTEM-SPEC.md` §1)
+- [ ] Replace tier-bucket `CUSTOM_GEMS` with continuous log-scale value generation (`GEM-SYSTEM-SPEC.md` §2). Requires regenerating `src/data/gems.ts` with `{min, max, weight, organic}` rows.
+- [ ] Descriptor generation (size / quality / cut / color / legendary names) per `GEM-DESCRIPTORS.md`
+- [ ] Consolidation: fold cheap gems into a single "pouch" line when hoards produce 15+
 
 ### Art Object Value Scoring
-1. Apply value scoring to DMG art tables: `base = faceValue / 5`, `value = base × 2d4`
-2. Add jitter for values ≥ 100 gp
-3. Display as description + final value only (no tier label, no quality label)
+- [x] ~~Apply value scoring to DMG art tables: `base = faceValue / 5`, `value = base × 2d4`~~ ✅
+- [x] ~~Add jitter for values ≥ 100 gp~~ ✅
+- [x] ~~Display as description + final value only (no tier/quality label)~~ ✅
 
-### Hoard Spell Component Steals
-1. Add steal entries to each hoard tier — exact value, specific gem, no variance
-2. Hoard 1 (CR 0–4): 100 gp Pearl (Identify), ~15–20% chance
-3. Hoard 2 (CR 5–10): 300 gp Diamond (Revivify) ~15%, 500 gp Diamond (Raise Dead) ~8%
-4. Hoard 3 (CR 11–16): 5,000 gp mixed gem dust (Sequester), ~10%
-5. Hoard 4 (CR 17+): 25,000 gp Diamond (True Resurrection), ~5%
-6. Reduce coin dice proportionally to offset expected steal value
+### ~~Hoard Spell Component Steals~~ ✅
+Implemented per `GEM-SYSTEM-SPEC.md` §6 (cleaner schedule than the earlier bullet list) — applied to vault hoards only via `rollHoardSteal()` in `loot-generator.ts`:
+
+| Tier | Gem | Value | Probability |
+|------|-----|-------|-------------|
+| 1 | Pearl   | 100 gp   | 1.00 (every vault) |
+| 2 | Diamond | 500 gp   | 2/7 ≈ 0.286 |
+| 3 | Diamond | 1,000 gp | 2/7 ≈ 0.286 |
+| 4 | Diamond | 5,000 gp | 1/7 ≈ 0.143 |
+
+Steal value is deducted from the vault's coin budget before coins are rolled (spec §6 rule 3). Exact value, no value score, no quality — a fixed-specimen drop. Covered by `tests/engine/loot-generator.test.ts`.
 
 ### Crafting System Integration (Future — Needs Discussion)
 Crafting tab design for the web app. Key topics to resolve:
