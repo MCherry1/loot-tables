@@ -96,7 +96,10 @@ try {
   process.exit(1);
 }
 
-const stats: Record<string, { type: string; rarity: string; attune: string; desc: string }> = {};
+const stats: Record<
+  string,
+  { type: string; rarity: string; attune: string; desc: string; srd: boolean }
+> = {};
 
 // 1. Regular items from items.json
 for (const item of rawData.item) {
@@ -117,7 +120,8 @@ for (const item of rawData.item) {
     desc = flattenEntries(item.entries);
   }
 
-  stats[key] = { type: String(item.type ?? ''), rarity, attune, desc };
+  const srd = !!(item.srd || item.srd52);
+  stats[key] = { type: String(item.type ?? ''), rarity, attune, desc, srd };
 }
 
 // 2. Magic variants from magicvariants.json (Flame Tongue, Frost Brand, etc.)
@@ -143,7 +147,13 @@ try {
     const rarity = String(inherits.rarity ?? v.rarity ?? '');
 
     if (desc) {
-      stats[key] = { type: String(inherits.type ?? ''), rarity, attune, desc };
+      const srd = !!(
+        (v as { srd?: unknown; srd52?: unknown }).srd ||
+        (v as { srd?: unknown; srd52?: unknown }).srd52 ||
+        (inherits as { srd?: unknown; srd52?: unknown }).srd ||
+        (inherits as { srd?: unknown; srd52?: unknown }).srd52
+      );
+      stats[key] = { type: String(inherits.type ?? ''), rarity, attune, desc, srd };
       variantCount++;
     }
   }
@@ -165,7 +175,11 @@ for (const g of rawData.itemGroup ?? []) {
 
   const desc = Array.isArray(g.entries) ? flattenEntries(g.entries) : '';
   if (desc) {
-    stats[key] = { type: String(g.type ?? ''), rarity, attune, desc };
+    const srd = !!(
+      (g as { srd?: unknown; srd52?: unknown }).srd ||
+      (g as { srd?: unknown; srd52?: unknown }).srd52
+    );
+    stats[key] = { type: String(g.type ?? ''), rarity, attune, desc, srd };
     groupCount++;
   }
 }

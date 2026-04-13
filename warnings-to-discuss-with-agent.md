@@ -210,3 +210,79 @@ In practice this works fine (scroll-to-link still lands in the right place), but
 The spec doesn't clearly pick one. I went with the visited-set approach because it's simpler and handles genuine cycles safely. Note this in case the reading experience suggests the other tradeoff is better.
 
 ---
+
+## 9. Priority 3 ships with a placeholder password in the encrypted blob
+
+**Surfaced during:** Priority 3 — Auth & Encrypted Descriptions.
+
+**The situation:**
+The new `scripts/encrypt-descriptions.ts` reads `CHERRYKEEP_PASSWORD` from the environment and writes an AES-256-GCM ciphertext to `public/data/item-protected.enc`. I ran it in this session with `CHERRYKEEP_PASSWORD=changeme-dev-password` so the repo actually contains a working, decryptable blob the user can verify end-to-end after deploy. The committed files are safe (encrypted with a published password — anyone who reads the PR can unlock descriptions, so it's effectively public until rotated), but that's the **explicit point** at this stage: you can check it works, then rotate to your real password.
+
+**Rotation procedure, for the user:**
+
+1. Pick a real password. Don't commit it.
+2. Run `CHERRYKEEP_PASSWORD=<your-real-password> npm run encrypt`
+3. `git add public/data/ && git commit -m "Rotate CherryKeep auth password"`
+4. `git push`
+5. On the deployed site, click the lock icon and enter the new password.
+6. If you automated GitHub Pages builds, set `CHERRYKEEP_PASSWORD` as a repository secret and teach the Actions workflow to inject it — `"build": "npm run encrypt && …"` will pick it up from the env.
+
+**Why this is a discussion, not a quick fix:**
+
+1. **Where should the real password live?** Options: (a) GitHub Actions secret + automated re-encrypt on every deploy, (b) local-only, committed manually, (c) pre-commit hook. Each has UX/security tradeoffs.
+2. **Password rotation surface.** There's no "retire all existing sessions" mechanism yet. Once a password is baked into `public/data/item-protected.enc`, anyone who has the blob can keep using it even if you rotate. This is intentional given the static-site constraint, but worth understanding before the placeholder is retired.
+3. **Multi-user support.** One password, one group. If you want per-user accounts, that's a bigger lift (server-side or OAuth).
+
+Until rotation: **the password is `changeme-dev-password`.** Don't ship to real users with that string in place.
+
+---
+
+## 10. SRD three-tier split is dormant until `npm run sync` runs
+
+**Surfaced during:** Priority 3 — Auth & Encrypted Descriptions.
+
+**The situation:**
+The encrypt script is SRD-aware: if `data/item-stats.json` has an `srd: true` field on an item, that item's description is split into `public/data/item-srd-descriptions.json` (served unencrypted, CC BY 4.0). Otherwise it goes into `item-protected.enc` (encrypted).
+
+I modified `scripts/generate-item-stats.ts` to emit `srd: !!(item.srd || item.srd52)` when reading 5etools `items.json`, but I could not re-run it in this session because the `5etools-mirror-3/` clone required by the script is not present in this environment. As a result, the committed `item-stats.json` files still do NOT have the `srd` field on any entry, and my local run of the encrypt script produced:
+
+- `public/data/item-srd-descriptions.json` → `{}` (empty)
+- `public/data/item-protected.enc` → 1810 items (everything)
+
+In practice that means **zero items render with the green SRD badge or show their description without a login** — until the user runs `npm run sync` locally to pull the mirror, regenerate the item-stats files with `srd` flags, and re-run `npm run encrypt`.
+
+**What I'd want to understand before fixing:**
+
+1. **Is the mirror expected to be cloned on CI?** If yes, the GitHub Actions build should run `npm run sync --skip-pull` or similar before `npm run build`.
+2. **Should the sync pipeline run automatically on a schedule?** New books drop periodically; if so, the srd flag + protected blob would drift over time.
+3. **Is there value in a minimal SRD seed file?** We could hardcode the ~327 SRD item keys in a small JSON and merge that into the split at build time, so the SRD badge lights up today. Brittle, but works.
+
+Until one of these is done: the auth flow works, descriptions are gated correctly, but the SRD tier is effectively empty.
+
+---
+
+## 11. ReferenceView detail panel renders outside a grid, not inside a `grid-column: 1/-1` cell
+
+**Surfaced during:** Priority 3 — Auth & Encrypted Descriptions.
+
+**The situation:**
+Spec §5.2 describes the inline description panel as a row that spans "grid-column: 1 / -1" — i.e. a grid cell that occupies the full width of its parent row grid. My implementation renders it as a sibling element inside `.ref-rows` (which is `display: flex; flex-direction: column;`), not as a grid cell. Visually it's identical — the panel occupies the full width of the container — but semantically it's not the same as the spec's description.
+
+The practical consequence: if you ever change `.ref-rows` back to a grid layout, the panel won't naturally span. It would need `grid-column: 1 / -1` added.
+
+**What I'd want to understand before fixing:**
+
+This is a minor spec/implementation divergence that may never matter. Flagging it so the next person doesn't spend time hunting for a grid-span that isn't there.
+
+---
+
+## 12. `utf8()` helper in decrypt.ts uses `TextEncoder.encodeInto` for ArrayBuffer typing
+
+**Surfaced during:** Priority 3 — Auth & Encrypted Descriptions.
+
+**The situation:**
+TypeScript 5.7 tightened the generic on `Uint8Array` so the default type is `Uint8Array<ArrayBufferLike>`, but `crypto.subtle.importKey` / `deriveKey` / `decrypt` all want a `BufferSource` that's specifically `Uint8Array<ArrayBuffer>` (non-shared). `new TextEncoder().encode(str)` returns the unbounded generic and fails the overload check.
+
+My workaround in `src/web/lib/decrypt.ts` is a small `utf8(str)` helper that allocates a fresh `ArrayBuffer`, writes into it via `encodeInto`, and returns a subarray — which forces the right generic. It works cleanly but it's wordier than the single-line `TextEncoder.encode()` call. If TS gets a cleaner idiom for this (or Web Crypto types relax), the helper can go.
+
+---
