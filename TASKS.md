@@ -6,6 +6,95 @@ Specs live in `specs/`. Read the relevant spec BEFORE starting each task — the
 
 ---
 
+## 🔴 Priority 0: Data Cleanup (before visual redesign)
+
+These are quick data-level fixes that should land before the UI work begins, since the visual redesign and Reference view will display this data.
+
+### Subtable Rectification — Align Names with 5etools
+
+Our tables use custom item names (e.g., "Air Essence Shard") while 5etools uses the canonical names (e.g., "Elemental Essence Shard (Air)"). Since 5etools is our sync pipeline source, rename items to match 5etools naming and introduce subtables where the data naturally groups.
+
+**Changes to `src/data/magic-items.ts`:**
+
+1. **Elemental Essence Shards** — Currently 4 separate items in Sorcerer-G: "Air Essence Shard", "Earth Essence Shard", "Fire Essence Shard", "Water Essence Shard". Replace with a single parent entry `[Elemental-Essence-Shard]` and a new subtable:
+   ```
+   "Elemental-Essence-Shard": [
+     { "name": "Elemental Essence Shard (Air)", "source": "TCE", "weight": 1 },
+     { "name": "Elemental Essence Shard (Earth)", "source": "TCE", "weight": 1 },
+     { "name": "Elemental Essence Shard (Fire)", "source": "TCE", "weight": 1 },
+     { "name": "Elemental Essence Shard (Water)", "source": "TCE", "weight": 1 }
+   ]
+   ```
+   Die: d4. Equal weights. The parent entry in Sorcerer-G gets the combined weight of the 4 items it replaces (4, or whatever their current total is).
+
+2. **Outer Essence Shards** — Currently "Chaotic Essence Shard", "Evil Essence Shard", "Good Essence Shard", "Lawful Essence Shard" in Sorcerer-G. Replace with `[Outer-Essence-Shard]`:
+   ```
+   "Outer-Essence-Shard": [
+     { "name": "Outer Essence Shard (Chaotic)", "source": "TCE", "weight": 1 },
+     { "name": "Outer Essence Shard (Evil)", "source": "TCE", "weight": 1 },
+     { "name": "Outer Essence Shard (Good)", "source": "TCE", "weight": 1 },
+     { "name": "Outer Essence Shard (Lawful)", "source": "TCE", "weight": 1 }
+   ]
+   ```
+   Die: d4. Equal weights.
+
+3. **Astral Shard, Far Realm Shard, Shadowfell Shard** — These are NOT subtypes of the same item. They are three distinct items. Keep them as individual entries. But verify the names match 5etools exactly.
+
+4. **Carpet of Flying** — Currently one entry. Replace with `[Carpet-of-Flying]`:
+   ```
+   "Carpet-of-Flying": [
+     { "name": "Carpet of Flying, 3 ft. × 5 ft.", "source": "DMG", "weight": 4 },
+     { "name": "Carpet of Flying, 4 ft. × 6 ft.", "source": "DMG", "weight": 3 },
+     { "name": "Carpet of Flying, 5 ft. × 7 ft.", "source": "DMG", "weight": 2 },
+     { "name": "Carpet of Flying, 6 ft. × 9 ft.", "source": "DMG", "weight": 1 }
+   ]
+   ```
+   Die: d10. Smaller carpets are more common (lighter, cheaper in-world).
+
+5. **General name check** — Run a comparison of all item names in magic-items.ts against 5etools items.json. Any name that doesn't exactly match should be flagged for review. The `item-stats.json` lookup depends on exact name|source matching, so alignment here fixes description lookups too.
+
+**Also update `scripts/extract-data.ts`:**
+- Include weight-0 items in the output (currently filtered out).
+- These are cursed items that exist in the tables but are not rollable.
+
+### Weight-0 Cursed Item Display
+
+Weight-0 items (cursed items like Armor of Vulnerability, Cursed Luckstone) should appear in the tables with special treatment:
+
+**In the stepper (Magic Item Tables tab):**
+- Weight-0 items appear at the bottom of their subtable, below all weighted items.
+- The dice range column shows an en-dash `–` instead of a number range.
+- The item name is displayed normally (not grayed out — it's a deliberate choice, not disabled).
+- The item IS clickable. Clicking it selects it as if the DM chose it manually.
+- The ROLL button never lands on weight-0 items (they contribute 0 to the total, so they have no dice range).
+
+**In the Reference view:**
+- Same placement: bottom of subtable, en-dash for range.
+- Add a small tag after the item name: "Cursed" in `--ck-text-tertiary` with a subtle style.
+- Clicking the row opens the detail panel same as any other item.
+
+**In the roll result (if manually selected):**
+- Show normally, but add "Cursed Item" label in the result metadata.
+
+**CSS for weight-0 rows:**
+```css
+.entry-row.cursed .entry-dice-range,
+.ref-row.cursed .ref-range {
+  color: var(--ck-text-tertiary);
+  font-style: italic;
+}
+
+.cursed-tag {
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-xs);
+  color: var(--ck-text-tertiary);
+  font-style: italic;
+  margin-left: 6px;
+}
+```
+
+---
+
 ## 🔴 Priority 1: CherryKeep Visual Redesign
 
 **Spec:** `specs/CHERRYKEEP-DESIGN-SPEC.md`
