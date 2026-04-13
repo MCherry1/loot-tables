@@ -4,7 +4,11 @@ import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
-  base: '/loot-tables/',
+  // Served from cherrykeep.com (custom domain) at the root. The old
+  // '/loot-tables/' subpath was for GitHub Pages project-site hosting
+  // at github.io/loot-tables/; the CNAME file in public/ switches the
+  // deploy to the custom domain, and assets now need to resolve from /.
+  base: '/',
   root: 'src/web',
   publicDir: '../../public',
   resolve: {
