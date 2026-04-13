@@ -15,7 +15,7 @@ Complete visual overhaul from the "DM's Binder" parchment theme to the "Iron For
 **Implementation order (follow the spec's Section 10 step-by-step):**
 
 1. **Engine types** — Delete `Palette` type, remove `palette` from `CampaignSettings` (`src/engine/types.ts`, `src/engine/constants.ts`).
-2. **Font loading** — Replace Google Fonts `<link>` in `src/web/index.html` with Cinzel + Crimson Text + Source Sans 3. Update `<title>` to "CherryKeep — D&D 5e Loot Tools".
+2. **Self-host fonts** — Download WOFF2 files for Cinzel, Crimson Text, and Source Sans 3 into `public/fonts/`. Add `@font-face` declarations to `app.css` per spec Section 4.1. DELETE the Google Fonts `<link>` tags from `index.html`. Update `<title>` to "CherryKeep — D&D 5e Loot Tools".
 3. **CSS tokens** — In `src/web/styles/app.css`, delete ALL palette blocks (`:root` through all `[data-palette='...']` variants, ~235 lines). Replace with the new `:root` (dark default) and `[data-theme='light']` blocks from the spec.
 4. **CSS migration** — Find-and-replace every `var(--old-token)` → `var(--ck-*)` using the mapping table in spec Section 3. Replace every `font-family` using the mapping in spec Section 4.4. Update base styles (`html`, `body`, `button`) per spec Section 5. Add global `:focus-visible` rule.
 5. **Layout** — Replace `<h1 class="app-title">` + `.tab-bar` in `App.tsx` with the new `<nav class="ck-nav">` structure (spec Section 6). Add theme toggle (☀ ◐ ☾) to nav bar. Add footer.
@@ -117,10 +117,8 @@ DNS configured for cherrykeep.com → GitHub Pages. Remaining steps:
 - Check "Enforce HTTPS"
 - Update `vite.config.ts` base path from `/loot-tables/` to `/` once domain is active
 
-### License
-- CC BY 4.0 for table system, weights, economy math (original creative work)
-- MIT for code (TypeScript, React components)
-- Add `LICENSE` file to repo
+### ~~License~~ ✓
+Done — `LICENSE` file in repo root. MIT for code, CC BY 4.0 for table design, plus Fan Content Policy and SRD attribution.
 
 ### Dice Colors (12 options)
 Dice-box supports `themeColor`. Add a color picker to settings: 12 color swatches. Store preference in localStorage. Apply via `diceBoxRef.current.updateConfig()`.

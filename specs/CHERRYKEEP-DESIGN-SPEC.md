@@ -191,23 +191,141 @@ Replace the ENTIRE `:root` and `[data-theme='dark']` blocks with the following. 
 
 ## 4. Typography
 
-### 4.1. Font Loading
+### 4.1. Font Loading — Self-Hosted
 
-**Replace the Google Fonts `<link>` in `src/web/index.html`.** Remove the existing one and add:
+**Do NOT use Google Fonts CDN.** Self-host the font files from the repo. This eliminates an external network dependency, removes Google's tracking pixel, and gives faster first-paint since fonts load from the same origin.
 
+**Step 1: Download the font files.**
+
+Download WOFF2 files (the only format needed for modern browsers) for:
+- **Cinzel**: weights 400, 500, 600, 700
+- **Crimson Text**: weights 400, 600, plus 400 italic
+- **Source Sans 3**: weights 300, 400, 600, 700, plus 400 italic
+
+Source: https://fonts.google.com — download each family, extract the WOFF2 files.
+
+Place them in `public/fonts/`:
+```
+public/fonts/cinzel-400.woff2
+public/fonts/cinzel-500.woff2
+public/fonts/cinzel-600.woff2
+public/fonts/cinzel-700.woff2
+public/fonts/crimson-text-400.woff2
+public/fonts/crimson-text-400i.woff2
+public/fonts/crimson-text-600.woff2
+public/fonts/source-sans-3-300.woff2
+public/fonts/source-sans-3-400.woff2
+public/fonts/source-sans-3-400i.woff2
+public/fonts/source-sans-3-600.woff2
+public/fonts/source-sans-3-700.woff2
+```
+
+**Step 2: Add @font-face declarations to the top of `app.css`.**
+
+```css
+/* ═══════════════════════════════════════════
+   Self-Hosted Fonts
+   ═══════════════════════════════════════════ */
+@font-face {
+  font-family: 'Cinzel';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/cinzel-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Cinzel';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/cinzel-500.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Cinzel';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/cinzel-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Cinzel';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/cinzel-700.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Crimson Text';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/crimson-text-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Crimson Text';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/crimson-text-400i.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Crimson Text';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/crimson-text-600.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Source Sans 3';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('/fonts/source-sans-3-300.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Source Sans 3';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/source-sans-3-400.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Source Sans 3';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/source-sans-3-400i.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Source Sans 3';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/source-sans-3-600.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Source Sans 3';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/source-sans-3-700.woff2') format('woff2');
+}
+```
+
+**Step 3: Remove the Google Fonts `<link>` tags from `src/web/index.html`.**
+
+Delete these lines entirely:
 ```html
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link
-  href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap"
-  rel="stylesheet"
-/>
+<link href="https://fonts.googleapis.com/css2?family=..." rel="stylesheet" />
 ```
 
-This loads three font families:
-- **Cinzel** (400, 500, 600, 700) — display/headers
-- **Crimson Text** (400, 600, 400i) — item names, flavor text (already loaded, keeping it)
-- **Source Sans 3** (300, 400, 600, 700, 400i) — UI labels, controls, data
+No replacement `<link>` is needed — the `@font-face` declarations in CSS handle everything.
+
+**Note on the `src: url(...)` paths:** If the Vite `base` is `/loot-tables/`, the URL should be `/loot-tables/fonts/cinzel-400.woff2`. When the custom domain is active and `base` changes to `/`, the URLs become `/fonts/cinzel-400.woff2`. Vite handles this automatically if you use the `public/` directory — files in `public/` are served at the root of the base path.
 
 ### 4.2. Font Roles
 
@@ -1124,7 +1242,7 @@ This is an ordered list of every file change. Do them in this order.
 - Remove `palette: 'treasure',` from `DEFAULT_CAMPAIGN_SETTINGS`.
 
 ### Step 3: `src/web/index.html`
-- Replace the Google Fonts `<link>` tag as specified in Section 4.1.
+- DELETE the Google Fonts `<link>` tags entirely (all three: preconnect to googleapis, preconnect to gstatic, and the CSS link). Fonts are now self-hosted via `@font-face` in CSS.
 - Change `<title>` to "CherryKeep — D&D 5e Loot Tools".
 
 ### Step 4: `src/web/styles/app.css`
