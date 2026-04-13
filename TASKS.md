@@ -51,7 +51,29 @@ Our tables use custom item names (e.g., "Air Essence Shard") while 5etools uses 
    ```
    Die: d10. Smaller carpets are more common (lighter, cheaper in-world).
 
-5. **General name check** — Run a comparison of all item names in magic-items.ts against 5etools items.json. Any name that doesn't exactly match should be flagged for review. The `item-stats.json` lookup depends on exact name|source matching, so alignment here fixes description lookups too.
+5. **Systematic naming fixes** — Our items use different naming conventions than 5etools. These MUST be aligned for item-stats lookups (descriptions, SRD flags) to work. The fixes, ordered by impact:
+
+   **a) +N prefix vs suffix (~30 items, 10 base items × 3 tiers):**
+   Our format: `"All-Purpose Tool, +1"` → 5etools: `"+1 All-Purpose Tool"`
+   Affected: All-Purpose Tool, Amulet of the Devout, Arcane Grimoire, Bloodwell Vial, Dragonhide Belt, Fate Dealer's Deck, Moon Sickle, Rhythm-Maker's Drum, Rod of the Pact Keeper, Wand of the War Mage, Wraps of Unarmed Prowess. Each has +1/+2/+3 variants.
+   **Fix:** Rename all to `"+N ItemName"` format.
+
+   **b) Barrier Tattoo (3 items):**
+   Ours: `"Small Barrier Tattoo"` → 5etools: `"Barrier Tattoo (Small)"`
+   **Fix:** Rename to `"Barrier Tattoo (Small/Medium/Large)"`.
+
+   **c) Sage's Signet (6 items):**
+   Ours: `"Sage's Bear Signet"` → 5etools: `"Sage's Signet (Bear)"`
+   **Fix:** Rename to `"Sage's Signet (Bear/Hart/Lion/Serpent/Songbird/Wolf)"`.
+
+   **d) Specific one-off renames:**
+   - `"Boots of Springing and Striding"` → `"Boots of Striding and Springing"` (word order)
+   - `"Elven Chain Shirt, +1"` → `"Elven Chain"` (5etools name)
+   - `"Efreeti Chain Mail"` → `"Efreeti Chain"` (5etools name)
+   - `"Plate Armor of Invulnerability"` → `"Armor of Invulnerability"` (5etools name, verify)
+   - `"Glamoured Studded Leather, +1"` → check 5etools exact name
+
+   **e) Subtable shortnames (141 items) — DO NOT RENAME these.** Items like "Answerer, CG, Emerald" in the Answering-I subtable are intentionally short because the parent entry provides context. The item-stats lookup for these must use the composed name (parent + variant), not the shortname alone. The stepper already does this via `composedName`. Verify the Reference view does the same.
 
 **Also update `scripts/extract-data.ts`:**
 - Include weight-0 items in the output (currently filtered out).
