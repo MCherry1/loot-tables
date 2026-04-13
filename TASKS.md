@@ -73,6 +73,10 @@ Our tables use custom item names (e.g., "Air Essence Shard") while 5etools uses 
    - `"Plate Armor of Invulnerability"` → `"Armor of Invulnerability"` (5etools name, verify)
    - `"Glamoured Studded Leather, +1"` → check 5etools exact name
 
+   **Important context:** The existing stepper's `lookupItemStats` function (LootTables.tsx:50-145) already has six fallback strategies that handle most of these mismatches — including a `"Foo, +N" → "+N Foo"` conversion (step 6) and subtable-ref stripping (step 4). So **the current stepper will NOT break** if renames are deferred. Descriptions already work for most items despite the naming differences.
+
+   **Why rename anyway:** The Reference view displays items directly from the data (no stepper composition), and the SRD flag matching uses exact `name|source` keys. Without renaming, the Reference view would need its own parallel lookup logic, and SRD descriptions wouldn't serve publicly for misnamed items. Renaming is a one-time cleanup that simplifies everything downstream.
+
    **e) Subtable shortnames (141 items) — DO NOT RENAME these.** Items like "Answerer, CG, Emerald" in the Answering-I subtable are intentionally short because the parent entry provides context. The item-stats lookup for these must use the composed name (parent + variant), not the shortname alone. The stepper already does this via `composedName`. Verify the Reference view does the same.
 
 **Also update `scripts/extract-data.ts`:**
