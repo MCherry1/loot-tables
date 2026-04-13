@@ -129,3 +129,84 @@ Pragmatically the aliases work — the site renders with the CherryKeep palette 
 - Are there rules elsewhere that need the `--bg-card-soft` nuance (subtle lighter variant) that we should preserve as a new token?
 
 ---
+
+## 5. Reference view admin mode only writes to the 2014 curation file
+
+**Surfaced during:** Priority 2 — Reference Tables Tab.
+
+**The situation:**
+`ReferenceView.tsx`'s admin Publish button always commits to `data/curation.json` (the 2014 edition file). There is no edition picker in the Reference tab header, and the component doesn't read `settings.edition` for the publish target. If a DM is playing the 2024 edition and adjusts weights, pressing Publish will silently write them into the 2014 curation file — wrong destination, wrong effect, and confusing once they re-open the tab.
+
+The same ambiguity applies to the data being shown in the table cards: `ReferenceView` reads from `MAGIC_ITEMS` (via `getStepperTable`) which today only surfaces the 2014 data path. The stepper (`LootTables.tsx`) already supports 2024 edition via `getTablesForEdition`, so the Reference view is inconsistent with the rest of the app.
+
+**Why this is a discussion, not a quick fix:**
+
+1. **Do we need two sets of rendered tables?** If the user toggles edition in Settings, should the Reference tab re-render the 2024 tree and pill set, or is the 2014 data the "canonical" reference regardless of the campaign edition?
+2. **Per-edition localStorage keys.** The current key is `loot-tables:ref-weight-edits`. If edition matters, we probably want `loot-tables:ref-weight-edits:2014` and `...:2024` so edits don't bleed across editions.
+3. **Publish target mapping.** `publishJsonFile()` already accepts either `data/curation.json` or `data/curation-2024.json`; wiring the right one in from `settings.edition` is a 2-line fix. The UX decision is whether the Publish button should also refuse to fire when edition toggles mid-session (to prevent accidental cross-edition writes).
+4. **Curation entry shape.** 2024 curation may have slightly different fields. I haven't cross-checked both files for schema parity.
+
+**What I'd want to understand before fixing:**
+- Should the Reference tab be 2014-only by convention (simplest, least surprise), or should it mirror whatever `settings.edition` says?
+- If mirrored, should there be a visible indicator ("Reference · 2014 edition") so DMs know what they're editing?
+
+Until this is resolved: the Publish button works for 2014 and is a silent footgun for 2024. The admin flow is usable for someone who knows the limitation; I'll add a `TODO` comment inside `ReferenceView.tsx` pointing here.
+
+---
+
+## 6. Admin mode in Reference view shares state with localStorage, not the reducer
+
+**Surfaced during:** Priority 2 — Reference Tables Tab.
+
+**The situation:**
+`ReviewUI.tsx` has its own draft state persisted to `loot-tables:review-draft`, and `ReferenceView.tsx` now has its own draft state persisted to `loot-tables:ref-weight-edits`. They don't talk to each other. A DM who makes weight changes in the Reference tab and then switches to the Review tab will see the original weights in Review, not the pending edits from Reference.
+
+When they Publish from either tab, the other tab's edits survive (since they're in a different localStorage key) and would silently take effect on the next publish from *either* surface. Depending on ordering, edits from one can clobber edits from the other.
+
+**Why this is a discussion, not a quick fix:**
+
+1. **Unify the draft state?** Both UIs really want the same thing: "what are my pending changes to `curation.json`?" Merging them into a single localStorage key (e.g. `loot-tables:curation-draft`) with a shared shape would make the two surfaces consistent.
+2. **Which is the canonical authoring surface?** ReviewUI is richer (status workflow, notes, keyboard nav, approval). Reference view is a fast "I want to bump this weight" tool. They serve different workflows.
+3. **Is cross-surface sync even desired?** A DM might want to isolate "balancing pass" edits in the Reference view from the long-running curation-review backlog in ReviewUI.
+
+**What I'd want to understand before fixing:**
+- Should the Reference view's publish flow warn when ReviewUI has pending drafts (and vice versa)?
+- If you ever want a unified "Staging" tab that shows everything queued up, these two draft stores need to converge first.
+
+For now: both flows work in isolation; each clears its own state after a successful publish. Not broken, just not unified.
+
+---
+
+## 7. `extractInlineRef` pattern not implemented
+
+**Surfaced during:** Priority 2 — Reference Tables Tab.
+
+**The situation:**
+Spec §7.1 describes three row types: bracket-only refs (`[Potions-A]`), inline refs (`Spell Scroll ([Spells-Level-1])`), and leaf items. My implementation uses the existing `extractRef()` from `stepperResolve.ts`, which handles the first case but conflates the second — an inline ref like `Spell Scroll ([Spells-Level-1])` will also match the regex and be displayed as a clickable link, with `cleanDisplayName` showing just "Spell Scroll" rather than the composed "Spell Scroll (Spells-Level-1)". The scroll target still works, but the label loses the "Spell Scroll" prefix.
+
+I did not add the dedicated `extractInlineRef` helper described in the plan. In practice the stepper data currently doesn't have many items where the inline prefix text really matters for the label, so this renders as "acceptable" most of the time — but it's a correctness gap versus the spec.
+
+**What I'd want to understand before fixing:**
+- Are there specific items where the bracket-less prefix is semantically meaningful to the DM reading the reference table? ("Spell Scroll (Spells-Level-1)" is the classic example — the user needs to know it's a scroll, not just a spell.)
+- Should the row render both the prefix text (as a non-clickable label) AND the bracketed ref (as a clickable link), side by side? That's more complex but preserves information.
+
+For now: the row shows `▸ Spell Scroll` and clicking scrolls to `Spells-Level-1`. Labels for leaf-prefixed inline refs get their prefix elided.
+
+---
+
+## 8. Cycle detection in subtable rendering is eager
+
+**Surfaced during:** Priority 2 — Reference Tables Tab.
+
+**The situation:**
+`collectDescendants()` in `ReferenceView.tsx` uses a visited-set to prevent infinite recursion, which is necessary because the stepper data has a handful of subtables that reference each other (e.g. `Swords` and `Defender`). My implementation visits each subtable exactly once per render pass — so if a table is referenced by two different parents, only the first parent's subtree renders it. The second parent gets a clickable link that scrolls to wherever the first one put the card.
+
+In practice this works fine (scroll-to-link still lands in the right place), but it means the rendered "book" for Table D doesn't physically contain all of Table D's descendants if one of them also descends from Table B. A DM reading Table D in isolation sees a link into Table B's section.
+
+**What I'd want to understand before fixing:**
+- Is it OK for the Reference view to render each subtable exactly once globally, linking across sections? (Current behavior — matches a physical sourcebook's "see Table X" sidebar.)
+- Or should shared subtables be rendered inline under every parent that references them, at the cost of duplicated content? (Higher fidelity but larger DOM.)
+
+The spec doesn't clearly pick one. I went with the visited-set approach because it's simpler and handles genuine cycles safely. Note this in case the reading experience suggests the other tradeoff is better.
+
+---
