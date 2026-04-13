@@ -33,7 +33,7 @@ import {
   crToDefaultTier,
 } from './constants';
 import { coinCountToDiceFormula, evalDiceFormula } from './dice';
-import { cryptoRandom } from './random';
+import { cryptoRandom, logNormalVariance } from './random';
 import { applyRichness } from './richness';
 import {
   rollMagicItem,
@@ -222,8 +222,9 @@ export function generateLoot(input: LootInput): LootResult {
     }
   }
 
-  const gems: TreasureItem[] = gemsFromShare(gemGpShare, tier);
-  const artObjects: TreasureItem[] = artFromShare(artGpShare, tier);
+  // Apply log-normal variance to gem/art shares (DMG CV ~0.75).
+  const gems: TreasureItem[] = gemsFromShare(gemGpShare * logNormalVariance(0.75), tier);
+  const artObjects: TreasureItem[] = artFromShare(artGpShare * logNormalVariance(0.75), tier);
 
   const coins = gpToCoinBreakdown(coinGpBudget, tier);
 
@@ -358,8 +359,9 @@ export function generateLootResolvable(
     }
   }
 
-  const gems: TreasureItem[] = gemsFromShare(gemGpShare, tier);
-  const artObjects: TreasureItem[] = artFromShare(artGpShare, tier);
+  // Apply log-normal variance to gem/art shares (DMG CV ~0.75).
+  const gems: TreasureItem[] = gemsFromShare(gemGpShare * logNormalVariance(0.75), tier);
+  const artObjects: TreasureItem[] = artFromShare(artGpShare * logNormalVariance(0.75), tier);
 
   const coins = gpToCoinBreakdown(coinGpBudget, tier);
 
@@ -447,8 +449,9 @@ export function generateVaultLootResolvable(
     }
   }
 
-  const gems: TreasureItem[] = gemsFromShare(gemGpShare, tier);
-  const artObjects: TreasureItem[] = artFromShare(artGpShare, tier);
+  // Apply log-normal variance to gem/art shares (DMG CV ~0.75).
+  const gems: TreasureItem[] = gemsFromShare(gemGpShare * logNormalVariance(0.75), tier);
+  const artObjects: TreasureItem[] = artFromShare(artGpShare * logNormalVariance(0.75), tier);
 
   // Hoard spell-component steal (vault-only). Deduct from the coin budget
   // before coin dice are built, so the total gp for the hoard stays stable.
