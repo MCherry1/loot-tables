@@ -29,7 +29,7 @@ const itemStats2024Map = itemStatsData2024 as ItemStatsMap;
 function buildNormalizedIndex(stats: ItemStatsMap): Map<string, string> {
   const index = new Map<string, string>();
   for (const key of Object.keys(stats)) {
-    const normalized = key.toLowerCase().replace(/[(),]/g, '').replace(/\s+/g, ' ').trim();
+    const normalized = key.toLowerCase().replace(/[(),*]/g, '').replace(/\s+/g, ' ').replace(/\s*\|\s*/g, '|').trim();
     index.set(normalized, key);
   }
   return index;
@@ -56,7 +56,7 @@ function lookupItemStats(
   const tryKey = (name: string, source: string): typeof stats[string] | null => {
     const key = `${name}|${source}`;
     if (stats[key]) return stats[key];
-    const norm = key.toLowerCase().replace(/[(),]/g, '').replace(/\s+/g, ' ').trim();
+    const norm = key.toLowerCase().replace(/[(),*]/g, '').replace(/\s+/g, ' ').replace(/\s*\|\s*/g, '|').trim();
     const mapped = normalizedIndex.get(norm);
     if (mapped && stats[mapped]) return stats[mapped];
     return null;
@@ -130,6 +130,15 @@ function lookupItemStats(
   if (plusMatch) {
     const prefixResult = tryAnySrc(`${plusMatch[2]} ${plusMatch[1]}`);
     if (prefixResult) return prefixResult;
+
+    // 6b. For resolved sub-table items like "Longsword, +1", the specific
+    // "+1 Longsword" won't exist — fall back to generic "+N Weapon/Armor/etc."
+    const bonus = plusMatch[2];
+    const genericTypes = ['Weapon', 'Armor', 'Shield', 'Ammunition'];
+    for (const generic of genericTypes) {
+      const genericResult = tryAnySrc(`${bonus} ${generic}`);
+      if (genericResult) return genericResult;
+    }
   }
 
   // 7. Try the result name against any source (source mismatch fallback)
