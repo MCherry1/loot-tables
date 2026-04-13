@@ -100,7 +100,7 @@ const App: React.FC = () => {
   }, [settings.theme, settings.palette]);
 
   // When pendingResolve is set (because user clicked an unresolved item in
-  // the encounter), force-switch to the Loot Tables tab.
+  // the encounter), force-switch to the Magic Item Tables tab.
   useEffect(() => {
     if (pendingResolve) setActiveTab('tables');
   }, [pendingResolve]);
@@ -146,7 +146,7 @@ const App: React.FC = () => {
           className={`tab-btn ${activeTab === 'tables' ? 'active' : ''}`}
           onClick={() => setActiveTab('tables')}
         >
-          Loot Tables
+          Magic Item Tables
         </button>
         <button
           className={`tab-btn ${activeTab === 'encounter' ? 'active' : ''}`}

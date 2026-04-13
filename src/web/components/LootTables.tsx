@@ -6,8 +6,6 @@ import React, {
   useCallback,
   useState,
 } from 'react';
-import { SPELL_TABLES } from '../../data/spells';
-import { SUPPLEMENTAL_TABLES } from '../../data/supplemental';
 import { weightedPick } from '@engine/index';
 import type { CampaignSettings, Edition, MITable, SourceSettings } from '@engine/index';
 import {
@@ -148,15 +146,6 @@ function lookupItemStats(
 // ---------------------------------------------------------------------------
 
 const MI_LETTERS: MITable[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
-
-const SPELL_LEVEL_LABELS = [
-  'Cantrip', '1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th',
-];
-
-const EQUIPMENT_TOP_LEVEL = [
-  'Armor', 'Weapons', 'Ammunition', 'Swords', 'Axes', 'Bows',
-  'Dragon-Breath', 'All-Dragons', 'Damage-Type', 'Tools',
-];
 
 /** Muted colored-pencil palette per STEPPER-DESIGN.md. */
 const SEGMENT_COLORS = [
@@ -860,8 +849,7 @@ function ResultHistory({
 // Main LootTables component
 // ---------------------------------------------------------------------------
 
-type Section = 'magic' | 'subtables';
-type SubTableKind = 'spells' | 'equipment';
+// No section tabs — this component only shows Magic Item Tables A–I.
 
 export interface LootTablesProps {
   settings: CampaignSettings;
@@ -878,40 +866,15 @@ const LootTables: React.FC<LootTablesProps> = ({
   pendingResolve,
   onResolveComplete,
 }) => {
-  const [activeSection, setActiveSection] = React.useState<Section>('magic');
-  const [activeSubKind, setActiveSubKind] = React.useState<SubTableKind>('spells');
   const [activeLetter, setActiveLetter] = React.useState<MITable>('A');
-  const [activeSpellIdx, setActiveSpellIdx] = React.useState(0);
-  const [activeEquipIdx, setActiveEquipIdx] = React.useState(0);
   // Ephemeral pick-flash highlight (purely visual; reducer is unaware).
   const [flashIdx, setFlashIdx] = React.useState<number | null>(null);
 
-  const equipmentTables = useMemo(
-    () =>
-      SUPPLEMENTAL_TABLES.filter((t) =>
-        EQUIPMENT_TOP_LEVEL.includes(t.name),
-      ),
-    [],
+  /** Root table name from current letter tab. */
+  const currentRootTable = useMemo(
+    () => `Magic-Item-Table-${activeLetter}`,
+    [activeLetter],
   );
-
-  /** Compute the canonical root table name from current section + sub-tab. */
-  const currentRootTable = useMemo(() => {
-    if (activeSection === 'magic') {
-      return `Magic-Item-Table-${activeLetter}`;
-    }
-    // subtables
-    if (activeSubKind === 'spells') {
-      return SPELL_TABLES[activeSpellIdx]?.name ?? 'Spells-Cantrip';
-    }
-    return equipmentTables[activeEquipIdx]?.name ?? 'Armor';
-  }, [
-    activeSection,
-    activeSubKind,
-    activeLetter,
-    activeSpellIdx,
-    activeEquipIdx,
-    equipmentTables,
-  ]);
 
   const [state, dispatch] = useReducer(
     stepperReducer,
@@ -930,13 +893,12 @@ const LootTables: React.FC<LootTablesProps> = ({
     }
   }, [currentRootTable]);
 
-  // Encounter-resolve mode: when pendingResolve arrives, force the section
-  // to magic + the matching letter, then dispatch SET_ROOT.
+  // Encounter-resolve mode: when pendingResolve arrives, force the matching
+  // letter tab, then dispatch SET_ROOT.
   useEffect(() => {
     if (!pendingResolve) return;
     const m = /Magic-Item-Table-([A-I])/.exec(pendingResolve.table);
     if (m) {
-      setActiveSection('magic');
       setActiveLetter(m[1] as MITable);
     }
     lastRootRef.current = pendingResolve.table;
@@ -1026,13 +988,8 @@ const LootTables: React.FC<LootTablesProps> = ({
   );
   // Display entries: snap weights to next standard die for clean dice ranges.
   // Curation overrides or source filtering can produce non-standard totals.
-  // EXCEPTION: Spell tables are exempt — all spells have equal weight,
-  // and non-standard totals (e.g., d67) are fine.
+  // Snap to next standard die for clean dice ranges.
   const displayEntries = useMemo<Entry[]>(() => {
-    if (activeSection === 'subtables' && activeSubKind === 'spells') {
-      // No snapping for spell tables — equal weight, non-standard dice OK
-      return currentEntries;
-    }
     if (currentEntries.length === rawEntries.length) {
       // No source filtering — use raw weights but snap if needed
       const total = rawEntries.reduce((s, e) => s + e.weight, 0);
@@ -1048,7 +1005,7 @@ const LootTables: React.FC<LootTablesProps> = ({
       (e) => !e.source || survivorKeys.has(`${e.name}|${e.source ?? ''}`),
     );
     return snapToStandardDie(filtered);
-  }, [rawEntries, currentEntries, activeSection]);
+  }, [rawEntries, currentEntries]);
   // Display dice ranges and total use snapped display weights.
   const diceRanges = useMemo(
     () => computeDiceRanges(displayEntries),
@@ -1173,90 +1130,26 @@ const LootTables: React.FC<LootTablesProps> = ({
         id="dice-overlay"
         className={`dice-overlay${showDiceOverlay ? ' visible' : ''}`}
       />
-      {/* Section tabs */}
-      <div className="section-tabs">
-        <button
-          className={`section-tab${activeSection === 'magic' ? ' active' : ''}`}
-          onClick={() => setActiveSection('magic')}
-        >
-          Magic Items
-        </button>
-        <button
-          className={`section-tab${activeSection === 'subtables' ? ' active' : ''}`}
-          onClick={() => setActiveSection('subtables')}
-        >
-          Sub-Tables
-        </button>
+      {/* Table letter tabs (A–I) */}
+      <div className="letter-tabs">
+        {MI_LETTERS.map((l) => (
+          <button
+            key={l}
+            className={`letter-tab${activeLetter === l ? ' active' : ''}`}
+            onClick={() => {
+              if (l === activeLetter) {
+                // Already on this letter — reset stepper to root table
+                setFlashIdx(null);
+                dispatch({ type: 'SET_ROOT', rootTable: `Magic-Item-Table-${l}` });
+              } else {
+                setActiveLetter(l);
+              }
+            }}
+          >
+            {l}
+          </button>
+        ))}
       </div>
-
-      {/* Sub-tabs */}
-      {activeSection === 'magic' && (
-        <div className="letter-tabs">
-          {MI_LETTERS.map((l) => (
-            <button
-              key={l}
-              className={`letter-tab${activeLetter === l ? ' active' : ''}`}
-              onClick={() => {
-                if (l === activeLetter) {
-                  // Already on this letter — reset stepper to root table
-                  setFlashIdx(null);
-                  dispatch({ type: 'SET_ROOT', rootTable: `Magic-Item-Table-${l}` });
-                } else {
-                  setActiveLetter(l);
-                }
-              }}
-            >
-              {l}
-            </button>
-          ))}
-        </div>
-      )}
-      {activeSection === 'subtables' && (
-        <>
-          {/* Kind toggle: Spells vs Equipment */}
-          <div className="sub-tabs">
-            <button
-              className={`sub-tab${activeSubKind === 'spells' ? ' active' : ''}`}
-              onClick={() => setActiveSubKind('spells')}
-            >
-              Spells
-            </button>
-            <button
-              className={`sub-tab${activeSubKind === 'equipment' ? ' active' : ''}`}
-              onClick={() => setActiveSubKind('equipment')}
-            >
-              Equipment
-            </button>
-          </div>
-          {/* Specific table selector */}
-          {activeSubKind === 'spells' && (
-            <div className="sub-tabs">
-              {SPELL_LEVEL_LABELS.map((label, i) => (
-                <button
-                  key={i}
-                  className={`sub-tab${activeSpellIdx === i ? ' active' : ''}`}
-                  onClick={() => setActiveSpellIdx(i)}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          )}
-          {activeSubKind === 'equipment' && (
-            <div className="sub-tabs">
-              {equipmentTables.map((table, i) => (
-                <button
-                  key={table.name}
-                  className={`sub-tab${activeEquipIdx === i ? ' active' : ''}`}
-                  onClick={() => setActiveEquipIdx(i)}
-                >
-                  {table.name.replace(/-/g, ' ')}
-                </button>
-              ))}
-            </div>
-          )}
-        </>
-      )}
 
       {/* Breadcrumb + Context Bar */}
       {showBreadcrumb && (

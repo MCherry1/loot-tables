@@ -50,27 +50,31 @@ function formatCoins(coins: CoinBreakdown, convertToGold: boolean, splitAmongPar
     if (cp > 0) {
       const each = Math.floor(cp / partySize);
       const rem = cp % partySize;
-      if (each > 0) parts.push(rem > 0 ? `${each} cp each (+${rem})` : `${each} cp each`);
-      else if (rem > 0) parts.push(`${rem} cp remainder`);
+      if (each > 0) parts.push(rem > 0 ? `${each} cp each, ${rem} cp leftover` : `${each} cp each`);
+      else if (rem > 0) parts.push(`${rem} cp leftover`);
     }
     if (sp > 0) {
       const each = Math.floor(sp / partySize);
       const rem = sp % partySize;
-      if (each > 0) parts.push(rem > 0 ? `${each} sp each (+${rem})` : `${each} sp each`);
-      else if (rem > 0) parts.push(`${rem} sp remainder`);
+      if (each > 0) parts.push(rem > 0 ? `${each} sp each, ${rem} sp leftover` : `${each} sp each`);
+      else if (rem > 0) parts.push(`${rem} sp leftover`);
     }
     if (gp > 0) {
       const each = Math.floor(gp / partySize);
       const rem = gp % partySize;
-      if (each > 0) parts.push(rem > 0 ? `${each} gp each (+${rem})` : `${each} gp each`);
-      else if (rem > 0) parts.push(`${rem} gp remainder`);
+      if (each > 0) parts.push(rem > 0 ? `${each} gp each, ${rem} gp leftover` : `${each} gp each`);
+      else if (rem > 0) parts.push(`${rem} gp leftover`);
     }
     if (pp > 0) {
       const each = Math.floor(pp / partySize);
       const rem = pp % partySize;
-      if (each > 0) parts.push(rem > 0 ? `${each} pp each (+${rem})` : `${each} pp each`);
-      else if (rem > 0) parts.push(`${rem} pp remainder`);
+      if (each > 0) parts.push(rem > 0 ? `${each} pp each, ${rem} pp leftover` : `${each} pp each`);
+      else if (rem > 0) parts.push(`${rem} pp leftover`);
     }
+    if (parts.length > 0) {
+      return `${parts.join(', ')} (Splitting among party)`;
+    }
+    return '';
   } else {
     if (cp > 0) parts.push(`${cp} cp`);
     if (sp > 0) parts.push(`${sp} sp`);
