@@ -738,11 +738,12 @@ button {
 /* --- Role multiplier preview (Encounter Builder) --- */
 .role-preview {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   gap: 0.5rem;
   padding: 0.5rem 0.75rem;
   margin-top: 0.25rem;
-  background: var(--bg-raised, rgba(0,0,0,0.04));
+  background: var(--bg-raised);
   border-radius: 6px;
   font-size: 0.8rem;
 }
@@ -751,6 +752,7 @@ button {
   flex-direction: column;
   align-items: center;
   gap: 0.15rem;
+  min-width: 3.5rem;
 }
 .role-preview-label {
   font-size: 0.7rem;

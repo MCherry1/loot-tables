@@ -8,7 +8,7 @@ export type Tier = 1 | 2 | 3 | 4;
 export type MITable = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I';
 
 /** Priority level for a single sourcebook. */
-export type SourcePriority = 'off' | 'low' | 'normal' | 'high' | 'emphasis';
+export type SourcePriority = 'off' | 'low' | 'normal' | 'high';
 
 /** Bucketed "named item" tier derived from raw entry weight. */
 export type ItemTier = 'low' | 'mid' | 'high' | 'veryHigh';

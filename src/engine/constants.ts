@@ -477,7 +477,6 @@ export const PRIORITY_MULTIPLIER: Record<SourcePriority, number> = {
   low: 0.5,
   normal: 1.0,
   high: 1.5,
-  emphasis: 2.0,
 } as const;
 
 /** Bucketed tier values mapped from each item's raw weight. */

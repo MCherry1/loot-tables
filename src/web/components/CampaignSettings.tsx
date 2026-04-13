@@ -36,14 +36,12 @@ const PRIORITY_ORDER: SourcePriority[] = [
   'low',
   'normal',
   'high',
-  'emphasis',
 ];
 const PRIORITY_LABELS: Record<SourcePriority, string> = {
   off: 'Off',
   low: 'Low',
-  normal: 'Normal',
+  normal: 'Medium',
   high: 'High',
-  emphasis: 'Emphasis',
 };
 
 const THEME_OPTIONS: { value: ThemePref; label: string }[] = [
@@ -81,12 +79,14 @@ interface Props {
   onAdminModeChange?: (enabled: boolean) => void;
 }
 
-/** Read the current priority for a source, defaulting to 'normal'. */
+/** Read the current priority for a source, defaulting to 'normal'.
+ *  Migrates legacy 'emphasis' values to 'high'. */
 function getPriority(
   settings: SourceSettings,
   acronym: string,
 ): SourcePriority {
-  return settings[acronym] ?? 'normal';
+  const val = settings[acronym] ?? 'normal';
+  return val === ('emphasis' as string) ? 'high' : val;
 }
 
 /** Apply a priority to many acronyms at once, mutating a fresh copy. */

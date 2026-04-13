@@ -152,7 +152,7 @@ const App: React.FC = () => {
           className={`tab-btn ${activeTab === 'encounter' ? 'active' : ''}`}
           onClick={() => setActiveTab('encounter')}
         >
-          Encounter Builder
+          Loot Drops
         </button>
         <button
           className={`tab-btn ${activeTab === 'settings' ? 'active' : ''}`}

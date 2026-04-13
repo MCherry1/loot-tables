@@ -19,6 +19,7 @@ import type {
   ItemSegment,
   ResolvableMagicItem,
   SourceSettings,
+  SourcePriority,
   Edition,
 } from './types';
 
@@ -148,8 +149,10 @@ export function getEffectiveWeight(
   sourceSettings: SourceSettings,
 ): number {
   if (!entry.source) return entry.weight;
-  const priority = sourceSettings[entry.source] ?? 'normal';
-  const mult = PRIORITY_MULTIPLIER[priority];
+  const rawPriority = sourceSettings[entry.source] ?? 'normal';
+  // Migrate legacy 'emphasis' → 'high'
+  const priority: SourcePriority = rawPriority === ('emphasis' as string) ? 'high' : rawPriority as SourcePriority;
+  const mult = PRIORITY_MULTIPLIER[priority] ?? 1.0;
   if (mult === 0) return 0;
   const damp = computeDampFactors()[entry.source] ?? 1.0;
   return TIER_VALUE[weightToTier(entry.weight)] * mult * damp;
@@ -195,7 +198,10 @@ export function weightedPick<T extends { weight: number }>(entries: readonly T[]
 
 /**
  * Resolve a magic item entry that may contain subtable references.
- * Recursively follows "[[ Nt[TableName] ]]" patterns up to MAX_DEPTH.
+ * 
+ * Pure references (name is just "[TableName]") replace entirely.
+ * Inline references ("Frost Brand [Swords]") splice the picked name
+ * into the surrounding text, preserving the item prefix/suffix.
  */
 function resolveEntry(
   entry: { name: string; source: string; weight: number },
@@ -213,7 +219,20 @@ function resolveEntry(
   }
 
   const picked = weightedPick(subtable);
-  return resolveEntry(picked, depth + 1);
+  const isPureRef = entry.name.trim() === `[${tableName}]`;
+
+  if (isPureRef) {
+    // Pure subtable ref — replace entirely and continue resolving
+    return resolveEntry(picked, depth + 1);
+  }
+
+  // Inline ref — splice the picked name into the surrounding text
+  const splicedName = entry.name.replace(match[0], picked.name);
+  const splicedSource = picked.source || entry.source;
+  return resolveEntry(
+    { name: splicedName, source: splicedSource, weight: entry.weight },
+    depth + 1,
+  );
 }
 
 /**

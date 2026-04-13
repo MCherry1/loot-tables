@@ -74,12 +74,12 @@ describe('getEffectiveWeight', () => {
       { name: 'Test', source: 'DMG', weight: 3 },
       {},
     );
-    const emphasis = getEffectiveWeight(
+    const high = getEffectiveWeight(
       { name: 'Test', source: 'DMG', weight: 3 },
-      { DMG: 'emphasis' },
+      { DMG: 'high' },
     );
-    // 'emphasis' is 2.0 vs 'normal' 1.0 — ratio is exactly 2.
-    expect(emphasis / normal).toBeCloseTo(2, 8);
+    // 'high' is 1.5 vs 'normal' 1.0 — ratio is exactly 1.5.
+    expect(high / normal).toBeCloseTo(1.5, 8);
   });
 });
 

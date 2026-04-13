@@ -95,7 +95,7 @@ interface Props {
 const HELP_CONTENT = [
   {
     title: 'What This Does',
-    text: 'The Encounter Builder assigns treasure to individual creatures based on their Challenge Rating and role. Instead of rolling one hoard after clearing a dungeon, every creature generates its own loot — scaled to CR, role, and party level. Over a full campaign the total matches the DMG\'s expected treasure.',
+    text: 'Loot Drops assigns treasure to individual creatures based on their Challenge Rating and role. Instead of rolling one hoard after clearing a dungeon, every creature generates its own loot — scaled to CR, role, and party level. Over a full campaign the total matches the DMG\'s expected treasure.',
   },
   {
     title: 'Roles',
@@ -140,7 +140,7 @@ function HelpTooltip() {
       <button
         className="help-icon-btn"
         onClick={() => setOpen((v) => !v)}
-        title="How the Encounter Builder works"
+        title="How Loot Drops works"
         aria-label="Help"
       >
         ?
@@ -246,7 +246,7 @@ const EncounterBuilder: React.FC<Props> = ({
   return (
     <div className="card">
       <h2 className="card-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-        Encounter Builder
+        Loot Drops
         <HelpTooltip />
         {onNavigateHelp && (
           <button className="help-link" onClick={onNavigateHelp}>

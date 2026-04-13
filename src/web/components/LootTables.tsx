@@ -992,7 +992,7 @@ const LootTables: React.FC<LootTablesProps> = ({
           container: '#dice-overlay',
           assetPath: `${basePath}assets/dice-box/`,
           scale: 16,
-          gravity: 3,
+          gravity: 6,
           theme: 'default',
           themeColor: settings.diceColor ?? '#f5ede0',
           offscreen: true,
