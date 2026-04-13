@@ -22,26 +22,26 @@ describe('economy balance', () => {
   });
 
   it('boss multiplier is much larger than elite', () => {
-    // New multipliers: boss=3.00, elite=0.60 → ratio 5×
-    expect(mults.boss / mults.elite).toBeCloseTo(5, 1);
+    // New multipliers: boss=1.75, elite=0.50 → ratio 3.5×
+    expect(mults.boss / mults.elite).toBeCloseTo(3.5, 1);
   });
 
   it('deprecated computeRoleMultipliers ignores concentration parameter', () => {
     const flat = computeRoleMultipliers(1.5);
     const steep = computeRoleMultipliers(5.0);
-    // Always returns same values: boss/minion = 15 (raw weights)
-    expect(flat.boss / flat.minion).toBeCloseTo(15, 1);
-    expect(steep.boss / steep.minion).toBeCloseTo(15, 1);
+    // Always returns same values: boss/minion = 1.75/0.15 ≈ 11.67
+    expect(flat.boss / flat.minion).toBeCloseTo(11.67, 0);
+    expect(steep.boss / steep.minion).toBeCloseTo(11.67, 0);
   });
 
-  it('role multipliers have mini-boss above fair share', () => {
-    // Narrative-fit: minion=0.20, elite=0.60, mini-boss=1.20, boss=3.00
-    expect(mults.minion).toBeCloseTo(0.20, 2);
-    expect(mults.elite).toBeCloseTo(0.60, 2);
-    expect(mults['mini-boss']).toBeCloseTo(1.20, 2);
-    expect(mults.boss).toBeCloseTo(3.00, 2);
-    // Mini-boss is above 1.0 (fair share)
-    expect(mults['mini-boss']).toBeGreaterThan(1.0);
+  it('role multipliers have mini-boss at exactly fair share', () => {
+    // Regression-optimized: minion=0.15, elite=0.50, mini-boss=1.00, boss=1.75
+    expect(mults.minion).toBeCloseTo(0.15, 2);
+    expect(mults.elite).toBeCloseTo(0.50, 2);
+    expect(mults['mini-boss']).toBeCloseTo(1.00, 2);
+    expect(mults.boss).toBeCloseTo(1.75, 2);
+    // Mini-boss is exactly 1.0 (fair share)
+    expect(mults['mini-boss']).toBeCloseTo(1.0, 2);
   });
 
   it('useRoles=false gives flat multiplier', () => {

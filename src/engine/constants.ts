@@ -97,20 +97,20 @@ export const ROLE_RAW_WEIGHT: Record<CreatureRole, number> = {
   boss: 27,
 } as const;
 
-/** Pre-computed role multipliers. */
+/** Pre-computed role multipliers (regression-optimized). */
 export const ROLE_MULTIPLIER: Record<CreatureRole, number> = {
-  minion: 0.20,    // pocket change — 1/5 of fair share
-  elite: 0.60,     // personal belongings — over half fair share
-  'mini-boss': 1.20, // well-equipped — above fair share
-  boss: 3.00,      // the big score — 3× fair share
+  minion: 0.15,    // pocket change — part of the machine
+  elite: 0.50,     // personal gear — decent personal wealth
+  'mini-boss': 1.00, // exactly fair share — the lieutenant
+  boss: 1.75,      // the big score — accumulated wealth
 } as const;
 
 /** Default role ratios for CampaignSettings (includes vault). */
 export const DEFAULT_ROLE_RATIOS: Record<Role, number> = {
-  minion: 0.20,
-  elite: 0.60,
-  'mini-boss': 1.20,
-  boss: 3.00,
+  minion: 0.15,
+  elite: 0.50,
+  'mini-boss': 1.00,
+  boss: 1.75,
   vault: 1.00,
 } as const;
 

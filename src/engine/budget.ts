@@ -21,30 +21,32 @@ import type { VaultSize } from './constants';
 import { XP_BY_CR, GP_PER_XP, VAULT_BUDGET_PER_TIER, VAULT_SIZE_MULTIPLIER, progressionMultiplier } from './constants';
 
 /**
- * Raw role weights (narrative-fit, non-geometric).
- * Calibrated against real adventure XP distributions (LMoP, CoS)
- * to deliver ~70% of total treasure through creature loot,
- * with vault hoards covering the remaining ~30%.
+ * Raw role weights (regression-optimized against published adventures).
+ * Calibrated against LMoP (all chapters), Curse of Strahd, and mixed
+ * encounter compositions to minimize delivery variance across adventure
+ * styles while maintaining narrative role differentiation.
  *
- *   weightedAvg = (1+3+6+15)/4 = 6.25 → use 5 for slight over-delivery
- *   multiplier = rawWeight / 5
+ * Mini-boss = exactly fair share (1.0×): not penalized for being in
+ * an organization, not skimming. The lieutenant gets what they'd get solo.
+ *
+ * See specs/ENCOUNTER-BALANCE.md for the full regression analysis.
  */
 export const ROLE_RAW_WEIGHT: Record<CreatureRole, number> = {
-  minion: 1,
-  elite: 3,
-  'mini-boss': 6,
-  boss: 15,
+  minion: 3,
+  elite: 10,
+  'mini-boss': 20,
+  boss: 35,
 } as const;
 
-/** The campaign-weighted average divisor (delivers ~70% via creature loot). */
-const WEIGHTED_AVG = 5;
+/** Divisor calibrated so mini-boss = 1.00× (exactly fair share). */
+const WEIGHTED_AVG = 20;
 
 /** Pre-computed role multipliers (rawWeight / weightedAvg). */
 export const ROLE_MULTIPLIER: Record<CreatureRole, number> = {
-  minion: ROLE_RAW_WEIGHT.minion / WEIGHTED_AVG,       // 0.20
-  elite: ROLE_RAW_WEIGHT.elite / WEIGHTED_AVG,         // 0.60
-  'mini-boss': ROLE_RAW_WEIGHT['mini-boss'] / WEIGHTED_AVG, // 1.20
-  boss: ROLE_RAW_WEIGHT.boss / WEIGHTED_AVG,           // 3.00
+  minion: 0.15,       // pocket change — part of the machine
+  elite: 0.50,        // personal gear — decent personal wealth
+  'mini-boss': 1.00,  // exactly fair share — the lieutenant
+  boss: 1.75,         // the big score — accumulated wealth
 } as const;
 
 /**
