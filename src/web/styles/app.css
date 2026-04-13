@@ -810,20 +810,63 @@ button {
   gap: 0;
 }
 
-.creature-line {
-  padding: 0.55rem 0;
+.creature-block {
+  padding: 0.6rem 0;
   border-bottom: 1px solid var(--bg-raised);
-  font-size: 0.95rem;
-  line-height: 1.55;
 }
 
-.creature-line:last-child {
+.creature-block:last-child {
   border-bottom: none;
 }
 
-.creature-label {
+.creature-header {
   font-weight: 700;
+  font-family: 'Cinzel', serif;
+  font-size: 0.9rem;
   color: var(--ink);
+  text-transform: capitalize;
+  margin-bottom: 0.3rem;
+}
+
+.loot-section {
+  margin-left: 0.75rem;
+  margin-bottom: 0.2rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.loot-section-label {
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-muted);
+  margin-right: 0.4rem;
+}
+
+.loot-items-list {
+  list-style: none;
+  margin: 0.15rem 0 0 0;
+  padding: 0 0 0 0.5rem;
+}
+
+.loot-items-list li {
+  position: relative;
+  padding-left: 0.8rem;
+  margin-bottom: 0.1rem;
+}
+
+.loot-items-list li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--ink-faint);
+}
+
+.loot-empty {
+  font-style: italic;
+  color: var(--ink-faint);
+  font-size: 0.85rem;
 }
 
 .creature-coins {
@@ -836,8 +879,7 @@ button {
   color: var(--ink);
 }
 
-.mundane-finds {
-  margin-top: 0.2rem;
+.mundane-item {
   font-size: 0.85rem;
   color: var(--ink-faint);
   font-style: italic;

@@ -30,8 +30,6 @@ import {
   TIER_CATEGORIES,
   COIN_MIX,
   HOARD_SPELL_COMPONENT_STEALS,
-  GEM_MEANINGFUL_MIN,
-  ART_MEANINGFUL_MIN,
   crToDefaultTier,
 } from './constants';
 import { coinCountToDiceFormula, evalDiceFormula } from './dice';
@@ -72,32 +70,25 @@ function probHit(probability: number): boolean {
  * Turn a gem-share gp amount into a list of gems using the continuous
  * log-scale budget algorithm (GEM-BUDGET-ALGORITHM.md §3, §7).
  *
- * For shares at or above the tier's meaningful minimum, the full share
- * is spent. For smaller shares, probability = share / minimum and the
- * actual budget is the minimum — preserving expected value while
- * producing meaningful drops when they happen.
+ * Always generates gems from the full share — no probability gate.
+ * If the share is too small for any gem to fit (< 1 gp), the generator
+ * naturally produces nothing. The budget IS the gate.
  */
-function gemsFromShare(share: number, tier: Tier): TreasureItem[] {
+function gemsFromShare(share: number, _tier: Tier): TreasureItem[] {
   if (share <= 0) return [];
-  const minimum = GEM_MEANINGFUL_MIN[tier];
-  if (share >= minimum) {
-    return generateGemBudget(share);
-  }
-  const probability = share / minimum;
-  if (!probHit(probability)) return [];
-  return generateGemBudget(minimum);
+  return generateGemBudget(share);
 }
 
-/** Same as gemsFromShare but for art (ART-SYSTEM-SPEC.md §4). */
-function artFromShare(share: number, tier: Tier): TreasureItem[] {
+/**
+ * Turn an art-share gp amount into art objects (ART-SYSTEM-SPEC.md §4).
+ *
+ * Always generates art from the full share. If the share is below the
+ * cheapest art object (~25 gp), nothing is produced — the art value
+ * floor acts as a natural gate.
+ */
+function artFromShare(share: number, _tier: Tier): TreasureItem[] {
   if (share <= 0) return [];
-  const minimum = ART_MEANINGFUL_MIN[tier];
-  if (share >= minimum) {
-    return generateArtBudget(share);
-  }
-  const probability = share / minimum;
-  if (!probHit(probability)) return [];
-  return generateArtBudget(minimum);
+  return generateArtBudget(share);
 }
 
 /**

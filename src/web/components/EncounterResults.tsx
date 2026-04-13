@@ -144,53 +144,88 @@ const EncounterResults: React.FC<Props> = ({
             settings.partySize,
           );
 
+          const hasGems = loot.gems.length > 0;
+          const hasArt = loot.artObjects.length > 0;
+          const hasMagic = loot.magicItems.length > 0;
+          const hasMundane = settings.showMundane && loot.mundaneFinds.length > 0;
+          const sortedGems = [...loot.gems].sort((a, b) => b.value - a.value);
+          const sortedArt = [...loot.artObjects].sort((a, b) => b.value - a.value);
+
           return (
             <div
-              className="creature-line"
+              className="creature-block"
               key={`${creature.role}-${creature.index}`}
             >
-              <span className="creature-label">{label}:</span>{' '}
-              <span className="creature-coins">{coinText}</span>
-              {loot.gems.map((gem, i) => (
-                <span key={`gem-${i}`}>
-                  {', '}
-                  <span className="creature-item">
-                    {gem.description ?? gem.name} ({gem.value} gp)
-                  </span>
-                </span>
-              ))}
-              {loot.artObjects.map((art, i) => (
-                <span key={`art-${i}`}>
-                  {', '}
-                  <span className="creature-item">
-                    {art.description ?? art.name} ({art.value} gp)
-                  </span>
-                </span>
-              ))}
-              {loot.magicItems.map((mi, i) => {
-                const itemId = `mi-${ci}-${i}`;
-                return (
-                  <span key={`mi-${i}`}>
-                    {', '}
-                    <MagicItemSlot
-                      item={mi}
-                      itemId={itemId}
-                      resolved={resolvedItems[itemId]}
-                      onStartResolve={onStartResolve}
-                      settings={settings}
-                    />
-                  </span>
-                );
-              })}
-              {settings.showMundane && loot.mundaneFinds.length > 0 && (
-                <div className="mundane-finds">
-                  {loot.mundaneFinds.map((find, i) => (
-                    <span key={i} className="mundane-item">
-                      {find}
-                      {i < loot.mundaneFinds.length - 1 ? ', ' : ''}
-                    </span>
-                  ))}
+              <div className="creature-header">{label}</div>
+
+              {coinText && (
+                <div className="loot-section">
+                  <span className="loot-section-label">Coins</span>
+                  <span className="creature-coins">{coinText}</span>
                 </div>
+              )}
+
+              {hasGems && (
+                <div className="loot-section">
+                  <span className="loot-section-label">Gems</span>
+                  <ul className="loot-items-list">
+                    {sortedGems.map((gem, i) => (
+                      <li key={`gem-${i}`} className="creature-item">
+                        {gem.description ?? gem.name} ({gem.value.toLocaleString()} gp)
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {hasArt && (
+                <div className="loot-section">
+                  <span className="loot-section-label">Art Objects</span>
+                  <ul className="loot-items-list">
+                    {sortedArt.map((art, i) => (
+                      <li key={`art-${i}`} className="creature-item">
+                        {art.description ?? art.name} ({art.value.toLocaleString()} gp)
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {hasMagic && (
+                <div className="loot-section">
+                  <span className="loot-section-label">Magic Items</span>
+                  <ul className="loot-items-list">
+                    {loot.magicItems.map((mi, i) => {
+                      const itemId = `mi-${ci}-${i}`;
+                      return (
+                        <li key={`mi-${i}`}>
+                          <MagicItemSlot
+                            item={mi}
+                            itemId={itemId}
+                            resolved={resolvedItems[itemId]}
+                            onStartResolve={onStartResolve}
+                            settings={settings}
+                          />
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              )}
+
+              {hasMundane && (
+                <div className="loot-section">
+                  <span className="loot-section-label">Misc</span>
+                  <ul className="loot-items-list">
+                    {loot.mundaneFinds.map((find, i) => (
+                      <li key={i} className="mundane-item">{find}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {!coinText && !hasGems && !hasArt && !hasMagic && !hasMundane && (
+                <div className="loot-section loot-empty">Nothing of value</div>
               )}
             </div>
           );
