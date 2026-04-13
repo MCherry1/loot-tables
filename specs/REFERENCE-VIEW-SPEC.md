@@ -388,65 +388,349 @@ This scrolls back to the parent main table. Use `--ck-font-ui`, `--ck-text-xs`, 
 
 ---
 
-## 8. Admin Mode: Weight Editing
+## 8. Admin Mode: Weight Editing & Rebalancing
 
-When `adminMode === true`, the following changes apply to the Reference tab:
+Admin mode is gated behind the password/auth system (see `AUTH-SPEC.md`). When `adminMode === true`, the Reference tab becomes an editing interface. The primary workflow is adjusting item weights, with automatic rebalancing to maintain standard dice sizes.
 
-### 8.1. Weight Column Becomes Editable
+### 8.1. Weight Column: Stepper Controls
 
-Replace the static weight number with an `<input>`:
+In admin mode, each weight cell becomes an inline stepper — the current weight value flanked by `−` and `+` buttons:
+
+```
+┌───┬─────┬───┐
+│ − │  12 │ + │
+└───┴─────┴───┘
+```
 
 ```css
-.ref-weight-input {
-  width: 44px;
-  background: var(--ck-bg-deep);
-  border: 1px solid var(--ck-border);
+.ref-weight-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0;
   border-radius: 4px;
-  padding: 4px 6px;
+  overflow: hidden;
+  border: 1px solid var(--ck-border);
+}
+
+.ref-weight-stepper-btn {
+  width: 28px;
+  min-height: 32px;
+  background: var(--ck-bg-elevated);
+  border: none;
+  color: var(--ck-text-secondary);
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--ck-ease-fast);
+}
+
+.ref-weight-stepper-btn:hover {
+  background: var(--ck-bg-hover);
+  color: var(--ck-text-primary);
+}
+
+.ref-weight-stepper-btn:active {
+  background: var(--ck-cherry-faint);
+}
+
+.ref-weight-value {
+  width: 36px;
+  background: var(--ck-bg-deep);
+  border: none;
+  border-left: 1px solid var(--ck-border-subtle);
+  border-right: 1px solid var(--ck-border-subtle);
   font-family: var(--ck-font-ui);
   font-size: var(--ck-text-sm);
   color: var(--ck-text-primary);
-  text-align: right;
+  text-align: center;
   min-height: 32px;
   font-variant-numeric: tabular-nums;
+  padding: 0;
 }
 
-.ref-weight-input:focus-visible {
-  border-color: var(--ck-cherry);
-  outline: none;
-}
-
-.ref-weight-input.modified {
+/* Modified indicator — ember highlight */
+.ref-weight-stepper.modified {
   border-color: var(--ck-ember);
+}
+
+.ref-weight-stepper.modified .ref-weight-value {
   background: var(--ck-ember-faint);
+  color: var(--ck-ember);
+  font-weight: 700;
 }
 ```
 
-### 8.2. Modified Indicator
+The value field is also directly editable — the user can click the number and type a value. But the +/− buttons are the primary interaction. The +/− buttons increment/decrement by 1. Minimum weight is 1. There is no maximum.
 
-When a weight has been changed from its original value, the input gets the `.modified` class (ember border + faint background). This makes it immediately obvious which weights have been edited.
+### 8.2. Tracking Edits
 
-### 8.3. Save/Discard Controls
+The component tracks three things in state:
 
-When any weights have been modified, show a sticky bar at the bottom of the Reference tab:
+```typescript
+interface WeightEdits {
+  /** Map of tableName → itemName → newWeight */
+  edits: Record<string, Record<string, number>>;
+  /** Set of tableName → itemName keys that the user manually touched */
+  touched: Set<string>;  // keys formatted as "tableName::itemName"
+}
+```
+
+When a user adjusts a weight via +/−:
+1. The new weight is stored in `edits`.
+2. The item is added to `touched`.
+3. Dice ranges for that table recompute immediately using the edited weights.
+4. The row gets the `.modified` class.
+
+Items NOT in `touched` are "untouched" — eligible for auto-rebalancing.
+
+### 8.3. Dice Size Status Bar (per-table)
+
+Each table card in admin mode gets a status bar at the bottom showing the current dice situation:
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
-│  12 weights modified              [Discard Changes]  [Save Draft]   │
+│ Total: 23  │  Target: d20 (need −3)  │  ☐ Auto-rebalance  │ [Apply]│
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
-- "Save Draft" saves to the existing draft mechanism (same as ReviewUI's draft).
-- "Discard Changes" resets all weights to their original values.
-- The bar uses `position: sticky; bottom: 0;` with `--ck-bg-elevated` background.
+This bar is per-table, not global, because each table has its own dice size.
 
-### 8.4. State Management
+**Fields in the status bar:**
 
-Weight edits are stored in component-local state as a map: `Record<string, Record<string, number>>` where the outer key is the table name (e.g. "Potions-A") and the inner key is the item name, and the value is the new weight.
+| Field | Description |
+|-------|-------------|
+| Total | Current sum of all weights in this table (including edits) |
+| Target | The nearest standard die that fits. Computed as `nextDieUp(total)`. If total already matches a standard die, show "✓ d20" in green. |
+| Delta | How many weight points need to be added or removed. E.g. "need −3" or "need +1". Hidden when total matches a die. |
+| Auto-rebalance | Checkbox. When checked, the Apply button will redistribute the delta across untouched items. |
+| Apply | Button. Behavior depends on the checkbox state (see 8.4). |
 
-When rendering, if an edit exists for an item, use the edited weight. Otherwise use the original weight. Dice ranges recompute dynamically when weights change.
+**Status bar CSS:**
 
-The save mechanism should integrate with the existing curation/draft system. The exact integration depends on how the ReviewUI draft works — the Reference tab should call the same `updateDraft` or equivalent function.
+```css
+.ref-admin-status {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--ck-border);
+  background: var(--ck-bg-elevated);
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-xs);
+  flex-wrap: wrap;
+}
+
+.ref-admin-total {
+  font-weight: 600;
+  color: var(--ck-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.ref-admin-target {
+  color: var(--ck-text-secondary);
+}
+
+.ref-admin-target.fits {
+  color: var(--ck-rarity-uncommon);  /* green */
+}
+
+.ref-admin-target.needs-change {
+  color: var(--ck-ember);
+}
+
+.ref-admin-delta {
+  font-weight: 600;
+  color: var(--ck-ember);
+}
+
+.ref-admin-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: var(--ck-text-secondary);
+}
+
+.ref-admin-checkbox input[type="checkbox"] {
+  accent-color: var(--ck-cherry);
+  width: 16px;
+  height: 16px;
+}
+
+.ref-admin-apply {
+  margin-left: auto;
+}
+```
+
+### 8.4. Apply Button Behavior
+
+The Apply button has two modes depending on the auto-rebalance checkbox:
+
+**Auto-rebalance OFF:**
+
+- If the total weight matches a standard die → Apply is ENABLED (green). Clicking it commits the edits to the draft. The button text shows "Apply (d20 ✓)".
+- If the total weight does NOT match a standard die → Apply is DISABLED (grayed out). Show tooltip or inline text: "Total must match a standard die size (d4, d6, d8, d10, d12, d20, d100). Adjust weights manually, or enable auto-rebalance."
+
+**Auto-rebalance ON:**
+
+- Apply is always ENABLED (unless there are no edits). The button text shows "Apply & Rebalance → d20" (where d20 is the target die).
+- When clicked, the system:
+  1. Computes the target die: `nextDieUp(total)`.
+  2. Computes the delta: `target - total`. This can be positive (need to add weight) or negative (need to remove weight).
+  3. Identifies all UNTOUCHED items in the table.
+  4. Redistributes the delta across untouched items using the largest-remainder method (same algorithm as `snapToStandardDie` in `LootTables.tsx`).
+  5. The redistribution logic: scale each untouched item's weight proportionally to fill the target, then use the largest-remainder rounding to ensure integer weights that sum correctly.
+  6. All redistributed items are NOT added to `touched` — they remain "auto-adjusted" and get a different visual indicator.
+
+**Redistribution algorithm (detailed):**
+
+```typescript
+function rebalance(
+  entries: Array<{ name: string; weight: number }>,
+  touched: Set<string>,
+  tableName: string,
+  edits: Record<string, number>,
+): Record<string, number> {
+  // 1. Compute current weights (with edits applied)
+  const current = entries.map(e => ({
+    name: e.name,
+    weight: edits[e.name] ?? e.weight,
+    isTouched: touched.has(`${tableName}::${e.name}`),
+  }));
+
+  const total = current.reduce((s, e) => s + e.weight, 0);
+  const target = nextDieUp(total);
+  const delta = target - total;
+
+  if (delta === 0) return edits; // Already fits
+
+  // 2. Sum of untouched weights
+  const untouched = current.filter(e => !e.isTouched);
+  const untouchedTotal = untouched.reduce((s, e) => s + e.weight, 0);
+
+  if (untouchedTotal === 0) {
+    // All items are touched — can't auto-rebalance
+    return edits;
+  }
+
+  // 3. Scale untouched weights to absorb the delta
+  const newUntouchedTotal = untouchedTotal + delta;
+  const ratio = newUntouchedTotal / untouchedTotal;
+
+  // 4. Largest-remainder rounding
+  const scaled = untouched.map(e => {
+    const ideal = e.weight * ratio;
+    const floored = Math.max(1, Math.floor(ideal));
+    return { name: e.name, floored, remainder: ideal - Math.floor(ideal) };
+  });
+
+  let distributed = scaled.reduce((s, e) => s + e.floored, 0);
+  const remaining = newUntouchedTotal - distributed;
+
+  // Sort by remainder descending, give +1 to top N
+  scaled.sort((a, b) => b.remainder - a.remainder);
+  for (let i = 0; i < remaining && i < scaled.length; i++) {
+    scaled[i].floored += 1;
+  }
+
+  // 5. Build new edits
+  const newEdits = { ...edits };
+  for (const s of scaled) {
+    newEdits[s.name] = s.floored;
+  }
+  return newEdits;
+}
+```
+
+### 8.5. Auto-Adjusted Visual Indicator
+
+Items that were adjusted by auto-rebalance (not manually touched, but weight changed from original) get a different visual treatment than manually edited items:
+
+```css
+/* Manually edited — ember */
+.ref-weight-stepper.modified {
+  border-color: var(--ck-ember);
+}
+
+/* Auto-adjusted — subtle blue-gray */
+.ref-weight-stepper.auto-adjusted {
+  border-color: var(--ck-rarity-rare);  /* blue */
+}
+
+.ref-weight-stepper.auto-adjusted .ref-weight-value {
+  background: rgba(74, 158, 232, 0.06);
+  color: var(--ck-rarity-rare);
+}
+```
+
+This makes it immediately visible: "I changed these (ember) and the system adjusted these (blue) to make the dice work."
+
+### 8.6. Global Sticky Save Bar
+
+Below all table-level status bars, a global sticky bar appears at the bottom of the viewport when ANY edits exist anywhere:
+
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│  Table A: 3 edited · Table C: 1 edited     [Discard All] [Publish] │
+└──────────────────────────────────────────────────────────────────────┘
+```
+
+```css
+.ref-admin-global-bar {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--ck-bg-elevated);
+  border-top: 1px solid var(--ck-border);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  z-index: 50;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.2);
+}
+
+.ref-admin-edit-summary {
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-xs);
+  color: var(--ck-text-secondary);
+}
+
+.ref-admin-bar-actions {
+  display: flex;
+  gap: 8px;
+}
+```
+
+**Buttons:**
+- "Discard All" — `btn-ghost` style. Clears all edits across all tables. Confirm with a simple "Are you sure?" inline.
+- "Publish" — `btn-primary` (cherry) style. Commits the weight changes to the GitHub repo via the existing PAT/publish mechanism from REVIEW-UI-SPEC. This writes updated weight values into `data/curation.json` (or whichever file the curation system uses), commits, and pushes.
+
+### 8.7. Item Moving (Future)
+
+The ability to move items between subtables (e.g. moving an item from Potions-A to Consumables-B) is a planned future feature. For now, do NOT implement it. Reserve space in the UI by noting that in admin mode, a "⋮" menu icon could appear at the end of each row, but do not implement the menu. This is noted here for future reference only.
+
+### 8.8. State Persistence
+
+Weight edits are stored in `localStorage` under key `loot-tables:ref-weight-edits` so they survive page refreshes. The format is:
+
+```json
+{
+  "edits": {
+    "Potions-A": { "Potion of Healing": 14, "Potion of Climbing": 2 }
+  },
+  "touched": ["Potions-A::Potion of Healing", "Potions-A::Potion of Climbing"]
+}
+```
+
+On component mount, load from localStorage. On every edit, save to localStorage. On Publish or Discard, clear localStorage.
 
 ---
 
@@ -572,7 +856,13 @@ After implementation, verify:
 4. **Sorting is correct:** weight descending → source alphabetical → name alphabetical.
 5. **Die type is correct** in each table header (e.g. Table A shows d6 if total weight maps to a d6).
 6. **Source-disabled items are dimmed** but still visible.
-7. **Admin mode:** weight inputs appear, modified weights show ember highlight, dice ranges recalculate live.
-8. **Mobile:** % column hidden, table scrolls horizontally if needed.
-9. **Scroll navigation:** pill clicks and subtable link clicks both scroll smoothly with nav bar offset.
-10. **Highlight flash:** navigated-to subtable cards briefly glow cherry on arrival.
+7. **Admin mode — weight steppers:** +/− buttons appear, click + to increment, − to decrement. Minimum weight is 1.
+8. **Admin mode — modified indicator:** manually edited weights show ember highlight. The number updates live.
+9. **Admin mode — dice status bar:** each table shows current total, target die, and delta. When total matches a die, shows green ✓.
+10. **Admin mode — auto-rebalance OFF:** Apply button is grayed out when total doesn't match a die. Enabled when it does.
+11. **Admin mode — auto-rebalance ON:** Apply redistributes delta across untouched items. Auto-adjusted items show blue highlight (distinct from ember for manual edits).
+12. **Admin mode — global bar:** shows summary of all edits, Discard All clears everything, Publish commits to repo.
+13. **Admin mode — persistence:** refresh the page, edits are still there (localStorage). Publish or Discard clears them.
+14. **Mobile:** % column hidden, table scrolls horizontally if needed.
+15. **Scroll navigation:** pill clicks and subtable link clicks both scroll smoothly with nav bar offset.
+16. **Highlight flash:** navigated-to subtable cards briefly glow cherry on arrival.
