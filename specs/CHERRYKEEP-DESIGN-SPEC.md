@@ -1067,6 +1067,7 @@ Add a footer at the bottom of `.app-container`:
 - "© 2026 CherryKeep" — This asserts copyright over the tool code and design (which the user owns). No registration needed.
 - "Fan Content Policy" — This refers to Wizards of the Coast's Fan Content Policy which permits fan-made tools that reference D&D content as long as they are non-commercial and include this attribution. The current tool qualifies.
 - "Not affiliated with Wizards of the Coast" — Required disclaimer.
+- When SRD descriptions are displayed, add: "Includes content from the System Reference Document 5.2, licensed under CC BY 4.0." — This is the required Creative Commons attribution for SRD content.
 
 ---
 

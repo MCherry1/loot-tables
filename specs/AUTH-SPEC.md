@@ -38,9 +38,32 @@ This is a **static site** on GitHub Pages. There is no server, no database, no s
 
 ## 2. Data Pipeline
 
-### 2.1. Description Data Source
+### 2.1. Three-Tier Description Access
 
-Item descriptions come from the existing `item-stats.json` and `item-stats-2024.json` files in `data/`. These contain:
+Not all descriptions require the same access level. The 5etools data includes an `srd` boolean flag on items that are in Wizards of the Coast's System Reference Document. SRD content is published under Creative Commons Attribution 4.0 and can be freely redistributed.
+
+**Tier 1 — Public (no auth):** Item names, sources, rarities, table assignments, weights, dice ranges. Available to everyone. Non-copyrightable factual data.
+
+**Tier 2 — SRD (no auth):** Full descriptions for the ~327 items flagged as SRD in 5etools. Available to everyone. Licensed under CC BY 4.0. Requires attribution: "This work includes material taken from the System Reference Document 5.2 by Wizards of the Coast LLC, licensed under CC BY 4.0."
+
+**Tier 3 — Protected (auth required):** Full descriptions for the remaining ~915 non-SRD items. Encrypted, password-gated.
+
+### 2.2. SRD Flag in Data Pipeline
+
+The `scripts/generate-item-stats.ts` script needs modification. When reading 5etools `items.json`, check each item for the `srd` or `srd52` boolean flag. Add this flag to the output:
+
+```typescript
+// In generate-item-stats.ts, when building each item entry:
+const isSRD = !!(item.srd || item.srd52);
+// Include in output:
+{ type, rarity, attune, desc, srd: isSRD }
+```
+
+The existing `data/item-stats.json` and `data/item-stats-2024.json` files gain an `srd: boolean` field per item. This requires re-running the generate script against the 5etools source data.
+
+### 2.3. Description Data Source
+
+Item descriptions come from `item-stats.json` and `item-stats-2024.json`. Each entry:
 
 ```json
 {
@@ -48,28 +71,48 @@ Item descriptions come from the existing `item-stats.json` and `item-stats-2024.
     "type": "Wondrous item",
     "rarity": "uncommon",
     "attune": "",
-    "desc": "This bag has an interior space considerably larger than..."
+    "desc": "This bag has an interior space considerably larger than...",
+    "srd": true
   }
 }
 ```
 
-The `desc` field is the copyrightable content that must be gated.
-
-### 2.2. Build-Time Encryption
+### 2.4. Build-Time Splitting & Encryption
 
 Create a new build script: `scripts/encrypt-descriptions.ts`
 
 This script:
 1. Reads `item-stats.json` and `item-stats-2024.json`.
-2. Extracts a "protected" payload containing only the fields that require gating: `{ desc, type, attune }` for each item.
-3. Extracts a "public" payload containing only non-copyrightable fields: `{ rarity }` (rarity is factual, not creative expression).
-4. Encrypts the protected payload using AES-256-GCM with a key derived from a password via PBKDF2.
-5. Writes two output files:
-   - `public/data/item-public.json` — rarity, type (debatable but generally non-copyrightable), attunement requirement (factual).
-   - `public/data/item-protected.enc` — encrypted blob containing descriptions.
-   - `public/data/item-protected.meta.json` — salt and IV (needed for decryption, NOT secret).
+2. For each item, checks the `srd` flag.
+3. Produces THREE output files:
 
-**Encryption implementation:**
+**`public/data/item-public.json`** — Non-copyrightable metadata for ALL items:
+```json
+{
+  "Bag of Holding|DMG": { "type": "Wondrous item", "rarity": "uncommon", "attune": "", "srd": true },
+  "Cloak of Many Fashions|XGE": { "type": "Wondrous item", "rarity": "common", "attune": "", "srd": false }
+}
+```
+Note: `desc` field is NOT included here. The `srd` flag IS included (it's a fact, not creative content).
+
+**`public/data/item-srd-descriptions.json`** — Descriptions for SRD items only (publicly accessible):
+```json
+{
+  "Bag of Holding|DMG": { "desc": "This bag has an interior space..." }
+}
+```
+This file is served unencrypted. Anyone can read it. It contains only SRD-licensed content.
+
+**`public/data/item-protected.enc`** + **`public/data/item-protected.meta.json`** — Encrypted descriptions for non-SRD items:
+The encrypted blob contains:
+```json
+{
+  "Cloak of Many Fashions|XGE": { "desc": "While wearing this cloak..." }
+}
+```
+Encrypted using AES-256-GCM with PBKDF2-derived key, same as before.
+
+### 2.5. Build-Time Encryption (encrypt-descriptions.ts)
 
 ```typescript
 import * as crypto from 'crypto';
@@ -81,18 +124,15 @@ if (!PASSWORD) throw new Error('CHERRYKEEP_PASSWORD env var required');
 const SALT_BYTES = 32;
 const IV_BYTES = 12;
 const KEY_ITERATIONS = 100_000;
-const KEY_LENGTH = 32; // 256 bits
+const KEY_LENGTH = 32;
 
 function encrypt(plaintext: string, password: string) {
   const salt = crypto.randomBytes(SALT_BYTES);
   const iv = crypto.randomBytes(IV_BYTES);
   const key = crypto.pbkdf2Sync(password, salt, KEY_ITERATIONS, KEY_LENGTH, 'sha256');
-  
+
   const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
-  const encrypted = Buffer.concat([
-    cipher.update(plaintext, 'utf8'),
-    cipher.final(),
-  ]);
+  const encrypted = Buffer.concat([cipher.update(plaintext, 'utf8'), cipher.final()]);
   const tag = cipher.getAuthTag();
 
   return {
@@ -102,30 +142,54 @@ function encrypt(plaintext: string, password: string) {
   };
 }
 
-// Build protected payload
-const stats2014 = JSON.parse(fs.readFileSync('data/item-stats.json', 'utf8'));
-const stats2024 = JSON.parse(fs.readFileSync('data/item-stats-2024.json', 'utf8'));
+function processEdition(inputPath: string, prefix: string) {
+  const stats = JSON.parse(fs.readFileSync(inputPath, 'utf8'));
+  const publicData: Record<string, any> = {};
+  const srdDescs: Record<string, { desc: string }> = {};
+  const protectedDescs: Record<string, { desc: string }> = {};
 
-const protectedPayload: Record<string, { desc: string }> = {};
-const publicPayload: Record<string, { type: string; rarity: string; attune: string }> = {};
+  for (const [key, value] of Object.entries(stats)) {
+    const v = value as any;
+    publicData[key] = { type: v.type || '', rarity: v.rarity || '', attune: v.attune || '', srd: !!v.srd };
 
-for (const [key, value] of Object.entries(stats2014)) {
-  const v = value as any;
-  protectedPayload[key] = { desc: v.desc || '' };
-  publicPayload[key] = { type: v.type || '', rarity: v.rarity || '', attune: v.attune || '' };
+    if (v.srd && v.desc) {
+      srdDescs[key] = { desc: v.desc };
+    } else if (v.desc) {
+      protectedDescs[key] = { desc: v.desc };
+    }
+  }
+
+  return { publicData, srdDescs, protectedDescs };
 }
-// Repeat for stats2024 with a prefix or separate key space
 
-const { ciphertext, salt, iv } = encrypt(JSON.stringify(protectedPayload), PASSWORD);
+// Process both editions
+const r2014 = processEdition('data/item-stats.json', '2014');
+const r2024 = processEdition('data/item-stats-2024.json', '2024');
 
-fs.writeFileSync('public/data/item-public.json', JSON.stringify(publicPayload));
+// Merge
+const publicData = { ...r2014.publicData, ...r2024.publicData };
+const srdDescs = { ...r2014.srdDescs, ...r2024.srdDescs };
+const protectedDescs = { ...r2014.protectedDescs, ...r2024.protectedDescs };
+
+// Write public metadata
+fs.mkdirSync('public/data', { recursive: true });
+fs.writeFileSync('public/data/item-public.json', JSON.stringify(publicData));
+console.log(`Public metadata: ${Object.keys(publicData).length} items`);
+
+// Write SRD descriptions (unencrypted, publicly accessible)
+fs.writeFileSync('public/data/item-srd-descriptions.json', JSON.stringify(srdDescs));
+console.log(`SRD descriptions: ${Object.keys(srdDescs).length} items (public, CC BY 4.0)`);
+
+// Encrypt non-SRD descriptions
+const { ciphertext, salt, iv } = encrypt(JSON.stringify(protectedDescs), PASSWORD);
 fs.writeFileSync('public/data/item-protected.enc', ciphertext);
 fs.writeFileSync('public/data/item-protected.meta.json', JSON.stringify({ salt, iv }));
+console.log(`Protected descriptions: ${Object.keys(protectedDescs).length} items (encrypted)`);
 ```
 
-### 2.3. Build Integration
+### 2.6. Build Integration
 
-Add an npm script to `package.json`:
+Add npm scripts to `package.json`:
 
 ```json
 {
@@ -136,7 +200,7 @@ Add an npm script to `package.json`:
 }
 ```
 
-The password is provided via environment variable at build time. It is NEVER committed to the repo.
+The password is provided via environment variable at build time and NEVER committed to the repo.
 
 ---
 
@@ -431,10 +495,13 @@ Only ONE detail panel is open at a time. Clicking another row closes the previou
 
 ### 5.3. When NOT Authenticated
 
-If a user clicks an item row and is NOT authenticated:
-- Show a brief prompt instead of the description: "🔒 Unlock item descriptions" as a clickable link that opens the login modal.
-- The type and rarity still show (these come from the public data).
-- The description field shows the lock prompt.
+If a user clicks an item row and is NOT authenticated, the behavior depends on the item's SRD status:
+
+**SRD item (srd: true):** Show the full description from `item-srd-descriptions.json`. No lock prompt. The description is publicly available. Add a small "SRD" badge or note: "Source: System Reference Document (CC BY 4.0)".
+
+**Non-SRD item (srd: false):** Show a brief prompt instead of the description: "🔒 Unlock item descriptions" as a clickable link that opens the login modal. The type and rarity still show (from public data). The description field shows the lock prompt.
+
+This creates a seamless experience: public users see descriptions for roughly a quarter of items (the popular DMG ones) and a lock icon for the rest. It demonstrates the tool's value and gives them a reason to want the password.
 
 ```css
 .ref-detail-locked {
@@ -447,6 +514,20 @@ If a user clicks an item row and is NOT authenticated:
 
 .ref-detail-locked:hover {
   color: var(--ck-cherry);
+}
+
+.ref-detail-srd-badge {
+  font-family: var(--ck-font-ui);
+  font-size: 0.5625rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ck-rarity-uncommon);
+  background: rgba(78, 202, 123, 0.08);
+  border: 1px solid rgba(78, 202, 123, 0.2);
+  border-radius: 3px;
+  padding: 1px 5px;
+  margin-left: 6px;
 }
 ```
 
