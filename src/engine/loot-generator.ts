@@ -45,7 +45,6 @@ import {
   GEMS_PER_XP,
   ART_PER_XP,
   MI_PER_XP,
-  MI_AVG_VALUES,
   GP_PER_XP,
   COIN_MIX,
   HOARD_SPELL_COMPONENT_STEALS,
@@ -142,28 +141,6 @@ function gpToCoinBreakdown(gpBudget: number, tier: Tier): CoinBreakdown {
   };
 }
 
-/**
- * Compute the magic richness coin adjustment.
- *
- * When magicRichness != 1.0, the expected GP value of magic items changes.
- * To keep total expected loot value stable, we subtract (or add) the delta
- * from the coin pool.
- *
- * @returns GP delta to subtract from coin budget (positive = fewer coins).
- */
-function richnessGpDelta(base: number, tier: Tier, richness: number): number {
-  if (richness === 1.0) return 0;
-  const tables = MI_PER_XP[tier];
-  let baseExpectedGp = 0;
-  for (const [table, rate] of Object.entries(tables)) {
-    const avgValue = MI_AVG_VALUES[table as MITable];
-    baseExpectedGp += base * rate * avgValue;
-  }
-  // At richness R, expected MI GP = baseExpectedGp × R.
-  // Delta to subtract from coins = baseExpectedGp × (R - 1).
-  return baseExpectedGp * (richness - 1);
-}
-
 // ---------------------------------------------------------------------------
 // Core pool generation (shared by V1, V2, and vault)
 // ---------------------------------------------------------------------------
@@ -186,10 +163,8 @@ function generateFromPools<MI>(
   const richness = settings.magicRichness;
 
   // ---- Coins ----
-  // base × COINS_PER_XP[tier], adjusted for richness delta.
-  const rawCoinBudget = base * COINS_PER_XP[tier];
-  const delta = richnessGpDelta(base, tier, richness);
-  const coinBudget = Math.max(0, rawCoinBudget - delta);
+  // base × COINS_PER_XP[tier] — coins are independent of MI richness.
+  const coinBudget = base * COINS_PER_XP[tier];
 
   // ---- Gems ----
   // base × GEMS_PER_XP[tier] × logNormalVariance(0.75)

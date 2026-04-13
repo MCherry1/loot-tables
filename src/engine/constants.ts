@@ -56,13 +56,17 @@ export const XP_BY_CR: Record<string, number> = {
 // ---------------------------------------------------------------------------
 
 /**
- * Total GP per encounter-XP by tier (= pool constant sum).
+ * Total treasure per encounter-XP by tier (conversion factor).
  *
  * Used for vault conversion: vaultBase = vaultBudget / GP_PER_XP[tier].
- * Must equal the sum of coins + gems + art + MI_GP pools for each tier
- * so the vault conversion produces exactly VAULT_BUDGET_PER_TIER in output.
+ * This converts a GP hoard budget into the "virtual base" that all four
+ * pools multiply against. The math works out because:
+ *   vaultBase = hoard_avg / GP_PER_XP = tierXP / hoards
+ * which produces correct per-hoard values for coins, gems, art, AND MI.
  *
- * Derived from: (avg_hoard × hoards_per_tier) / tier_encounter_XP.
+ * Includes MI GP value in the total (MI_AVG_VALUES × expected counts).
+ * This is NOT a budget — MI uses item counts, not GP. The MI GP value
+ * is included only to make the vault conversion factor correct.
  *
  * Tier XP denominators (party of 4, encounter XP divided equally):
  *   T1: 6,500 × 4 = 26,000  (levels 1–4, advance to 5)
@@ -260,14 +264,13 @@ export const TIER_CATEGORIES: Record<Tier, CategoryEntry[]> = {
 // Independent Pool Constants (four parallel systems from DMG hoard tables)
 // ---------------------------------------------------------------------------
 //
-// Derived from TIER_CATEGORIES (DMG probability analysis, source of truth)
-// multiplied by corrected GP_PER_XP:
+// Coins, gems, and art use GP as an intermediate (continuous values):
+//   pool_gp_per_xp = (category_pct / 100) × GP_PER_XP[tier]
 //
-//   pool_per_xp = (category_pct / 100) × GP_PER_XP[tier]
-//   mi_items_per_xp = pool_gp_per_xp / MI_AVG_VALUES[table]
+// Magic items use ITEM COUNTS directly from DMG hoard d100 entries:
+//   mi_items_per_xp = (expected_items_per_hoard × hoards) / tier_XP
 //
 // These do NOT interact. Tuning one does not affect the others.
-// All tiers verified: pool sums match GP_PER_XP to <0.1%.
 // ---------------------------------------------------------------------------
 
 /** Coin GP per encounter-XP by tier. */
@@ -297,45 +300,50 @@ export const ART_PER_XP: Record<Tier, number> = {
 /**
  * Magic items per encounter-XP by tier and table (expected item count).
  *
- * Derived from: (category_pct / 100 × GP_PER_XP[tier]) / MI_AVG_VALUES[table]
+ * Derived DIRECTLY from DMG hoard table d100 entries — actual item count
+ * dice, probability-weighted across all d100 outcomes. NO GP intermediate.
  *
- * These are expected items, not GP. Multiply by MI_AVG_VALUES to get expected GP.
+ *   MI_PER_XP = (expected_items_per_hoard × hoards_per_tier) / tier_encounter_XP
+ *
+ * These are expected items, not GP values. The four pools are independent:
+ * coins/gems/art use GP as an intermediate (continuous values), but magic
+ * items use raw item counts (discrete table rolls).
  */
 export const MI_PER_XP: Record<Tier, Partial<Record<MITable, number>>> = {
   1: {
-    A: 0.0002261700,  // 3.9% → 0.011309 gp/XP / 50
-    B: 0.0001020665,  // 4.4% → 0.012758 gp/XP / 125
-    C: 0.0000672711,  // 29.0% → 0.084089 gp/XP / 1250
-    F: 0.0000806093,  // 13.9% → 0.040305 gp/XP / 500
-    G: 0.0000080609,  // 13.9% → 0.040305 gp/XP / 5000
+    A: 0.0002261538,  // 0.84 items/hoard × 7 / 26,000
+    B: 0.0001009615,  // 0.375 items/hoard
+    C: 0.0000673077,  // 0.25 items/hoard
+    F: 0.0000807692,  // 0.30 items/hoard
+    G: 0.0000080769,  // 0.03 items/hoard
   },
   2: {
-    A: 0.0000340234,  // 0.4% → 0.001701 gp/XP / 50
-    B: 0.0000272188,  // 0.8% → 0.003402 gp/XP / 125
-    C: 0.0000156508,  // 4.6% → 0.019564 gp/XP / 1250
-    D: 0.0000034364,  // 10.1% → 0.042955 gp/XP / 12500
-    F: 0.0000204141,  // 2.4% → 0.010207 gp/XP / 500
-    G: 0.0000056989,  // 6.7% → 0.028495 gp/XP / 5000
-    H: 0.0000011483,  // 13.5% → 0.057415 gp/XP / 50000
+    A: 0.0000321019,  // 0.56 items/hoard × 18 / 314,000
+    B: 0.0000272293,  // 0.475 items/hoard
+    C: 0.0000157643,  // 0.275 items/hoard
+    D: 0.0000034395,  // 0.06 items/hoard
+    F: 0.0000200637,  // 0.35 items/hoard
+    G: 0.0000057325,  // 0.10 items/hoard
+    H: 0.0000011465,  // 0.02 items/hoard
   },
   3: {
-    A: 0.0000226976,  // 0.05% → 0.001135 gp/XP / 50
-    B: 0.0000181581,  // 0.1% → 0.002270 gp/XP / 125
-    C: 0.0000163423,  // 0.9% → 0.020428 gp/XP / 1250
-    D: 0.0000085343,  // 4.7% → 0.106679 gp/XP / 12500
-    E: 0.0000017069,  // 9.4% → 0.213357 gp/XP / 125000
-    F: 0.0000022698,  // 0.05% → 0.001135 gp/XP / 500
-    G: 0.0000040856,  // 0.9% → 0.020428 gp/XP / 5000
-    H: 0.0000053566,  // 11.8% → 0.267831 gp/XP / 50000
-    I: 0.0000017159,  // 37.8% → 0.857968 gp/XP / 500000
+    A: 0.0000030000,  // 0.14 items/hoard × 12 / 560,000
+    B: 0.0000042857,  // 0.20 items/hoard
+    C: 0.0000058929,  // 0.275 items/hoard
+    D: 0.0000062143,  // 0.29 items/hoard
+    E: 0.0000008571,  // 0.04 items/hoard
+    F: 0.0000021429,  // 0.10 items/hoard
+    G: 0.0000085714,  // 0.40 items/hoard
+    H: 0.0000117857,  // 0.55 items/hoard
+    I: 0.0000082500,  // 0.385 items/hoard
   },
   4: {
-    C: 0.0000087448,  // 0.1% → 0.010931 gp/XP / 1250
-    D: 0.0000174895,  // 2.0% → 0.218619 gp/XP / 12500
-    E: 0.0000118054,  // 13.5% → 1.475679 gp/XP / 125000
-    G: 0.0000021862,  // 0.1% → 0.010931 gp/XP / 5000
-    H: 0.0000034979,  // 1.6% → 0.174895 gp/XP / 50000
-    I: 0.0000076954,  // 35.2% → 3.847696 gp/XP / 500000
+    C: 0.0000020769,  // 0.135 items/hoard × 8 / 520,000
+    D: 0.0000032308,  // 0.21 items/hoard
+    E: 0.0000011538,  // 0.075 items/hoard
+    G: 0.0000061538,  // 0.40 items/hoard
+    H: 0.0000216923,  // 1.41 items/hoard
+    I: 0.0000170769,  // 1.11 items/hoard
   },
 } as const;
 
