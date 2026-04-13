@@ -71,7 +71,8 @@ Password-gated item descriptions using client-side AES-256-GCM encryption. The p
 
 **Implementation order:**
 
-1. **Build script** — Create `scripts/encrypt-descriptions.ts`. Reads `item-stats.json` + `item-stats-2024.json`, encrypts description data with AES-256-GCM using PBKDF2-derived key from `CHERRYKEEP_PASSWORD` env var. Outputs `public/data/item-public.json`, `public/data/item-protected.enc`, `public/data/item-protected.meta.json`.
+1. **Prerequisite: Add SRD flag to item-stats** — Modify `scripts/generate-item-stats.ts` to read the `srd` and `srd52` boolean fields from the 5etools `items.json` source data. Add `srd: boolean` to each item's output in `item-stats.json` and `item-stats-2024.json`. Then run `npm run sync` to regenerate both files with the flag. This must be done BEFORE the encrypt step works, because the encrypt script reads the `srd` flag to split items into public vs protected.
+2. **Build script** — Create `scripts/encrypt-descriptions.ts`. Reads `item-stats.json` + `item-stats-2024.json`, checks each item's `srd` flag, splits into three outputs: `public/data/item-public.json` (metadata for all items), `public/data/item-srd-descriptions.json` (descriptions for SRD items, unencrypted), `public/data/item-protected.enc` + `item-protected.meta.json` (encrypted non-SRD descriptions). Uses AES-256-GCM with PBKDF2-derived key from `CHERRYKEEP_PASSWORD` env var.
 2. **Decryption lib** — Create `src/web/lib/decrypt.ts`. Uses Web Crypto API for PBKDF2 key derivation + AES-GCM decryption in the browser.
 3. **Auth context** — Create `src/web/lib/authContext.ts`. Provides `{ authenticated, descriptions, adminMode }` to the component tree.
 4. **Login modal** — Create `src/web/components/LoginModal.tsx`. Password input, unlock button, shake animation on wrong password, loading state during PBKDF2.

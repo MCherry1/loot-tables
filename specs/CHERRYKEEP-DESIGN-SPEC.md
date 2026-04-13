@@ -1188,7 +1188,122 @@ This is an ordered list of every file change. Do them in this order.
 
 ---
 
-## 12. Verification
+## 12. Settings Reorganization
+
+### 12.1. Problem
+
+Currently all settings live in the Settings tab. But many settings (party level, tier, party size, coin display options) are most relevant when you're actively using the Encounter Builder. Forcing users to switch to Settings, change a value, then switch back is friction.
+
+### 12.2. Principle: Show Settings Where They're Used
+
+Settings that affect a specific tab's output should appear on that tab. The Settings tab remains the canonical "see everything in one place" view. Both locations reference the same `CampaignSettings` state — changing party level on the Encounter Builder tab immediately reflects on the Settings tab, and vice versa.
+
+### 12.3. What Moves Where
+
+**Encounter Builder tab — add these controls inline (above the creature list):**
+
+| Setting | Why it belongs here |
+|---------|-------------------|
+| Party Level (stepper) | You set this per encounter. It's the primary input. |
+| Tier (buttons + autoTier) | Directly tied to party level. Shows the tier you're generating for. |
+| Party Size (slider or stepper) | Affects split-among-party display and XP calculations. |
+
+These already partially exist in EncounterBuilder.tsx (party level and tier are there). Party size should be added.
+
+**Encounter Results area — add these as inline toggles (small row of checkboxes above the results):**
+
+| Setting | Why it belongs here |
+|---------|-------------------|
+| Show Values | Toggle while looking at results to compare item values. |
+| Show Sale Price | Dependent on Show Values, relevant when reviewing loot. |
+| Convert to Gold | Toggle to see denomination breakdown vs simplified gold. |
+| Split Among Party | Toggle to see per-player shares. |
+| Show Mundane Finds | Toggle to hide/show mundane items in results. |
+
+These should be a compact row of small toggle chips or checkboxes right above the encounter results, not full field rows. Something like:
+
+```
+[✓ Values] [✓ Sale Price] [○ Convert to Gold] [○ Split] [✓ Mundane]
+```
+
+**Magic Item Tables tab — add these controls:**
+
+| Setting | Why it belongs here |
+|---------|-------------------|
+| Show Item Details | Toggle while browsing table results. |
+| Enable 3D Dice | Toggle while using the roller. |
+
+**Settings tab — keeps ALL settings as the comprehensive view.** Every setting that appears on another tab also appears here. Nothing is removed from Settings. Settings is the "master panel." The individual tab placements are convenient shortcuts.
+
+### 12.4. What Stays Settings-Only
+
+These settings are "set once and forget" — no need to duplicate:
+
+| Setting | Why it stays in Settings only |
+|---------|------------------------------|
+| Theme (light/dark/auto) | Now in nav bar toggle, not even in Settings anymore |
+| Edition (2014/2024) | Rarely changed mid-session |
+| Dice Colors | Aesthetic preference, set once |
+| Magic Richness | Campaign-level decision, not per-encounter |
+| Tier Progression (Natural/Flat) | Campaign-level decision |
+| Source Priorities | Big section, best kept in its own dedicated area |
+| Role Multipliers | Reference display, not frequently changed |
+
+### 12.5. Implementation Notes
+
+- Use the same `settings` state object and `onChange` handler in all locations. No separate state.
+- For the inline result toggles, create a small `ResultToggles` component that takes `settings` and `onChange` props. Render it in EncounterBuilder above the results area AND in Settings.
+- For party level/tier on EncounterBuilder: these controls already exist there. Just ensure party size is added.
+- The Settings tab does NOT label duplicated settings as "also available on..." — it's just a clean comprehensive list.
+
+### 12.6. CSS for Inline Result Toggles
+
+```css
+.result-toggles {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--ck-border-subtle);
+}
+
+.result-toggle {
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-xs);
+  font-weight: 500;
+  padding: 0 10px;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all var(--ck-ease-pop);
+  border: 1px solid var(--ck-border-subtle);
+  background: transparent;
+  color: var(--ck-text-tertiary);
+}
+
+.result-toggle.on {
+  background: var(--ck-bg-elevated);
+  border-color: var(--ck-border);
+  color: var(--ck-text-primary);
+  font-weight: 600;
+}
+
+.result-toggle input[type="checkbox"] {
+  display: none;
+}
+
+.result-toggle .toggle-check {
+  font-size: 0.625rem;
+}
+```
+
+---
+
+## 13. Verification
 
 After implementation, verify:
 
@@ -1201,4 +1316,6 @@ After implementation, verify:
 7. **Focus states:** Tab through the entire page with keyboard. Every interactive element shows a blue focus ring.
 8. **Fonts:** Cinzel on headers/site name. Crimson Text on item names. Source Sans 3 on everything else. No IBM Plex Mono anywhere.
 9. **No palette selector:** The palette swatches are gone from CampaignSettings.
-10. **Footer:** "© 2026 CherryKeep" and "Fan Content Policy · Not affiliated with Wizards of the Coast" at the bottom of every page.
+10. **Footer:** "© 2026 CherryKeep" and "Fan Content Policy · Not affiliated with Wizards of the Coast" at the bottom of every page. SRD attribution when SRD descriptions are displayed.
+11. **Settings duplication:** Party level/tier on Encounter Builder matches Settings tab. Changing one updates the other. Result toggles appear above encounter results.
+12. **Admin section:** NOT visible in Settings when unauthenticated. Appears after login.

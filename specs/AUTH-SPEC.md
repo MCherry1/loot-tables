@@ -300,37 +300,36 @@ This context is provided at the `App` level. All components that need descriptio
 
 ### 4.1. Login Trigger
 
-In the nav bar, add a small lock icon button on the far right (before the theme toggle):
+In the nav bar, add a small, understated lock icon button on the far right (before the theme toggle):
 
 ```
 CherryKeep     [Tables] [Reference] [Loot Drops] [Settings]     [🔒] [☀ ◐ ☾]
 ```
 
-- When NOT authenticated: shows 🔒 (locked). Clicking opens the login modal.
-- When authenticated: shows 🔓 (unlocked) in cherry color. Clicking shows a small dropdown with "Admin Mode" toggle and "Log Out" option.
+- When NOT authenticated: shows a small 🔒 icon in `--ck-text-tertiary` color. No label, no tooltip, no indication of what it does. It is deliberately inconspicuous. Clicking opens the login modal.
+- When authenticated: the icon changes to 🔓 in `--ck-cherry` color. Clicking shows a small dropdown with "Admin Mode" toggle and "Log Out" option. No "descriptions unlocked" messaging.
+
+The lock icon does NOT say "Login", does NOT say "Unlock descriptions", does NOT hint at what features are behind it. It is just a lock. People who know what it's for will use it. Everyone else will ignore it.
 
 ### 4.2. Login Modal
 
-A centered overlay modal. Minimal, clean, on-brand:
+A centered overlay modal. Minimal, bare-bones, no explanation of what it unlocks:
 
 ```
 ┌──────────────────────────────────────────┐
 │                                          │
 │          🔒                              │
 │                                          │
-│    Enter password to unlock item         │
-│    descriptions and admin features.      │
-│                                          │
 │    ┌────────────────────────────┐        │
 │    │ ●●●●●●●●                  │        │
 │    └────────────────────────────┘        │
 │                                          │
-│    [Cancel]              [Unlock]        │
-│                                          │
-│    Wrong password? Check with the DM.    │
+│    [Cancel]              [Enter]         │
 │                                          │
 └──────────────────────────────────────────┘
 ```
+
+No title text. No explanation. No "Enter password to unlock descriptions." Just the lock icon, a password field, and two buttons. If you know what this is, you know. If you don't, the Cancel button is right there.
 
 ```css
 .auth-overlay {
@@ -499,23 +498,11 @@ If a user clicks an item row and is NOT authenticated, the behavior depends on t
 
 **SRD item (srd: true):** Show the full description from `item-srd-descriptions.json`. No lock prompt. The description is publicly available. Add a small "SRD" badge or note: "Source: System Reference Document (CC BY 4.0)".
 
-**Non-SRD item (srd: false):** Show a brief prompt instead of the description: "🔒 Unlock item descriptions" as a clickable link that opens the login modal. The type and rarity still show (from public data). The description field shows the lock prompt.
+**Non-SRD item (srd: false):** Show ONLY the source name prominently — e.g. "Xanathar's Guide to Everything" in `--ck-text-secondary` color. No lock icon. No "unlock" prompt. No indication whatsoever that a description exists or could be unlocked. The source name IS the content for unauthenticated users. This is intentional — we do not want to advertise that descriptions are available behind a password.
 
-This creates a seamless experience: public users see descriptions for roughly a quarter of items (the popular DMG ones) and a lock icon for the rest. It demonstrates the tool's value and gives them a reason to want the password.
+When authenticated, the description appears below the source name seamlessly, as if it was always there.
 
 ```css
-.ref-detail-locked {
-  font-family: var(--ck-font-ui);
-  font-size: var(--ck-text-sm);
-  color: var(--ck-text-tertiary);
-  cursor: pointer;
-  padding: 8px 0;
-}
-
-.ref-detail-locked:hover {
-  color: var(--ck-cherry);
-}
-
 .ref-detail-srd-badge {
   font-family: var(--ck-font-ui);
   font-size: 0.5625rem;
@@ -529,23 +516,30 @@ This creates a seamless experience: public users see descriptions for roughly a 
   padding: 1px 5px;
   margin-left: 6px;
 }
+
+/* Non-SRD items when unauthenticated: just show source prominently */
+.ref-detail-source-only {
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-sm);
+  color: var(--ck-text-secondary);
+  font-style: italic;
+  padding: 4px 0;
+}
 ```
 
 ---
 
-## 6. Session Caching
+## 6. Persistent Login
 
-To avoid re-entering the password on every page refresh, offer a "Remember for this session" checkbox in the login modal.
+Once a user enters the correct password, they should never have to enter it again on that browser.
 
-When checked:
-- After successful decryption, store the password in `sessionStorage` (NOT `localStorage`) under key `ck-session`.
-- On page load, check `sessionStorage` for the key. If present, automatically attempt decryption.
-- `sessionStorage` is cleared when the browser tab/window is closed. This is the appropriate lifetime.
+**Implementation:**
+- After successful decryption, store the password in `localStorage` under key `ck-auth` (NOT `sessionStorage` — this persists permanently).
+- On page load, check `localStorage` for the key. If present, automatically attempt decryption in the background. Show a brief loading state if needed.
+- The user stays logged in across page refreshes, browser restarts, and device reboots.
+- "Log Out" from the nav dropdown clears the `localStorage` key and resets auth state.
 
-When unchecked:
-- Password is held only in React state. Page refresh requires re-entry.
-
-The checkbox defaults to CHECKED. This is the expected behavior for a personal tool — you don't want to retype the password every time you navigate.
+**No checkbox needed.** Permanent persistence is the default and only behavior. This is a personal tool for a small group — convenience trumps security theater. The password protects against casual visitors, not determined attackers.
 
 ---
 
@@ -553,13 +547,11 @@ The checkbox defaults to CHECKED. This is the expected behavior for a personal t
 
 ### 7.1. Relationship to Auth
 
-Admin mode requires authentication. It is a sub-state of being authenticated. The login modal does NOT automatically enable admin mode — it just unlocks descriptions.
+Admin mode requires authentication. It is a sub-state of being authenticated.
 
-Admin mode is toggled via:
-- The unlocked dropdown menu in the nav bar: "Enable Admin Mode" toggle.
-- The existing admin mode mechanism (currently uses localStorage flag `loot-tables:admin`).
+**When NOT authenticated:** The Admin section in CampaignSettings does not exist. It is not grayed out. It is not hidden with CSS. The entire `<section>` is not rendered. There is zero indication that admin mode exists. The Review tab also does not appear in the nav.
 
-When admin mode is enabled AND the user is authenticated, the Reference tab shows weight editing controls (see REFERENCE-VIEW-SPEC Section 8).
+**When authenticated:** The Admin section appears in CampaignSettings with a checkbox: "Enable Admin Mode." The Review tab appears in the nav. The Reference tab shows weight editing controls when admin mode is checked.
 
 ### 7.2. Admin-Only Features
 
