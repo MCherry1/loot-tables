@@ -3255,3 +3255,484 @@ button {
   }
 }
 
+/* =========================================================================
+   Reference Tables — Book View (Priority 2)
+   ========================================================================= */
+
+.reference-view {
+  padding-bottom: 120px; /* room for the sticky admin save bar */
+}
+
+.ref-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Nested subtable group — left cherry connector showing parent relation. */
+.ref-subtable-group .ref-table-card + .ref-table-card {
+  border-left: 2px solid var(--ck-border-cherry);
+}
+
+/* --- Table Card ---------------------------------------------------- */
+.ref-table-card {
+  background: var(--ck-bg-raised);
+  border: 1px solid var(--ck-border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  box-shadow: var(--ck-shadow-card);
+  transition: box-shadow 0.3s ease;
+  scroll-margin-top: 60px; /* account for sticky nav */
+}
+
+.ref-table-header {
+  padding: 12px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px solid var(--ck-border);
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ref-table-name {
+  font-family: var(--ck-font-display);
+  font-size: var(--ck-text-md);
+  font-weight: 600;
+  color: var(--ck-text-primary);
+  letter-spacing: 0.03em;
+}
+
+.ref-table-name.main {
+  font-size: var(--ck-text-lg);
+  color: var(--ck-cherry);
+}
+
+.ref-table-subtitle {
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-xs);
+  color: var(--ck-text-tertiary);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ref-table-die {
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-sm);
+  color: var(--ck-text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Column header row --------------------------------------------- */
+.ref-col-header {
+  display: grid;
+  grid-template-columns: 56px 1fr 56px 92px 56px;
+  gap: 8px;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--ck-border);
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-xs);
+  font-weight: 600;
+  color: var(--ck-text-tertiary);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ref-col-header-right {
+  text-align: right;
+}
+
+/* --- Row ----------------------------------------------------------- */
+.ref-rows {
+  display: flex;
+  flex-direction: column;
+}
+
+.ref-row {
+  display: grid;
+  grid-template-columns: 56px 1fr 56px 92px 56px;
+  gap: 8px;
+  min-height: 44px;
+  padding: 4px 14px;
+  align-items: center;
+  background: transparent;
+  border-bottom: 1px solid var(--ck-border-subtle);
+  transition: background 0.15s ease;
+  cursor: default;
+}
+
+.ref-row:nth-child(even) {
+  background: rgba(255, 255, 255, 0.012);
+}
+
+[data-theme='light'] .ref-row:nth-child(even) {
+  background: rgba(0, 0, 0, 0.015);
+}
+
+.ref-row:hover {
+  background: var(--ck-bg-hover);
+}
+
+.ref-row:last-child {
+  border-bottom: none;
+}
+
+.ref-row.source-disabled {
+  opacity: 0.4;
+}
+
+.ref-row.source-disabled .ref-item-name {
+  text-decoration: line-through;
+}
+
+.ref-row.cursed .ref-range {
+  color: var(--ck-text-tertiary);
+  font-style: italic;
+}
+
+.ref-range {
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-xs);
+  color: var(--ck-text-secondary);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.ref-item-name {
+  font-family: var(--ck-font-content);
+  font-size: var(--ck-text-base);
+  color: var(--ck-text-primary);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ref-subtable-link {
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-base);
+  font-weight: 600;
+  color: var(--ck-cherry);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  transition: color var(--ck-ease-fast);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ref-subtable-link:hover {
+  color: var(--ck-cherry-light);
+  text-decoration: underline;
+}
+
+.ref-source {
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-xs);
+  color: var(--ck-text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+.ref-weight {
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-sm);
+  color: var(--ck-text-secondary);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.ref-pct {
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-xs);
+  color: var(--ck-text-tertiary);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Weight stepper (admin mode) ----------------------------------- */
+.ref-weight-stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--ck-border);
+  justify-self: end;
+}
+
+.ref-weight-stepper-btn {
+  width: 26px;
+  min-height: 30px;
+  background: var(--ck-bg-elevated);
+  border: none;
+  color: var(--ck-text-secondary);
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--ck-ease-fast);
+}
+
+.ref-weight-stepper-btn:hover:not(:disabled) {
+  background: var(--ck-bg-hover);
+  color: var(--ck-text-primary);
+}
+
+.ref-weight-stepper-btn:active {
+  background: var(--ck-cherry-faint);
+}
+
+.ref-weight-stepper-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.ref-weight-value {
+  width: 34px;
+  background: var(--ck-bg-deep);
+  border: none;
+  border-left: 1px solid var(--ck-border-subtle);
+  border-right: 1px solid var(--ck-border-subtle);
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-sm);
+  color: var(--ck-text-primary);
+  text-align: center;
+  min-height: 30px;
+  font-variant-numeric: tabular-nums;
+  padding: 0;
+}
+
+/* Manually edited — ember */
+.ref-weight-stepper.modified {
+  border-color: var(--ck-ember);
+}
+
+.ref-weight-stepper.modified .ref-weight-value {
+  background: var(--ck-ember-faint);
+  color: var(--ck-ember);
+  font-weight: 700;
+}
+
+/* Auto-adjusted — subtle blue */
+.ref-weight-stepper.auto-adjusted {
+  border-color: var(--ck-rarity-rare);
+}
+
+.ref-weight-stepper.auto-adjusted .ref-weight-value {
+  background: rgba(74, 158, 232, 0.06);
+  color: var(--ck-rarity-rare);
+}
+
+/* --- Per-table admin status bar ------------------------------------ */
+.ref-admin-status {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--ck-border);
+  background: var(--ck-bg-elevated);
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-xs);
+  flex-wrap: wrap;
+}
+
+.ref-admin-total {
+  font-weight: 600;
+  color: var(--ck-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.ref-admin-target {
+  color: var(--ck-text-secondary);
+}
+
+.ref-admin-target.fits {
+  color: var(--ck-rarity-uncommon);
+}
+
+.ref-admin-target.needs-change {
+  color: var(--ck-ember);
+}
+
+.ref-admin-delta {
+  font-weight: 600;
+  color: var(--ck-ember);
+}
+
+.ref-admin-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: var(--ck-text-secondary);
+}
+
+.ref-admin-checkbox input[type='checkbox'] {
+  accent-color: var(--ck-cherry);
+  width: 16px;
+  height: 16px;
+}
+
+.ref-admin-apply {
+  margin-left: auto;
+  min-height: 32px;
+  padding: 0 14px;
+}
+
+/* --- Global sticky admin save bar ---------------------------------- */
+.ref-admin-global-bar {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--ck-bg-elevated);
+  border-top: 1px solid var(--ck-border);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  z-index: 50;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.ref-admin-edit-summary {
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-xs);
+  color: var(--ck-text-secondary);
+}
+
+.ref-admin-publish-error {
+  color: var(--ck-ember);
+  font-weight: 600;
+}
+
+.ref-admin-publish-success {
+  color: var(--ck-rarity-uncommon);
+  font-weight: 600;
+}
+
+.ref-admin-bar-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* --- PAT modal ----------------------------------------------------- */
+.pat-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.pat-modal {
+  background: var(--ck-bg-raised);
+  border: 1px solid var(--ck-border);
+  border-radius: 10px;
+  padding: 20px 22px;
+  max-width: 480px;
+  width: calc(100% - 32px);
+  box-shadow: var(--ck-shadow-pop);
+}
+
+.pat-modal-title {
+  margin: 0 0 8px;
+  font-family: var(--ck-font-display);
+  font-size: var(--ck-text-lg);
+  color: var(--ck-text-primary);
+}
+
+.pat-modal-desc {
+  margin: 0 0 14px;
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-sm);
+  color: var(--ck-text-secondary);
+  line-height: 1.5;
+}
+
+.pat-modal-desc code {
+  background: var(--ck-bg-deep);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-xs);
+}
+
+.pat-modal-input {
+  width: 100%;
+  margin-bottom: 12px;
+  background: var(--ck-bg-deep);
+  border: 1px solid var(--ck-border);
+  border-radius: 6px;
+  padding: 9px 12px;
+  min-height: 40px;
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-sm);
+  color: var(--ck-text-primary);
+}
+
+.pat-modal-input:focus-visible {
+  border-color: var(--ck-cherry);
+  outline: none;
+}
+
+.pat-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* --- Highlight flash for scrolled-to cards ------------------------- */
+.ref-highlight {
+  animation: ref-flash 1.5s ease;
+}
+
+@keyframes ref-flash {
+  0% {
+    box-shadow:
+      0 0 0 2px var(--ck-cherry),
+      var(--ck-shadow-glow);
+  }
+  100% {
+    box-shadow: var(--ck-shadow-card);
+  }
+}
+
+/* --- Mobile overrides ---------------------------------------------- */
+@media (max-width: 560px) {
+  .ref-col-header,
+  .ref-row {
+    grid-template-columns: 48px 1fr 48px 78px;
+    gap: 6px;
+    padding: 4px 10px;
+  }
+
+  /* Hide % column on mobile per spec §6.2 */
+  .ref-col-header > span:nth-child(5),
+  .ref-row > .ref-pct {
+    display: none;
+  }
+
+  .ref-admin-status {
+    padding: 8px 10px;
+    gap: 10px;
+    font-size: var(--ck-text-xs);
+  }
+
+  .ref-admin-apply {
+    margin-left: 0;
+    flex-basis: 100%;
+  }
+}

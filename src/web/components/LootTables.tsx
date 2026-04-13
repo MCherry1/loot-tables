@@ -17,6 +17,12 @@ import {
   type Entry,
   type StepRecord,
 } from '../lib/stepperResolve';
+import {
+  STANDARD_DICE,
+  nextDieUp,
+  computeDiceRanges,
+  formatRange,
+} from '../lib/diceUtils';
 import { expandSource } from '../../data/sourcebook-lookup';
 import itemStatsData from '../../../data/item-stats.json';
 import itemStatsData2024 from '../../../data/item-stats-2024.json';
@@ -183,31 +189,6 @@ function getSegmentColor(index: number): string {
 // Helpers
 // ---------------------------------------------------------------------------
 
-/**
- * Compute display dice ranges from entry weights.
- * Always called with raw (integer) weights — source filtering is only
- * used for probability sampling, not for display.
- */
-function computeDiceRanges(
-  entries: { weight: number }[],
-): { lo: number; hi: number }[] {
-  const ranges: { lo: number; hi: number }[] = [];
-  let cumulative = 0;
-  for (const entry of entries) {
-    const lo = cumulative + 1;
-    const hi = cumulative + entry.weight;
-    ranges.push({ lo, hi });
-    cumulative = hi;
-  }
-  return ranges;
-}
-
-function formatRange(r: { lo: number; hi: number }): string {
-  // Empty range (hi < lo) indicates a weight-0 cursed entry: show en-dash.
-  if (r.hi < r.lo) return '\u2013';
-  return r.lo === r.hi ? `${r.lo}` : `${r.lo}\u2013${r.hi}`;
-}
-
 function randomInRange(r: { lo: number; hi: number }): number {
   // Empty range: cursed entry manually picked. Report its cumulative slot.
   if (r.hi < r.lo) return r.lo;
@@ -218,15 +199,6 @@ function randomInRange(r: { lo: number; hi: number }): number {
 // ---------------------------------------------------------------------------
 // Integer rounding for standard-die display
 // ---------------------------------------------------------------------------
-
-const STANDARD_DICE = [4, 6, 8, 10, 12, 20, 100];
-
-function nextDieUp(total: number): number {
-  for (const d of STANDARD_DICE) {
-    if (d >= total) return d;
-  }
-  return 100;
-}
 
 /**
  * Snap entry weights up to the next standard die using the

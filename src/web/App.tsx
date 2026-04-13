@@ -9,12 +9,21 @@ import EncounterBuilder from './components/EncounterBuilder';
 import VaultHoard from './components/VaultHoard';
 import CampaignSettingsPanel from './components/CampaignSettings';
 import LootTables from './components/LootTables';
+import ReferenceView from './components/ReferenceView';
 import About from './components/About';
 import HowItWorks from './components/HowItWorks';
 import DDesign from './components/DDesign';
 import ReviewUI from './components/ReviewUI';
 
-type Tab = 'tables' | 'encounter' | 'settings' | 'review' | 'about' | 'how-it-works' | 'ddesign';
+type Tab =
+  | 'tables'
+  | 'reference'
+  | 'encounter'
+  | 'settings'
+  | 'review'
+  | 'about'
+  | 'how-it-works'
+  | 'ddesign';
 
 export type ResolvedItem = { name: string; source: string };
 export type PendingResolve = { itemId: string; table: string };
@@ -137,6 +146,7 @@ const App: React.FC = () => {
 
   const TABS: { id: Tab; label: string }[] = [
     { id: 'tables',       label: 'Tables' },
+    { id: 'reference',    label: 'Reference' },
     { id: 'encounter',    label: 'Loot Drops' },
     { id: 'settings',     label: 'Settings' },
     { id: 'about',        label: 'About' },
@@ -206,6 +216,10 @@ const App: React.FC = () => {
             onResolveComplete={handleResolveComplete}
             onCancelResolve={handleCancelResolve}
           />
+        )}
+
+        {activeTab === 'reference' && (
+          <ReferenceView settings={settings} adminMode={adminMode} />
         )}
 
         {activeTab === 'encounter' && (

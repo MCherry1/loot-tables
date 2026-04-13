@@ -2,6 +2,12 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import curationData from '../../../data/curation.json';
 import itemStatsData from '../../../data/item-stats.json';
 import { expandSource } from '../../data/sourcebook-lookup';
+import {
+  publishJsonFile,
+  getStoredPat,
+  storePat,
+  GITHUB_PAT_KEY,
+} from '../lib/githubPublish';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -355,8 +361,8 @@ const ReviewUI: React.FC = () => {
     URL.revokeObjectURL(url);
   }, [curation, draft]);
 
-  // GitHub publish
-  const PAT_KEY = 'loot-tables:github-pat';
+  // GitHub publish (PAT storage + network live in src/web/lib/githubPublish.ts)
+  const PAT_KEY = GITHUB_PAT_KEY;
   const [showPatModal, setShowPatModal] = useState(false);
   const [patInput, setPatInput] = useState('');
   const [publishState, setPublishState] = useState<'idle' | 'publishing' | 'success' | 'error'>('idle');
@@ -369,14 +375,6 @@ const ReviewUI: React.FC = () => {
     };
   }, []);
 
-  const getStoredPat = useCallback((): string | null => {
-    try { return localStorage.getItem(PAT_KEY); } catch { return null; }
-  }, []);
-
-  const storePat = useCallback((pat: string) => {
-    try { localStorage.setItem(PAT_KEY, pat); } catch { /* ignore */ }
-  }, []);
-
   const publishToGitHub = useCallback(async () => {
     const pat = getStoredPat();
     if (!pat) { setShowPatModal(true); return; }
@@ -384,69 +382,35 @@ const ReviewUI: React.FC = () => {
     setPublishState('publishing');
     setPublishError(null);
 
-    // Merge curation + draft
+    // Merge curation + draft.
     const merged: CurationFile = {};
     for (const [key, entry] of Object.entries(curation)) {
       merged[key] = draft[key] ? { ...entry, ...draft[key] } as CurationEntry : entry;
     }
-    const jsonContent = JSON.stringify(merged, null, 2);
-    const headers = { Authorization: `Bearer ${pat}`, Accept: 'application/vnd.github.v3+json' };
 
-    try {
-      // Get current SHA
-      const getRes = await fetch(
-        'https://api.github.com/repos/MCherry1/loot-tables/contents/data/curation.json',
-        { headers },
-      );
-      if (getRes.status === 401 || getRes.status === 403) {
-        setPublishState('error');
-        setPublishError('PAT expired or invalid. Please update.');
-        setShowPatModal(true);
-        return;
-      }
-      const getData = await getRes.json();
-      const sha = getData.sha;
+    const result = await publishJsonFile(
+      pat,
+      'data/curation.json',
+      merged,
+      'Update curation.json via review UI',
+    );
 
-      // PUT updated file
-      const encoded = btoa(unescape(encodeURIComponent(jsonContent)));
-      const putRes = await fetch(
-        'https://api.github.com/repos/MCherry1/loot-tables/contents/data/curation.json',
-        {
-          method: 'PUT',
-          headers: { ...headers, 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            message: 'Update curation.json via review UI',
-            content: encoded,
-            sha,
-          }),
-        },
-      );
-
-      if (putRes.status === 409) {
-        setPublishState('error');
-        setPublishError('Conflict: file was modified externally. Refresh and re-apply.');
-        return;
-      }
-      if (!putRes.ok) {
-        const err = await putRes.json().catch(() => ({}));
-        setPublishState('error');
-        setPublishError((err as Record<string, string>).message || `HTTP ${putRes.status}`);
-        return;
-      }
-
-      // Success
-      setPublishState('success');
-      setDraft({});
-      localStorage.removeItem(DRAFT_KEY);
-      publishTimerRef.current = window.setTimeout(() => {
-        publishTimerRef.current = null;
-        setPublishState('idle');
-      }, 3000);
-    } catch (err) {
+    if (!result.ok) {
       setPublishState('error');
-      setPublishError(err instanceof Error ? err.message : 'Network error');
+      setPublishError(result.error);
+      if (result.kind === 'auth') setShowPatModal(true);
+      return;
     }
-  }, [curation, draft, getStoredPat]);
+
+    // Success
+    setPublishState('success');
+    setDraft({});
+    localStorage.removeItem(DRAFT_KEY);
+    publishTimerRef.current = window.setTimeout(() => {
+      publishTimerRef.current = null;
+      setPublishState('idle');
+    }, 3000);
+  }, [curation, draft]);
 
   // Keyboard navigation
   useEffect(() => {
