@@ -208,6 +208,7 @@ const App: React.FC = () => {
             resolvedItems={resolvedItems}
             setResolvedItems={setResolvedItems}
             onStartResolve={handleStartResolve}
+            onNavigateHelp={() => setActiveTab('how-it-works')}
           />
           <VaultHoard settings={settings} />
         </>

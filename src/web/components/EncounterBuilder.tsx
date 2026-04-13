@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import type {
   CampaignSettings,
   CreatureGroup,
@@ -89,6 +89,78 @@ interface Props {
     React.SetStateAction<Record<string, ResolvedItem>>
   >;
   onStartResolve: (itemId: string, table: string) => void;
+  onNavigateHelp?: () => void;
+}
+
+const HELP_CONTENT = [
+  {
+    title: 'What This Does',
+    text: 'The Encounter Builder assigns treasure to individual creatures based on their Challenge Rating and role. Instead of rolling one hoard after clearing a dungeon, every creature generates its own loot — scaled to CR, role, and party level. Over a full campaign the total matches the DMG\'s expected treasure.',
+  },
+  {
+    title: 'Roles',
+    text: 'Each creature has a role that determines its share of treasure. Minions (×0.10) carry pocket change. Elites (×0.30) are worth searching. Mini-bosses (×0.90) have significant treasure. Bosses (×2.70) are the big score. These follow a 3× geometric progression — over a balanced campaign the weighted average is exactly 1.0×.',
+  },
+  {
+    title: 'Tier Progression',
+    text: 'Within each tier, treasure scales from 0.70× at the tier\'s start to 1.30× at its end. A level 5 party gets leaner hoards than a level 10 party, even fighting the same CR creatures. This matches how published adventures pace their rewards — more loot comes later in each tier, not at the beginning.',
+  },
+  {
+    title: 'How Loot Budget Works',
+    text: 'The DMG expects a known number of hoards per tier (7 for Tier 1, 18 for Tier 2, etc.) and a known XP total to get through each tier. Dividing total treasure by total XP gives a gold-per-XP ratio. Every creature\'s XP value maps to a proportional share of that tier\'s treasure — then the role multiplier scales it up or down.',
+  },
+  {
+    title: 'Resolving Magic Items',
+    text: 'Magic items appear as unresolved table references (e.g. "Table G"). Click one to open the Loot Tables stepper where you can roll randomly or choose at each step. Use "Resolve All" to auto-roll everything at once. Tip: roll loot before the fight — you might give the enemy a magic item they can use against the party!',
+  },
+];
+
+/** Inline help tooltip — hover on desktop, tap-toggle on mobile. */
+function HelpTooltip() {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent | TouchEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    document.addEventListener('touchstart', handler);
+    return () => {
+      document.removeEventListener('mousedown', handler);
+      document.removeEventListener('touchstart', handler);
+    };
+  }, [open]);
+
+  return (
+    <div className="help-trigger" ref={ref}>
+      <button
+        className="help-icon-btn"
+        onClick={() => setOpen((v) => !v)}
+        title="How the Encounter Builder works"
+        aria-label="Help"
+      >
+        ?
+      </button>
+      {open && (
+        <div className="help-bubble">
+          <button className="help-bubble-close" onClick={() => setOpen(false)} aria-label="Close help">&times;</button>
+          {HELP_CONTENT.map((section) => (
+            <React.Fragment key={section.title}>
+              <h4>{section.title}</h4>
+              <p>{section.text}</p>
+            </React.Fragment>
+          ))}
+          <p style={{ marginTop: '0.6rem', fontSize: '0.82rem', opacity: 0.7 }}>
+            See the <em>How it Works</em> tab for full details.
+          </p>
+        </div>
+      )}
+    </div>
+  );
 }
 
 const EncounterBuilder: React.FC<Props> = ({
@@ -99,6 +171,7 @@ const EncounterBuilder: React.FC<Props> = ({
   resolvedItems,
   setResolvedItems,
   onStartResolve,
+  onNavigateHelp,
 }) => {
   const [groups, setGroups] = useState<CreatureGroup[]>([
     { id: nextGroupId(), cr: 1, role: 'minion', count: 1 },
@@ -172,7 +245,15 @@ const EncounterBuilder: React.FC<Props> = ({
 
   return (
     <div className="card">
-      <h2 className="card-title">Encounter Builder</h2>
+      <h2 className="card-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+        Encounter Builder
+        <HelpTooltip />
+        {onNavigateHelp && (
+          <button className="help-link" onClick={onNavigateHelp}>
+            How to use &rarr;
+          </button>
+        )}
+      </h2>
 
       {/* Creature Groups */}
       <div className="field-row">

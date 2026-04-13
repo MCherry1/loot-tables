@@ -20,10 +20,10 @@ interface Props {
 
 /** DMG reference info per tier. */
 const DMG_HOARD_INFO: Record<Tier, { levels: string; hoards: number; avgValue: number; totalValue: number; dmgPages: string }> = {
-  1: { levels: '1\u20135', hoards: 7, avgValue: 1077, totalValue: 7540, dmgPages: 'p.137' },
+  1: { levels: '1\u20134', hoards: 7, avgValue: 1077, totalValue: 7540, dmgPages: 'p.137' },
   2: { levels: '5\u201310', hoards: 18, avgValue: 7419, totalValue: 133544, dmgPages: 'p.137\u2013138' },
-  3: { levels: '10\u201316', hoards: 12, avgValue: 105922, totalValue: 1271070, dmgPages: 'p.138\u2013139' },
-  4: { levels: '16\u201320', hoards: 8, avgValue: 710512, totalValue: 5684100, dmgPages: 'p.139' },
+  3: { levels: '11\u201316', hoards: 12, avgValue: 105922, totalValue: 1271070, dmgPages: 'p.138\u2013139' },
+  4: { levels: '17\u201320', hoards: 8, avgValue: 710512, totalValue: 5684100, dmgPages: 'p.139' },
 };
 
 const VAULT_SIZES: VaultSize[] = ['minor', 'standard', 'major'];

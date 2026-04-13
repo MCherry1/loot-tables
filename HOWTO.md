@@ -69,6 +69,24 @@ You can disable Auto Tier and manually select any tier if you want more control.
 
 Magic items initially appear as unresolved table references (e.g., "Table G"). Click any unresolved item to jump to the Loot Tables stepper and walk through the resolution — rolling or choosing at each step. When you're done, you're returned to the encounter with the resolved item filled in.
 
+Use **Resolve All** to auto-roll every remaining unresolved item at once when you want speed over control.
+
+### How the Budget Math Works
+
+The system converts the DMG's hoard-level treasure into per-creature loot through two separate multipliers working together.
+
+**Multiplier 1: Tier Progression.** Not all hoards within a tier are created equal. The DMG expects multiple hoards per tier, but adventures tend to hand out richer treasure as you approach the end of a tier rather than the beginning. Tier Progression captures this by scaling loot from 0.70× at the first level of a tier to 1.30× at the last level. A level 5 party is getting the lean early hoards of Tier 2; a level 10 party is getting the rich final hoards before the jump to Tier 3. This is on by default, but you can turn it off for flat distribution.
+
+**Multiplier 2: Role Distribution.** A single criminal organization might have one entire hoard's worth of gear, but the bulk of it is held by the boss, not spread equally among every lackey. The role multipliers reflect this: minions have a fractional chance at carrying anything interesting — less than their "fair share" of items per XP. A boss has more than their fair share. The exact multipliers (Minion ×0.10, Elite ×0.30, Mini-boss ×0.90, Boss ×2.70) follow a 3× geometric progression. Over a balanced campaign where XP is distributed across all roles, the weighted average comes out to exactly 1.0× — no treasure is created or destroyed.
+
+The classification of creatures into roles is entirely up to you as the Dungeon Master. There's no formula for what "counts" as a minion versus an elite — it's a judgment call based on the fiction of the encounter. A hobgoblin warlord might be a boss in one encounter and a mini-boss in another where there's a dragon behind them.
+
+### Rolling Before vs. After the Fight
+
+It's recommended to roll loot before the encounter starts. When you do, you might discover that an enemy is carrying a magic weapon or wearing enchanted armor — and you can let them use it in battle. A hobgoblin captain with a +1 longsword fights differently than one with pocket change, and your players will remember the moment they pried it from his hands.
+
+Alternatively, roll after the fight and treat it as what was in their chest or stash that they weren't using. Both approaches work — rolling before adds tactical variety, rolling after keeps the surprise.
+
 ### Vault Hoards
 
 For placed treasure that isn't tied to a specific creature — a dragon's lair, a locked vault, a merchant's strongbox — use the Vault tab. Choose the tier and the system generates a full hoard: coins, gems with descriptions, art objects, and magic item rolls. No CR needed.
