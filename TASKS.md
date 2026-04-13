@@ -523,6 +523,39 @@ Implemented per `specs/GEM-SYSTEM-SPEC.md` §6 — applied to vault hoards only 
 
 Steal value is deducted from the vault's coin budget before coins are rolled. Exact value, no value score, no quality — a fixed-specimen drop. Covered by `tests/engine/loot-generator.test.ts`.
 
+### ~~Independent Pool Model~~ ✅
+Replaced the old percentage-based `TIER_CATEGORIES` → single budget → split approach with four independent pools, each computed directly from XP:
+
+```
+base = XP × roleMult × tierProg × partySizeScalar
+
+Coins:  base × COINS_PER_XP[tier]                                  → dice formula → coins
+Gems:   base × GEMS_PER_XP[tier]  × logNormalVariance(0.75)        → gem generator
+Art:    base × ART_PER_XP[tier]   × logNormalVariance(0.75)        → art generator
+Magic:  base × MI_PER_XP[tier][table] × richness × logNormal(1.85) → probHit → roll item
+```
+
+Key changes:
+- `loot-generator.ts`: `generateFromPools<MI>()` generic core replaces `resolveCategories()` loop
+- `budget.ts`: `calculatePoolBase()` returns `{ xp, roleMult, tierProg, partySizeScalar, base }`
+- Vault uses `vaultBase = vaultBudget / GP_PER_XP[tier]` to convert total GP into a virtual pool base
+- `magicRichness` scales MI expected counts; the GP delta is subtracted from coins to keep total stable
+- Old `TIER_CATEGORIES`, `resolveCategories()`, and `applyRichness()` are now dead code
+
+### Pool Constant Calibration (Tiers 2–4)
+Tier 1 pool constants sum to 0.2901 gp/XP ≈ GP_PER_XP of 0.29. **Tiers 2–4 pool constants use different XP denominators** than GP_PER_XP and sum 28–55% lower:
+
+| Tier | Pool Sum | GP_PER_XP | Delta |
+|------|----------|-----------|-------|
+| 1    | 0.2901   | 0.29      | +0.02% ✅ |
+| 2    | 0.4156   | 0.5806    | −28% ⚠️ |
+| 3    | 1.0935   | 2.4257    | −55% ⚠️ |
+| 4    | 5.3099   | 8.8814    | −40% ⚠️ |
+
+The XP denominators in `COINS_PER_XP` comments (314K for T2) don't match GP_PER_XP derivation (230K for T2). Need to reconcile — either rederive pool constants using consistent tier XP totals, or verify which denominator is correct and adjust GP_PER_XP to match.
+
+MI probabilities are independently correct (derived from hoard item counts, not GP). The calibration issue only affects coin/gem/art pool sizes at Tiers 2–4.
+
 ### Crafting System Integration (Future — Needs Discussion)
 Crafting tab design for the web app. Key topics to resolve:
 - Gemcutter improving value scores (VS increase → gem value increase proportionally toward gem's max)

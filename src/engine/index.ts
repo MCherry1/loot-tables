@@ -52,6 +52,14 @@ export {
   priceItem,
 } from './value-score';
 
+// Budget calculation
+export {
+  calculateBudget,
+  calculateVaultBudget,
+  calculatePoolBase,
+} from './budget';
+export type { PoolBase } from './budget';
+
 // Constants and mappings
 export {
   DEFAULT_CAMPAIGN_SETTINGS,
@@ -72,6 +80,12 @@ export {
   COIN_MIX,
   tierFromLevel,
   progressionMultiplier,
+  COINS_PER_XP,
+  GEMS_PER_XP,
+  ART_PER_XP,
+  MI_PER_XP,
+  MI_AVG_VALUES,
+  GP_PER_XP,
 } from './constants';
 export type { VaultSize, VarianceProfile } from './constants';
 

@@ -1,10 +1,24 @@
 // ---------------------------------------------------------------------------
-// Main loot generation orchestrator
+// Main loot generation orchestrator — Independent Pool Model
+// ---------------------------------------------------------------------------
+//
+// Each creature's loot is computed from four independent pools, each derived
+// directly from XP:
+//
+//   Coins:  base × COINS_PER_XP[tier]                                  → dice formula → coins
+//   Gems:   base × GEMS_PER_XP[tier]  × logNormalVariance(0.75)        → gem generator
+//   Art:    base × ART_PER_XP[tier]   × logNormalVariance(0.75)        → art generator
+//   Magic:  base × MI_PER_XP[tier][table] × richness × logNormal(1.85) → probHit → roll item
+//
+// where base = XP × roleMult × tierProg × partySizeScalar.
+//
+// The pools do not interact. Tuning one does not affect the others, except
+// that magicRichness steals from / donates to the coin pool to keep total
+// expected value stable.
 // ---------------------------------------------------------------------------
 
 import type {
   CampaignSettings,
-  CategoryEntry,
   CoinBreakdown,
   CoinDenom,
   CreatureResult,
@@ -24,17 +38,21 @@ import type {
   TreasureItem,
   VaultLootInput,
 } from './types';
-import { calculateBudget, calculateVaultBudget } from './budget';
+import { calculatePoolBase, calculateVaultBudget } from './budget';
 import {
   MUNDANE_FINDS,
-  TIER_CATEGORIES,
+  COINS_PER_XP,
+  GEMS_PER_XP,
+  ART_PER_XP,
+  MI_PER_XP,
+  MI_AVG_VALUES,
+  GP_PER_XP,
   COIN_MIX,
   HOARD_SPELL_COMPONENT_STEALS,
   crToDefaultTier,
 } from './constants';
 import { coinCountToDiceFormula, evalDiceFormula } from './dice';
 import { cryptoRandom, logNormalVariance } from './random';
-import { applyRichness } from './richness';
 import {
   rollMagicItem,
   rollMagicItemResolvable,
@@ -48,56 +66,35 @@ import { priceItem } from './value-score';
 // Internal helpers
 // ---------------------------------------------------------------------------
 
-/**
- * Resolve the adjusted category entries for a given budget.
- * Applies magic richness, then converts percentages into expected GP values.
- */
-function resolveCategories(
-  roleBudget: number,
-  tier: Tier,
-  settings: CampaignSettings,
-): CategoryEntry[] {
-  const base = TIER_CATEGORIES[tier];
-  return applyRichness(base, settings.magicRichness);
-}
-
 /** Roll a probability check: returns true with the given probability (0-1). */
 function probHit(probability: number): boolean {
   return cryptoRandom() < probability;
 }
 
 /**
- * Turn a gem-share gp amount into a list of gems using the continuous
- * log-scale budget algorithm (GEM-BUDGET-ALGORITHM.md §3, §7).
+ * Turn a gem budget into a list of gems using the continuous log-scale
+ * algorithm (GEM-BUDGET-ALGORITHM.md §3, §7).
  *
- * Always generates gems from the full share — no probability gate.
- * If the share is too small for any gem to fit (< 1 gp), the generator
- * naturally produces nothing. The budget IS the gate.
+ * If the budget is too small for any gem (< 1 gp), naturally produces nothing.
  */
-function gemsFromShare(share: number, _tier: Tier): TreasureItem[] {
-  if (share <= 0) return [];
-  return generateGemBudget(share);
+function gemsFromBudget(budget: number): TreasureItem[] {
+  if (budget <= 0) return [];
+  return generateGemBudget(budget);
 }
 
 /**
- * Turn an art-share gp amount into art objects (ART-SYSTEM-SPEC.md §4).
+ * Turn an art budget into art objects (ART-SYSTEM-SPEC.md §4).
  *
- * Always generates art from the full share. If the share is below the
- * cheapest art object (~25 gp), nothing is produced — the art value
- * floor acts as a natural gate.
+ * If the budget is below the cheapest art object (~25 gp), nothing is produced.
  */
-function artFromShare(share: number, _tier: Tier): TreasureItem[] {
-  if (share <= 0) return [];
-  return generateArtBudget(share);
+function artFromBudget(budget: number): TreasureItem[] {
+  if (budget <= 0) return [];
+  return generateArtBudget(budget);
 }
 
 /**
  * Roll the per-hoard spell-component steal for a given tier.
- *
- * Returns a fixed-value TreasureItem (e.g. a 100 gp Pearl) when the tier's
- * probability hits, or null otherwise. Used by vault generation only — the
- * caller is responsible for deducting `item.value` from the coin budget so
- * the hoard's total gp doesn't inflate (GEM-SYSTEM-SPEC.md §6).
+ * Returns a fixed-value TreasureItem or null. Vault-only.
  */
 function rollHoardSteal(tier: Tier): TreasureItem | null {
   const entry = HOARD_SPELL_COMPONENT_STEALS[tier];
@@ -107,7 +104,6 @@ function rollHoardSteal(tier: Tier): TreasureItem | null {
     baseValue: entry.value,
     value: entry.value,
     tableName: 'hoard-steal',
-    // No valueScore/quality/improvable — steals are exact-value specimens.
   };
 }
 
@@ -123,7 +119,7 @@ function coinBreakdownToGp(coins: CoinBreakdown): number {
   return coins.cp.average / 100 + coins.sp.average / 10 + coins.gp.average + coins.pp.average * 10;
 }
 
-/** Convert a GP budget into a per-denomination coin breakdown. */
+/** Convert a GP budget into a per-denomination coin breakdown with dice. */
 function gpToCoinBreakdown(gpBudget: number, tier: Tier): CoinBreakdown {
   if (gpBudget < 0.01) {
     return { cp: { ...ZERO_DENOM }, sp: { ...ZERO_DENOM }, gp: { ...ZERO_DENOM }, pp: { ...ZERO_DENOM } };
@@ -146,110 +142,124 @@ function gpToCoinBreakdown(gpBudget: number, tier: Tier): CoinBreakdown {
   };
 }
 
+/**
+ * Compute the magic richness coin adjustment.
+ *
+ * When magicRichness != 1.0, the expected GP value of magic items changes.
+ * To keep total expected loot value stable, we subtract (or add) the delta
+ * from the coin pool.
+ *
+ * @returns GP delta to subtract from coin budget (positive = fewer coins).
+ */
+function richnessGpDelta(base: number, tier: Tier, richness: number): number {
+  if (richness === 1.0) return 0;
+  const tables = MI_PER_XP[tier];
+  let baseExpectedGp = 0;
+  for (const [table, rate] of Object.entries(tables)) {
+    const avgValue = MI_AVG_VALUES[table as MITable];
+    baseExpectedGp += base * rate * avgValue;
+  }
+  // At richness R, expected MI GP = baseExpectedGp × R.
+  // Delta to subtract from coins = baseExpectedGp × (R - 1).
+  return baseExpectedGp * (richness - 1);
+}
+
 // ---------------------------------------------------------------------------
-// Public API
+// Core pool generation (shared by V1, V2, and vault)
 // ---------------------------------------------------------------------------
 
 /**
- * Generate loot for a single creature.
+ * Generate loot from the four independent pools.
  *
- * 1. Calculate the role-adjusted budget.
- * 2. Resolve category breakdowns (with richness applied).
- * 3. For coins: build a dice formula from the coins budget, roll it.
- * 4. For gems/art: probability = categoryGP / unitValue; if hit, roll on table.
- * 5. For magic items: probability = categoryGP / avgValue; if hit, roll + price.
- * 6. If coins < 1gp: add a random mundane find instead.
+ * @param base - Pool base = XP × roleMult × tierProg × partySizeScalar.
+ * @param tier - Tier of play.
+ * @param settings - Campaign settings.
+ * @param rollMI - Callback to produce a magic item (V1 or V2 style).
+ * @returns The raw coin GP budget and generated treasure arrays.
  */
-export function generateLoot(input: LootInput): LootResult {
-  const { cr, tier, role, settings } = input;
-  const { roleBudget } = calculateBudget(cr, tier, role, settings);
+function generateFromPools<MI>(
+  base: number,
+  tier: Tier,
+  settings: CampaignSettings,
+  rollMI: (table: MITable) => MI,
+): { coinBudget: number; gems: TreasureItem[]; artObjects: TreasureItem[]; magicItems: MI[] } {
+  const richness = settings.magicRichness;
 
-  const categories = resolveCategories(roleBudget, tier, settings);
+  // ---- Coins ----
+  // base × COINS_PER_XP[tier], adjusted for richness delta.
+  const rawCoinBudget = base * COINS_PER_XP[tier];
+  const delta = richnessGpDelta(base, tier, richness);
+  const coinBudget = Math.max(0, rawCoinBudget - delta);
 
-  let coinGpBudget = 0;
-  let gemGpShare = 0;
-  let artGpShare = 0;
-  const magicItems: MagicItemResult[] = [];
-  const mundaneFinds: string[] = [];
+  // ---- Gems ----
+  // base × GEMS_PER_XP[tier] × logNormalVariance(0.75)
+  const gemBudget = base * GEMS_PER_XP[tier] * logNormalVariance(0.75);
+  const gems = gemsFromBudget(gemBudget);
 
-  for (const cat of categories) {
-    const categoryGp = (cat.pct / 100) * roleBudget;
+  // ---- Art ----
+  // base × ART_PER_XP[tier] × logNormalVariance(0.75)
+  const artBudget = base * ART_PER_XP[tier] * logNormalVariance(0.75);
+  const artObjects = artFromBudget(artBudget);
 
-    switch (cat.type) {
-      case 'coins': {
-        coinGpBudget = categoryGp;
-        break;
-      }
-
-      case 'gems': {
-        // Continuous-value system: accumulate total gem gp share here;
-        // gems are rolled once after the loop via gemsFromShare().
-        gemGpShare += categoryGp;
-        break;
-      }
-
-      case 'art': {
-        // Continuous-value system: accumulate total art gp share here.
-        artGpShare += categoryGp;
-        break;
-      }
-
-      case 'magic': {
-        if (!cat.miTable || !cat.avgValue) break;
-        // Independent variance per table (DMG CV ~1.85). Each table
-        // rolls its own multiplier — a creature can get lucky on Table A
-        // but unlucky on Table G, matching the DMG's independent outcomes.
-        const variedGp = categoryGp * logNormalVariance(1.85);
-        const probability = variedGp / cat.avgValue;
-        // Single variance source: log-normal determines count directly.
-        const count = Math.round(probability);
-        for (let i = 0; i < count; i++) {
-          const { name, source } = rollMagicItem(cat.miTable);
-          const miResult: MagicItemResult = {
-            name,
-            source,
-            table: cat.miTable,
-          };
-          if (settings.showValues) {
-            const pricing = priceItem(cat.miTable);
-            miResult.valueScore = pricing.valueScore;
-            miResult.buyPrice = pricing.buyPrice;
-            if (settings.showSalePrice) {
-              miResult.salePrice = pricing.salePrice;
-            }
-          }
-          magicItems.push(miResult);
-        }
-        break;
-      }
+  // ---- Magic Items ----
+  // For each table: base × MI_PER_XP[tier][table] × richness × logNormal(1.85) → count → roll
+  const magicItems: MI[] = [];
+  const tables = MI_PER_XP[tier];
+  for (const [table, rate] of Object.entries(tables)) {
+    const expected = base * rate * richness * logNormalVariance(1.85);
+    // Floor for guaranteed items, remainder for probHit on one more.
+    const guaranteed = Math.floor(expected);
+    const remainder = expected - guaranteed;
+    const count = guaranteed + (probHit(remainder) ? 1 : 0);
+    for (let i = 0; i < count; i++) {
+      magicItems.push(rollMI(table as MITable));
     }
   }
 
-  // Apply log-normal variance to gem/art shares (DMG CV ~0.75).
-  const gems: TreasureItem[] = gemsFromShare(gemGpShare * logNormalVariance(0.75), tier);
-  const artObjects: TreasureItem[] = artFromShare(artGpShare * logNormalVariance(0.75), tier);
+  return { coinBudget, gems, artObjects, magicItems };
+}
 
-  const coins = gpToCoinBreakdown(coinGpBudget, tier);
+// ---------------------------------------------------------------------------
+// Public API — V1 (fully resolved, backward compat)
+// ---------------------------------------------------------------------------
 
-  // If coins are negligible and mundane finds are enabled, add flavor.
+/**
+ * Generate loot for a single creature (V1 — fully resolved names).
+ */
+export function generateLoot(input: LootInput): LootResult {
+  const { cr, tier, role, settings } = input;
+  const pool = calculatePoolBase(cr, tier, role, settings);
+
+  const { coinBudget, gems, artObjects, magicItems } = generateFromPools(
+    pool.base,
+    tier,
+    settings,
+    (table: MITable): MagicItemResult => {
+      const { name, source } = rollMagicItem(table);
+      const result: MagicItemResult = { name, source, table };
+      if (settings.showValues) {
+        const pricing = priceItem(table);
+        result.valueScore = pricing.valueScore;
+        result.buyPrice = pricing.buyPrice;
+        if (settings.showSalePrice) {
+          result.salePrice = pricing.salePrice;
+        }
+      }
+      return result;
+    },
+  );
+
+  const coins = gpToCoinBreakdown(coinBudget, tier);
+  const mundaneFinds: string[] = [];
   if (coinBreakdownToGp(coins) < 1 && settings.showMundane) {
     mundaneFinds.push(randomMundaneFind());
   }
 
-  return {
-    coins,
-    gems,
-    artObjects,
-    magicItems,
-    mundaneFinds,
-  };
+  return { coins, gems, artObjects, magicItems, mundaneFinds };
 }
 
 /**
- * Generate loot for a full encounter.
- *
- * For each role, generates `counts[role]` creatures, labels them
- * "Minion 1", "Elite 1", "Boss 1", etc., and sums totals.
+ * Generate loot for a full encounter (V1 — same CR for all creatures).
  */
 export function generateEncounter(input: EncounterInput): EncounterResult {
   const { cr, tier: inputTier, autoTier, counts, settings } = input;
@@ -261,11 +271,10 @@ export function generateEncounter(input: EncounterInput): EncounterResult {
   for (const role of roles) {
     const count = counts[role] ?? 0;
     for (let i = 0; i < count; i++) {
-      const loot = generateLoot({ cr, tier, role, settings });
       creatures.push({
         role,
         index: i + 1,
-        loot,
+        loot: generateLoot({ cr, tier, role, settings }),
       });
     }
   }
@@ -274,13 +283,9 @@ export function generateEncounter(input: EncounterInput): EncounterResult {
     (sum, c) => sum + coinBreakdownToGp(c.loot.coins),
     0,
   );
-
   const totalItems = creatures.reduce(
     (sum, c) =>
-      sum +
-      c.loot.gems.length +
-      c.loot.artObjects.length +
-      c.loot.magicItems.length,
+      sum + c.loot.gems.length + c.loot.artObjects.length + c.loot.magicItems.length,
     0,
   );
 
@@ -288,195 +293,115 @@ export function generateEncounter(input: EncounterInput): EncounterResult {
 }
 
 // ---------------------------------------------------------------------------
-// V2: Mixed-CR encounters with resolvable magic items
+// V2: Resolvable magic items (step-by-step resolution)
 // ---------------------------------------------------------------------------
 
 /**
  * Generate loot for a single creature, returning ResolvableMagicItems
- * (segments parsed but not recursively resolved).
- *
- * When resolveImmediately is true, all refs are resolved at once (same as V1).
+ * (segments parsed but optionally not yet recursively resolved).
  */
 export function generateLootResolvable(
   input: LootInput,
   resolveImmediately: boolean,
 ): ResolvableLootResult {
   const { cr, tier, role, settings } = input;
-  const { roleBudget } = calculateBudget(cr, tier, role, settings);
+  const pool = calculatePoolBase(cr, tier, role, settings);
 
-  const categories = resolveCategories(roleBudget, tier, settings);
+  const { coinBudget, gems, artObjects, magicItems } = generateFromPools(
+    pool.base,
+    tier,
+    settings,
+    (table: MITable): ResolvableMagicItem => {
+      const item = rollMagicItemResolvable(table);
 
-  let coinGpBudget = 0;
-  let gemGpShare = 0;
-  let artGpShare = 0;
-  const magicItems: ResolvableMagicItem[] = [];
-  const mundaneFinds: string[] = [];
-
-  for (const cat of categories) {
-    const categoryGp = (cat.pct / 100) * roleBudget;
-
-    switch (cat.type) {
-      case 'coins': {
-        coinGpBudget = categoryGp;
-        break;
+      if (resolveImmediately) {
+        const resolved = resolveAllRefs(item.segments);
+        item.segments = resolved.segments;
+        if (resolved.source) item.source = resolved.source;
+        item.isFullyResolved = true;
       }
 
-      case 'gems': {
-        gemGpShare += categoryGp;
-        break;
-      }
-
-      case 'art': {
-        artGpShare += categoryGp;
-        break;
-      }
-
-      case 'magic': {
-        if (!cat.miTable || !cat.avgValue) break;
-        const variedGp = categoryGp * logNormalVariance(1.85);
-        const probability = variedGp / cat.avgValue;
-        // Single variance source: log-normal determines count directly.
-        const count = Math.round(probability);
-        for (let i = 0; i < count; i++) {
-          const item = rollMagicItemResolvable(cat.miTable);
-
-          if (resolveImmediately) {
-            const resolved = resolveAllRefs(item.segments);
-            item.segments = resolved.segments;
-            if (resolved.source) item.source = resolved.source;
-            item.isFullyResolved = true;
-          }
-
-          if (settings.showValues) {
-            const pricing = priceItem(cat.miTable);
-            item.valueScore = pricing.valueScore;
-            item.buyPrice = pricing.buyPrice;
-            if (settings.showSalePrice) {
-              item.salePrice = pricing.salePrice;
-            }
-          }
-          magicItems.push(item);
+      if (settings.showValues) {
+        const pricing = priceItem(table);
+        item.valueScore = pricing.valueScore;
+        item.buyPrice = pricing.buyPrice;
+        if (settings.showSalePrice) {
+          item.salePrice = pricing.salePrice;
         }
-        break;
       }
-    }
-  }
+      return item;
+    },
+  );
 
-  // Apply log-normal variance to gem/art shares (DMG CV ~0.75).
-  const gems: TreasureItem[] = gemsFromShare(gemGpShare * logNormalVariance(0.75), tier);
-  const artObjects: TreasureItem[] = artFromShare(artGpShare * logNormalVariance(0.75), tier);
-
-  const coins = gpToCoinBreakdown(coinGpBudget, tier);
-
+  const coins = gpToCoinBreakdown(coinBudget, tier);
+  const mundaneFinds: string[] = [];
   if (coinBreakdownToGp(coins) < 1 && settings.showMundane) {
     mundaneFinds.push(randomMundaneFind());
   }
 
-  return {
-    coins,
-    gems,
-    artObjects,
-    magicItems,
-    mundaneFinds,
-  };
+  return { coins, gems, artObjects, magicItems, mundaneFinds };
 }
 
 /**
  * Generate loot for a vault hoard using fixed per-tier budgets.
  *
- * Uses VAULT_BUDGET_PER_TIER instead of CR-based budget calculation.
- * Category breakdown still uses TIER_CATEGORIES for the selected tier.
+ * Derives a "virtual base" from the vault budget so the same four
+ * independent pools apply with correct proportions:
+ *   vaultBase = vaultBudget / GP_PER_XP[tier]
  */
 export function generateVaultLootResolvable(
   input: VaultLootInput,
   resolveImmediately: boolean,
 ): ResolvableLootResult {
   const { tier, size, settings } = input;
-  const roleBudget = calculateVaultBudget(tier, size, settings);
+  const vaultBudget = calculateVaultBudget(tier, size, settings);
 
-  const categories = resolveCategories(roleBudget, tier, settings);
+  // Convert total GP budget into a virtual base that the pools can use.
+  // Since sum(pool_per_xp) ≈ GP_PER_XP, this preserves the total.
+  const vaultBase = vaultBudget / GP_PER_XP[tier];
 
-  let coinGpBudget = 0;
-  let gemGpShare = 0;
-  let artGpShare = 0;
-  const magicItems: ResolvableMagicItem[] = [];
-  const mundaneFinds: string[] = [];
+  const { coinBudget, gems, artObjects, magicItems } = generateFromPools(
+    vaultBase,
+    tier,
+    settings,
+    (table: MITable): ResolvableMagicItem => {
+      const item = rollMagicItemResolvable(table);
 
-  for (const cat of categories) {
-    const categoryGp = (cat.pct / 100) * roleBudget;
-
-    switch (cat.type) {
-      case 'coins': {
-        coinGpBudget = categoryGp;
-        break;
+      if (resolveImmediately) {
+        const resolved = resolveAllRefs(item.segments);
+        item.segments = resolved.segments;
+        if (resolved.source) item.source = resolved.source;
+        item.isFullyResolved = true;
       }
 
-      case 'gems': {
-        gemGpShare += categoryGp;
-        break;
-      }
-
-      case 'art': {
-        artGpShare += categoryGp;
-        break;
-      }
-
-      case 'magic': {
-        if (!cat.miTable || !cat.avgValue) break;
-        const variedGp = categoryGp * logNormalVariance(1.85);
-        const probability = variedGp / cat.avgValue;
-        // Single variance source: log-normal determines count directly.
-        const count = Math.round(probability);
-        for (let i = 0; i < count; i++) {
-          const item = rollMagicItemResolvable(cat.miTable);
-
-          if (resolveImmediately) {
-            const resolved = resolveAllRefs(item.segments);
-            item.segments = resolved.segments;
-            if (resolved.source) item.source = resolved.source;
-            item.isFullyResolved = true;
-          }
-
-          if (settings.showValues) {
-            const pricing = priceItem(cat.miTable);
-            item.valueScore = pricing.valueScore;
-            item.buyPrice = pricing.buyPrice;
-            if (settings.showSalePrice) {
-              item.salePrice = pricing.salePrice;
-            }
-          }
-          magicItems.push(item);
+      if (settings.showValues) {
+        const pricing = priceItem(table);
+        item.valueScore = pricing.valueScore;
+        item.buyPrice = pricing.buyPrice;
+        if (settings.showSalePrice) {
+          item.salePrice = pricing.salePrice;
         }
-        break;
       }
-    }
-  }
+      return item;
+    },
+  );
 
-  // Apply log-normal variance to gem/art shares (DMG CV ~0.75).
-  const gems: TreasureItem[] = gemsFromShare(gemGpShare * logNormalVariance(0.75), tier);
-  const artObjects: TreasureItem[] = artFromShare(artGpShare * logNormalVariance(0.75), tier);
-
-  // Hoard spell-component steal (vault-only). Deduct from the coin budget
-  // before coin dice are built, so the total gp for the hoard stays stable.
+  // Hoard spell-component steal (vault-only). Deduct from coin budget
+  // so total GP stays stable (GEM-SYSTEM-SPEC.md §6).
+  let adjustedCoinBudget = coinBudget;
   const steal = rollHoardSteal(tier);
   if (steal) {
-    coinGpBudget = Math.max(0, coinGpBudget - steal.value);
+    adjustedCoinBudget = Math.max(0, adjustedCoinBudget - steal.value);
     gems.push(steal);
   }
 
-  const coins = gpToCoinBreakdown(coinGpBudget, tier);
-
+  const coins = gpToCoinBreakdown(adjustedCoinBudget, tier);
+  const mundaneFinds: string[] = [];
   if (coinBreakdownToGp(coins) < 1 && settings.showMundane) {
     mundaneFinds.push(randomMundaneFind());
   }
 
-  return {
-    coins,
-    gems,
-    artObjects,
-    magicItems,
-    mundaneFinds,
-  };
+  return { coins, gems, artObjects, magicItems, mundaneFinds };
 }
 
 /**

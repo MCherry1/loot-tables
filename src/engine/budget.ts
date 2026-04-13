@@ -1,53 +1,84 @@
 // ---------------------------------------------------------------------------
-// Budget calculation — Role Multiplier Model
+// Budget calculation — Independent Pool Model
 // ---------------------------------------------------------------------------
 //
-// Each creature's loot budget = XP × GP/XP[tier] × roleMultiplier
+// Each creature's loot is computed from four independent pools:
+//   coins  = base × COINS_PER_XP[tier]
+//   gems   = base × GEMS_PER_XP[tier]
+//   art    = base × ART_PER_XP[tier]
+//   magic  = base × MI_PER_XP[tier][table]  (expected item count)
 //
-// Role multipliers are derived from raw weights (1/3/9/27, ~3× geometric
-// steps) normalized against an assumed 25/25/25/25 campaign XP split.
-// This produces multipliers of 0.10 / 0.30 / 0.90 / 2.70 which sum to
-// exactly 1.0 over a balanced campaign — no wealth is lost or created.
+// where base = XP × roleMult × tierProg × partySizeScalar.
 //
-// Individual encounters will over- or under-distribute depending on
-// composition. Boss-heavy encounters are richer. Minion-heavy encounters
-// are leaner. It balances out over a campaign.
+// Role multipliers (0.15 / 0.50 / 1.00 / 1.75) are regression-optimized
+// against published adventures. Mini-boss = exactly fair share (1.0×).
 //
 // Vault is separate — it's placed treasure, not a creature role.
 // ---------------------------------------------------------------------------
 
 import type { Tier, Role, CreatureRole, CampaignSettings } from './types';
 import type { VaultSize } from './constants';
-import { XP_BY_CR, GP_PER_XP, VAULT_BUDGET_PER_TIER, VAULT_SIZE_MULTIPLIER, progressionMultiplier } from './constants';
+import { XP_BY_CR, GP_PER_XP, VAULT_BUDGET_PER_TIER, VAULT_SIZE_MULTIPLIER, progressionMultiplier, ROLE_MULTIPLIER } from './constants';
+
+// ---------------------------------------------------------------------------
+// Pool base — the shared multiplier for independent pool calculations
+// ---------------------------------------------------------------------------
+
+export interface PoolBase {
+  /** Raw XP value for this CR. */
+  xp: number;
+  /** Role multiplier (0.15 / 0.50 / 1.00 / 1.75, or 1.0 when roles disabled). */
+  roleMult: number;
+  /** Tier progression multiplier (0.70–1.30, or 1.0 when disabled). */
+  tierProg: number;
+  /** Party size scalar (4 / partySize). */
+  partySizeScalar: number;
+  /** Pre-computed product: xp × roleMult × tierProg × partySizeScalar. */
+  base: number;
+}
 
 /**
- * Raw role weights (regression-optimized against published adventures).
- * Calibrated against LMoP (all chapters), Curse of Strahd, and mixed
- * encounter compositions to minimize delivery variance across adventure
- * styles while maintaining narrative role differentiation.
+ * Compute the shared base that all four independent pools multiply against.
  *
- * Mini-boss = exactly fair share (1.0×): not penalized for being in
- * an organization, not skimming. The lieutenant gets what they'd get solo.
+ *   base = XP × roleMult × tierProg × partySizeScalar
  *
- * See specs/ENCOUNTER-BALANCE.md for the full regression analysis.
+ * Each pool then applies its own per-XP constant:
+ *   coins  = base × COINS_PER_XP[tier]
+ *   gems   = base × GEMS_PER_XP[tier]
+ *   art    = base × ART_PER_XP[tier]
+ *   magic  = base × MI_PER_XP[tier][table]  (per table, = expected item count)
  */
-export const ROLE_RAW_WEIGHT: Record<CreatureRole, number> = {
-  minion: 3,
-  elite: 10,
-  'mini-boss': 20,
-  boss: 35,
-} as const;
+export function calculatePoolBase(
+  cr: number,
+  tier: Tier,
+  role: Role,
+  settings: CampaignSettings,
+): PoolBase {
+  const key = crToKey(cr);
+  const xp = XP_BY_CR[key];
+  if (xp === undefined) {
+    throw new Error(`Unknown CR: ${cr} (key "${key}")`);
+  }
 
-/** Divisor calibrated so mini-boss = 1.00× (exactly fair share). */
-const WEIGHTED_AVG = 20;
+  const useRoles = settings.useRoles ?? true;
+  const roleMult = role === 'vault' ? 1.0
+    : useRoles ? ROLE_MULTIPLIER[role as CreatureRole]
+    : 1.0;
 
-/** Pre-computed role multipliers (rawWeight / weightedAvg). */
-export const ROLE_MULTIPLIER: Record<CreatureRole, number> = {
-  minion: 0.15,       // pocket change — part of the machine
-  elite: 0.50,        // personal gear — decent personal wealth
-  'mini-boss': 1.00,  // exactly fair share — the lieutenant
-  boss: 1.75,         // the big score — accumulated wealth
-} as const;
+  const tierProg = settings.partyLevel != null
+    ? progressionMultiplier(settings.partyLevel, tier, settings.tierProgression ?? true)
+    : (settings.aplAdjustment ?? 1.0);
+
+  const partySizeScalar = 4 / settings.partySize;
+
+  return {
+    xp,
+    roleMult,
+    tierProg,
+    partySizeScalar,
+    base: xp * roleMult * tierProg * partySizeScalar,
+  };
+}
 
 /**
  * Map from numeric CR values to the string keys used in XP_BY_CR.
@@ -67,10 +98,9 @@ function crToKey(cr: number): string {
  * roleBudget  = fullBudget × ROLE_MULTIPLIER[role]
  *
  * The role multiplier determines what fraction of the creature's "fair share"
- * it actually carries. A minion carries 10% (pocket change). A boss carries
- * 270% (the big score). Over a campaign with even role distribution, the
- * average multiplier is exactly 1.0 — total wealth distributed equals total
- * XP budget.
+ * it actually carries. A minion carries 15% (pocket change). A boss carries
+ * 175% (the big score). Over a balanced campaign, total wealth distributed
+ * approximates total XP budget.
  *
  * @param cr - Challenge Rating as a number (0, 0.125, 0.25, 0.5, 1..30).
  * @param tier - Tier of play (1-4).
