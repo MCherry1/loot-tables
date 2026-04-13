@@ -190,10 +190,14 @@ function computeDiceRanges(
 }
 
 function formatRange(r: { lo: number; hi: number }): string {
+  // Empty range (hi < lo) indicates a weight-0 cursed entry: show en-dash.
+  if (r.hi < r.lo) return '\u2013';
   return r.lo === r.hi ? `${r.lo}` : `${r.lo}\u2013${r.hi}`;
 }
 
 function randomInRange(r: { lo: number; hi: number }): number {
+  // Empty range: cursed entry manually picked. Report its cumulative slot.
+  if (r.hi < r.lo) return r.lo;
   if (r.lo === r.hi) return r.lo;
   return r.lo + Math.floor(Math.random() * (r.hi - r.lo + 1));
 }
@@ -214,6 +218,9 @@ function nextDieUp(total: number): number {
 /**
  * Snap entry weights up to the next standard die using the
  * largest-remainder method (Hamilton's method) for fair integer rounding.
+ *
+ * Weight-0 entries (cursed items) pass through unchanged — they don't
+ * contribute to the die total and remain non-rollable.
  */
 function snapToStandardDie(
   entries: Entry[],
@@ -225,23 +232,41 @@ function snapToStandardDie(
 
   const ratio = target / total;
   const scaled = entries.map((e) => {
+    if (e.weight === 0) {
+      return { entry: e, floored: 0, remainder: 0, cursed: true };
+    }
     const ideal = e.weight * ratio;
     const floored = Math.max(1, Math.floor(ideal));
-    return { entry: e, floored, remainder: ideal - Math.floor(ideal) };
+    return { entry: e, floored, remainder: ideal - Math.floor(ideal), cursed: false };
   });
 
   let currentTotal = scaled.reduce((s, e) => s + e.floored, 0);
   const deficit = target - currentTotal;
 
   const byRemainder = scaled
-    .map((e, i) => ({ i, remainder: e.remainder }))
+    .map((e, i) => ({ i, remainder: e.remainder, cursed: e.cursed }))
+    .filter((e) => !e.cursed)
     .sort((a, b) => b.remainder - a.remainder);
 
-  for (let j = 0; j < deficit; j++) {
+  for (let j = 0; j < deficit && j < byRemainder.length; j++) {
     scaled[byRemainder[j].i].floored += 1;
   }
 
   return scaled.map((e) => ({ ...e.entry, weight: e.floored }));
+}
+
+/**
+ * Stable sort that moves weight-0 (cursed) entries to the bottom while
+ * preserving original relative order within each group.
+ */
+function cursedToBottom(entries: Entry[]): Entry[] {
+  const weighted: Entry[] = [];
+  const cursed: Entry[] = [];
+  for (const e of entries) {
+    if (e.weight === 0) cursed.push(e);
+    else weighted.push(e);
+  }
+  return cursed.length === 0 ? entries : [...weighted, ...cursed];
 }
 
 // ---------------------------------------------------------------------------
@@ -408,11 +433,15 @@ function stepperReducer(
       // Hard cap.
       for (let i = 0; i < 32; i++) {
         if (working.finished) break;
-        const entries =
+        const entries = cursedToBottom(
           getFilteredStepperTable(working.currentTable, action.sourceSettings, action.edition) ??
-          [];
+          [],
+        );
         if (entries.length === 0) break;
-        const picked = weightedPick(entries);
+        // Cursed (weight-0) entries never resolve via auto-skip.
+        const rollable = entries.filter((e) => e.weight > 0);
+        if (rollable.length === 0) break;
+        const picked = weightedPick(rollable);
         const idx = entries.indexOf(picked);
         const ranges = computeDiceRanges(entries);
         const rolledNumber = randomInRange(ranges[idx]);
@@ -603,10 +632,12 @@ function TableCard({
         {entries.map((entry, i) => {
           const ref = extractRef(entry.name);
           const isHighlighted = visualHighlight === i;
+          const isCursed = entry.weight === 0;
+          const displayWeight = rawEntries[i]?.weight ?? entry.weight;
           return (
             <div
               key={i}
-              className={`entry-row${isHighlighted ? ' highlighted' : ''}`}
+              className={`entry-row${isHighlighted ? ' highlighted' : ''}${isCursed ? ' cursed' : ''}`}
               onClick={() => onPick(entry, i)}
             >
               <span className="entry-dice-range">
@@ -620,13 +651,16 @@ function TableCard({
                 className={`entry-name${ref ? ' has-ref' : ''}`}
               >
                 {cleanDisplayName(entry.name)}
+                {isCursed && <span className="cursed-tag">Cursed</span>}
                 {isHighlighted ? ' ✦' : ''}
               </span>
               {entry.source && (
                 <span className="entry-source">{entry.source}</span>
               )}
               <span className="entry-percentage">
-                {((rawEntries[i]?.weight ?? entry.weight) / totalWeight * 100).toFixed(1)}%
+                {totalWeight > 0
+                  ? `${((displayWeight / totalWeight) * 100).toFixed(1)}%`
+                  : '–'}
               </span>
             </div>
           );
@@ -755,11 +789,16 @@ function FinalResultCard({
     .join('');
 
   const stats = showItemDetails ? lookupItemStats(result, itemStatsMap, normalizedIndex) : null;
+  // A result is cursed iff any step in its resolution chain picked a weight-0 entry.
+  const isCursed = result.steps.some((s) => s.pickedEntry.weight === 0);
 
   return (
     <div className="final-result-card">
       <div className="final-result-label">{'✦ Final Result ✦'}</div>
-      <div className="final-result-name">{result.name}</div>
+      <div className="final-result-name">
+        {result.name}
+        {isCursed && <span className="cursed-tag">Cursed Item</span>}
+      </div>
       {result.source && (
         <div className="final-result-source">{expandSource(result.source)}</div>
       )}
@@ -988,16 +1027,20 @@ const LootTables: React.FC<LootTablesProps> = ({
   const currentNormalizedIndex = edition === '2024' ? normalizedIndex2024 : normalizedIndex2014;
 
   // Raw entries (original weights) — full table before source filtering.
+  // Weight-0 cursed items are sorted to the bottom.
   const rawEntries = useMemo<Entry[]>(
-    () => getStepperTable(state.currentTable, edition) ?? [],
+    () => cursedToBottom(getStepperTable(state.currentTable, edition) ?? []),
     [state.currentTable, edition],
   );
   // Filtered entries (effective weights from source priority) — used for
-  // probability sampling via weightedPick.
+  // probability sampling via weightedPick. Same cursed-bottom ordering as
+  // rawEntries so indexes line up across render and roll paths.
   const currentEntries = useMemo<Entry[]>(
     () =>
-      getFilteredStepperTable(state.currentTable, settings.sourceSettings, edition) ??
-      [],
+      cursedToBottom(
+        getFilteredStepperTable(state.currentTable, settings.sourceSettings, edition) ??
+          [],
+      ),
     [state.currentTable, settings.sourceSettings, edition],
   );
   // Display entries: snap weights to next standard die for clean dice ranges.
@@ -1032,6 +1075,9 @@ const LootTables: React.FC<LootTablesProps> = ({
 
   const handleRoll = useCallback(() => {
     if (state.rolling || currentEntries.length === 0) return;
+    // Cursed (weight-0) entries are never rolled — only picked manually.
+    const rollable = currentEntries.filter((e) => e.weight > 0);
+    if (rollable.length === 0) return;
 
     // 3D dice path: roll a physical die and map the result to an entry
     if (settings.dice3d && diceBoxRef.current && STANDARD_DICE.includes(totalWeight)) {
@@ -1060,7 +1106,7 @@ const LootTables: React.FC<LootTablesProps> = ({
     }
 
     // Fallback: CSS animation path
-    const picked = weightedPick(currentEntries);
+    const picked = weightedPick(rollable);
     const idx = currentEntries.indexOf(picked);
     const rolledNumber = randomInRange(diceRanges[idx]);
     dispatch({ type: 'ROLL_START' });
