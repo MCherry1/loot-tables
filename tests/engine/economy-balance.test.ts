@@ -1,10 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { calculateBudget } from '../../src/engine/budget';
-import { DEFAULT_CAMPAIGN_SETTINGS, computeRoleMultipliers, GP_PER_XP } from '../../src/engine/constants';
+import { DEFAULT_CAMPAIGN_SETTINGS, GP_PER_XP, ROLE_MULTIPLIER } from '../../src/engine/constants';
 
 // Use flat progression so budget tests verify role math in isolation.
 const settings = { ...DEFAULT_CAMPAIGN_SETTINGS, tierProgression: false };
-const mults = computeRoleMultipliers(3.0);
+const mults = { ...ROLE_MULTIPLIER, vault: 1.0 } as Record<string, number>;
 
 describe('economy balance', () => {
   it('CR 4, Tier 1, Boss → roleBudget uses role multiplier', () => {
@@ -24,16 +24,8 @@ describe('economy balance', () => {
   });
 
   it('boss multiplier is much larger than elite', () => {
-    // New multipliers: boss=1.75, elite=0.50 → ratio 3.5×
+    // Multipliers: boss=1.75, elite=0.50 → ratio 3.5×
     expect(mults.boss / mults.elite).toBeCloseTo(3.5, 1);
-  });
-
-  it('deprecated computeRoleMultipliers ignores concentration parameter', () => {
-    const flat = computeRoleMultipliers(1.5);
-    const steep = computeRoleMultipliers(5.0);
-    // Always returns same values: boss/minion = 1.75/0.15 ≈ 11.67
-    expect(flat.boss / flat.minion).toBeCloseTo(11.67, 0);
-    expect(steep.boss / steep.minion).toBeCloseTo(11.67, 0);
   });
 
   it('role multipliers have mini-boss at exactly fair share', () => {
@@ -42,8 +34,6 @@ describe('economy balance', () => {
     expect(mults.elite).toBeCloseTo(0.50, 2);
     expect(mults['mini-boss']).toBeCloseTo(1.00, 2);
     expect(mults.boss).toBeCloseTo(1.75, 2);
-    // Mini-boss is exactly 1.0 (fair share)
-    expect(mults['mini-boss']).toBeCloseTo(1.0, 2);
   });
 
   it('useRoles=false gives flat multiplier', () => {

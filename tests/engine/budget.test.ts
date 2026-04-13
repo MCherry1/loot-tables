@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { calculateBudget } from '../../src/engine/budget';
-import { DEFAULT_CAMPAIGN_SETTINGS, computeRoleMultipliers, GP_PER_XP } from '../../src/engine/constants';
+import { DEFAULT_CAMPAIGN_SETTINGS, GP_PER_XP, ROLE_MULTIPLIER } from '../../src/engine/constants';
 
 // Use flat progression (×1.00) so tests verify budget math in isolation.
 const settings = { ...DEFAULT_CAMPAIGN_SETTINGS, tierProgression: false };
 
-// Pre-compute the role multipliers for use in assertions.
-const mults = computeRoleMultipliers(3.0);
+// Role multipliers for use in assertions (add vault = 1.0 for completeness).
+const mults = { ...ROLE_MULTIPLIER, vault: 1.0 } as Record<string, number>;
 
 describe('calculateBudget', () => {
   it('CR 5, Tier 2, Boss → fullBudget ≈ XP × GP_PER_XP', () => {

@@ -1,16 +1,16 @@
 import { describe, it, expect } from 'vitest';
 import {
-  generateLoot,
-  generateEncounter,
+  generateLootResolvable,
+  generateEncounterV2,
   generateVaultLootResolvable,
 } from '../../src/engine/loot-generator';
 import { DEFAULT_CAMPAIGN_SETTINGS } from '../../src/engine/constants';
 
 const settings = { ...DEFAULT_CAMPAIGN_SETTINGS };
 
-describe('generateLoot', () => {
-  it('CR 5, Tier 2, Elite → returns LootResult with coins and positive average', () => {
-    const result = generateLoot({ cr: 5, tier: 2, role: 'elite', settings });
+describe('generateLootResolvable', () => {
+  it('CR 5, Tier 2, Elite → returns result with coins and positive average', () => {
+    const result = generateLootResolvable({ cr: 5, tier: 2, role: 'elite', settings }, true);
     expect(result).toHaveProperty('coins');
     expect(result).toHaveProperty('gems');
     expect(result).toHaveProperty('artObjects');
@@ -27,26 +27,36 @@ describe('generateLoot', () => {
   });
 });
 
-describe('generateEncounter', () => {
+describe('generateEncounterV2', () => {
   it('4 minions + 1 elite + 1 boss → returns 6 creatures', () => {
-    const result = generateEncounter({
-      cr: 5,
+    const result = generateEncounterV2({
+      groups: [
+        { id: '1', cr: 5, role: 'minion', count: 4 },
+        { id: '2', cr: 5, role: 'elite', count: 1 },
+        { id: '3', cr: 5, role: 'boss', count: 1 },
+      ],
+      vaultCount: 0,
+      vaultSize: 'standard',
       tier: 2,
       autoTier: false,
-      counts: { minion: 4, elite: 1, 'mini-boss': 0, boss: 1, vault: 0 },
       settings,
-    });
+    }, true);
     expect(result.creatures).toHaveLength(6);
   });
 
   it('creatures are labeled correctly', () => {
-    const result = generateEncounter({
-      cr: 5,
+    const result = generateEncounterV2({
+      groups: [
+        { id: '1', cr: 5, role: 'minion', count: 4 },
+        { id: '2', cr: 5, role: 'elite', count: 1 },
+        { id: '3', cr: 5, role: 'boss', count: 1 },
+      ],
+      vaultCount: 0,
+      vaultSize: 'standard',
       tier: 2,
       autoTier: false,
-      counts: { minion: 4, elite: 1, 'mini-boss': 0, boss: 1, vault: 0 },
       settings,
-    });
+    }, true);
 
     const minions = result.creatures.filter((c) => c.role === 'minion');
     const elites = result.creatures.filter((c) => c.role === 'elite');
@@ -93,9 +103,9 @@ describe('hoard spell-component steals (vault)', () => {
     expect(diamondHits).toBeLessThan(100);
   });
 
-  it('non-vault generateLoot never produces a hoard-steal gem', () => {
+  it('non-vault generateLootResolvable never produces a hoard-steal gem', () => {
     for (let i = 0; i < 50; i++) {
-      const loot = generateLoot({ cr: 3, tier: 1, role: 'boss', settings });
+      const loot = generateLootResolvable({ cr: 3, tier: 1, role: 'boss', settings }, true);
       expect(loot.gems.every((g) => g.tableName !== 'hoard-steal')).toBe(true);
     }
   });

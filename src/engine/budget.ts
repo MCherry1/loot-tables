@@ -65,9 +65,7 @@ export function calculatePoolBase(
     : useRoles ? ROLE_MULTIPLIER[role as CreatureRole]
     : 1.0;
 
-  const tierProg = settings.partyLevel != null
-    ? progressionMultiplier(settings.partyLevel, tier, settings.tierProgression ?? true)
-    : (settings.aplAdjustment ?? 1.0);
+  const tierProg = progressionMultiplier(settings.partyLevel, tier, settings.tierProgression ?? true);
 
   const partySizeScalar = 4 / settings.partySize;
 
@@ -94,7 +92,7 @@ function crToKey(cr: number): string {
 /**
  * Calculate the budget for a single creature.
  *
- * fullBudget  = XP_BY_CR[cr] × GP_PER_XP[tier] × aplAdjustment × (4 / partySize)
+ * fullBudget  = XP_BY_CR[cr] × GP_PER_XP[tier] × tierProg × (4 / partySize)
  * roleBudget  = fullBudget × ROLE_MULTIPLIER[role]
  *
  * The role multiplier determines what fraction of the creature's "fair share"
@@ -105,7 +103,7 @@ function crToKey(cr: number): string {
  * @param cr - Challenge Rating as a number (0, 0.125, 0.25, 0.5, 1..30).
  * @param tier - Tier of play (1-4).
  * @param role - Creature's economy role.
- * @param settings - Campaign settings (party size, APL adjustment, etc.).
+ * @param settings - Campaign settings (party size, party level, etc.).
  * @returns The full (pre-role) budget and the role-adjusted budget in GP.
  */
 export function calculateBudget(
@@ -122,13 +120,9 @@ export function calculateBudget(
   }
 
   const gpPerXp = GP_PER_XP[tier];
-  // New system: compute from partyLevel + tierProgression.
-  // Backward compat: fall back to stored aplAdjustment for old settings.
-  const aplAdj = settings.partyLevel != null
-    ? progressionMultiplier(settings.partyLevel, tier, settings.tierProgression ?? true)
-    : (settings.aplAdjustment ?? 1.0);
+  const tierProg = progressionMultiplier(settings.partyLevel, tier, settings.tierProgression ?? true);
   const partySizeScalar = 4 / settings.partySize;
-  const fullBudget = xp * gpPerXp * aplAdj * partySizeScalar;
+  const fullBudget = xp * gpPerXp * tierProg * partySizeScalar;
 
   // Vault role uses 1.0 multiplier (it's placed treasure, sized separately)
   // When useRoles is false, all creature roles also get 1.0 (flat CR distribution)

@@ -60,12 +60,6 @@ export interface CampaignSettings {
    * When false, treasure is flat ×1.00 across the entire tier.
    */
   tierProgression: boolean;
-  /**
-   * @deprecated Use partyLevel + tierProgression instead.
-   * Kept for backward compatibility with stored settings.
-   * Computed from partyLevel when tierProgression is true.
-   */
-  aplAdjustment: number;
   /** D&D edition for item data (default '2014'). */
   edition: Edition;
   /** Enable 3D dice rolling animation. */
@@ -101,20 +95,6 @@ export interface VaultLootInput {
   tier: Tier;
   /** Vault size (minor/standard/major). */
   size: import('./constants').VaultSize;
-  /** Campaign settings to apply. */
-  settings: CampaignSettings;
-}
-
-/** Input for generating loot for an entire encounter. */
-export interface EncounterInput {
-  /** Challenge Rating shared by all creatures (0-30). */
-  cr: number;
-  /** Tier of play. */
-  tier: Tier;
-  /** Whether to derive tier automatically from CR. */
-  autoTier: boolean;
-  /** How many creatures of each role are in the encounter. */
-  counts: Record<Role, number>;
   /** Campaign settings to apply. */
   settings: CampaignSettings;
 }
@@ -177,22 +157,6 @@ export interface TreasureItem {
   artisanTool?: string;
 }
 
-/** A single magic item result. */
-export interface MagicItemResult {
-  /** Item name (e.g. "Cloak of Protection"). */
-  name: string;
-  /** Sourcebook acronym (DMG, XGE, etc.). */
-  source: string;
-  /** Which MI table (A-I) produced this item. */
-  table: MITable;
-  /** Value score from 2d4 roll (2-8). */
-  valueScore?: number;
-  /** Buy price: valueScore x baseNumber. */
-  buyPrice?: number;
-  /** Sale price: floor(valueScore / 2) x baseNumber. */
-  salePrice?: number;
-}
-
 /** A single denomination's dice formula and rolled result. */
 export interface CoinDenom {
   formula: string;
@@ -208,42 +172,8 @@ export interface CoinBreakdown {
   pp: CoinDenom;
 }
 
-/** Complete loot result for a single creature. */
-export interface LootResult {
-  /** Coin award broken down by denomination. */
-  coins: CoinBreakdown;
-  /** Gem drops. */
-  gems: TreasureItem[];
-  /** Art object drops. */
-  artObjects: TreasureItem[];
-  /** Magic item drops. */
-  magicItems: MagicItemResult[];
-  /** Flavor text for mundane pocket finds. */
-  mundaneFinds: string[];
-}
-
-/** One creature's results within an encounter. */
-export interface CreatureResult {
-  /** The creature's economy role. */
-  role: Role;
-  /** Ordinal index within its role group (e.g. "Minion 3" -> 3). */
-  index: number;
-  /** The generated loot. */
-  loot: LootResult;
-}
-
-/** Aggregated results for an entire encounter. */
-export interface EncounterResult {
-  /** Per-creature breakdown. */
-  creatures: CreatureResult[];
-  /** Sum of all coin averages across every creature. */
-  totalCoinsAvg: number;
-  /** Total number of gems + art objects + magic items. */
-  totalItems: number;
-}
-
 // ---------------------------------------------------------------------------
-// V2: Mixed-CR encounters and step-by-step resolution
+// Mixed-CR encounters and step-by-step resolution
 // ---------------------------------------------------------------------------
 
 /** Creature roles for creature groups (vault handled separately). */
@@ -323,22 +253,3 @@ export interface ResolvableEncounterResult {
   totalItems: number;
 }
 
-// ---------------------------------------------------------------------------
-// Internal engine types
-// ---------------------------------------------------------------------------
-
-/** A category entry in the tier breakdown (used internally by the engine). */
-export interface CategoryEntry {
-  /** What kind of treasure this category represents. */
-  type: 'coins' | 'gems' | 'art' | 'magic';
-  /** Percentage of total hoard value allocated to this category. */
-  pct: number;
-  /** For gems/art: gp value per unit (e.g. 50 for 50gp gems). */
-  unitValue?: number;
-  /** For gems/art: reference table name (e.g. "Gems-2-50-gp"). */
-  tableName?: string;
-  /** For magic items: which MI table to roll on. */
-  miTable?: MITable;
-  /** For magic items: average gp value of items from this table. */
-  avgValue?: number;
-}

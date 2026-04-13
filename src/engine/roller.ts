@@ -149,9 +149,7 @@ export function getEffectiveWeight(
   sourceSettings: SourceSettings,
 ): number {
   if (!entry.source) return entry.weight;
-  const rawPriority = sourceSettings[entry.source] ?? 'normal';
-  // Migrate legacy 'emphasis' → 'high'
-  const priority: SourcePriority = rawPriority === ('emphasis' as string) ? 'high' : rawPriority as SourcePriority;
+  const priority = (sourceSettings[entry.source] ?? 'normal') as SourcePriority;
   const mult = PRIORITY_MULTIPLIER[priority] ?? 1.0;
   if (mult === 0) return 0;
   const damp = computeDampFactors()[entry.source] ?? 1.0;

@@ -21,19 +21,13 @@ import type {
   CampaignSettings,
   CoinBreakdown,
   CoinDenom,
-  CreatureResult,
-  EncounterInput,
   EncounterInputV2,
-  EncounterResult,
   LootInput,
-  LootResult,
-  MagicItemResult,
   MITable,
   ResolvableCreatureResult,
   ResolvableEncounterResult,
   ResolvableLootResult,
   ResolvableMagicItem,
-  Role,
   Tier,
   TreasureItem,
   VaultLootInput,
@@ -195,80 +189,7 @@ function generateFromPools<MI>(
 }
 
 // ---------------------------------------------------------------------------
-// Public API — V1 (fully resolved, backward compat)
-// ---------------------------------------------------------------------------
-
-/**
- * Generate loot for a single creature (V1 — fully resolved names).
- */
-export function generateLoot(input: LootInput): LootResult {
-  const { cr, tier, role, settings } = input;
-  const pool = calculatePoolBase(cr, tier, role, settings);
-
-  const { coinBudget, gems, artObjects, magicItems } = generateFromPools(
-    pool.base,
-    tier,
-    settings,
-    (table: MITable): MagicItemResult => {
-      const { name, source } = rollMagicItem(table);
-      const result: MagicItemResult = { name, source, table };
-      if (settings.showValues) {
-        const pricing = priceItem(table);
-        result.valueScore = pricing.valueScore;
-        result.buyPrice = pricing.buyPrice;
-        if (settings.showSalePrice) {
-          result.salePrice = pricing.salePrice;
-        }
-      }
-      return result;
-    },
-  );
-
-  const coins = gpToCoinBreakdown(coinBudget, tier);
-  const mundaneFinds: string[] = [];
-  if (coinBreakdownToGp(coins) < 1 && settings.showMundane) {
-    mundaneFinds.push(randomMundaneFind());
-  }
-
-  return { coins, gems, artObjects, magicItems, mundaneFinds };
-}
-
-/**
- * Generate loot for a full encounter (V1 — same CR for all creatures).
- */
-export function generateEncounter(input: EncounterInput): EncounterResult {
-  const { cr, tier: inputTier, autoTier, counts, settings } = input;
-  const tier: Tier = autoTier ? crToDefaultTier(cr) : inputTier;
-
-  const creatures: CreatureResult[] = [];
-  const roles: Role[] = ['minion', 'elite', 'mini-boss', 'boss', 'vault'];
-
-  for (const role of roles) {
-    const count = counts[role] ?? 0;
-    for (let i = 0; i < count; i++) {
-      creatures.push({
-        role,
-        index: i + 1,
-        loot: generateLoot({ cr, tier, role, settings }),
-      });
-    }
-  }
-
-  const totalCoinsAvg = creatures.reduce(
-    (sum, c) => sum + coinBreakdownToGp(c.loot.coins),
-    0,
-  );
-  const totalItems = creatures.reduce(
-    (sum, c) =>
-      sum + c.loot.gems.length + c.loot.artObjects.length + c.loot.magicItems.length,
-    0,
-  );
-
-  return { creatures, totalCoinsAvg, totalItems };
-}
-
-// ---------------------------------------------------------------------------
-// V2: Resolvable magic items (step-by-step resolution)
+// Public API
 // ---------------------------------------------------------------------------
 
 /**

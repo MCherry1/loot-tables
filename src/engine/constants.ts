@@ -1,6 +1,5 @@
 import type {
   CampaignSettings,
-  CategoryEntry,
   CreatureRole,
   ItemTier,
   MITable,
@@ -123,24 +122,6 @@ export const ROLE_MULTIPLIER: Record<CreatureRole, number> = {
   boss: 1.75,      // the big score — accumulated wealth
 } as const;
 
-/** Default role ratios for CampaignSettings (includes vault). */
-export const DEFAULT_ROLE_RATIOS: Record<Role, number> = {
-  minion: 0.15,
-  elite: 0.50,
-  'mini-boss': 1.00,
-  boss: 1.75,
-  vault: 1.00,
-} as const;
-
-/**
- * Compute role multipliers from a concentration parameter.
- * @deprecated Use ROLE_MULTIPLIER directly. Kept for UI backward compatibility.
- */
-export function computeRoleMultipliers(concentration: number): Record<Role, number> {
-  // New system uses narrative-fit multipliers, concentration parameter is ignored.
-  return { ...ROLE_MULTIPLIER, vault: 1.0 };
-}
-
 // ---------------------------------------------------------------------------
 // Magic-item base numbers and average values
 // ---------------------------------------------------------------------------
@@ -190,82 +171,6 @@ export function crToDefaultTier(cr: number): Tier {
 export const CR_TO_DEFAULT_TIER: Record<number, Tier> = Object.fromEntries(
   Array.from({ length: 31 }, (_, cr) => [cr, crToDefaultTier(cr)])
 ) as Record<number, Tier>;
-
-// ---------------------------------------------------------------------------
-// Tier category breakdowns (REFERENCE DATA — not used by runtime)
-// ---------------------------------------------------------------------------
-
-/**
- * Per-tier breakdown of how total hoard value is distributed across categories.
- *
- * @deprecated This was the source of truth for the old percentage-based system.
- * COINS/GEMS/ART_PER_XP were derived from these percentages × GP_PER_XP.
- * MI_PER_XP was derived directly from DMG d100 item counts (not from these).
- * Kept as reference for the derivation trail — not used by the runtime engine.
- */
-export const TIER_CATEGORIES: Record<Tier, CategoryEntry[]> = {
-  // --- Tier 1 ---
-  1: [
-    { type: 'coins', pct: 18.2 },
-    { type: 'gems', pct: 1.7, unitValue: 25, tableName: 'Gems-1-25-gp' },
-    { type: 'art', pct: 3.9, unitValue: 100, tableName: 'Art-1-100-gp' },
-    { type: 'gems', pct: 11.0, unitValue: 50, tableName: 'Gems-2-50-gp' },
-    { type: 'magic', pct: 3.9, miTable: 'A', avgValue: 50 },
-    { type: 'magic', pct: 4.4, miTable: 'B', avgValue: 125 },
-    { type: 'magic', pct: 29.0, miTable: 'C', avgValue: 1250 },
-    { type: 'magic', pct: 13.9, miTable: 'F', avgValue: 500 },
-    { type: 'magic', pct: 13.9, miTable: 'G', avgValue: 5000 },
-  ],
-
-  // --- Tier 2 ---
-  2: [
-    { type: 'coins', pct: 52.0 },
-    { type: 'art', pct: 0.4, unitValue: 100, tableName: 'Art-1-100-gp' },
-    { type: 'gems', pct: 1.7, unitValue: 50, tableName: 'Gems-2-50-gp' },
-    { type: 'gems', pct: 3.5, unitValue: 125, tableName: 'Gems-3-125-gp' },
-    { type: 'art', pct: 3.9, unitValue: 500, tableName: 'Art-2-500-gp' },
-    { type: 'magic', pct: 0.4, miTable: 'A', avgValue: 50 },
-    { type: 'magic', pct: 0.8, miTable: 'B', avgValue: 125 },
-    { type: 'magic', pct: 4.6, miTable: 'C', avgValue: 1250 },
-    { type: 'magic', pct: 10.1, miTable: 'D', avgValue: 12500 },
-    { type: 'magic', pct: 2.4, miTable: 'F', avgValue: 500 },
-    { type: 'magic', pct: 6.7, miTable: 'G', avgValue: 5000 },
-    { type: 'magic', pct: 13.5, miTable: 'H', avgValue: 50000 },
-  ],
-
-  // --- Tier 3 ---
-  3: [
-    { type: 'coins', pct: 29.7 },
-    { type: 'art', pct: 0.3, unitValue: 500, tableName: 'Art-2-500-gp' },
-    { type: 'gems', pct: 1.1, unitValue: 500, tableName: 'Gems-4-500-gp' },
-    { type: 'art', pct: 0.9, unitValue: 1250, tableName: 'Art-3-1250-gp' },
-    { type: 'gems', pct: 2.3, unitValue: 1250, tableName: 'Gems-5-1250-gp' },
-    { type: 'magic', pct: 0.05, miTable: 'A', avgValue: 50 },
-    { type: 'magic', pct: 0.1, miTable: 'B', avgValue: 125 },
-    { type: 'magic', pct: 0.9, miTable: 'C', avgValue: 1250 },
-    { type: 'magic', pct: 4.7, miTable: 'D', avgValue: 12500 },
-    { type: 'magic', pct: 9.4, miTable: 'E', avgValue: 125000 },
-    { type: 'magic', pct: 0.05, miTable: 'F', avgValue: 500 },
-    { type: 'magic', pct: 0.9, miTable: 'G', avgValue: 5000 },
-    { type: 'magic', pct: 11.8, miTable: 'H', avgValue: 50000 },
-    { type: 'magic', pct: 37.8, miTable: 'I', avgValue: 500000 },
-  ],
-
-  // --- Tier 4 ---
-  4: [
-    { type: 'coins', pct: 45.3 },
-    { type: 'gems', pct: 0.4, unitValue: 1250, tableName: 'Gems-5-1250-gp' },
-    { type: 'art', pct: 0.5, unitValue: 5000, tableName: 'Art-4-5000-gp' },
-    { type: 'gems', pct: 0.8, unitValue: 5000, tableName: 'Gems-6-5000-gp' },
-    { type: 'art', pct: 0.6, unitValue: 12500, tableName: 'Art-5-12500-gp' },
-    { type: 'magic', pct: 0.1, miTable: 'C', avgValue: 1250 },
-    { type: 'magic', pct: 2.0, miTable: 'D', avgValue: 12500 },
-    { type: 'magic', pct: 13.5, miTable: 'E', avgValue: 125000 },
-    { type: 'magic', pct: 0.1, miTable: 'G', avgValue: 5000 },
-    { type: 'magic', pct: 1.6, miTable: 'H', avgValue: 50000 },
-    { type: 'magic', pct: 35.2, miTable: 'I', avgValue: 500000 },
-  ],
-} as const;
 
 // ---------------------------------------------------------------------------
 // Independent Pool Constants (four parallel systems from DMG hoard tables)
@@ -463,7 +368,6 @@ export const DEFAULT_CAMPAIGN_SETTINGS: CampaignSettings = {
   partyLevel: 5,
   autoTier: true,
   tierProgression: true,
-  aplAdjustment: 1.0,
   edition: '2014',
   dice3d: false,
   showItemDetails: true,

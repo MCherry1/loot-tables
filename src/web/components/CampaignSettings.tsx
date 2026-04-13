@@ -79,14 +79,12 @@ interface Props {
   onAdminModeChange?: (enabled: boolean) => void;
 }
 
-/** Read the current priority for a source, defaulting to 'normal'.
- *  Migrates legacy 'emphasis' values to 'high'. */
+/** Read the current priority for a source, defaulting to 'normal'. */
 function getPriority(
   settings: SourceSettings,
   acronym: string,
 ): SourcePriority {
-  const val = settings[acronym] ?? 'normal';
-  return val === ('emphasis' as string) ? 'high' : val;
+  return (settings[acronym] ?? 'normal') as SourcePriority;
 }
 
 /** Apply a priority to many acronyms at once, mutating a fresh copy. */
