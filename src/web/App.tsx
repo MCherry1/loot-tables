@@ -89,7 +89,6 @@ const App: React.FC = () => {
     if (typeof document === 'undefined') return;
     const apply = () => {
       document.documentElement.dataset.theme = resolveTheme(settings.theme);
-      document.documentElement.dataset.palette = settings.palette ?? 'treasure';
     };
     apply();
     if (settings.theme !== 'auto') return;
@@ -97,7 +96,7 @@ const App: React.FC = () => {
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
     mq.addEventListener('change', apply);
     return () => mq.removeEventListener('change', apply);
-  }, [settings.theme, settings.palette]);
+  }, [settings.theme]);
 
   // When pendingResolve is set (because user clicked an unresolved item in
   // the encounter), force-switch to the Magic Item Tables tab.
@@ -136,101 +135,118 @@ const App: React.FC = () => {
     [],
   );
 
+  const TABS: { id: Tab; label: string }[] = [
+    { id: 'tables',       label: 'Tables' },
+    { id: 'encounter',    label: 'Loot Drops' },
+    { id: 'settings',     label: 'Settings' },
+    { id: 'about',        label: 'About' },
+    { id: 'how-it-works', label: 'How it Works' },
+    { id: 'ddesign',      label: 'D\u0026Design' },
+  ];
+
+  const themeOptions: { value: ThemePref; glyph: string; label: string }[] = [
+    { value: 'light', glyph: '\u2600',  label: 'Light theme' },
+    { value: 'auto',  glyph: '\u25D0',  label: 'Auto theme' },
+    { value: 'dark',  glyph: '\u263E',  label: 'Dark theme' },
+  ];
+
   return (
-    <div className="app-container">
-      <h1 className="app-title">D&amp;D 5e Loot Generator</h1>
+    <>
+      <nav className="ck-nav" aria-label="Site navigation">
+        <span className="ck-nav-brand">CherryKeep</span>
+        <div className="ck-nav-tabs" role="tablist">
+          {TABS.map((t) => (
+            <button
+              key={t.id}
+              role="tab"
+              aria-selected={activeTab === t.id}
+              className={`ck-nav-tab${activeTab === t.id ? ' active' : ''}`}
+              onClick={() => setActiveTab(t.id)}
+            >
+              {t.label}
+            </button>
+          ))}
+          {adminMode && (
+            <button
+              role="tab"
+              aria-selected={activeTab === 'review'}
+              className={`ck-nav-tab${activeTab === 'review' ? ' active' : ''}`}
+              onClick={() => setActiveTab('review')}
+            >
+              Review
+            </button>
+          )}
+        </div>
+        <div className="ck-nav-right">
+          <div className="ck-theme-toggle" role="group" aria-label="Theme">
+            {themeOptions.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                aria-label={opt.label}
+                aria-pressed={settings.theme === opt.value}
+                className={`ck-theme-btn${settings.theme === opt.value ? ' active' : ''}`}
+                onClick={() =>
+                  setSettings((prev) => ({ ...prev, theme: opt.value }))
+                }
+              >
+                {opt.glyph}
+              </button>
+            ))}
+          </div>
+        </div>
+      </nav>
 
-      {/* Tab Navigation */}
-      <div className="tab-bar">
-        <button
-          className={`tab-btn ${activeTab === 'tables' ? 'active' : ''}`}
-          onClick={() => setActiveTab('tables')}
-        >
-          Magic Item Tables
-        </button>
-        <button
-          className={`tab-btn ${activeTab === 'encounter' ? 'active' : ''}`}
-          onClick={() => setActiveTab('encounter')}
-        >
-          Loot Drops
-        </button>
-        <button
-          className={`tab-btn ${activeTab === 'settings' ? 'active' : ''}`}
-          onClick={() => setActiveTab('settings')}
-        >
-          Settings
-        </button>
-        {adminMode && (
-          <button
-            className={`tab-btn ${activeTab === 'review' ? 'active' : ''}`}
-            onClick={() => setActiveTab('review')}
-          >
-            Review
-          </button>
-        )}
-        <button
-          className={`tab-btn ${activeTab === 'about' ? 'active' : ''}`}
-          onClick={() => setActiveTab('about')}
-        >
-          About
-        </button>
-        <button
-          className={`tab-btn ${activeTab === 'how-it-works' ? 'active' : ''}`}
-          onClick={() => setActiveTab('how-it-works')}
-        >
-          How it Works
-        </button>
-        <button
-          className={`tab-btn ${activeTab === 'ddesign' ? 'active' : ''}`}
-          onClick={() => setActiveTab('ddesign')}
-        >
-          D&amp;Design
-        </button>
-      </div>
-
-      {/* Tab Content */}
-      {activeTab === 'tables' && (
-        <LootTables
-          settings={settings}
-          pendingResolve={pendingResolve}
-          onResolveComplete={handleResolveComplete}
-          onCancelResolve={handleCancelResolve}
-        />
-      )}
-
-      {activeTab === 'encounter' && (
-        <>
-          <EncounterBuilder
+      <div className="app-container">
+        {/* Tab Content */}
+        {activeTab === 'tables' && (
+          <LootTables
             settings={settings}
-            onSettingsChange={setSettings}
-            results={encounterResults}
-            onResultsChange={handleNewResults}
-            resolvedItems={resolvedItems}
-            setResolvedItems={setResolvedItems}
-            onStartResolve={handleStartResolve}
-            onNavigateHelp={() => setActiveTab('how-it-works')}
+            pendingResolve={pendingResolve}
+            onResolveComplete={handleResolveComplete}
+            onCancelResolve={handleCancelResolve}
           />
-          <VaultHoard settings={settings} />
-        </>
-      )}
+        )}
 
-      {activeTab === 'settings' && (
-        <CampaignSettingsPanel
-          settings={settings}
-          onChange={setSettings}
-          adminMode={adminMode}
-          onAdminModeChange={setAdminMode}
-        />
-      )}
+        {activeTab === 'encounter' && (
+          <>
+            <EncounterBuilder
+              settings={settings}
+              onSettingsChange={setSettings}
+              results={encounterResults}
+              onResultsChange={handleNewResults}
+              resolvedItems={resolvedItems}
+              setResolvedItems={setResolvedItems}
+              onStartResolve={handleStartResolve}
+              onNavigateHelp={() => setActiveTab('how-it-works')}
+            />
+            <VaultHoard settings={settings} />
+          </>
+        )}
 
-      {activeTab === 'review' && adminMode && <ReviewUI />}
+        {activeTab === 'settings' && (
+          <CampaignSettingsPanel
+            settings={settings}
+            onChange={setSettings}
+            adminMode={adminMode}
+            onAdminModeChange={setAdminMode}
+          />
+        )}
 
-      {activeTab === 'about' && <About />}
+        {activeTab === 'review' && adminMode && <ReviewUI />}
 
-      {activeTab === 'how-it-works' && <HowItWorks />}
+        {activeTab === 'about' && <About />}
 
-      {activeTab === 'ddesign' && <DDesign />}
-    </div>
+        {activeTab === 'how-it-works' && <HowItWorks />}
+
+        {activeTab === 'ddesign' && <DDesign />}
+
+        <footer className="ck-footer">
+          <span>&copy; 2026 CherryKeep</span>
+          <span>Fan Content Policy &middot; Not affiliated with Wizards of the Coast</span>
+        </footer>
+      </div>
+    </>
   );
 };
 
