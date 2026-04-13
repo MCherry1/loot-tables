@@ -55,12 +55,26 @@ export const XP_BY_CR: Record<string, number> = {
 // Gold-per-XP conversion rate by tier
 // ---------------------------------------------------------------------------
 
-/** GP earned per 1 XP, indexed by tier of play. */
+/**
+ * Total GP per encounter-XP by tier (= pool constant sum).
+ *
+ * Used for vault conversion: vaultBase = vaultBudget / GP_PER_XP[tier].
+ * Must equal the sum of coins + gems + art + MI_GP pools for each tier
+ * so the vault conversion produces exactly VAULT_BUDGET_PER_TIER in output.
+ *
+ * Derived from: (avg_hoard × hoards_per_tier) / tier_encounter_XP.
+ *
+ * Tier XP denominators (party of 4, encounter XP divided equally):
+ *   T1: 6,500 × 4 = 26,000  (levels 1–4, advance to 5)
+ *   T2: 78,500 × 4 = 314,000 (levels 5–10, advance to 11)
+ *   T3: 140,000 × 4 = 560,000 (levels 11–16, advance to 17)
+ *   T4: 130,000 × 4 = 520,000 (levels 17–20)
+ */
 export const GP_PER_XP: Record<Tier, number> = {
-  1: 0.29,
-  2: 0.5806,
-  3: 2.4257,
-  4: 8.8814,
+  1: 0.289962,   // 7,539 / 26,000
+  2: 0.425293,   // 133,542 / 314,000
+  3: 2.269757,   // 1,271,064 / 560,000
+  4: 10.930954,  // 5,684,096 / 520,000
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -246,43 +260,83 @@ export const TIER_CATEGORIES: Record<Tier, CategoryEntry[]> = {
 // Independent Pool Constants (four parallel systems from DMG hoard tables)
 // ---------------------------------------------------------------------------
 //
-// Each pool has its own per-XP constant:
-//   (avg_per_hoard × hoards_per_tier) / total_encounter_XP_per_tier
+// Derived from TIER_CATEGORIES (DMG probability analysis, source of truth)
+// multiplied by corrected GP_PER_XP:
+//
+//   pool_per_xp = (category_pct / 100) × GP_PER_XP[tier]
+//   mi_items_per_xp = pool_gp_per_xp / MI_AVG_VALUES[table]
 //
 // These do NOT interact. Tuning one does not affect the others.
-// Tier 1 verified: pools sum to 0.2901 gp/XP ≈ old GP_PER_XP[1] of 0.29.
+// All tiers verified: pool sums match GP_PER_XP to <0.1%.
 // ---------------------------------------------------------------------------
 
 /** Coin GP per encounter-XP by tier. */
 export const COINS_PER_XP: Record<Tier, number> = {
-  1: 0.052769,  // 196 gp/hoard × 7 / 26,000 XP
-  2: 0.221102,  // 3,857 gp/hoard × 18 / 314,000 XP
-  3: 0.675000,  // 31,500 gp/hoard × 12 / 560,000 XP
-  4: 4.600000,  // 322,000 gp/hoard × 8 / 560,000 XP
+  1: 0.052773,   // 18.2% of 0.289962
+  2: 0.221152,   // 52.0% of 0.425293
+  3: 0.674118,   // 29.7% of 2.269757
+  4: 4.951722,   // 45.3% of 10.930954
 } as const;
 
 /** Gem GP budget per encounter-XP by tier. */
 export const GEMS_PER_XP: Record<Tier, number> = {
-  1: 0.037154,  // 138 gp/hoard × 7 / 26,000 XP
-  2: 0.022357,  // 390 gp/hoard × 18 / 314,000 XP
-  3: 0.075129,  // 3,506 gp/hoard × 12 / 560,000 XP
-  4: 0.119500,  // 8,365 gp/hoard × 8 / 560,000 XP
+  1: 0.036825,   // (1.7+11.0)% = 12.7% of 0.289962
+  2: 0.022115,   // (1.7+3.5)% = 5.2% of 0.425293
+  3: 0.077172,   // (1.1+2.3)% = 3.4% of 2.269757
+  4: 0.131171,   // (0.4+0.8)% = 1.2% of 10.930954
 } as const;
 
 /** Art GP budget per encounter-XP by tier. */
 export const ART_PER_XP: Record<Tier, number> = {
-  1: 0.011308,  // 42 gp/hoard × 7 / 26,000 XP
-  2: 0.018115,  // 316 gp/hoard × 18 / 314,000 XP
-  3: 0.027900,  // 1,302 gp/hoard × 12 / 560,000 XP
-  4: 0.106443,  // 7,451 gp/hoard × 8 / 560,000 XP
+  1: 0.011309,   // 3.9% of 0.289962
+  2: 0.018288,   // (0.4+3.9)% = 4.3% of 0.425293
+  3: 0.027237,   // (0.3+0.9)% = 1.2% of 2.269757
+  4: 0.120240,   // (0.5+0.6)% = 1.1% of 10.930954
 } as const;
 
-/** Magic items per encounter-XP by tier and table (independent probabilities). */
+/**
+ * Magic items per encounter-XP by tier and table (expected item count).
+ *
+ * Derived from: (category_pct / 100 × GP_PER_XP[tier]) / MI_AVG_VALUES[table]
+ *
+ * These are expected items, not GP. Multiply by MI_AVG_VALUES to get expected GP.
+ */
 export const MI_PER_XP: Record<Tier, Partial<Record<MITable, number>>> = {
-  1: { A: 0.0002261538, B: 0.0001009615, C: 0.0000673077, F: 0.0000807692, G: 0.0000080769 },
-  2: { A: 0.0000275159, B: 0.0000171975, C: 0.0000103185, D: 0.0000022930, F: 0.0000171975, G: 0.0000085987, H: 0.0000011465 },
-  3: { A: 0.0000008571, B: 0.0000012857, C: 0.0000051429, D: 0.0000034286, E: 0.0000004286, F: 0.0000004286, G: 0.0000038571, H: 0.0000017143, I: 0.0000002143 },
-  4: { C: 0.0000002857, D: 0.0000014286, E: 0.0000008571, G: 0.0000002857, H: 0.0000014286, I: 0.0000005714 },
+  1: {
+    A: 0.0002261700,  // 3.9% → 0.011309 gp/XP / 50
+    B: 0.0001020665,  // 4.4% → 0.012758 gp/XP / 125
+    C: 0.0000672711,  // 29.0% → 0.084089 gp/XP / 1250
+    F: 0.0000806093,  // 13.9% → 0.040305 gp/XP / 500
+    G: 0.0000080609,  // 13.9% → 0.040305 gp/XP / 5000
+  },
+  2: {
+    A: 0.0000340234,  // 0.4% → 0.001701 gp/XP / 50
+    B: 0.0000272188,  // 0.8% → 0.003402 gp/XP / 125
+    C: 0.0000156508,  // 4.6% → 0.019564 gp/XP / 1250
+    D: 0.0000034364,  // 10.1% → 0.042955 gp/XP / 12500
+    F: 0.0000204141,  // 2.4% → 0.010207 gp/XP / 500
+    G: 0.0000056989,  // 6.7% → 0.028495 gp/XP / 5000
+    H: 0.0000011483,  // 13.5% → 0.057415 gp/XP / 50000
+  },
+  3: {
+    A: 0.0000226976,  // 0.05% → 0.001135 gp/XP / 50
+    B: 0.0000181581,  // 0.1% → 0.002270 gp/XP / 125
+    C: 0.0000163423,  // 0.9% → 0.020428 gp/XP / 1250
+    D: 0.0000085343,  // 4.7% → 0.106679 gp/XP / 12500
+    E: 0.0000017069,  // 9.4% → 0.213357 gp/XP / 125000
+    F: 0.0000022698,  // 0.05% → 0.001135 gp/XP / 500
+    G: 0.0000040856,  // 0.9% → 0.020428 gp/XP / 5000
+    H: 0.0000053566,  // 11.8% → 0.267831 gp/XP / 50000
+    I: 0.0000017159,  // 37.8% → 0.857968 gp/XP / 500000
+  },
+  4: {
+    C: 0.0000087448,  // 0.1% → 0.010931 gp/XP / 1250
+    D: 0.0000174895,  // 2.0% → 0.218619 gp/XP / 12500
+    E: 0.0000118054,  // 13.5% → 1.475679 gp/XP / 125000
+    G: 0.0000021862,  // 0.1% → 0.010931 gp/XP / 5000
+    H: 0.0000034979,  // 1.6% → 0.174895 gp/XP / 50000
+    I: 0.0000076954,  // 35.2% → 3.847696 gp/XP / 500000
+  },
 } as const;
 
 /** Variance CVs from DMG hoard Monte Carlo simulation. */

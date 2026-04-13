@@ -194,6 +194,12 @@ Done — `roller.ts` canonicalizes legacy abbreviations at startup. "Other" sour
 ### ~~"How it Works" and "D&Design" Tabs~~ ✅
 ~~Wire two additional info tabs alongside About.~~ Done — `HowItWorks.tsx` renders `HOW-IT-WORKS.md`, `DDesign.tsx` renders `DDESIGN.md`. Shared `markdownToHtml.ts` utility supports headings, tables, code blocks, and lists.
 
+### Documentation Refresh (About / How It Works / D&Design)
+All three documentation tabs are out of date with recent engine changes:
+- **ABOUT.md**: Needs to reflect independent pool model, updated role multipliers (0.15/0.50/1.00/1.75), and removal of concentration slider.
+- **HOW-IT-WORKS.md**: Needs updated encounter builder description with independent pools, magic richness behavior (scales MI, delta to coins), and corrected budget formulas.
+- **DDESIGN.md**: Needs updated budget math section replacing percentage-based category breakdown with independent pool formulas. Should reference the four pool constants and how they don't interact.
+
 ### ~~3D Dice Roller~~ ✅ (basic integration done, tuning needed below)
 
 ### ~~3D Dice Tuning~~ ✅
@@ -542,19 +548,21 @@ Key changes:
 - `magicRichness` scales MI expected counts; the GP delta is subtracted from coins to keep total stable
 - Old `TIER_CATEGORIES`, `resolveCategories()`, and `applyRichness()` are now dead code
 
-### Pool Constant Calibration (Tiers 2–4)
-Tier 1 pool constants sum to 0.2901 gp/XP ≈ GP_PER_XP of 0.29. **Tiers 2–4 pool constants use different XP denominators** than GP_PER_XP and sum 28–55% lower:
+### ~~Pool Constant Calibration (Tiers 2–4)~~ ✅
+Fixed XP denominator mismatch: GP_PER_XP was using wrong level ranges (e.g., levels 5→reach 10 instead of levels 5→reach 11 for Tier 2). The DMG hoard tables cover CRs 0-4 / 5-10 / 11-16 / 17+, meaning levels 1-4 / 5-10 / 11-16 / 17-20, and XP earned *through* each range means advancing to the next tier's start level.
 
-| Tier | Pool Sum | GP_PER_XP | Delta |
-|------|----------|-----------|-------|
-| 1    | 0.2901   | 0.29      | +0.02% ✅ |
-| 2    | 0.4156   | 0.5806    | −28% ⚠️ |
-| 3    | 1.0935   | 2.4257    | −55% ⚠️ |
-| 4    | 5.3099   | 8.8814    | −40% ⚠️ |
+Corrected tier encounter XP (party of 4): 26,000 / 314,000 / 560,000 / 520,000. All pool constants rederived from `TIER_CATEGORIES × corrected GP_PER_XP`. Pool sums now match GP_PER_XP to <0.1% at all tiers. MI_PER_XP values increased 5-10× at Tiers 3-4 (previous values were derived from incorrect per-hoard MI counts).
 
-The XP denominators in `COINS_PER_XP` comments (314K for T2) don't match GP_PER_XP derivation (230K for T2). Need to reconcile — either rederive pool constants using consistent tier XP totals, or verify which denominator is correct and adjust GP_PER_XP to match.
+### Documentation Update (ABOUT.md, HOW-IT-WORKS.md, DDESIGN.md)
+The three documentation tabs are out of date after recent engine changes:
 
-MI probabilities are independently correct (derived from hoard item counts, not GP). The calibration issue only affects coin/gem/art pool sizes at Tiers 2–4.
+- **Independent pool model**: docs still describe the old percentage-based budget system. Need to explain the four independent pools and how `base × POOL_PER_XP` works.
+- **Role multipliers**: docs may still reference the old 0.10/0.30/0.90/2.70 values. Current values are 0.15/0.50/1.00/1.75 (regression-optimized).
+- **Tier progression**: verify the 0.70×–1.30× description matches current implementation.
+- **Gem/art systems**: may need refreshing after recent continuous-value and descriptor work.
+- **Magic richness**: explain how it now scales MI counts and redistributes the GP delta to coins.
+- **useRoles toggle**: document the "Roles On/Off" setting (all creatures at 1.0× when off).
+- **General**: review for any stale references to removed features (concentration slider, old TIER_CATEGORIES approach).
 
 ### Crafting System Integration (Future — Needs Discussion)
 Crafting tab design for the web app. Key topics to resolve:

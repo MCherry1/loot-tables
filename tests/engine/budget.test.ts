@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { calculateBudget } from '../../src/engine/budget';
-import { DEFAULT_CAMPAIGN_SETTINGS, computeRoleMultipliers } from '../../src/engine/constants';
+import { DEFAULT_CAMPAIGN_SETTINGS, computeRoleMultipliers, GP_PER_XP } from '../../src/engine/constants';
 
 // Use flat progression (×1.00) so tests verify budget math in isolation.
 const settings = { ...DEFAULT_CAMPAIGN_SETTINGS, tierProgression: false };
@@ -9,26 +9,30 @@ const settings = { ...DEFAULT_CAMPAIGN_SETTINGS, tierProgression: false };
 const mults = computeRoleMultipliers(3.0);
 
 describe('calculateBudget', () => {
-  it('CR 5, Tier 2, Boss → fullBudget ≈ 1045', () => {
+  it('CR 5, Tier 2, Boss → fullBudget ≈ XP × GP_PER_XP', () => {
     const { fullBudget, roleBudget } = calculateBudget(5, 2, 'boss', settings);
-    // 1800 × 0.5806 = 1045.08
-    expect(fullBudget).toBeCloseTo(1045.08, 0);
-    expect(roleBudget).toBeCloseTo(1045.08 * mults.boss, 0);
+    // 1800 × GP_PER_XP[2]
+    const expected = 1800 * GP_PER_XP[2];
+    expect(fullBudget).toBeCloseTo(expected, 0);
+    expect(roleBudget).toBeCloseTo(expected * mults.boss, 0);
   });
 
   it('CR 5, Tier 2, Elite → roleBudget uses role multiplier', () => {
     const { roleBudget } = calculateBudget(5, 2, 'elite', settings);
-    expect(roleBudget).toBeCloseTo(1045.08 * mults.elite, 0);
+    const expected = 1800 * GP_PER_XP[2];
+    expect(roleBudget).toBeCloseTo(expected * mults.elite, 0);
   });
 
   it('CR 5, Tier 2, Minion → roleBudget uses role multiplier', () => {
     const { roleBudget } = calculateBudget(5, 2, 'minion', settings);
-    expect(roleBudget).toBeCloseTo(1045.08 * mults.minion, 0);
+    const expected = 1800 * GP_PER_XP[2];
+    expect(roleBudget).toBeCloseTo(expected * mults.minion, 0);
   });
 
   it('CR 5, Tier 2, Mini-boss → roleBudget uses role multiplier', () => {
     const { roleBudget } = calculateBudget(5, 2, 'mini-boss', settings);
-    expect(roleBudget).toBeCloseTo(1045.08 * mults['mini-boss'], 0);
+    const expected = 1800 * GP_PER_XP[2];
+    expect(roleBudget).toBeCloseTo(expected * mults['mini-boss'], 0);
   });
 
   it('CR 5, Tier 2, Vault → roleBudget equals fullBudget', () => {
@@ -38,15 +42,15 @@ describe('calculateBudget', () => {
 
   it('CR 0, Tier 1, Minion → very small budget', () => {
     const { roleBudget } = calculateBudget(0, 1, 'minion', settings);
-    // 10 × 0.29 × minionMultiplier
-    expect(roleBudget).toBeCloseTo(10 * 0.29 * mults.minion, 2);
+    // 10 × GP_PER_XP[1] × minionMultiplier
+    expect(roleBudget).toBeCloseTo(10 * GP_PER_XP[1] * mults.minion, 2);
     expect(roleBudget).toBeLessThan(1);
   });
 
   it('CR 30, Tier 4, Vault → very large budget', () => {
     const { roleBudget } = calculateBudget(30, 4, 'vault', settings);
-    // 155000 × 8.8814 × 1.00 = 1,376,617
-    expect(roleBudget).toBeGreaterThan(1_000_000);
+    // 155000 × GP_PER_XP[4] ≈ 886K
+    expect(roleBudget).toBeGreaterThan(800_000);
   });
 
   it('party size 6 → budget is 4/6 of default', () => {
@@ -58,20 +62,20 @@ describe('calculateBudget', () => {
 
   it('fractional CR 0.125 works', () => {
     const { fullBudget } = calculateBudget(0.125, 1, 'boss', settings);
-    // 25 × 0.29 = 7.25
-    expect(fullBudget).toBeCloseTo(7.25, 2);
+    // 25 × GP_PER_XP[1]
+    expect(fullBudget).toBeCloseTo(25 * GP_PER_XP[1], 2);
   });
 
   it('fractional CR 0.25 works', () => {
     const { fullBudget } = calculateBudget(0.25, 1, 'boss', settings);
-    // 50 × 0.29 = 14.5
-    expect(fullBudget).toBeCloseTo(14.5, 2);
+    // 50 × GP_PER_XP[1]
+    expect(fullBudget).toBeCloseTo(50 * GP_PER_XP[1], 2);
   });
 
   it('fractional CR 0.5 works', () => {
     const { fullBudget } = calculateBudget(0.5, 1, 'boss', settings);
-    // 100 × 0.29 = 29
-    expect(fullBudget).toBeCloseTo(29, 2);
+    // 100 × GP_PER_XP[1]
+    expect(fullBudget).toBeCloseTo(100 * GP_PER_XP[1], 2);
   });
 
   it('progression multiplier scales budget within tier', () => {

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { calculateBudget } from '../../src/engine/budget';
-import { DEFAULT_CAMPAIGN_SETTINGS, computeRoleMultipliers } from '../../src/engine/constants';
+import { DEFAULT_CAMPAIGN_SETTINGS, computeRoleMultipliers, GP_PER_XP } from '../../src/engine/constants';
 
 // Use flat progression so budget tests verify role math in isolation.
 const settings = { ...DEFAULT_CAMPAIGN_SETTINGS, tierProgression: false };
@@ -9,16 +9,18 @@ const mults = computeRoleMultipliers(3.0);
 describe('economy balance', () => {
   it('CR 4, Tier 1, Boss → roleBudget uses role multiplier', () => {
     const { fullBudget, roleBudget } = calculateBudget(4, 1, 'boss', settings);
-    // 1100 × 0.29 = 319 (fullBudget)
-    expect(fullBudget).toBeCloseTo(319, 0);
-    expect(roleBudget).toBeCloseTo(319 * mults.boss, 0);
+    // 1100 × GP_PER_XP[1]
+    const expected = 1100 * GP_PER_XP[1];
+    expect(fullBudget).toBeCloseTo(expected, 0);
+    expect(roleBudget).toBeCloseTo(expected * mults.boss, 0);
   });
 
   it('CR 4, Tier 2, Elite → roleBudget uses role multiplier', () => {
     const { fullBudget, roleBudget } = calculateBudget(4, 2, 'elite', settings);
-    // 1100 × 0.5806 = 638.66
-    expect(fullBudget).toBeCloseTo(638.66, 0);
-    expect(roleBudget).toBeCloseTo(638.66 * mults.elite, 0);
+    // 1100 × GP_PER_XP[2]
+    const expected = 1100 * GP_PER_XP[2];
+    expect(fullBudget).toBeCloseTo(expected, 0);
+    expect(roleBudget).toBeCloseTo(expected * mults.elite, 0);
   });
 
   it('boss multiplier is much larger than elite', () => {
