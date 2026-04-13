@@ -3765,3 +3765,257 @@ button {
     flex-basis: 100%;
   }
 }
+
+
+/* =========================================================================
+   Auth, Lock Icon & Detail Panels (Priority 3)
+   ========================================================================= */
+
+/* --- Nav lock icon + dropdown -------------------------------------- */
+.ck-nav-auth {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ck-nav-lock {
+  background: transparent;
+  border: none;
+  color: var(--ck-text-tertiary);
+  font-size: 1rem;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-radius: 6px;
+  transition: color var(--ck-ease-fast), background var(--ck-ease-fast);
+}
+
+.ck-nav-lock:hover {
+  color: var(--ck-text-secondary);
+  background: var(--ck-bg-hover);
+}
+
+.ck-nav-lock.authenticated {
+  color: var(--ck-cherry);
+}
+
+.ck-nav-lock.authenticated:hover {
+  color: var(--ck-cherry-light);
+}
+
+.ck-admin-badge {
+  font-family: var(--ck-font-ui);
+  font-size: 0.5625rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ck-cherry);
+  background: var(--ck-cherry-faint);
+  border: 1px solid var(--ck-border-cherry);
+  border-radius: 3px;
+  padding: 1px 5px;
+}
+
+.ck-nav-auth-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  min-width: 160px;
+  background: var(--ck-bg-raised);
+  border: 1px solid var(--ck-border);
+  border-radius: 8px;
+  padding: 6px;
+  box-shadow: var(--ck-shadow-pop);
+  z-index: 120;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ck-nav-auth-item {
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-sm);
+  color: var(--ck-text-primary);
+  padding: 8px 10px;
+  border-radius: 5px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  text-align: left;
+}
+
+.ck-nav-auth-item:hover {
+  background: var(--ck-bg-hover);
+}
+
+.ck-nav-auth-item input[type="checkbox"] {
+  accent-color: var(--ck-cherry);
+}
+
+.ck-nav-auth-button {
+  color: var(--ck-text-secondary);
+  width: 100%;
+}
+
+/* --- Login modal --------------------------------------------------- */
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  animation: ck-fade-in 0.2s ease;
+}
+
+@keyframes ck-fade-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.auth-modal {
+  background: var(--ck-bg-raised);
+  border: 1px solid var(--ck-border);
+  border-radius: 14px;
+  padding: 32px 28px;
+  max-width: 360px;
+  width: 90%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  text-align: center;
+}
+
+.auth-lock-icon {
+  font-size: 2rem;
+  margin-bottom: 12px;
+}
+
+.auth-password-input {
+  width: 100%;
+  background: var(--ck-bg-deep);
+  border: 1px solid var(--ck-border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-base);
+  color: var(--ck-text-primary);
+  min-height: 44px;
+  margin-bottom: 16px;
+  text-align: center;
+  letter-spacing: 0.1em;
+}
+
+.auth-password-input:focus-visible {
+  border-color: var(--ck-cherry);
+  outline: none;
+}
+
+.auth-password-input.error {
+  border-color: #e05a5a;
+  animation: auth-shake 0.3s ease;
+}
+
+@keyframes auth-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+.auth-modal-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.auth-modal-hint {
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-xs);
+  color: #e05a5a;
+  margin-top: 12px;
+  margin-bottom: 0;
+}
+
+/* --- Reference view detail panel ----------------------------------- */
+.ref-row.clickable {
+  cursor: pointer;
+}
+
+.ref-row.expanded {
+  background: var(--ck-bg-hover);
+  border-bottom-color: var(--ck-border);
+}
+
+.ref-detail-panel {
+  padding: 12px 16px;
+  background: var(--ck-bg-elevated);
+  border-top: 1px solid var(--ck-border-subtle);
+  border-bottom: 1px solid var(--ck-border);
+  animation: ck-fade-in 0.2s ease;
+}
+
+.ref-detail-meta {
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-xs);
+  color: var(--ck-text-tertiary);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+.ref-detail-desc {
+  font-family: var(--ck-font-content);
+  font-size: var(--ck-text-base);
+  color: var(--ck-text-primary);
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.ref-detail-desc p {
+  margin: 0 0 8px;
+}
+
+.ref-detail-desc p:last-child {
+  margin-bottom: 0;
+}
+
+.ref-detail-source {
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-xs);
+  color: var(--ck-text-tertiary);
+  font-style: italic;
+}
+
+.ref-detail-srd-badge {
+  font-family: var(--ck-font-ui);
+  font-size: 0.5625rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ck-rarity-uncommon);
+  background: rgba(78, 202, 123, 0.08);
+  border: 1px solid rgba(78, 202, 123, 0.2);
+  border-radius: 3px;
+  padding: 1px 5px;
+  margin-left: 6px;
+}
+
+.ref-detail-source-only {
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-sm);
+  color: var(--ck-text-secondary);
+  font-style: italic;
+  padding: 4px 0;
+}

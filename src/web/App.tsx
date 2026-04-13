@@ -1,4 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import type {
   CampaignSettings,
   ResolvableEncounterResult,
@@ -14,6 +19,16 @@ import About from './components/About';
 import HowItWorks from './components/HowItWorks';
 import DDesign from './components/DDesign';
 import ReviewUI from './components/ReviewUI';
+import LoginModal from './components/LoginModal';
+import {
+  AuthContext,
+  AUTH_STORAGE_KEY,
+  ADMIN_STORAGE_KEY,
+  type AuthState,
+  type ItemPublicMap,
+  type MergedItemStats,
+} from './lib/authContext';
+import { decryptDescriptions, type DescriptionMap } from './lib/decrypt';
 
 type Tab =
   | 'tables'
@@ -61,13 +76,26 @@ const App: React.FC = () => {
     loadSettings(),
   );
   const [activeTab, setActiveTab] = useState<Tab>('tables');
-  const [adminMode, setAdminMode] = useState(() => {
+
+  // ---- Auth + description data state ------------------------------------
+  const [publicData, setPublicData] = useState<ItemPublicMap | null>(null);
+  const [srdDescriptions, setSrdDescriptions] =
+    useState<DescriptionMap | null>(null);
+  const [protectedDescriptions, setProtectedDescriptions] =
+    useState<DescriptionMap | null>(null);
+  const [authenticated, setAuthenticated] = useState(false);
+  const [loadingData, setLoadingData] = useState(true);
+  const [adminModeRaw, setAdminModeRaw] = useState(() => {
     try {
-      return localStorage.getItem('loot-tables:admin') === 'true';
+      return localStorage.getItem(ADMIN_STORAGE_KEY) === 'true';
     } catch {
       return false;
     }
   });
+  // Admin mode is only effective when authenticated (spec §7.1).
+  const adminMode = authenticated && adminModeRaw;
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const [authDropdownOpen, setAuthDropdownOpen] = useState(false);
 
   // Encounter state lifted from EncounterBuilder so that resolve-mode handoffs
   // survive tab switches.
@@ -107,11 +135,67 @@ const App: React.FC = () => {
     return () => mq.removeEventListener('change', apply);
   }, [settings.theme]);
 
+  // Load public + SRD description files on mount. Attempt auto-login if
+  // a password is already stashed in localStorage.
+  useEffect(() => {
+    const base = import.meta.env.BASE_URL || '/';
+    let cancelled = false;
+
+    (async () => {
+      setLoadingData(true);
+      try {
+        const [publicRes, srdRes] = await Promise.all([
+          fetch(`${base}data/item-public.json`),
+          fetch(`${base}data/item-srd-descriptions.json`),
+        ]);
+        if (!cancelled && publicRes.ok) {
+          setPublicData((await publicRes.json()) as ItemPublicMap);
+        }
+        if (!cancelled && srdRes.ok) {
+          setSrdDescriptions((await srdRes.json()) as DescriptionMap);
+        }
+      } catch {
+        // Missing files are acceptable in dev — auth features just won't
+        // populate until encrypt has been run.
+      }
+
+      // Auto-login if a password is persisted.
+      try {
+        const stored = localStorage.getItem(AUTH_STORAGE_KEY);
+        if (stored) {
+          const decrypted = await decryptDescriptions(stored);
+          if (!cancelled && decrypted) {
+            setProtectedDescriptions(decrypted);
+            setAuthenticated(true);
+          } else if (!cancelled) {
+            // Stored password no longer works — clear it so the user
+            // gets prompted fresh on the next unlock attempt.
+            localStorage.removeItem(AUTH_STORAGE_KEY);
+          }
+        }
+      } catch {
+        /* ignore storage errors */
+      }
+
+      if (!cancelled) setLoadingData(false);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   // When pendingResolve is set (because user clicked an unresolved item in
   // the encounter), force-switch to the Magic Item Tables tab.
   useEffect(() => {
     if (pendingResolve) setActiveTab('tables');
   }, [pendingResolve]);
+
+  // If admin is disabled (e.g. user logs out while on the Review tab),
+  // bounce back to Tables.
+  useEffect(() => {
+    if (activeTab === 'review' && !adminMode) setActiveTab('tables');
+  }, [activeTab, adminMode]);
 
   const handleStartResolve = useCallback(
     (itemId: string, table: string) => {
@@ -144,6 +228,95 @@ const App: React.FC = () => {
     [],
   );
 
+  // ---- Auth actions ------------------------------------------------------
+  const login = useCallback(async (password: string): Promise<boolean> => {
+    const decrypted = await decryptDescriptions(password);
+    if (!decrypted) return false;
+    setProtectedDescriptions(decrypted);
+    setAuthenticated(true);
+    try {
+      localStorage.setItem(AUTH_STORAGE_KEY, password);
+    } catch {
+      /* ignore */
+    }
+    return true;
+  }, []);
+
+  const logout = useCallback(() => {
+    setProtectedDescriptions(null);
+    setAuthenticated(false);
+    setAdminModeRaw(false);
+    setAuthDropdownOpen(false);
+    try {
+      localStorage.removeItem(AUTH_STORAGE_KEY);
+      localStorage.setItem(ADMIN_STORAGE_KEY, 'false');
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  const setAdminMode = useCallback(
+    (v: boolean) => {
+      // Admin mode requires auth (spec §7.1). Silently refuse when
+      // unauthenticated so the surface can't get into an invalid state.
+      if (v && !authenticated) return;
+      setAdminModeRaw(v);
+      try {
+        localStorage.setItem(ADMIN_STORAGE_KEY, String(v));
+      } catch {
+        /* ignore */
+      }
+    },
+    [authenticated],
+  );
+
+  const getItemStats = useCallback(
+    (key: string): MergedItemStats | null => {
+      if (!publicData) return null;
+      const pub = publicData[key];
+      if (!pub) return null;
+      const srdDesc = srdDescriptions?.[key]?.desc ?? '';
+      const protDesc = protectedDescriptions?.[key]?.desc ?? '';
+      // Prefer protected desc (newer) when authenticated, fall back to SRD.
+      const desc = protDesc || srdDesc;
+      return {
+        type: pub.type,
+        rarity: pub.rarity,
+        attune: pub.attune,
+        srd: pub.srd,
+        desc,
+      };
+    },
+    [publicData, srdDescriptions, protectedDescriptions],
+  );
+
+  const authState: AuthState = useMemo(
+    () => ({
+      authenticated,
+      loadingData,
+      publicData,
+      srdDescriptions,
+      protectedDescriptions,
+      adminMode,
+      login,
+      logout,
+      setAdminMode,
+      getItemStats,
+    }),
+    [
+      authenticated,
+      loadingData,
+      publicData,
+      srdDescriptions,
+      protectedDescriptions,
+      adminMode,
+      login,
+      logout,
+      setAdminMode,
+      getItemStats,
+    ],
+  );
+
   const TABS: { id: Tab; label: string }[] = [
     { id: 'tables',       label: 'Tables' },
     { id: 'reference',    label: 'Reference' },
@@ -161,7 +334,7 @@ const App: React.FC = () => {
   ];
 
   return (
-    <>
+    <AuthContext.Provider value={authState}>
       <nav className="ck-nav" aria-label="Site navigation">
         <span className="ck-nav-brand">CherryKeep</span>
         <div className="ck-nav-tabs" role="tablist">
@@ -188,6 +361,54 @@ const App: React.FC = () => {
           )}
         </div>
         <div className="ck-nav-right">
+          <div className="ck-nav-auth">
+            <button
+              type="button"
+              className={`ck-nav-lock${
+                authenticated ? ' authenticated' : ''
+              }`}
+              aria-label={authenticated ? 'Account menu' : 'Unlock'}
+              aria-expanded={authenticated ? authDropdownOpen : undefined}
+              onClick={() => {
+                if (authenticated) {
+                  setAuthDropdownOpen((v) => !v);
+                } else {
+                  setLoginModalOpen(true);
+                }
+              }}
+            >
+              <span aria-hidden="true">
+                {authenticated ? '\uD83D\uDD13' : '\uD83D\uDD12'}
+              </span>
+              {adminMode && <span className="ck-admin-badge">Admin</span>}
+            </button>
+            {authenticated && authDropdownOpen && (
+              <div
+                className="ck-nav-auth-dropdown"
+                role="menu"
+                onMouseLeave={() => setAuthDropdownOpen(false)}
+              >
+                <label className="ck-nav-auth-item">
+                  <input
+                    type="checkbox"
+                    checked={adminMode}
+                    onChange={(e) => setAdminMode(e.target.checked)}
+                  />
+                  Admin mode
+                </label>
+                <button
+                  type="button"
+                  className="ck-nav-auth-item ck-nav-auth-button"
+                  onClick={() => {
+                    logout();
+                    setAuthDropdownOpen(false);
+                  }}
+                >
+                  Log out
+                </button>
+              </div>
+            )}
+          </div>
           <div className="ck-theme-toggle" role="group" aria-label="Theme">
             {themeOptions.map((opt) => (
               <button
@@ -242,8 +463,6 @@ const App: React.FC = () => {
           <CampaignSettingsPanel
             settings={settings}
             onChange={setSettings}
-            adminMode={adminMode}
-            onAdminModeChange={setAdminMode}
           />
         )}
 
@@ -260,7 +479,11 @@ const App: React.FC = () => {
           <span>Fan Content Policy &middot; Not affiliated with Wizards of the Coast</span>
         </footer>
       </div>
-    </>
+
+      {loginModalOpen && (
+        <LoginModal onClose={() => setLoginModalOpen(false)} />
+      )}
+    </AuthContext.Provider>
   );
 };
 

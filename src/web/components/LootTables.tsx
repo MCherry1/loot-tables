@@ -24,52 +24,66 @@ import {
   formatRange,
 } from '../lib/diceUtils';
 import { expandSource } from '../../data/sourcebook-lookup';
-import itemStatsData from '../../../data/item-stats.json';
-import itemStatsData2024 from '../../../data/item-stats-2024.json';
+import { useAuth, type MergedItemStats } from '../lib/authContext';
 
-type ItemStatsMap = Record<string, { type: string; rarity: string; attune: string; desc: string }>;
-const itemStats2014 = itemStatsData as ItemStatsMap;
-const itemStats2024Map = itemStatsData2024 as ItemStatsMap;
-
-/** Build a normalized lookup: lowercase name with punctuation stripped → original key. */
-function buildNormalizedIndex(stats: ItemStatsMap): Map<string, string> {
+/** Build a normalized lookup from the full public-data key set.
+ *  Maps `lowercased-key-with-punctuation-stripped` → original key so
+ *  lookup can recover from casing/punctuation drift between display
+ *  names and data keys.  */
+function buildNormalizedIndex(keys: string[]): Map<string, string> {
   const index = new Map<string, string>();
-  for (const key of Object.keys(stats)) {
-    const normalized = key.toLowerCase().replace(/[(),*]/g, '').replace(/\s+/g, ' ').replace(/\s*\|\s*/g, '|').trim();
+  for (const key of keys) {
+    const normalized = key
+      .toLowerCase()
+      .replace(/[(),*]/g, '')
+      .replace(/\s+/g, ' ')
+      .replace(/\s*\|\s*/g, '|')
+      .trim();
     index.set(normalized, key);
   }
   return index;
 }
-
-const normalizedIndex2014 = buildNormalizedIndex(itemStats2014);
-const normalizedIndex2024 = buildNormalizedIndex(itemStats2024Map);
 
 /** Strip sub-table refs from an item name: "Flame Tongue [Swords]" → "Flame Tongue" */
 function stripRefs(name: string): string {
   return name.replace(/\s*\[[^\]]+\]/g, '').trim();
 }
 
+/** Lookup function supplied by the auth context — returns merged stats or null. */
+type StatsLookup = (key: string) => MergedItemStats | null;
+
 /**
- * Look up item stats for a completed result.
- * Tries: direct key, normalized key, then each step's entry name.
+ * Look up item stats for a completed result via the auth-context lookup.
+ * Tries: direct key, normalized key, then each step's entry name,
+ * with six fallback strategies for name-shape drift between the
+ * stepper data and 5etools canonical names.
  */
 function lookupItemStats(
   result: CompletedResult,
-  stats: ItemStatsMap,
+  lookup: StatsLookup,
   normalizedIndex: Map<string, string>,
-): { type: string; rarity: string; attune: string; desc: string } | null {
-  // Helper: try a key directly, then normalized
-  const tryKey = (name: string, source: string): typeof stats[string] | null => {
+): MergedItemStats | null {
+  // Helper: try a key directly, then normalized.
+  const tryKey = (name: string, source: string): MergedItemStats | null => {
     const key = `${name}|${source}`;
-    if (stats[key]) return stats[key];
-    const norm = key.toLowerCase().replace(/[(),*]/g, '').replace(/\s+/g, ' ').replace(/\s*\|\s*/g, '|').trim();
+    const direct = lookup(key);
+    if (direct) return direct;
+    const norm = key
+      .toLowerCase()
+      .replace(/[(),*]/g, '')
+      .replace(/\s+/g, ' ')
+      .replace(/\s*\|\s*/g, '|')
+      .trim();
     const mapped = normalizedIndex.get(norm);
-    if (mapped && stats[mapped]) return stats[mapped];
+    if (mapped) {
+      const viaMapped = lookup(mapped);
+      if (viaMapped) return viaMapped;
+    }
     return null;
   };
 
   // Helper: try a name against multiple sources
-  const tryAnySrc = (name: string): typeof stats[string] | null => {
+  const tryAnySrc = (name: string): MergedItemStats | null => {
     // Try specified source first, then common sources
     const sources = [result.source, 'DMG', 'XGE', 'TCE', 'ERLW', 'FTD', 'TftYP', 'CM', 'BGG', 'KftGV', 'MOT', 'EGW', 'BMT', 'IDRotF'];
     for (const src of sources) {
@@ -749,7 +763,7 @@ function FinalResultCard({
   result,
   inResolveMode,
   showItemDetails,
-  itemStatsMap,
+  statsLookup,
   normalizedIndex,
   onStepBack,
   onRollAgain,
@@ -758,7 +772,7 @@ function FinalResultCard({
   result: CompletedResult;
   inResolveMode: boolean;
   showItemDetails: boolean;
-  itemStatsMap: ItemStatsMap;
+  statsLookup: StatsLookup;
   normalizedIndex: Map<string, string>;
   onStepBack: () => void;
   onRollAgain: () => void;
@@ -773,7 +787,7 @@ function FinalResultCard({
     })
     .join('');
 
-  const stats = showItemDetails ? lookupItemStats(result, itemStatsMap, normalizedIndex) : null;
+  const stats = showItemDetails ? lookupItemStats(result, statsLookup, normalizedIndex) : null;
   // A result is cursed iff any step in its resolution chain picked a weight-0 entry.
   const isCursed = result.steps.some((s) => s.pickedEntry.weight === 0);
 
@@ -1008,8 +1022,15 @@ const LootTables: React.FC<LootTablesProps> = ({
   }, [settings.diceColor]);
 
   const edition = settings.edition ?? '2014';
-  const currentItemStats = edition === '2024' ? itemStats2024Map : itemStats2014;
-  const currentNormalizedIndex = edition === '2024' ? normalizedIndex2024 : normalizedIndex2014;
+
+  // Auth-context-driven description lookup. publicData + srd/protected
+  // descriptions are loaded/decrypted by App.tsx; the stepper just reads
+  // what's available at the current auth level via getItemStats(key).
+  const { publicData, getItemStats } = useAuth();
+  const currentNormalizedIndex = useMemo(
+    () => buildNormalizedIndex(publicData ? Object.keys(publicData) : []),
+    [publicData],
+  );
 
   // Raw entries (original weights) — full table before source filtering.
   // Weight-0 cursed items are sorted to the bottom.
@@ -1224,7 +1245,7 @@ const LootTables: React.FC<LootTablesProps> = ({
           result={finalResult}
           inResolveMode={inResolveMode}
           showItemDetails={settings.showItemDetails ?? false}
-          itemStatsMap={currentItemStats}
+          statsLookup={getItemStats}
           normalizedIndex={currentNormalizedIndex}
           onStepBack={handleStepBack}
           onRollAgain={handleRollAgain}

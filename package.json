@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "encrypt": "tsx scripts/encrypt-descriptions.ts",
+    "build": "npm run encrypt && tsc -b && vite build",
     "preview": "vite preview",
     "extract": "tsx scripts/extract-data.ts",
     "seed-curation": "tsx scripts/seed-curation.ts",

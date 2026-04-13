@@ -32,6 +32,8 @@ import {
   getStoredPat,
   storePat,
 } from '../lib/githubPublish';
+import { useAuth } from '../lib/authContext';
+import { expandSource } from '../../data/sourcebook-lookup';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -229,7 +231,6 @@ function rebalanceTable(
 
 function RefRow({
   entry,
-  tableName,
   diceRange,
   totalWeight,
   isSubtableRef,
@@ -238,11 +239,12 @@ function RefRow({
   effectiveWeight,
   isTouched,
   isAutoAdjusted,
+  isExpanded,
   onScrollTo,
   onWeightChange,
+  onToggleExpand,
 }: {
   entry: Entry;
-  tableName: string;
   diceRange: { lo: number; hi: number };
   totalWeight: number;
   isSubtableRef: boolean;
@@ -251,8 +253,10 @@ function RefRow({
   effectiveWeight: number;
   isTouched: boolean;
   isAutoAdjusted: boolean;
+  isExpanded: boolean;
   onScrollTo: (targetTableName: string) => void;
   onWeightChange: (newWeight: number) => void;
+  onToggleExpand: () => void;
 }) {
   const isCursed = effectiveWeight === 0;
   const pct =
@@ -261,23 +265,52 @@ function RefRow({
       : '\u2013';
 
   const refTarget = extractRef(entry.name);
+  // Only leaf items (non-subtable refs) expand a detail panel on click.
+  // In admin mode the weight stepper needs to be clickable without
+  // toggling the panel, so we only attach the click handler to the row
+  // wrapper when NOT a subtable ref AND NOT in admin mode.
+  const isClickable = !isSubtableRef && !adminMode;
 
   const cls = [
     'ref-row',
     isSourceDisabled ? 'source-disabled' : '',
     isCursed ? 'cursed' : '',
+    isExpanded ? 'expanded' : '',
+    isClickable ? 'clickable' : '',
   ]
     .filter(Boolean)
     .join(' ');
 
+  const handleRowClick = () => {
+    if (isClickable) onToggleExpand();
+  };
+
   return (
-    <div className={cls}>
+    <div
+      className={cls}
+      onClick={handleRowClick}
+      role={isClickable ? 'button' : undefined}
+      tabIndex={isClickable ? 0 : undefined}
+      onKeyDown={
+        isClickable
+          ? (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onToggleExpand();
+              }
+            }
+          : undefined
+      }
+    >
       <span className="ref-range">{formatRange(diceRange)}</span>
       {isSubtableRef && refTarget ? (
         <button
           type="button"
           className="ref-subtable-link"
-          onClick={() => onScrollTo(refTarget)}
+          onClick={(e) => {
+            e.stopPropagation();
+            onScrollTo(refTarget);
+          }}
         >
           &#9656; {cleanDisplayName(entry.name)}
         </button>
@@ -299,6 +332,81 @@ function RefRow({
         <span className="ref-weight">{effectiveWeight}</span>
       )}
       <span className="ref-pct">{pct}</span>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Detail Panel (spec §5.2)
+// ---------------------------------------------------------------------------
+
+function RefDetailPanel({ entry }: { entry: Entry }) {
+  const { getItemStats, authenticated } = useAuth();
+  const key = `${entry.name}|${entry.source ?? ''}`;
+  const stats = getItemStats(key);
+
+  if (!stats) {
+    // Public data missing → minimal fallback showing just the source.
+    return (
+      <div className="ref-detail-panel">
+        <div className="ref-detail-source-only">
+          {entry.source ? expandSource(entry.source) : 'No source'}
+        </div>
+      </div>
+    );
+  }
+
+  const hasDesc = !!stats.desc;
+  const shouldShowDesc = hasDesc && (authenticated || stats.srd);
+
+  return (
+    <div className="ref-detail-panel">
+      {shouldShowDesc ? (
+        <>
+          <div className="ref-detail-meta">
+            {stats.type && <span>{stats.type}</span>}
+            {stats.type && stats.rarity && <span> &middot; </span>}
+            {stats.rarity && <span>{stats.rarity}</span>}
+            {stats.attune &&
+              stats.attune !== 'No' &&
+              stats.attune !== 'false' && (
+                <>
+                  <span> &middot; </span>
+                  <span>
+                    Attunement
+                    {stats.attune !== 'true' && stats.attune !== 'True'
+                      ? `: ${stats.attune}`
+                      : ''}
+                  </span>
+                </>
+              )}
+            {stats.srd && <span className="ref-detail-srd-badge">SRD</span>}
+          </div>
+          <div className="ref-detail-desc">
+            {stats.desc.split('\n\n').map((para, pi) => (
+              <p key={pi}>
+                {para.split('\n').map((line, li, arr) => (
+                  <React.Fragment key={li}>
+                    {line}
+                    {li < arr.length - 1 && <br />}
+                  </React.Fragment>
+                ))}
+              </p>
+            ))}
+          </div>
+          {entry.source && (
+            <div className="ref-detail-source">
+              Source: {expandSource(entry.source)}
+            </div>
+          )}
+        </>
+      ) : (
+        // Unauthenticated + non-SRD item: just show the source name.
+        // Intentionally no "unlock" prompt or lock icon (spec §5.3).
+        <div className="ref-detail-source-only">
+          {entry.source ? expandSource(entry.source) : 'No source'}
+        </div>
+      )}
     </div>
   );
 }
@@ -376,6 +484,14 @@ const ReferenceView: React.FC<ReferenceViewProps> = ({
   adminMode,
 }) => {
   const [activePill, setActivePill] = useState<PillValue>('A');
+  /** Currently-expanded leaf row. Spec §5.2: only one detail panel at a time.
+   *  Key format: "tableName::itemName". */
+  const [expandedKey, setExpandedKey] = useState<string | null>(null);
+
+  // Close any open detail panel when switching tables.
+  useEffect(() => {
+    setExpandedKey(null);
+  }, [activePill]);
 
   // Admin edit state (persisted to localStorage).
   const initial = useMemo(() => loadEdits(), []);
@@ -653,6 +769,10 @@ const ReferenceView: React.FC<ReferenceViewProps> = ({
             touched={touched}
             autoAdjusted={autoAdjusted}
             autoRebalance={autoRebalance[block.tableName] ?? false}
+            expandedKey={expandedKey}
+            onToggleExpand={(key) =>
+              setExpandedKey((prev) => (prev === key ? null : key))
+            }
             onToggleAutoRebalance={(v) =>
               setAutoRebalance((prev) => ({ ...prev, [block.tableName]: v }))
             }
@@ -772,6 +892,8 @@ function RefTableCard({
   touched,
   autoAdjusted,
   autoRebalance,
+  expandedKey,
+  onToggleExpand,
   onToggleAutoRebalance,
   onWeightChange,
   onScrollTo,
@@ -787,6 +909,8 @@ function RefTableCard({
   touched: Set<string>;
   autoAdjusted: Set<string>;
   autoRebalance: boolean;
+  expandedKey: string | null;
+  onToggleExpand: (key: string) => void;
   onToggleAutoRebalance: (v: boolean) => void;
   onWeightChange: (itemName: string, newWeight: number) => void;
   onScrollTo: (targetTableName: string) => void;
@@ -853,22 +977,26 @@ function RefTableCard({
           const srcDisabled =
             !!entry.source && settings.sourceSettings[entry.source] === 'off';
           const k = keyFor(tableName, entry.name);
+          const isExpanded = expandedKey === k && !isRef;
           return (
-            <RefRow
-              key={`${entry.name}|${entry.source}|${i}`}
-              entry={entry}
-              tableName={tableName}
-              diceRange={diceRanges[i]}
-              totalWeight={totalWeight}
-              isSubtableRef={isRef}
-              isSourceDisabled={srcDisabled}
-              adminMode={adminMode}
-              effectiveWeight={entry.weight}
-              isTouched={touched.has(k)}
-              isAutoAdjusted={autoAdjusted.has(k)}
-              onScrollTo={onScrollTo}
-              onWeightChange={(w) => onWeightChange(entry.name, w)}
-            />
+            <React.Fragment key={`${entry.name}|${entry.source}|${i}`}>
+              <RefRow
+                entry={entry}
+                diceRange={diceRanges[i]}
+                totalWeight={totalWeight}
+                isSubtableRef={isRef}
+                isSourceDisabled={srcDisabled}
+                adminMode={adminMode}
+                effectiveWeight={entry.weight}
+                isTouched={touched.has(k)}
+                isAutoAdjusted={autoAdjusted.has(k)}
+                isExpanded={isExpanded}
+                onScrollTo={onScrollTo}
+                onWeightChange={(w) => onWeightChange(entry.name, w)}
+                onToggleExpand={() => onToggleExpand(k)}
+              />
+              {isExpanded && <RefDetailPanel entry={entry} />}
+            </React.Fragment>
           );
         })}
       </div>

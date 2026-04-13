@@ -67,8 +67,6 @@ const DICE_COLORS: { label: string; color: string; pip?: string }[] = [
 interface Props {
   settings: CampaignSettings;
   onChange: (settings: CampaignSettings) => void;
-  adminMode?: boolean;
-  onAdminModeChange?: (enabled: boolean) => void;
 }
 
 /** Read the current priority for a source, defaulting to 'normal'. */
@@ -208,7 +206,7 @@ const SourceGroup: React.FC<SourceGroupProps> = ({
   );
 };
 
-const CampaignSettingsPanel: React.FC<Props> = ({ settings, onChange, adminMode, onAdminModeChange }) => {
+const CampaignSettingsPanel: React.FC<Props> = ({ settings, onChange }) => {
   const [showFormula, setShowFormula] = useState(false);
   const [manualTier, setManualTier] = useState<Tier>(1);
 
@@ -647,31 +645,8 @@ const CampaignSettingsPanel: React.FC<Props> = ({ settings, onChange, adminMode,
         </div>
       </section>
 
-      {/* -------- Admin -------- */}
-      <section className="card settings-section">
-        <h2 className="card-title">Admin</h2>
-        <div className="settings-content">
-          <div className="field-row">
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={adminMode ?? false}
-                onChange={(e) => {
-                  const enabled = e.target.checked;
-                  try {
-                    localStorage.setItem('loot-tables:admin', String(enabled));
-                  } catch { /* ignore */ }
-                  onAdminModeChange?.(enabled);
-                }}
-              />
-              Enable Admin Mode
-            </label>
-            <p className="field-hint">
-              Shows the Review tab for curating item assignments and weights.
-            </p>
-          </div>
-        </div>
-      </section>
+      {/* Admin section removed: admin mode now lives in the nav bar auth
+          dropdown (spec/AUTH-SPEC.md §9). It requires authentication. */}
     </div>
   );
 };
