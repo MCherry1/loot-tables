@@ -201,9 +201,8 @@ export function generateLoot(input: LootInput): LootResult {
         // but unlucky on Table G, matching the DMG's independent outcomes.
         const variedGp = categoryGp * logNormalVariance(1.85);
         const probability = variedGp / cat.avgValue;
-        const guaranteed = Math.floor(probability);
-        const fractional = probability - guaranteed;
-        const count = guaranteed + (probHit(fractional) ? 1 : 0);
+        // Single variance source: log-normal determines count directly.
+        const count = Math.round(probability);
         for (let i = 0; i < count; i++) {
           const { name, source } = rollMagicItem(cat.miTable);
           const miResult: MagicItemResult = {
@@ -336,9 +335,8 @@ export function generateLootResolvable(
         if (!cat.miTable || !cat.avgValue) break;
         const variedGp = categoryGp * logNormalVariance(1.85);
         const probability = variedGp / cat.avgValue;
-        const guaranteed = Math.floor(probability);
-        const fractional = probability - guaranteed;
-        const count = guaranteed + (probHit(fractional) ? 1 : 0);
+        // Single variance source: log-normal determines count directly.
+        const count = Math.round(probability);
         for (let i = 0; i < count; i++) {
           const item = rollMagicItemResolvable(cat.miTable);
 
@@ -427,9 +425,8 @@ export function generateVaultLootResolvable(
         if (!cat.miTable || !cat.avgValue) break;
         const variedGp = categoryGp * logNormalVariance(1.85);
         const probability = variedGp / cat.avgValue;
-        const guaranteed = Math.floor(probability);
-        const fractional = probability - guaranteed;
-        const count = guaranteed + (probHit(fractional) ? 1 : 0);
+        // Single variance source: log-normal determines count directly.
+        const count = Math.round(probability);
         for (let i = 0; i < count; i++) {
           const item = rollMagicItemResolvable(cat.miTable);
 
