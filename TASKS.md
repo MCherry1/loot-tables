@@ -579,6 +579,24 @@ A DM running a low-magic campaign sets MI to 0.5× and everything else stays the
 ### MI_PER_XP Verification (Tiers 2–4)
 Tier 1 MI_PER_XP values are verified exact against DMG CR 0-4 hoard table d100 entries. Tiers 2-4 were reconstructed from partial data in chat history and may have errors in the d100 entry weights or item count dice. Need to cross-check against the actual DMG hoard tables (CR 5-10, CR 11-16, CR 17+) entry by entry.
 
+### Paired Items Display (Wand Sheath)
+Some items include a separate companion item as part of the roll. The Wand Sheath (ERLW) is the primary example: it's a forearm-mounted holder that comes with a random wand. The result is two distinct pieces of loot that count as one for attunement.
+
+Currently stored as `"Wand Sheath ([Wands-A])"` and resolved inline to `"Wand Sheath (Wand of Enemy Detection)"` — displayed as one card. Should display as two separate cards, visually linked.
+
+**Data change:** Add an optional `paired` field. Items with `paired` have their sub-table ref resolved as a companion item instead of inlined into the name:
+```json
+{ "name": "Wand Sheath", "source": "ERLW", "weight": 1, "paired": "[Wands-A]" }
+```
+
+**Type change:** Add `companionItems?: ResolvableMagicItem[]` to `ResolvableMagicItem`.
+
+**Resolver change:** When resolving a `paired` item, the sub-table result populates `companionItems` instead of being text-replaced into segments.
+
+**UI change:** Render companion items as a second card linked to the first — shared border, "includes" connector, or indented sub-card. Each has its own source badge, value score, and item details.
+
+Only Wand Sheath needs this currently (of 30 items with sub-table refs, 29 are parameterized variants like Spell Scroll or Armblade where the ref is part of the same item, not a separate piece of loot).
+
 ### Crafting System Integration (Future — Needs Discussion)
 Crafting tab design for the web app. Key topics to resolve:
 - Gemcutter improving value scores (VS increase → gem value increase proportionally toward gem's max)
