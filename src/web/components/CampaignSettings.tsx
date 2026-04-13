@@ -3,7 +3,6 @@ import type {
   CampaignSettings,
   CreatureRole,
   Edition,
-  Palette,
   SourcePriority,
   SourceSettings,
   ThemePref,
@@ -48,13 +47,6 @@ const THEME_OPTIONS: { value: ThemePref; label: string }[] = [
   { value: 'auto', label: 'Auto' },
   { value: 'light', label: 'Light' },
   { value: 'dark', label: 'Dark' },
-];
-
-const PALETTE_OPTIONS: { value: Palette; label: string; swatch: string }[] = [
-  { value: 'treasure', label: 'Treasure', swatch: '#c9943a' },
-  { value: 'stone',    label: 'Stone',    swatch: '#607080' },
-  { value: 'verdant',  label: 'Verdant',  swatch: '#4a7a3a' },
-  { value: 'arcane',   label: 'Arcane',   swatch: '#6a3a9a' },
 ];
 
 const DICE_COLORS: { label: string; color: string; pip?: string }[] = [
@@ -280,30 +272,6 @@ const CampaignSettingsPanel: React.FC<Props> = ({ settings, onChange, adminMode,
                 >
                   {opt.label}
                 </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="field-row">
-            <label className="field-label">
-              Palette:{' '}
-              <span className="mono">
-                {PALETTE_OPTIONS.find((p) => p.value === (settings.palette ?? 'treasure'))?.label}
-              </span>
-            </label>
-            <div className="palette-swatches">
-              {PALETTE_OPTIONS.map((opt) => (
-                <button
-                  key={opt.value}
-                  type="button"
-                  className={`palette-swatch ${
-                    (settings.palette ?? 'treasure') === opt.value ? 'active' : ''
-                  }`}
-                  style={{ backgroundColor: opt.swatch }}
-                  onClick={() => update({ palette: opt.value })}
-                  title={opt.label}
-                  aria-label={`${opt.label} palette`}
-                />
               ))}
             </div>
           </div>

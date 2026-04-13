@@ -1,238 +1,151 @@
-/* =========================================================================
-   D&D 5e Loot Generator — "The DM's Binder" parchment theme
-   ========================================================================= */
+/* ═══════════════════════════════════════════════════════════════════
+   CherryKeep — "Iron Forge + Cherry" Design System
+   Dark is the default. Light overrides via [data-theme='light'].
+   ═══════════════════════════════════════════════════════════════════ */
 
-/* --- Theme Custom Properties --------------------------------------------
-   Light is the default parchment palette; [data-theme="dark"] overrides
-   only the tokens that change. Sienna/gold/burnt-red accents stay constant.
-   -------------------------------------------------------------------- */
 :root {
-  --bg-start: #f5ede0;
-  --bg-end: #ede1c9;
-  --bg-card: #f8f2e6;
-  --bg-card-soft: #fbf5e7;
-  --bg-raised: #e8dcc8;
-  --ink: #2a1f14;
-  --ink-strong: #1a120a;
-  --ink-muted: #6a5540;
-  --ink-faint: #8a7458;
-  --ink-fainter: #a89474;
-  --ink-inverse: #f5ede0;
-  --border: #d4c4a8;
-  --border-soft: #e8dcc8;
-  --border-muted: #c0a880;
-  /* Accents — burnished gold on warm parchment */
-  --accent: #8a6818;
-  --accent-dark: #6a5010;
-  --accent-darker: #504008;
-  --accent-gold: #a07820;
-  --accent-gold-dark: #886818;
-  --accent-gold-darker: #705810;
-  --header-start: #3d2b1f;
-  --header-end: #2a1f14;
-  --danger: #b04030;
-  --shadow: rgba(42, 31, 20, 0.08);
-  --shadow-strong: rgba(42, 31, 20, 0.2);
+  /* Background layers (deepest → surface) */
+  --ck-bg-deep:      #0c0d10;
+  --ck-bg-base:      #121318;
+  --ck-bg-raised:    #1a1b22;
+  --ck-bg-elevated:  #22232c;
+  --ck-bg-hover:     #282936;
+
+  /* Cherry accent spectrum */
+  --ck-cherry:       #c44258;
+  --ck-cherry-muted: #a33748;
+  --ck-cherry-light: #e05a72;
+  --ck-cherry-glow:  rgba(196, 66, 88, 0.15);
+  --ck-cherry-faint: rgba(196, 66, 88, 0.08);
+
+  /* Ember secondary (warmth, secondary actions) */
+  --ck-ember:       #d4844a;
+  --ck-ember-faint: rgba(212, 132, 74, 0.10);
+
+  /* D&D rarity colors (tuned for dark backgrounds) */
+  --ck-rarity-common:     #9ca0a8;
+  --ck-rarity-uncommon:   #4eca7b;
+  --ck-rarity-rare:       #4a9ee8;
+  --ck-rarity-very-rare:  #a66de8;
+  --ck-rarity-legendary:  #e8a84a;
+
+  /* Text hierarchy */
+  --ck-text-primary:   #e8e7ed;
+  --ck-text-secondary: #9294a0;
+  --ck-text-tertiary:  #5c5e6a;
+  --ck-text-on-cherry: #ffffff;
+
+  /* Borders & dividers */
+  --ck-border:        rgba(255, 255, 255, 0.07);
+  --ck-border-subtle: rgba(255, 255, 255, 0.04);
+  --ck-border-cherry: rgba(196, 66, 88, 0.25);
+
+  /* Focus ring (keyboard navigation) */
+  --ck-focus-ring: rgba(120, 180, 255, 0.7);
+
+  /* Shadows */
+  --ck-shadow-card:       0 2px 8px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+  --ck-shadow-button:     0 2px 6px rgba(196, 66, 88, 0.2);
+  --ck-shadow-glow:       0 0 20px rgba(196, 66, 88, 0.12);
+  --ck-shadow-pop:        0 3px 10px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.2);
+  --ck-shadow-pop-cherry: 0 3px 10px rgba(196,66,88,0.2), 0 1px 3px rgba(0,0,0,0.3);
+  --ck-shadow-inset:      inset 0 1px 3px rgba(0,0,0,0.3);
+
+  /* Transition timing */
+  --ck-ease-fast:   0.12s ease;
+  --ck-ease-normal: 0.2s ease;
+  --ck-ease-pop:    0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Font families */
+  --ck-font-display: 'Cinzel', serif;
+  --ck-font-content: 'Crimson Text', Georgia, serif;
+  --ck-font-ui:      'Source Sans 3', 'Segoe UI', sans-serif;
+
+  /* Font scale */
+  --ck-text-xxl:  2.25rem;
+  --ck-text-xl:   1.625rem;
+  --ck-text-lg:   1.25rem;
+  --ck-text-md:   1.0625rem;
+  --ck-text-base: 0.9375rem;
+  --ck-text-sm:   0.8125rem;
+  --ck-text-xs:   0.6875rem;
+
+  /* ------------------------------------------------------------------
+     Legacy token aliases — the existing stylesheet still references
+     --bg-*, --ink-*, --border*, --accent*, --header-*, --danger,
+     --shadow* tokens throughout. Map them to the CherryKeep palette so
+     the old rules keep rendering while the component styles below are
+     rewritten gradually. New code should prefer the --ck-* tokens.
+     ------------------------------------------------------------------ */
+  --bg-start:         var(--ck-bg-deep);
+  --bg-end:           var(--ck-bg-deep);
+  --bg-card:          var(--ck-bg-raised);
+  --bg-card-soft:     var(--ck-bg-raised);
+  --bg-raised:        var(--ck-bg-elevated);
+  --ink:              var(--ck-text-primary);
+  --ink-strong:       var(--ck-text-primary);
+  --ink-muted:        var(--ck-text-secondary);
+  --ink-faint:        var(--ck-text-tertiary);
+  --ink-fainter:      var(--ck-text-tertiary);
+  --ink-inverse:      var(--ck-text-on-cherry);
+  --border:           var(--ck-border);
+  --border-soft:      var(--ck-border-subtle);
+  --border-muted:     var(--ck-border);
+  --accent:           var(--ck-cherry);
+  --accent-dark:      var(--ck-cherry-muted);
+  --accent-darker:    var(--ck-cherry-muted);
+  --accent-gold:      var(--ck-ember);
+  --accent-gold-dark: var(--ck-ember);
+  --accent-gold-darker: var(--ck-ember);
+  --header-start:     var(--ck-bg-base);
+  --header-end:       var(--ck-bg-base);
+  --danger:           #e05a5a;
+  --shadow:           var(--ck-shadow-card);
+  --shadow-strong:    var(--ck-shadow-card);
 }
 
-[data-theme='dark'] {
-  --bg-start: #1a1410;
-  --bg-end: #12100c;
-  --bg-card: #211c14;
-  --bg-card-soft: #2a1f14;
-  --bg-raised: #2a1f14;
-  --ink: #e8dcc8;
-  --ink-strong: #f5ede0;
-  --ink-muted: #c0a880;
-  --ink-faint: #a08860;
-  --ink-fainter: #887858;
-  --ink-inverse: #1a1410;
-  --border: #3d2b1f;
-  --border-soft: #2a1f14;
-  --border-muted: #5a4a3a;
-  /* Accents — bright gold on dark brown */
-  --accent: #d4a040;
-  --accent-dark: #b08830;
-  --accent-darker: #907020;
-  --accent-gold: #e0b848;
-  --accent-gold-dark: #c09838;
-  --accent-gold-darker: #a08028;
-  --header-start: #2a1f14;
-  --header-end: #1a120a;
-  --danger: #d46a52;
-  --shadow: rgba(0, 0, 0, 0.4);
-  --shadow-strong: rgba(0, 0, 0, 0.6);
+[data-theme='light'] {
+  --ck-bg-deep:      #eeeef2;
+  --ck-bg-base:      #f5f5f8;
+  --ck-bg-raised:    #ffffff;
+  --ck-bg-elevated:  #f0f0f4;
+  --ck-bg-hover:     #e8e8ee;
+
+  --ck-cherry:       #a83348;
+  --ck-cherry-muted: #8e2a3c;
+  --ck-cherry-light: #c44258;
+  --ck-cherry-glow:  rgba(168, 51, 72, 0.08);
+  --ck-cherry-faint: rgba(168, 51, 72, 0.06);
+
+  --ck-ember:       #b86e38;
+  --ck-ember-faint: rgba(212, 132, 74, 0.08);
+
+  --ck-rarity-common:     #6b6e76;
+  --ck-rarity-uncommon:   #1a8a4a;
+  --ck-rarity-rare:       #2a6eb8;
+  --ck-rarity-very-rare:  #7a4ab8;
+  --ck-rarity-legendary:  #a07820;
+
+  --ck-text-primary:   #1a1b22;
+  --ck-text-secondary: #5c5e6a;
+  --ck-text-tertiary:  #9294a0;
+  --ck-text-on-cherry: #ffffff;
+
+  --ck-border:        rgba(0, 0, 0, 0.08);
+  --ck-border-subtle: rgba(0, 0, 0, 0.04);
+  --ck-border-cherry: rgba(168, 51, 72, 0.2);
+
+  --ck-focus-ring: rgba(40, 100, 220, 0.6);
+
+  --ck-shadow-card:       0 1px 4px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --ck-shadow-button:     0 1px 4px rgba(168, 51, 72, 0.15);
+  --ck-shadow-glow:       0 0 12px rgba(168, 51, 72, 0.06);
+  --ck-shadow-pop:        0 2px 8px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --ck-shadow-pop-cherry: 0 2px 8px rgba(168,51,72,0.12), 0 1px 2px rgba(0,0,0,0.06);
+  --ck-shadow-inset:      inset 0 1px 2px rgba(0,0,0,0.06);
 }
 
 /* --- Reset & Base --- */
-
-/* --- Palette: Stone (mithril silver on dungeon stone) --- */
-[data-palette='stone'] {
-  --bg-start: #eaebee;
-  --bg-end: #dcdee4;
-  --bg-card: #f2f3f6;
-  --bg-card-soft: #f8f8fa;
-  --bg-raised: #d8dae2;
-  --ink: #18192a;
-  --ink-strong: #0a0a16;
-  --ink-muted: #484a5c;
-  --ink-faint: #6a6c80;
-  --ink-fainter: #8a8c98;
-  --ink-inverse: #eaebee;
-  --border: #b8bac8;
-  --border-soft: #d0d2dc;
-  --border-muted: #a0a2b4;
-  --accent: #3a4d62;
-  --accent-dark: #2a3a4e;
-  --accent-darker: #1e2c3c;
-  --accent-gold: #4a5e78;
-  --accent-gold-dark: #3a4e68;
-  --accent-gold-darker: #2c3e54;
-  --header-start: #282838;
-  --header-end: #1a1a24;
-  --danger: #b84040;
-  --shadow: rgba(20, 20, 30, 0.08);
-  --shadow-strong: rgba(20, 20, 30, 0.2);
-}
-[data-palette='stone'][data-theme='dark'] {
-  --bg-start: #181a20;
-  --bg-end: #101218;
-  --bg-card: #20222c;
-  --bg-card-soft: #282a36;
-  --bg-raised: #282a36;
-  --ink: #dce0ea;
-  --ink-strong: #eef0f8;
-  --ink-muted: #a8acbc;
-  --ink-faint: #808498;
-  --ink-fainter: #606478;
-  --ink-inverse: #181a20;
-  --border: #363848;
-  --border-soft: #282a36;
-  --border-muted: #484a5c;
-  --accent: #b0bcd0;
-  --accent-dark: #8a98b0;
-  --accent-darker: #6a7890;
-  --accent-gold: #c4cee0;
-  --accent-gold-dark: #9aa8c0;
-  --accent-gold-darker: #7888a0;
-  --header-start: #22242e;
-  --header-end: #18181e;
-  --danger: #d06060;
-  --shadow: rgba(0, 0, 0, 0.4);
-  --shadow-strong: rgba(0, 0, 0, 0.6);
-}
-
-/* --- Palette: Verdant (elven forest — gold on green) --- */
-[data-palette='verdant'] {
-  --bg-start: #ecf2e6;
-  --bg-end: #deebd2;
-  --bg-card: #f2f8ec;
-  --bg-card-soft: #f6faf2;
-  --bg-raised: #d8e6cc;
-  --ink: #1a2818;
-  --ink-strong: #0e1a0c;
-  --ink-muted: #3e5838;
-  --ink-faint: #5a7a52;
-  --ink-fainter: #7a9870;
-  --ink-inverse: #ecf2e6;
-  --border: #b8ceaa;
-  --border-soft: #d0e2c2;
-  --border-muted: #a0bc90;
-  --accent: #7a6418;
-  --accent-dark: #5e4c10;
-  --accent-darker: #483a0c;
-  --accent-gold: #907420;
-  --accent-gold-dark: #786018;
-  --accent-gold-darker: #5e4c10;
-  --header-start: #2a4020;
-  --header-end: #1a2a14;
-  --danger: #b04838;
-  --shadow: rgba(26, 42, 24, 0.08);
-  --shadow-strong: rgba(26, 42, 24, 0.2);
-}
-[data-palette='verdant'][data-theme='dark'] {
-  --bg-start: #0e1a0e;
-  --bg-end: #0a140a;
-  --bg-card: #162016;
-  --bg-card-soft: #1e2a1e;
-  --bg-raised: #1e2a1e;
-  --ink: #c8e0c0;
-  --ink-strong: #e0f0d8;
-  --ink-muted: #90b088;
-  --ink-faint: #6a8a60;
-  --ink-fainter: #507848;
-  --ink-inverse: #0e1a0e;
-  --border: #2a4028;
-  --border-soft: #1e2a1e;
-  --border-muted: #3a5034;
-  --accent: #d4b040;
-  --accent-dark: #b89830;
-  --accent-darker: #987820;
-  --accent-gold: #e4c450;
-  --accent-gold-dark: #c8a838;
-  --accent-gold-darker: #a88828;
-  --header-start: #1a2a18;
-  --header-end: #0e1a0c;
-  --danger: #d06050;
-  --shadow: rgba(0, 0, 0, 0.4);
-  --shadow-strong: rgba(0, 0, 0, 0.6);
-}
-
-/* --- Palette: Arcane (magical blue on purple) --- */
-[data-palette='arcane'] {
-  --bg-start: #eee8f4;
-  --bg-end: #e2d8ee;
-  --bg-card: #f4f0fa;
-  --bg-card-soft: #f8f4fc;
-  --bg-raised: #dcd2ea;
-  --ink: #1e1430;
-  --ink-strong: #0e0820;
-  --ink-muted: #504068;
-  --ink-faint: #706088;
-  --ink-fainter: #9088a0;
-  --ink-inverse: #eee8f4;
-  --border: #c8bcd8;
-  --border-soft: #dcd2ea;
-  --border-muted: #b0a4c8;
-  --accent: #2e58a0;
-  --accent-dark: #204080;
-  --accent-darker: #183068;
-  --accent-gold: #3868b8;
-  --accent-gold-dark: #2a50a0;
-  --accent-gold-darker: #1e3c80;
-  --header-start: #2a1840;
-  --header-end: #1e1030;
-  --danger: #b04068;
-  --shadow: rgba(30, 20, 48, 0.08);
-  --shadow-strong: rgba(30, 20, 48, 0.2);
-}
-[data-palette='arcane'][data-theme='dark'] {
-  --bg-start: #14101e;
-  --bg-end: #0e0a18;
-  --bg-card: #1c1628;
-  --bg-card-soft: #241c34;
-  --bg-raised: #241c34;
-  --ink: #d0c4e4;
-  --ink-strong: #e8daf8;
-  --ink-muted: #a898c0;
-  --ink-faint: #8070a8;
-  --ink-fainter: #605090;
-  --ink-inverse: #14101e;
-  --border: #302448;
-  --border-soft: #241c34;
-  --border-muted: #403060;
-  --accent: #70a8e8;
-  --accent-dark: #5890d0;
-  --accent-darker: #4078b8;
-  --accent-gold: #88b8f0;
-  --accent-gold-dark: #6098d8;
-  --accent-gold-darker: #4880c0;
-  --header-start: #1e1430;
-  --header-end: #140e22;
-  --danger: #d05888;
-  --shadow: rgba(0, 0, 0, 0.4);
-  --shadow-strong: rgba(0, 0, 0, 0.6);
-}
 *,
 *::before,
 *::after {
@@ -240,7 +153,7 @@
 }
 
 html {
-  background: var(--bg-end);
+  background: var(--ck-bg-deep);
 }
 
 html,
@@ -250,33 +163,35 @@ body {
 }
 
 body {
-  background: linear-gradient(180deg, var(--bg-start) 0%, var(--bg-end) 100%);
-  background-attachment: fixed;
-  color: var(--ink);
-  font-family: 'Crimson Text', Georgia, 'Times New Roman', serif;
-  font-size: 15px;
+  background: var(--ck-bg-deep);
+  color: var(--ck-text-primary);
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-base);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 button {
   font-family: inherit;
 }
 
-/* --- App Container --- */
-.app-container {
-  padding: 1.5rem 2rem 4rem;
+/* Global focus state — keyboard only */
+*:focus {
+  outline: none;
+}
+*:focus-visible {
+  outline: 2px solid var(--ck-focus-ring);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
-.app-title {
-  text-align: center;
-  font-family: 'Crimson Text', Georgia, serif;
-  font-size: 1.9rem;
-  font-weight: 700;
-  color: var(--ink);
-  margin: 0 0 1.5rem;
-  letter-spacing: 0.03em;
+/* --- App Container --- */
+.app-container {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 16px 16px 64px;
 }
 
 /* --- Cards --- */
@@ -291,19 +206,13 @@ button {
     0 2px 10px rgba(58, 43, 31, 0.08);
 }
 
-[data-theme='dark'] .card {
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.03) inset,
-    0 2px 10px rgba(0, 0, 0, 0.3);
-}
-
 .card-title {
-  font-family: 'Crimson Text', Georgia, serif;
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--ink);
-  margin: 0 0 1rem;
-  letter-spacing: 0.01em;
+  font-family: var(--ck-font-display);
+  font-size: var(--ck-text-lg);
+  font-weight: 600;
+  color: var(--ck-text-primary);
+  letter-spacing: 0.03em;
+  margin: 0 0 0.75rem;
 }
 
 /* --- Field Rows --- */
@@ -313,7 +222,7 @@ button {
 
 .field-label {
   display: block;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--ck-font-ui);
   font-size: 0.72rem;
   color: var(--ink-muted);
   margin-bottom: 0.35rem;
@@ -322,40 +231,8 @@ button {
   text-transform: uppercase;
 }
 
-/* --- Tab Bar (top-level) --- */
-.tab-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0;
-  margin-bottom: 1rem;
-  border-bottom: 1px solid var(--border);
-}
-
-.tab-btn {
-  flex: 0 1 auto;
-  min-width: fit-content;
-  padding: 0.7rem 1rem;
-  background: transparent;
-  border: none;
-  border-bottom: 3px solid transparent;
-  color: var(--ink-muted);
-  font-family: 'Crimson Text', Georgia, serif;
-  font-size: 1rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  cursor: pointer;
-  transition: color 0.15s, border-color 0.15s;
-}
-
-.tab-btn:hover {
-  color: var(--accent);
-}
-
-.tab-btn.active {
-  color: var(--ink);
-  font-weight: 700;
-  border-bottom-color: var(--accent);
-}
+/* Old .tab-bar / .tab-btn rules removed — replaced by .ck-nav / .ck-nav-tab
+   in the CherryKeep Components section at the bottom of this file. */
 
 /* --- Help Tooltip --- */
 .help-trigger {
@@ -377,7 +254,7 @@ button {
   color: var(--ink-muted);
   font-size: 0.8rem;
   font-weight: 700;
-  font-family: 'Crimson Text', Georgia, serif;
+  font-family: var(--ck-font-content);
   cursor: pointer;
   transition: color 0.15s, border-color 0.15s, background 0.15s;
   flex-shrink: 0;
@@ -416,7 +293,7 @@ button {
 .help-bubble h4 {
   margin: 0.8rem 0 0.3rem;
   font-size: 0.95rem;
-  font-family: 'Cinzel', serif;
+  font-family: var(--ck-font-display);
   color: var(--accent);
 }
 
@@ -460,7 +337,7 @@ button {
   cursor: pointer;
   background: none;
   border: none;
-  font-family: 'Crimson Text', Georgia, serif;
+  font-family: var(--ck-font-content);
   padding: 0;
 }
 
@@ -515,7 +392,7 @@ button {
 
 .cr-select {
   width: 5.8rem;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--ck-font-ui);
   text-align: center;
 }
 
@@ -700,7 +577,7 @@ button {
 .stepper-value {
   width: 2rem;
   text-align: center;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--ck-font-ui);
   font-size: 1rem;
   font-weight: 500;
   color: var(--ink);
@@ -716,7 +593,7 @@ button {
   color: var(--ink-inverse);
   border: 1px solid var(--accent-dark);
   border-radius: 6px;
-  font-family: 'Crimson Text', Georgia, serif;
+  font-family: var(--ck-font-content);
   font-size: 1.05rem;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -778,7 +655,7 @@ button {
   border: 1px solid var(--border);
   border-radius: 6px;
   color: var(--accent);
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--ck-font-ui);
   font-size: 0.78rem;
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s;
@@ -797,7 +674,7 @@ button {
 }
 
 .results-title {
-  font-family: 'Crimson Text', Georgia, serif;
+  font-family: var(--ck-font-content);
   font-size: 1.05rem;
   font-weight: 700;
   color: var(--ink);
@@ -821,7 +698,7 @@ button {
 
 .creature-header {
   font-weight: 700;
-  font-family: 'Cinzel', serif;
+  font-family: var(--ck-font-display);
   font-size: 0.9rem;
   color: var(--ink);
   text-transform: capitalize;
@@ -870,7 +747,7 @@ button {
 }
 
 .creature-coins {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--ck-font-ui);
   font-size: 0.85rem;
   color: var(--ink-muted);
 }
@@ -890,7 +767,7 @@ button {
   padding-top: 0.6rem;
   border-top: 1px solid var(--border);
   font-weight: 700;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--ck-font-ui);
   font-size: 0.9rem;
   color: var(--ink);
 }
@@ -908,7 +785,7 @@ button {
   border: 1px solid rgba(139, 94, 60, 0.35);
   border-radius: 4px;
   color: var(--accent);
-  font-family: 'Crimson Text', Georgia, serif;
+  font-family: var(--ck-font-content);
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
@@ -929,7 +806,7 @@ button {
 
 .item-meta {
   color: var(--ink-faint);
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--ck-font-ui);
   font-size: 0.75rem;
 }
 
@@ -1018,7 +895,7 @@ button {
 .slider-labels {
   display: flex;
   justify-content: space-between;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--ck-font-ui);
   font-size: 0.7rem;
   color: var(--ink-faint);
   margin-top: 0.1rem;
@@ -1026,7 +903,7 @@ button {
 
 /* --- Mono utility --- */
 .mono {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--ck-font-ui);
   font-weight: 500;
 }
 
@@ -1092,13 +969,13 @@ button {
 
 .vault-dmg-total {
   color: var(--ink-faint);
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--ck-font-ui);
   font-size: 0.78rem;
 }
 
 .vault-budget-label {
   margin-top: 0.3rem;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--ck-font-ui);
   font-size: 0.85rem;
   font-weight: 500;
   color: var(--ink);
@@ -1155,7 +1032,7 @@ button {
   border: none;
   border-bottom: 2px solid transparent;
   color: var(--ink-muted);
-  font-family: 'Crimson Text', Georgia, serif;
+  font-family: var(--ck-font-content);
   font-size: 0.95rem;
   font-weight: 600;
   letter-spacing: 0.02em;
@@ -1188,7 +1065,7 @@ button {
   border-radius: 4px;
   background: var(--bg-card-soft);
   color: var(--ink-muted);
-  font-family: 'Crimson Text', Georgia, serif;
+  font-family: var(--ck-font-content);
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
@@ -1207,42 +1084,8 @@ button {
   color: var(--ink-inverse);
 }
 
-/* Letter tabs (A-I) */
-.letter-tabs {
-  display: flex;
-  gap: 0.3rem;
-  margin-bottom: 0.85rem;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.letter-tab {
-  width: 2.3rem;
-  height: 2.3rem;
-  border: 1px solid var(--border-muted);
-  border-radius: 4px;
-  background: var(--bg-card-soft);
-  color: var(--ink);
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.95rem;
-  font-weight: 500;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
-}
-
-.letter-tab:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-.letter-tab.active {
-  background: var(--accent);
-  border-color: var(--accent-dark);
-  color: var(--ink-inverse);
-}
+/* Old .letter-tabs / .letter-tab rules removed — replaced by .table-pills
+   in the CherryKeep Components section at the bottom of this file. */
 
 /* =========================================================================
    Stepper — Breadcrumb
@@ -1252,7 +1095,7 @@ button {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  font-family: 'Crimson Text', Georgia, serif;
+  font-family: var(--ck-font-content);
   font-size: 13px;
   margin-bottom: 16px;
 }
@@ -1295,7 +1138,7 @@ button {
   background: rgba(139, 94, 60, 0.04);
   padding: 10px 14px;
   margin-bottom: 12px;
-  font-family: 'Crimson Text', Georgia, serif;
+  font-family: var(--ck-font-content);
   font-size: 15px;
   color: var(--ink);
 }
@@ -1348,7 +1191,7 @@ button {
 }
 
 .table-card-title {
-  font-family: 'Crimson Text', Georgia, serif;
+  font-family: var(--ck-font-content);
   font-size: 17px;
   font-weight: 700;
   color: var(--ink-inverse);
@@ -1356,7 +1199,7 @@ button {
 }
 
 .dice-badge {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--ck-font-ui);
   font-size: 12px;
   color: var(--border-muted);
   background: rgba(201, 184, 150, 0.15);
@@ -1433,7 +1276,7 @@ button {
 }
 
 .entry-dice-range {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--ck-font-ui);
   font-size: 11px;
   color: var(--ink-faint);
   min-width: 40px;
@@ -1450,7 +1293,7 @@ button {
 
 .entry-name {
   flex: 1;
-  font-family: 'Crimson Text', Georgia, serif;
+  font-family: var(--ck-font-content);
   font-size: 15px;
   color: var(--ink);
   min-width: 0;
@@ -1466,7 +1309,7 @@ button {
 }
 
 .entry-source {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--ck-font-ui);
   font-size: 11px;
   color: var(--ink-faint);
   font-style: italic;
@@ -1474,7 +1317,7 @@ button {
 }
 
 .entry-percentage {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--ck-font-ui);
   font-size: 11px;
   color: var(--ink-fainter);
   min-width: 40px;
@@ -1494,7 +1337,7 @@ button {
 }
 
 .cursed-tag {
-  font-family: var(--ck-font-ui, 'IBM Plex Mono', monospace);
+  font-family: var(--ck-font-ui);
   font-size: var(--ck-text-xs, 11px);
   color: var(--ck-text-tertiary, var(--ink-fainter));
   font-style: italic;
@@ -1518,7 +1361,7 @@ button {
   border-radius: 4px;
   background: var(--accent);
   color: var(--ink-inverse);
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--ck-font-ui);
   font-size: 0.8rem;
   font-weight: 700;
   white-space: nowrap;
@@ -1528,7 +1371,7 @@ button {
 .btn-continue {
   flex: 1;
   padding: 10px 16px;
-  font-family: 'Crimson Text', Georgia, serif;
+  font-family: var(--ck-font-content);
   font-size: 15px;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -1574,7 +1417,7 @@ button {
 .btn-skip,
 .btn-reroll {
   padding: 10px 14px;
-  font-family: 'Crimson Text', Georgia, serif;
+  font-family: var(--ck-font-content);
   font-size: 14px;
   font-weight: 600;
   color: var(--accent);
@@ -1596,7 +1439,7 @@ button {
   padding: 6px 10px;
   background: none;
   border: none;
-  font-family: 'Crimson Text', Georgia, serif;
+  font-family: var(--ck-font-content);
   font-size: 13px;
   cursor: pointer;
 }
@@ -1613,10 +1456,6 @@ button {
 .btn-start-over:hover,
 .btn-step-back:hover {
   text-decoration: underline;
-}
-  font-family: 'Crimson Text', Georgia, serif;
-  font-size: 13px;
-  cursor: pointer;
 }
 
 /* =========================================================================
@@ -1658,7 +1497,7 @@ button {
 }
 
 .final-result-label {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--ck-font-ui);
   font-size: 11px;
   text-transform: uppercase;
   color: var(--accent-gold);
@@ -1667,7 +1506,7 @@ button {
 }
 
 .final-result-name {
-  font-family: 'Crimson Text', Georgia, serif;
+  font-family: var(--ck-font-content);
   font-size: 22px;
   font-weight: 700;
   color: var(--ink-inverse);
@@ -1694,7 +1533,7 @@ button {
   display: flex;
   gap: 12px;
   font-size: 13px;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--ck-font-ui);
   margin-bottom: 8px;
   text-transform: capitalize;
 }
@@ -1735,7 +1574,7 @@ button {
 }
 
 .final-result-chain {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--ck-font-ui);
   font-size: 12px;
   color: var(--ink-faint);
   margin-bottom: 18px;
@@ -1752,7 +1591,7 @@ button {
 .btn-roll-again,
 .btn-done {
   padding: 9px 18px;
-  font-family: 'Crimson Text', Georgia, serif;
+  font-family: var(--ck-font-content);
   font-size: 14px;
   font-weight: 600;
   border-radius: 6px;
@@ -1797,7 +1636,7 @@ button {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-family: 'Crimson Text', Georgia, serif;
+  font-family: var(--ck-font-content);
   font-size: 13px;
   font-weight: 700;
   color: var(--ink-muted);
@@ -1807,7 +1646,7 @@ button {
 }
 
 .result-history-empty {
-  font-family: 'Crimson Text', Georgia, serif;
+  font-family: var(--ck-font-content);
   font-size: 13px;
   color: var(--ink-faint);
   font-style: italic;
@@ -1818,7 +1657,7 @@ button {
   background: none;
   border: none;
   color: var(--danger);
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--ck-font-ui);
   font-size: 11px;
   cursor: pointer;
   padding: 0;
@@ -1846,7 +1685,7 @@ button {
 }
 
 .result-entry-name {
-  font-family: 'Crimson Text', Georgia, serif;
+  font-family: var(--ck-font-content);
   font-size: 15px;
   font-weight: 700;
   color: var(--ink);
@@ -1861,7 +1700,7 @@ button {
 
 .result-entry-source {
   margin-left: auto;
-  font-family: 'Crimson Text', Georgia, serif;
+  font-family: var(--ck-font-content);
   font-size: 12px;
   font-weight: 400;
   font-style: italic;
@@ -1869,7 +1708,7 @@ button {
 }
 
 .result-entry-chain {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--ck-font-ui);
   font-size: 11px;
   color: var(--ink-faint);
   margin-top: 2px;
@@ -1974,7 +1813,7 @@ button {
   color: var(--ink-muted);
   border: none;
   padding: 6px 14px;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--ck-font-ui);
   font-size: 11px;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -1996,32 +1835,12 @@ button {
   color: var(--ink-inverse);
 }
 
-/* --- Palette swatches --- */
-.palette-swatches,
+/* --- Dice color swatches --- */
+/* .palette-swatch rules removed — palettes are no longer a feature. */
 .dice-color-swatches {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-}
-
-.palette-swatch {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 2px solid var(--border);
-  cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.15s;
-  padding: 0;
-}
-
-.palette-swatch:hover {
-  transform: scale(1.15);
-}
-
-.palette-swatch.active {
-  border-color: var(--ink);
-  box-shadow: 0 0 0 2px var(--ink), 0 0 8px var(--shadow-strong);
-  transform: scale(1.1);
 }
 
 .dice-swatch {
@@ -2049,7 +1868,7 @@ button {
   background: none;
   border: 1px solid var(--border);
   color: var(--accent);
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--ck-font-ui);
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -2073,7 +1892,7 @@ button {
 }
 
 .formula-explain code {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--ck-font-ui);
   color: var(--ink);
   font-size: 0.8rem;
 }
@@ -2106,7 +1925,7 @@ button {
   background: none;
   border: none;
   color: var(--ink);
-  font-family: 'Crimson Text', serif;
+  font-family: var(--ck-font-content);
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;
@@ -2168,7 +1987,7 @@ button {
 
 .source-acronym {
   display: inline-block;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--ck-font-ui);
   font-size: 10px;
   font-weight: 600;
   background: var(--accent);
@@ -2189,14 +2008,14 @@ button {
 }
 
 .source-count {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--ck-font-ui);
   font-size: 10px;
   color: var(--ink-faint);
   flex-shrink: 0;
 }
 
 .source-damp {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--ck-font-ui);
   font-size: 10px;
   color: var(--ink-fainter);
   flex-shrink: 0;
@@ -2213,7 +2032,7 @@ button {
   color: var(--ink-muted);
   border: 1px solid var(--border);
   padding: 3px 8px;
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--ck-font-ui);
   font-size: 10px;
   cursor: pointer;
   border-radius: 3px;
@@ -2261,7 +2080,7 @@ button {
   border-radius: 4px;
   background: var(--bg-card);
   color: var(--ink);
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--ck-font-ui);
   font-size: 12px;
   text-align: right;
 }
@@ -2275,12 +2094,12 @@ button {
   margin: 1rem auto 3rem;
   padding: 0 1rem;
   line-height: 1.7;
-  font-family: 'Crimson Text', Georgia, serif;
+  font-family: var(--ck-font-content);
   color: var(--ink);
 }
 
 .about-page h1 {
-  font-family: 'Crimson Text', Georgia, serif;
+  font-family: var(--ck-font-content);
   font-size: 1.8rem;
   font-weight: 700;
   margin: 0 0 1.5rem;
@@ -2289,7 +2108,7 @@ button {
 }
 
 .about-page h2 {
-  font-family: 'Crimson Text', Georgia, serif;
+  font-family: var(--ck-font-content);
   font-size: 1.3rem;
   font-weight: 700;
   margin: 1.75rem 0 0.5rem;
@@ -2299,7 +2118,7 @@ button {
 }
 
 .about-page h3 {
-  font-family: 'Crimson Text', Georgia, serif;
+  font-family: var(--ck-font-content);
   font-size: 1.15rem;
   font-weight: 700;
   margin: 1.5rem 0 0.4rem;
@@ -2320,7 +2139,7 @@ button {
 }
 
 .about-page code {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--ck-font-ui);
   background: var(--bg-raised);
   padding: 1px 5px;
   border-radius: 3px;
@@ -2357,7 +2176,7 @@ button {
 }
 
 .about-table th {
-  font-family: 'Crimson Text', serif;
+  font-family: var(--ck-font-content);
   font-weight: 700;
   color: var(--ink-muted);
   background: var(--bg-card-soft);
@@ -2510,7 +2329,7 @@ button {
 }
 
 .review-cell-source {
-  font-family: var(--font-mono, monospace);
+  font-family: var(--ck-font-ui);
   font-size: 0.75rem;
   color: var(--ink-muted);
 }
@@ -2536,7 +2355,7 @@ button {
   cursor: pointer;
   padding: 0.1rem 0.3rem;
   border-radius: 3px;
-  font-family: var(--font-mono, monospace);
+  font-family: var(--ck-font-ui);
 }
 
 .review-weight-display:hover {
@@ -2549,7 +2368,7 @@ button {
   padding: 0.1rem;
   border: 1px solid var(--accent);
   border-radius: 3px;
-  font-family: var(--font-mono, monospace);
+  font-family: var(--ck-font-ui);
   font-size: 0.82rem;
   text-align: center;
 }
@@ -2631,7 +2450,7 @@ button {
 }
 
 .review-context-weight {
-  font-family: var(--font-mono, monospace);
+  font-family: var(--ck-font-ui);
   min-width: 1.5em;
   text-align: right;
   font-weight: 600;
@@ -3008,7 +2827,7 @@ button {
   border-radius: 4px;
   background: var(--bg-card-soft);
   color: var(--ink);
-  font-family: var(--font-mono, monospace);
+  font-family: var(--ck-font-ui);
   font-size: 0.85rem;
   margin-bottom: 0.75rem;
   box-sizing: border-box;
@@ -3017,5 +2836,422 @@ button {
 .pat-modal-actions {
   display: flex;
   gap: 0.5rem;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   CherryKeep Components — nav, pills, buttons, cards, result card
+   Added in Priority 1 (specs/CHERRYKEEP-DESIGN-SPEC.md §6–§9).
+   These rules are the authoritative versions; any older rules above
+   that conflict are superseded by cascade order.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* --- Top Nav Bar --------------------------------------------------- */
+.ck-nav {
+  background: var(--ck-bg-base);
+  border-bottom: 1px solid var(--ck-border);
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.ck-nav-brand {
+  font-family: var(--ck-font-display);
+  font-size: var(--ck-text-base);
+  color: var(--ck-text-secondary);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+.ck-nav-tabs {
+  display: flex;
+  gap: 0;
+  height: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ck-nav-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.ck-nav-tab {
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-sm);
+  font-weight: 400;
+  color: var(--ck-text-tertiary);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 0 14px;
+  cursor: pointer;
+  transition: color var(--ck-ease-fast), border-color var(--ck-ease-fast);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  min-width: 44px;
+  white-space: nowrap;
+}
+
+.ck-nav-tab:hover {
+  color: var(--ck-text-primary);
+}
+
+.ck-nav-tab.active {
+  color: var(--ck-cherry);
+  font-weight: 700;
+  border-bottom-color: var(--ck-cherry);
+}
+
+.ck-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.ck-nav-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--ck-border);
+}
+
+/* --- Theme Toggle -------------------------------------------------- */
+.ck-theme-toggle {
+  display: flex;
+  gap: 1px;
+  background: var(--ck-bg-deep);
+  border-radius: 6px;
+  padding: 2px;
+}
+
+.ck-theme-btn {
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-sm);
+  min-height: 32px;
+  min-width: 36px;
+  padding: 0 8px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: all var(--ck-ease-pop);
+  background: transparent;
+  color: var(--ck-text-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ck-theme-btn:hover {
+  color: var(--ck-text-secondary);
+}
+
+.ck-theme-btn.active {
+  background: var(--ck-bg-elevated);
+  color: var(--ck-text-primary);
+  transform: translateY(-1px);
+  box-shadow: var(--ck-shadow-pop);
+}
+
+/* --- Table Letter Selector (A–I scrollable pills) ------------------ */
+.table-pills {
+  position: relative;
+  margin-bottom: 0.75rem;
+}
+
+.table-pills-fade {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 32px;
+  background: linear-gradient(90deg, transparent, var(--ck-bg-deep));
+  pointer-events: none;
+  z-index: 2;
+}
+
+.table-pills-scroll {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 6px 32px 6px 6px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-pills-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.table-pill {
+  font-family: var(--ck-font-display);
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  min-height: 44px;
+  padding: 0 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all var(--ck-ease-pop);
+  background: transparent;
+  color: var(--ck-text-tertiary);
+  transform: translateY(0) scale(1.0);
+}
+
+.table-pill:hover {
+  background: var(--ck-bg-elevated);
+  color: var(--ck-text-secondary);
+}
+
+.table-pill.active {
+  font-weight: 600;
+  background: var(--ck-bg-raised);
+  color: var(--ck-cherry);
+  border-color: var(--ck-border-cherry);
+  transform: translateY(-1px) scale(1.05);
+  box-shadow: var(--ck-shadow-pop-cherry);
+}
+
+.table-pill-sub {
+  font-family: var(--ck-font-ui);
+  font-size: 0.5625rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--ck-text-tertiary);
+  opacity: 0.7;
+}
+
+.table-pill.active .table-pill-sub {
+  color: var(--ck-text-secondary);
+  opacity: 1;
+}
+
+/* --- Buttons ------------------------------------------------------- */
+.btn-primary,
+.ck-nav ~ * .btn-roll,
+.btn-roll {
+  background: linear-gradient(180deg, var(--ck-cherry), var(--ck-cherry-muted));
+  color: var(--ck-text-on-cherry);
+  border: 1px solid var(--ck-border-cherry);
+  border-radius: 8px;
+  min-height: 44px;
+  padding: 0 24px;
+  font-family: var(--ck-font-display);
+  font-size: var(--ck-text-sm);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  box-shadow: var(--ck-shadow-button);
+  transition: all 0.15s ease;
+}
+
+.btn-primary:hover,
+.btn-roll:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active,
+.btn-roll:active {
+  transform: translateY(0);
+  filter: brightness(0.95);
+}
+
+.btn-primary:disabled,
+.btn-roll:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  filter: none;
+}
+
+.btn-secondary {
+  background: var(--ck-bg-elevated);
+  color: var(--ck-text-secondary);
+  border: 1px solid var(--ck-border);
+  border-radius: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--ck-ease-fast);
+}
+
+.btn-secondary:hover {
+  background: var(--ck-bg-hover);
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ck-text-tertiary);
+  border: 1px solid var(--ck-border-subtle);
+  border-radius: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-sm);
+  font-weight: 400;
+  cursor: pointer;
+  transition: all var(--ck-ease-fast);
+}
+
+.btn-ghost:hover {
+  border-color: var(--ck-border);
+  color: var(--ck-text-secondary);
+}
+
+/* --- Source Chips (inline, e.g. encounter results) ----------------- */
+.source-chip {
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-xs);
+  font-weight: 500;
+  min-height: 44px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all var(--ck-ease-pop);
+  background: transparent;
+  border: 1px solid var(--ck-border-subtle);
+  color: var(--ck-text-tertiary);
+  opacity: 0.55;
+  transform: translateY(0) scale(1.0);
+}
+
+.source-chip:hover {
+  transform: translateY(0) scale(1.01);
+}
+
+.source-chip.on {
+  font-weight: 700;
+  background: var(--ck-bg-elevated);
+  border-color: var(--ck-border);
+  color: var(--ck-text-primary);
+  opacity: 1;
+  transform: translateY(-1px) scale(1.04);
+  box-shadow: var(--ck-shadow-pop);
+}
+
+.source-chip.on.emphasis {
+  background: var(--ck-cherry-faint);
+  border-color: var(--ck-border-cherry);
+  color: var(--ck-cherry);
+  box-shadow: var(--ck-shadow-pop-cherry);
+}
+
+/* --- Rarity Color Helpers ------------------------------------------ */
+.rarity-common    { color: var(--ck-rarity-common); }
+.rarity-uncommon  { color: var(--ck-rarity-uncommon); }
+.rarity-rare      { color: var(--ck-rarity-rare); }
+.rarity-very-rare { color: var(--ck-rarity-very-rare); }
+.rarity-legendary { color: var(--ck-rarity-legendary); }
+
+/* --- Inputs & Selects ---------------------------------------------- */
+.ck-input,
+.ck-select {
+  background: var(--ck-bg-deep);
+  border: 1px solid var(--ck-border);
+  border-radius: 6px;
+  padding: 9px 14px;
+  min-height: 44px;
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-sm);
+  color: var(--ck-text-primary);
+  box-shadow: var(--ck-shadow-inset);
+  transition: border-color var(--ck-ease-fast);
+}
+
+.ck-input:focus-visible,
+.ck-select:focus-visible {
+  border-color: var(--ck-cherry);
+  outline: none;
+}
+
+.ck-input::placeholder {
+  color: var(--ck-text-tertiary);
+}
+
+/* --- Small Section Labels ("Sources", "Priority", etc.) ------------ */
+.section-label {
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-xs);
+  font-weight: 600;
+  color: var(--ck-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+
+/* --- Footer -------------------------------------------------------- */
+.ck-footer {
+  border-top: 1px solid var(--ck-border-subtle);
+  padding-top: 16px;
+  margin-top: 32px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-family: var(--ck-font-ui);
+  font-size: var(--ck-text-xs);
+  color: var(--ck-text-tertiary);
+}
+
+/* --- Mobile Responsive Overrides ----------------------------------- */
+@media (max-width: 560px) {
+  .app-container {
+    padding: 12px 10px 80px;
+  }
+
+  .ck-nav-tab {
+    padding: 0 10px;
+    font-size: var(--ck-text-xs);
+  }
+
+  .entry-row {
+    padding: 0 10px;
+    min-height: 44px;
+  }
+
+  .entry-percentage {
+    display: none;
+  }
+
+  .action-bar {
+    flex-wrap: wrap;
+  }
+
+  .btn-primary,
+  .btn-secondary,
+  .btn-roll {
+    flex-basis: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .ck-nav {
+    padding: 0 10px;
+  }
+  .ck-nav-tab {
+    padding: 0 10px;
+    font-size: var(--ck-text-xs);
+  }
 }
 

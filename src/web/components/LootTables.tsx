@@ -156,6 +156,19 @@ function lookupItemStats(
 
 const MI_LETTERS: MITable[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'];
 
+/** Rarity-tier subtitles shown under each letter in the scrollable pill bar. */
+const TABLE_SUBTITLES: Record<MITable, string> = {
+  A: 'Minor \u00B7 Common',
+  B: 'Minor \u00B7 Uncommon',
+  C: 'Minor \u00B7 Rare',
+  D: 'Minor \u00B7 V.Rare',
+  E: 'Minor \u00B7 Legendary',
+  F: 'Major \u00B7 Uncommon',
+  G: 'Major \u00B7 Rare',
+  H: 'Major \u00B7 V.Rare',
+  I: 'Major \u00B7 Legendary',
+};
+
 /** Muted colored-pencil palette per STEPPER-DESIGN.md. */
 const SEGMENT_COLORS = [
   '#c9553a', '#c9943a', '#5a9e6f', '#7b6fb5', '#c97a3a',
@@ -1190,25 +1203,35 @@ const LootTables: React.FC<LootTablesProps> = ({
         id="dice-overlay"
         className={`dice-overlay${showDiceOverlay ? ' visible' : ''}`}
       />
-      {/* Table letter tabs (A–I) */}
-      <div className="letter-tabs">
-        {MI_LETTERS.map((l) => (
-          <button
-            key={l}
-            className={`letter-tab${activeLetter === l ? ' active' : ''}`}
-            onClick={() => {
-              if (l === activeLetter) {
-                // Already on this letter — reset stepper to root table
-                setFlashIdx(null);
-                dispatch({ type: 'SET_ROOT', rootTable: `Magic-Item-Table-${l}` });
-              } else {
-                setActiveLetter(l);
-              }
-            }}
-          >
-            {l}
-          </button>
-        ))}
+      {/* Table letter pills (A–I, scrollable) */}
+      <div className="table-pills">
+        <div className="table-pills-fade" />
+        <div
+          className="table-pills-scroll"
+          role="tablist"
+          aria-label="Loot table selection"
+        >
+          {MI_LETTERS.map((l) => (
+            <button
+              key={l}
+              role="tab"
+              aria-selected={activeLetter === l}
+              className={`table-pill${activeLetter === l ? ' active' : ''}`}
+              onClick={() => {
+                if (l === activeLetter) {
+                  // Already on this letter — reset stepper to root table
+                  setFlashIdx(null);
+                  dispatch({ type: 'SET_ROOT', rootTable: `Magic-Item-Table-${l}` });
+                } else {
+                  setActiveLetter(l);
+                }
+              }}
+            >
+              <span>{l}</span>
+              <span className="table-pill-sub">{TABLE_SUBTITLES[l]}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Breadcrumb + Context Bar */}

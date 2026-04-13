@@ -35,3 +35,97 @@ Orphan curation entries are a related side effect of this same issue:
 `data/curation.json` still has entries keyed to the old names (`"Air Essence Shard|TCE"`, `"Carpet of Flying|DMG"`, etc.). They're harmless (no match = no override) but they're stale. A proper migration should either update or delete them.
 
 ---
+
+## 2. Priority 1 fonts are still served from Google Fonts CDN
+
+**Surfaced during:** Priority 1 — CherryKeep Visual Redesign.
+
+**The situation:**
+- `specs/CHERRYKEEP-DESIGN-SPEC.md` §4.1 calls for self-hosted WOFF2 files in `public/fonts/` — 11 files total (Cinzel 400/500/600/700, Crimson Text 400/400i/600, Source Sans 3 300/400/400i/600/700).
+- The spec explicitly says "Do NOT use Google Fonts CDN" — the goal is zero external dependencies, no Google tracking, faster first paint.
+- I can't download binary files from the internet in this environment — Claude Code's WebFetch tool returns parsed/extracted text, not raw bytes. There's no way for me to write the actual WOFF2 files into the repo from here.
+- **What I did instead:** Left `src/web/index.html` using the Google Fonts CDN, but updated the `<link href>` to load the three CherryKeep typefaces (Cinzel, Crimson Text, Source Sans 3) instead of the old Crimson Text + IBM Plex Mono pair. A TEMPORARY comment block in `index.html` flags this and points here.
+- `app.css` already uses the `var(--ck-font-*)` CSS variables everywhere, and the families named in those variables (`'Cinzel'`, `'Crimson Text'`, `'Source Sans 3'`) match what the CDN `<link>` provides. So visually the site is correct, it just has an external dependency the spec wanted removed.
+
+**Why this is a discussion, not a quick fix:**
+The spec's "self-host" directive exists for a few real reasons — external network dep, Google tracking, first-paint speed — but fixing it has a couple of open questions:
+
+1. **Licensing.** Google Fonts are OFL (open font license) which permits redistribution, but the WOFF2 binaries in the repo will still need a LICENSE entry or clear attribution. Worth confirming which license variant ships with each family.
+2. **Vite base path.** Spec §4.1 notes that font URLs must account for the Vite `base` path. Currently `vite.config.ts` sets `base: '/loot-tables/'` (GitHub Pages subpath). When the custom domain lands (Priority 🟡 Pending: Infrastructure), base becomes `/`. If I add `@font-face { src: url('/fonts/...') }` now, it'll break on the current deploy. The spec's workaround is to put files under `public/fonts/` and trust Vite to rewrite the URLs, but I'd want to verify that works end-to-end.
+3. **Who downloads the files?** Options: (a) you download them manually from https://fonts.google.com and drop them into `public/fonts/` in a follow-up commit; (b) add a small `scripts/download-fonts.ts` that fetches them at build time from the Google Fonts API (still an external dep, but only at build, not at runtime); (c) mirror them in a separate `assets/` submodule.
+
+**What I'd want to understand before fixing:**
+- Is manual commit of 11 binary files acceptable, or do you want a download script?
+- Is the custom domain live yet? That determines whether the URL format `/fonts/...` is safe now or if I need to prefix with the Vite base path.
+- Do you have a preferred font-license location (LICENSE file, `public/fonts/README.md`, inline comment)?
+
+Until then: the `<link>` in `index.html` is the shim. When you're ready to self-host, the steps are (a) drop the 11 WOFF2 files into `public/fonts/`, (b) replace the comment block + `<link>` in `index.html` with `@font-face` declarations at the top of `app.css` per the spec, (c) verify `data-theme='light'` and `data-theme='dark'` render the correct weights.
+
+---
+
+## 3. Section 12 (Settings Reorganization) vs. "don't change EncounterBuilder"
+
+**Surfaced during:** Priority 1 — CherryKeep Visual Redesign.
+
+**The situation:**
+`specs/CHERRYKEEP-DESIGN-SPEC.md` has two sections that contradict:
+
+- **§11 "Things NOT to Change"** says:
+  > **EncounterBuilder.tsx / VaultHoard.tsx** — leave structure as-is. They will inherit the CSS variable changes.
+
+- **§12 "Settings Reorganization"** says:
+  > Encounter Builder tab — add these controls inline (above the creature list): Party Level, Tier, Party Size.
+  > Encounter Results area — add these as inline toggles: Show Values, Show Sale Price, Convert to Gold, Split Among Party, Show Mundane Finds.
+  > Magic Item Tables tab — add these controls: Show Item Details, Enable 3D Dice.
+
+§12 clearly requires structural changes to `EncounterBuilder.tsx`, `EncounterResults.tsx`, and `LootTables.tsx`. But §11 says not to touch EncounterBuilder's structure. The two rules can't both be satisfied.
+
+**What I did instead:** Deferred §12 entirely. My Priority 1 commit ships §1–§11 (visual redesign, nav bar, pills, buttons, result card, footer) but does NOT touch the EncounterBuilder/EncounterResults/LootTables control layout. The settings relocation is untouched — everything remains in the Settings tab.
+
+**Why this is a discussion, not a quick fix:**
+§12 is a real UX improvement and should probably ship, but:
+
+1. **Which rule wins?** If §12 overrides §11, I need to know that explicitly so I can add the inline controls. If §11 overrides §12, then §12 should be struck from the spec.
+2. **Scope creep risk.** §12's result toggles mean a new `ResultToggles` component and prop threading through EncounterResults. The `.result-toggles` CSS is already in the spec (§12.6) so the visual side is ready, but the JSX isn't.
+3. **Is there a "phase 1a / 1b" split?** Maybe §1–§11 is the visual skin and §12 is a follow-up behavior change.
+
+**What I'd want to understand before fixing:**
+- Does §12 override §11, or vice versa?
+- If §12 is intended for a separate task, should it move out of CHERRYKEEP-DESIGN-SPEC.md into its own spec (SETTINGS-REORGANIZATION-SPEC.md or similar)?
+
+---
+
+## 4. Legacy CSS tokens aliased instead of migrated
+
+**Surfaced during:** Priority 1 — CherryKeep Visual Redesign.
+
+**The situation:**
+The spec (§3) directs a file-wide find-and-replace: every `var(--old-token)` becomes `var(--ck-*)` per a 24-row mapping table. Doing that literally would require editing ~600 lines of rules across `app.css` (27 unique legacy tokens used in several hundred rules).
+
+**What I did instead:** I added alias declarations inside `:root` so the old names resolve to the new tokens:
+
+```css
+:root {
+  /* ... new --ck-* tokens ... */
+  --bg-card: var(--ck-bg-raised);
+  --ink:     var(--ck-text-primary);
+  --accent:  var(--ck-cherry);
+  /* etc. for all 24 legacy tokens */
+}
+```
+
+This means every existing rule like `background: var(--bg-card)` still works without being rewritten, and the legacy rules pick up the CherryKeep color automatically. I did migrate all `font-family` declarations individually (71 of them) because the spec's font role table needs correct assignment per element.
+
+**Why this is a discussion, not a quick fix:**
+Pragmatically the aliases work — the site renders with the CherryKeep palette because every legacy token resolves through to a `--ck-*` value. But this creates a few concerns:
+
+1. **Two sources of truth.** New code written against `--ck-*` and old code written against `--bg-card` both work, so nothing forces new code to converge on the new names. The legacy aliases could linger indefinitely.
+2. **Token granularity mismatch.** Some legacy tokens map to the same new token (e.g. `--bg-card` and `--bg-card-soft` both alias to `--ck-bg-raised`). That loses a subtle distinction the old design made. If any rule relied on `--bg-card-soft` being lighter than `--bg-card`, that nuance is gone.
+3. **Theme-switch regressions.** The old system had `[data-theme='dark']` overrides scattered throughout. Most of those are dead (the new tokens handle dark natively), but some might have set component-specific things like `box-shadow` or `border-color` that don't migrate. I haven't audited every `[data-theme='dark'] .foo` selector in the stylesheet — there might be stale rules that fire on theme switch and fight the new tokens.
+
+**What I'd want to understand before fixing:**
+- Is the alias approach acceptable as a medium-term state, or do you want a clean migration in a follow-up commit?
+- Should I do an audit pass on every remaining `[data-theme='dark']` selector (there are several) and delete the ones that are no longer meaningful?
+- Are there rules elsewhere that need the `--bg-card-soft` nuance (subtle lighter variant) that we should preserve as a new token?
+
+---
