@@ -172,11 +172,6 @@ export function generateLoot(input: LootInput): LootResult {
   const magicItems: MagicItemResult[] = [];
   const mundaneFinds: string[] = [];
 
-  // One variance roll for all magic item categories per creature.
-  // DMG CV for magic items is ~1.85 (36% of hoards have zero items,
-  // jackpots pull the mean well above the median).
-  const miVariance = logNormalVariance(1.85);
-
   for (const cat of categories) {
     const categoryGp = (cat.pct / 100) * roleBudget;
 
@@ -201,7 +196,10 @@ export function generateLoot(input: LootInput): LootResult {
 
       case 'magic': {
         if (!cat.miTable || !cat.avgValue) break;
-        const variedGp = categoryGp * miVariance;
+        // Independent variance per table (DMG CV ~1.85). Each table
+        // rolls its own multiplier — a creature can get lucky on Table A
+        // but unlucky on Table G, matching the DMG's independent outcomes.
+        const variedGp = categoryGp * logNormalVariance(1.85);
         const probability = variedGp / cat.avgValue;
         const guaranteed = Math.floor(probability);
         const fractional = probability - guaranteed;
@@ -315,8 +313,6 @@ export function generateLootResolvable(
   const magicItems: ResolvableMagicItem[] = [];
   const mundaneFinds: string[] = [];
 
-  const miVariance = logNormalVariance(1.85);
-
   for (const cat of categories) {
     const categoryGp = (cat.pct / 100) * roleBudget;
 
@@ -338,7 +334,7 @@ export function generateLootResolvable(
 
       case 'magic': {
         if (!cat.miTable || !cat.avgValue) break;
-        const variedGp = categoryGp * miVariance;
+        const variedGp = categoryGp * logNormalVariance(1.85);
         const probability = variedGp / cat.avgValue;
         const guaranteed = Math.floor(probability);
         const fractional = probability - guaranteed;
@@ -408,8 +404,6 @@ export function generateVaultLootResolvable(
   const magicItems: ResolvableMagicItem[] = [];
   const mundaneFinds: string[] = [];
 
-  const miVariance = logNormalVariance(1.85);
-
   for (const cat of categories) {
     const categoryGp = (cat.pct / 100) * roleBudget;
 
@@ -431,7 +425,7 @@ export function generateVaultLootResolvable(
 
       case 'magic': {
         if (!cat.miTable || !cat.avgValue) break;
-        const variedGp = categoryGp * miVariance;
+        const variedGp = categoryGp * logNormalVariance(1.85);
         const probability = variedGp / cat.avgValue;
         const guaranteed = Math.floor(probability);
         const fractional = probability - guaranteed;
