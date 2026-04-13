@@ -8,8 +8,6 @@ import React, {
 } from 'react';
 import { SPELL_TABLES } from '../../data/spells';
 import { SUPPLEMENTAL_TABLES } from '../../data/supplemental';
-import { CUSTOM_GEMS } from '../../data/gems';
-import { CUSTOM_ART } from '../../data/art';
 import { weightedPick } from '@engine/index';
 import type { CampaignSettings, Edition, MITable, SourceSettings } from '@engine/index';
 import {
@@ -200,13 +198,6 @@ function formatRange(r: { lo: number; hi: number }): string {
 function randomInRange(r: { lo: number; hi: number }): number {
   if (r.lo === r.hi) return r.lo;
   return r.lo + Math.floor(Math.random() * (r.hi - r.lo + 1));
-}
-
-function extractGpLabel(name: string, baseValue?: number): string {
-  const m = name.match(/(\d[\d,]*)-gp$/i);
-  if (m) return `${Number(m[1]).toLocaleString()} gp`;
-  if (baseValue != null) return `${baseValue.toLocaleString()} gp`;
-  return name.replace(/-/g, ' ');
 }
 
 // ---------------------------------------------------------------------------
@@ -869,7 +860,8 @@ function ResultHistory({
 // Main LootTables component
 // ---------------------------------------------------------------------------
 
-type Section = 'magic' | 'spells' | 'supplemental' | 'gems' | 'art';
+type Section = 'magic' | 'subtables';
+type SubTableKind = 'spells' | 'equipment';
 
 export interface LootTablesProps {
   settings: CampaignSettings;
@@ -887,11 +879,10 @@ const LootTables: React.FC<LootTablesProps> = ({
   onResolveComplete,
 }) => {
   const [activeSection, setActiveSection] = React.useState<Section>('magic');
+  const [activeSubKind, setActiveSubKind] = React.useState<SubTableKind>('spells');
   const [activeLetter, setActiveLetter] = React.useState<MITable>('A');
   const [activeSpellIdx, setActiveSpellIdx] = React.useState(0);
   const [activeEquipIdx, setActiveEquipIdx] = React.useState(0);
-  const [activeGemIdx, setActiveGemIdx] = React.useState(0);
-  const [activeArtIdx, setActiveArtIdx] = React.useState(0);
   // Ephemeral pick-flash highlight (purely visual; reducer is unaware).
   const [flashIdx, setFlashIdx] = React.useState<number | null>(null);
 
@@ -905,25 +896,20 @@ const LootTables: React.FC<LootTablesProps> = ({
 
   /** Compute the canonical root table name from current section + sub-tab. */
   const currentRootTable = useMemo(() => {
-    switch (activeSection) {
-      case 'magic':
-        return `Magic-Item-Table-${activeLetter}`;
-      case 'spells':
-        return SPELL_TABLES[activeSpellIdx]?.name ?? 'Spells-Cantrip';
-      case 'supplemental':
-        return equipmentTables[activeEquipIdx]?.name ?? 'Armor';
-      case 'gems':
-        return CUSTOM_GEMS[activeGemIdx]?.name ?? 'Gems-1-25-gp';
-      case 'art':
-        return CUSTOM_ART[activeArtIdx]?.name ?? 'Art-1-25-gp';
+    if (activeSection === 'magic') {
+      return `Magic-Item-Table-${activeLetter}`;
     }
+    // subtables
+    if (activeSubKind === 'spells') {
+      return SPELL_TABLES[activeSpellIdx]?.name ?? 'Spells-Cantrip';
+    }
+    return equipmentTables[activeEquipIdx]?.name ?? 'Armor';
   }, [
     activeSection,
+    activeSubKind,
     activeLetter,
     activeSpellIdx,
     activeEquipIdx,
-    activeGemIdx,
-    activeArtIdx,
     equipmentTables,
   ]);
 
@@ -1043,7 +1029,7 @@ const LootTables: React.FC<LootTablesProps> = ({
   // EXCEPTION: Spell tables are exempt — all spells have equal weight,
   // and non-standard totals (e.g., d67) are fine.
   const displayEntries = useMemo<Entry[]>(() => {
-    if (activeSection === 'spells') {
+    if (activeSection === 'subtables' && activeSubKind === 'spells') {
       // No snapping for spell tables — equal weight, non-standard dice OK
       return currentEntries;
     }
@@ -1196,30 +1182,10 @@ const LootTables: React.FC<LootTablesProps> = ({
           Magic Items
         </button>
         <button
-          className={`section-tab${activeSection === 'spells' ? ' active' : ''}`}
-          onClick={() => setActiveSection('spells')}
+          className={`section-tab${activeSection === 'subtables' ? ' active' : ''}`}
+          onClick={() => setActiveSection('subtables')}
         >
-          Spells
-        </button>
-        <button
-          className={`section-tab${
-            activeSection === 'supplemental' ? ' active' : ''
-          }`}
-          onClick={() => setActiveSection('supplemental')}
-        >
-          Equipment
-        </button>
-        <button
-          className={`section-tab${activeSection === 'gems' ? ' active' : ''}`}
-          onClick={() => setActiveSection('gems')}
-        >
-          Gems
-        </button>
-        <button
-          className={`section-tab${activeSection === 'art' ? ' active' : ''}`}
-          onClick={() => setActiveSection('art')}
-        >
-          Art
+          Sub-Tables
         </button>
       </div>
 
@@ -1245,57 +1211,51 @@ const LootTables: React.FC<LootTablesProps> = ({
           ))}
         </div>
       )}
-      {activeSection === 'spells' && (
-        <div className="sub-tabs">
-          {SPELL_LEVEL_LABELS.map((label, i) => (
+      {activeSection === 'subtables' && (
+        <>
+          {/* Kind toggle: Spells vs Equipment */}
+          <div className="sub-tabs">
             <button
-              key={i}
-              className={`sub-tab${activeSpellIdx === i ? ' active' : ''}`}
-              onClick={() => setActiveSpellIdx(i)}
+              className={`sub-tab${activeSubKind === 'spells' ? ' active' : ''}`}
+              onClick={() => setActiveSubKind('spells')}
             >
-              {label}
+              Spells
             </button>
-          ))}
-        </div>
-      )}
-      {activeSection === 'supplemental' && (
-        <div className="sub-tabs">
-          {equipmentTables.map((table, i) => (
             <button
-              key={table.name}
-              className={`sub-tab${activeEquipIdx === i ? ' active' : ''}`}
-              onClick={() => setActiveEquipIdx(i)}
+              className={`sub-tab${activeSubKind === 'equipment' ? ' active' : ''}`}
+              onClick={() => setActiveSubKind('equipment')}
             >
-              {table.name.replace(/-/g, ' ')}
+              Equipment
             </button>
-          ))}
-        </div>
-      )}
-      {activeSection === 'gems' && (
-        <div className="sub-tabs">
-          {CUSTOM_GEMS.map((table, i) => (
-            <button
-              key={table.name}
-              className={`sub-tab${activeGemIdx === i ? ' active' : ''}`}
-              onClick={() => setActiveGemIdx(i)}
-            >
-              {extractGpLabel(table.name, table.baseValue)}
-            </button>
-          ))}
-        </div>
-      )}
-      {activeSection === 'art' && (
-        <div className="sub-tabs">
-          {CUSTOM_ART.map((table, i) => (
-            <button
-              key={table.name}
-              className={`sub-tab${activeArtIdx === i ? ' active' : ''}`}
-              onClick={() => setActiveArtIdx(i)}
-            >
-              {extractGpLabel(table.name, table.baseValue)}
-            </button>
-          ))}
-        </div>
+          </div>
+          {/* Specific table selector */}
+          {activeSubKind === 'spells' && (
+            <div className="sub-tabs">
+              {SPELL_LEVEL_LABELS.map((label, i) => (
+                <button
+                  key={i}
+                  className={`sub-tab${activeSpellIdx === i ? ' active' : ''}`}
+                  onClick={() => setActiveSpellIdx(i)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          )}
+          {activeSubKind === 'equipment' && (
+            <div className="sub-tabs">
+              {equipmentTables.map((table, i) => (
+                <button
+                  key={table.name}
+                  className={`sub-tab${activeEquipIdx === i ? ' active' : ''}`}
+                  onClick={() => setActiveEquipIdx(i)}
+                >
+                  {table.name.replace(/-/g, ' ')}
+                </button>
+              ))}
+            </div>
+          )}
+        </>
       )}
 
       {/* Breadcrumb + Context Bar */}

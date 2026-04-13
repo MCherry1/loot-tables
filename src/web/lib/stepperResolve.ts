@@ -51,8 +51,40 @@ export function getStepperTable(name: string, edition?: Edition): Entry[] | null
 }
 
 /**
- * Look up a table and apply source-priority filtering. Entries with empty
- * `source` (structural refs like `[Armor]`) pass through unchanged.
+ * Simple source filter: removes entries whose source is set to 'off' but
+ * preserves original weights. Used for spell tables, equipment sub-tables,
+ * and other uniform-weight tables where the tier/priority/dampening system
+ * would incorrectly distort the die size.
+ */
+function filterSourcesOnly(
+  entries: Entry[],
+  sourceSettings: SourceSettings,
+): Entry[] {
+  return entries.filter((e) => {
+    if (!e.source) return true; // structural refs pass through
+    const priority = sourceSettings[e.source] ?? 'normal';
+    return priority !== 'off';
+  });
+}
+
+/** True for tables that use the full tier/priority/dampening weight system. */
+function usesMagicItemWeighting(tableName: string): boolean {
+  // Main MI tables and their sub-categories (Potions-A, Arms-G, etc.)
+  // all contain items with designed weights (1-9) and belong to the
+  // sourcebook priority system. Everything else (spells, equipment,
+  // gems, art) has uniform weights that should be preserved.
+  if (tableName.startsWith('Magic-Item-Table-')) return true;
+  // Sub-category tables are named like "Potions-A", "Arms-G", "Misc-F"
+  // They end with a dash and a single letter A-I.
+  if (/^[A-Z][A-Za-z]+-[A-I]$/.test(tableName)) return true;
+  return false;
+}
+
+/**
+ * Look up a table and apply source filtering. For magic item tables,
+ * applies the full tier/priority/dampening weight system. For all other
+ * tables (spells, equipment, gems, art), only filters out 'off' sources
+ * while preserving original weights.
  */
 export function getFilteredStepperTable(
   name: string,
@@ -62,10 +94,16 @@ export function getFilteredStepperTable(
   const raw = getStepperLookup(edition)[name];
   if (!raw) return null;
   if (!sourceSettings) return raw;
-  // getFilteredEntries expects required `source`; our stepper entries have
-  // optional source so normalize to '' before filtering.
+
   const normalized = raw.map((e) => ({ ...e, source: e.source ?? '' }));
-  return getFilteredEntries(normalized, sourceSettings);
+
+  if (usesMagicItemWeighting(name)) {
+    // Full effective weight system: tier value × priority × dampening
+    return getFilteredEntries(normalized, sourceSettings);
+  }
+
+  // Simple filter: remove 'off' sources, preserve raw weights
+  return filterSourcesOnly(normalized, sourceSettings);
 }
 
 export type StepRecord = {
