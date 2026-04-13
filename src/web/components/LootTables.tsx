@@ -723,6 +723,7 @@ function FinalResultCard({
   showItemDetails,
   itemStatsMap,
   normalizedIndex,
+  onStepBack,
   onRollAgain,
   onDone,
 }: {
@@ -731,6 +732,7 @@ function FinalResultCard({
   showItemDetails: boolean;
   itemStatsMap: ItemStatsMap;
   normalizedIndex: Map<string, string>;
+  onStepBack: () => void;
   onRollAgain: () => void;
   onDone: () => void;
 }) {
@@ -777,6 +779,9 @@ function FinalResultCard({
       )}
       <div className="final-result-chain">{chain}</div>
       <div className="final-result-actions">
+        <button className="btn-step-back" onClick={onStepBack}>
+          {'← Back'}
+        </button>
         <button className="btn-roll-again" onClick={onRollAgain}>
           Roll Again
         </button>
@@ -1171,6 +1176,7 @@ const LootTables: React.FC<LootTablesProps> = ({
           showItemDetails={settings.showItemDetails ?? false}
           itemStatsMap={currentItemStats}
           normalizedIndex={currentNormalizedIndex}
+          onStepBack={handleStepBack}
           onRollAgain={handleRollAgain}
           onDone={handleDone}
         />
