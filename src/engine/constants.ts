@@ -243,7 +243,55 @@ export const TIER_CATEGORIES: Record<Tier, CategoryEntry[]> = {
 } as const;
 
 // ---------------------------------------------------------------------------
-// DMG Hoard Table Variance Profile (100,000 Monte Carlo simulations)
+// Independent Pool Constants (four parallel systems from DMG hoard tables)
+// ---------------------------------------------------------------------------
+//
+// Each pool has its own per-XP constant:
+//   (avg_per_hoard × hoards_per_tier) / total_encounter_XP_per_tier
+//
+// These do NOT interact. Tuning one does not affect the others.
+// Tier 1 verified: pools sum to 0.2901 gp/XP ≈ old GP_PER_XP[1] of 0.29.
+// ---------------------------------------------------------------------------
+
+/** Coin GP per encounter-XP by tier. */
+export const COINS_PER_XP: Record<Tier, number> = {
+  1: 0.052769,  // 196 gp/hoard × 7 / 26,000 XP
+  2: 0.221102,  // 3,857 gp/hoard × 18 / 314,000 XP
+  3: 0.675000,  // 31,500 gp/hoard × 12 / 560,000 XP
+  4: 4.600000,  // 322,000 gp/hoard × 8 / 560,000 XP
+} as const;
+
+/** Gem GP budget per encounter-XP by tier. */
+export const GEMS_PER_XP: Record<Tier, number> = {
+  1: 0.037154,  // 138 gp/hoard × 7 / 26,000 XP
+  2: 0.022357,  // 390 gp/hoard × 18 / 314,000 XP
+  3: 0.075129,  // 3,506 gp/hoard × 12 / 560,000 XP
+  4: 0.119500,  // 8,365 gp/hoard × 8 / 560,000 XP
+} as const;
+
+/** Art GP budget per encounter-XP by tier. */
+export const ART_PER_XP: Record<Tier, number> = {
+  1: 0.011308,  // 42 gp/hoard × 7 / 26,000 XP
+  2: 0.018115,  // 316 gp/hoard × 18 / 314,000 XP
+  3: 0.027900,  // 1,302 gp/hoard × 12 / 560,000 XP
+  4: 0.106443,  // 7,451 gp/hoard × 8 / 560,000 XP
+} as const;
+
+/** Magic items per encounter-XP by tier and table (independent probabilities). */
+export const MI_PER_XP: Record<Tier, Partial<Record<MITable, number>>> = {
+  1: { A: 0.0002261538, B: 0.0001009615, C: 0.0000673077, F: 0.0000807692, G: 0.0000080769 },
+  2: { A: 0.0000275159, B: 0.0000171975, C: 0.0000103185, D: 0.0000022930, F: 0.0000171975, G: 0.0000085987, H: 0.0000011465 },
+  3: { A: 0.0000008571, B: 0.0000012857, C: 0.0000051429, D: 0.0000034286, E: 0.0000004286, F: 0.0000004286, G: 0.0000038571, H: 0.0000017143, I: 0.0000002143 },
+  4: { C: 0.0000002857, D: 0.0000014286, E: 0.0000008571, G: 0.0000002857, H: 0.0000014286, I: 0.0000005714 },
+} as const;
+
+/** Variance CVs from DMG hoard Monte Carlo simulation. */
+export const POOL_VARIANCE_CV = {
+  coins: 0.20,
+  gems: 0.75,
+  art: 0.75,
+  magic: 1.85,
+} as const;
 // ---------------------------------------------------------------------------
 //
 // These values capture the actual variance in the DMG's hoard tables.
@@ -255,6 +303,10 @@ export const TIER_CATEGORIES: Record<Tier, CategoryEntry[]> = {
 // The median is always below the mean because most rolls are "normal"
 // and rare jackpots pull the average up. This right-skew is intentional
 // and creates the excitement of treasure hunting.
+
+// ---------------------------------------------------------------------------
+// DMG Hoard Table Variance Profile (100,000 Monte Carlo simulations)
+// ---------------------------------------------------------------------------
 
 export interface VarianceProfile {
   mean: number;
