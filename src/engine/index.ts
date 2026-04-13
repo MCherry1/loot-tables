@@ -5,7 +5,6 @@
 // Types
 export type {
   CampaignSettings,
-  CategoryEntry,
   CoinBreakdown,
   CoinDenom,
   CreatureGroup,

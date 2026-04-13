@@ -560,9 +560,24 @@ The three documentation tabs are out of date after recent engine changes:
 - **Role multipliers**: docs may still reference the old 0.10/0.30/0.90/2.70 values. Current values are 0.15/0.50/1.00/1.75 (regression-optimized).
 - **Tier progression**: verify the 0.70×–1.30× description matches current implementation.
 - **Gem/art systems**: may need refreshing after recent continuous-value and descriptor work.
-- **Magic richness**: explain how it now scales MI counts and redistributes the GP delta to coins.
+- **Magic richness**: explain how it now scales MI counts directly (no cross-pool compensation — pools are fully independent).
 - **useRoles toggle**: document the "Roles On/Off" setting (all creatures at 1.0× when off).
-- **General**: review for any stale references to removed features (concentration slider, old TIER_CATEGORIES approach).
+- **General**: review for any stale references to removed features (concentration slider, old TIER_CATEGORIES approach, GP-based MI derivation).
+
+### Independent Richness Knobs (Four Sliders)
+The engine now supports four fully independent pools. The UI should expose four independent richness controls instead of the current single `magicRichness` slider:
+
+- **Coin richness**: scales coins without affecting anything else
+- **Gem richness**: scales gems without affecting anything else
+- **Art richness**: scales art without affecting anything else
+- **Magic item richness**: scales MI frequency without touching the gold economy
+
+A DM running a low-magic campaign sets MI to 0.5× and everything else stays the same — normal coins, gems, art, just fewer enchanted items. A high-magic DM sets MI to 1.5× without inflating the gold economy. These are truly independent because they're parallel systems, not competing for the same budget.
+
+`CampaignSettings` needs: `coinRichness`, `gemRichness`, `artRichness`, `magicRichness` (rename existing). Each defaults to 1.0. UI: four small sliders in Campaign Settings, or a collapsible "Richness" panel.
+
+### MI_PER_XP Verification (Tiers 2–4)
+Tier 1 MI_PER_XP values are verified exact against DMG CR 0-4 hoard table d100 entries. Tiers 2-4 were reconstructed from partial data in chat history and may have errors in the d100 entry weights or item count dice. Need to cross-check against the actual DMG hoard tables (CR 5-10, CR 11-16, CR 17+) entry by entry.
 
 ### Crafting System Integration (Future — Needs Discussion)
 Crafting tab design for the web app. Key topics to resolve:

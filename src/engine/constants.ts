@@ -192,10 +192,17 @@ export const CR_TO_DEFAULT_TIER: Record<number, Tier> = Object.fromEntries(
 ) as Record<number, Tier>;
 
 // ---------------------------------------------------------------------------
-// Tier category breakdowns
+// Tier category breakdowns (REFERENCE DATA — not used by runtime)
 // ---------------------------------------------------------------------------
 
-/** Per-tier breakdown of how total hoard value is distributed across categories. */
+/**
+ * Per-tier breakdown of how total hoard value is distributed across categories.
+ *
+ * @deprecated This was the source of truth for the old percentage-based system.
+ * COINS/GEMS/ART_PER_XP were derived from these percentages × GP_PER_XP.
+ * MI_PER_XP was derived directly from DMG d100 item counts (not from these).
+ * Kept as reference for the derivation trail — not used by the runtime engine.
+ */
 export const TIER_CATEGORIES: Record<Tier, CategoryEntry[]> = {
   // --- Tier 1 ---
   1: [
