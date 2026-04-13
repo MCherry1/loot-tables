@@ -43,46 +43,53 @@ These variant items are correctly represented in our tables with subtables or in
 
 ---
 
-## Missing Items — Worth Adding
+## Missing Items — Corrected Findings
 
-These items exist in 5etools with variants but are completely absent from our tables. They may have been missed during curation or may be from sources that weren't included.
+### Items Confirmed Present (false alarm in initial audit)
 
-### High Priority (2014 Sources)
+| Item | How we name it | Where |
+|------|---------------|-------|
+| Elemental Essence Shard (Air/Earth/Fire/Water) | Air/Earth/Fire/Water Essence Shard | Sorcerer-G subtable, weight 1 each |
+| Outer Essence Shard (Chaotic/Evil/Good/Lawful) | Chaotic/Evil/Good/Lawful Essence Shard | Sorcerer-G subtable, weight 1 each |
+| Astral Shard, Far Realm Shard, Shadowfell Shard | Same names | Sorcerer-G subtable, weight 1 each |
 
-| Item | Source | Rarity | Variants | Notes |
-|------|--------|--------|----------|-------|
-| Armor of Vulnerability | DMG | Rare | 3 (Bludgeoning/Piercing/Slashing) | ★SRD. Cursed armor — might have been intentionally excluded? Verify. |
-| Elemental Essence Shard | TCE | Rare | 4 elements + 1 generic | Sorcerer-attuned metamagic item. Fits Spellcaster subtables. |
-| Outer Essence Shard | TCE | Rare | 4 alignments + 1 generic | Sorcerer-attuned metamagic item. Fits Spellcaster subtables. |
-| Spell Gem | OotA | Uncommon–Legendary | 10 gem types by spell level | Out of the Abyss. Interesting niche item — gem stores a spell. |
+These were flagged as "missing" because 5etools uses "Elemental Essence Shard (Air)" while our tables use "Air Essence Shard". **No action needed** — all 11 shards are present and correctly weighted.
 
-### Medium Priority (Adventure/Expansion Sources)
+### Weight-0 Cursed Items (present in Excel, missing from magic-items.ts)
 
-| Item | Source | Rarity | Variants | Notes |
-|------|--------|--------|----------|-------|
-| Mind Crystal | PaBTSO | Common–Rare | 7 metamagic types | Phandelver and Below. Single-use metamagic stones. |
-| Shard Solitaire | KftGV | Legendary | 5 gem types | Keys from the Golden Vault. Already has `[Shard-I]` subtable — verify these are included in it. |
+The Excel has cursed items at weight 0 — intentionally present but not rollable:
 
-### Low Priority (2024-Only / Obscure)
+| Item | Excel Location | Weight | Notes |
+|------|---------------|--------|-------|
+| `[Heavy-Armor] of Vulnerability` | Armor-G | 0 | Cursed. References Heavy-Armor subtable for armor type. |
+| Cursed Luckstone | Misc-F | 0 | Cursed. From Ghosts of Saltmarsh. |
 
-| Item | Source | Rarity | Variants | Notes |
-|------|--------|--------|----------|-------|
-| Enspelled Staff | XDMG | Uncommon–Legendary | 9 spell levels | 2024 DMG only. Equivalent to spell scrolls but as staffs. |
-| Scroll of Titan Summoning | XDMG | Legendary | 7 creature types | 2024 DMG only. Very niche high-level item. |
-| Flensing Claws | VGM | Unknown | 4 sizes | Monster equipment from Volo's Guide, not typical player loot. Skip. |
-| Mechanical Wonder | FRAiF | Common–Rare | 4 types | From a Forgotten Realms adventure. Very obscure. |
+**These were filtered out during data extraction** (`scripts/extract-data.ts` likely skips weight-0 entries). The user's intent is that weight-0 items should exist in the tables as deliberate DM choices — visible in the Reference view, selectable by clicking, but never rolled randomly.
+
+**Action:** Modify `extract-data.ts` to include weight-0 items. In the roller, weight-0 items are already excluded from random selection (they contribute 0 to the total weight). In the Reference view, weight-0 items should appear at the bottom of their subtable with a visual indicator (e.g., "Cursed — DM choice only" tag in `--ck-text-tertiary`).
+
+### Items Genuinely Missing (not in Excel or magic-items.ts)
+
+| Item | Source | Rarity | Variants | Recommendation |
+|------|--------|--------|----------|----------------|
+| Spell Gem | OotA | Uncommon–Legendary | 10 gem types | Adventure-specific. Add if Out of the Abyss source is enabled. Low priority. |
+| Mind Crystal | PaBTSO | Common–Rare | 7 metamagic types | Adventure-specific. Add if PaBTSO source is enabled. Low priority. |
+| Enspelled Staff | XDMG | Uncommon–Legendary | 9 spell levels | 2024-only. Will appear via `npm run sync:2024`. |
+| Scroll of Titan Summoning | XDMG | Legendary | 7 creature types | 2024-only. Will appear via `npm run sync:2024`. |
 
 ---
 
 ## Recommendations
 
-1. **Immediate:** Create `Carpet-of-Flying` subtable (4 entries). This is the only item already in our tables that needs a subtable added.
+1. **Immediate:** Create `Carpet-of-Flying` subtable (4 size entries). This is the only item already in our tables that needs a subtable added.
 
-2. **Curation review:** Add Armor of Vulnerability, Elemental Essence Shard, Outer Essence Shard, and Spell Gem to the curation pipeline. They should be auto-classified and appear for review.
+2. **Extract script fix:** Modify `extract-data.ts` to include weight-0 items (cursed items like Armor of Vulnerability and Cursed Luckstone). These should be present in the data but not rollable.
 
-3. **2024 content:** Enspelled Staff and Scroll of Titan Summoning should be picked up by `npm run sync:2024` when the 2024 curation is next updated.
+3. **No subtable restructuring needed for essence shards.** The current approach (individual items like "Air Essence Shard" rather than "Elemental Essence Shard (Air)") works well. Each shard is its own item with its own weight — no parent/child relationship needed.
 
-4. **Skip:** Flensing Claws (monster equipment) and Mechanical Wonder (too obscure).
+4. **2024 content:** Enspelled Staff and Scroll of Titan Summoning will be picked up by `npm run sync:2024`.
+
+5. **Skip:** Flensing Claws (monster equipment), Mechanical Wonder (too obscure), Spell Gem and Mind Crystal (adventure-specific, low priority).
 
 ---
 
