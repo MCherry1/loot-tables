@@ -1482,6 +1482,25 @@ button {
   flex-shrink: 0;
 }
 
+/* Weight-0 cursed entries — non-rollable rows rendered at the bottom of
+   a subtable. The dice range shows an en-dash (italic/tertiary) to signal
+   the ROLL button never lands here, but the row stays clickable so a DM
+   can still pick it manually. The `.ref-row.*` selectors are reserved for
+   the forthcoming Reference view (Priority 2). */
+.entry-row.cursed .entry-dice-range,
+.ref-row.cursed .ref-range {
+  color: var(--ck-text-tertiary, var(--ink-fainter));
+  font-style: italic;
+}
+
+.cursed-tag {
+  font-family: var(--ck-font-ui, 'IBM Plex Mono', monospace);
+  font-size: var(--ck-text-xs, 11px);
+  color: var(--ck-text-tertiary, var(--ink-fainter));
+  font-style: italic;
+  margin-left: 6px;
+}
+
 /* Action bar */
 .action-bar {
   display: flex;

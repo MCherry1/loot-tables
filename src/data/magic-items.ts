@@ -1519,7 +1519,7 @@ export const MAGIC_ITEMS = {
       "weight": 4
     },
     {
-      "name": "Boots of Springing and Striding",
+      "name": "Boots of Striding and Springing",
       "source": "DMG",
       "weight": 4
     },
@@ -1554,7 +1554,7 @@ export const MAGIC_ITEMS = {
       "weight": 4
     },
     {
-      "name": "Dragonhide Belt, +1",
+      "name": "+1 Dragonhide Belt",
       "source": "FTD",
       "weight": 4
     },
@@ -1614,7 +1614,7 @@ export const MAGIC_ITEMS = {
       "weight": 4
     },
     {
-      "name": "Small Barrier Tattoo",
+      "name": "Barrier Tattoo (Small)",
       "source": "TCE",
       "weight": 4
     },
@@ -1788,7 +1788,7 @@ export const MAGIC_ITEMS = {
       "weight": 3
     },
     {
-      "name": "Wraps of Unarmed Prowess, +1",
+      "name": "+1 Wraps of Unarmed Prowess",
       "source": "BMT",
       "weight": 3
     },
@@ -2093,12 +2093,12 @@ export const MAGIC_ITEMS = {
   ],
   "Spellcaster-F": [
     {
-      "name": "All-Purpose Tool, +1",
+      "name": "+1 All-Purpose Tool",
       "source": "TCE",
       "weight": 8
     },
     {
-      "name": "Arcane Grimoire, +1",
+      "name": "+1 Arcane Grimoire",
       "source": "TCE",
       "weight": 8
     },
@@ -2108,7 +2108,7 @@ export const MAGIC_ITEMS = {
       "weight": 8
     },
     {
-      "name": "Rod of the Pact Keeper, +1",
+      "name": "+1 Rod of the Pact Keeper",
       "source": "DMG",
       "weight": 8
     },
@@ -2128,12 +2128,12 @@ export const MAGIC_ITEMS = {
       "weight": 8
     },
     {
-      "name": "Amulet of the Devout, +1",
+      "name": "+1 Amulet of the Devout",
       "source": "TCE",
       "weight": 4
     },
     {
-      "name": "Bloodwell Vial, +1",
+      "name": "+1 Bloodwell Vial",
       "source": "TCE",
       "weight": 4
     },
@@ -2148,7 +2148,7 @@ export const MAGIC_ITEMS = {
       "weight": 4
     },
     {
-      "name": "Moon Sickle, +1",
+      "name": "+1 Moon Sickle",
       "source": "TCE",
       "weight": 4
     },
@@ -2163,7 +2163,7 @@ export const MAGIC_ITEMS = {
       "weight": 4
     },
     {
-      "name": "Wand of the War Mage, +1",
+      "name": "+1 Wand of the War Mage",
       "source": "DMG",
       "weight": 4
     },
@@ -2183,7 +2183,7 @@ export const MAGIC_ITEMS = {
       "weight": 3
     },
     {
-      "name": "Rhythm-Maker's Drum, +1",
+      "name": "+1 Rhythm-Maker's Drum",
       "source": "TCE",
       "weight": 3
     }
@@ -2514,7 +2514,7 @@ export const MAGIC_ITEMS = {
       "weight": 6
     },
     {
-      "name": "Dragonhide Belt, +2",
+      "name": "+2 Dragonhide Belt",
       "source": "FTD",
       "weight": 6
     },
@@ -2524,7 +2524,7 @@ export const MAGIC_ITEMS = {
       "weight": 6
     },
     {
-      "name": "Medium Barrier Tattoo",
+      "name": "Barrier Tattoo (Medium)",
       "source": "TCE",
       "weight": 6
     },
@@ -2656,7 +2656,7 @@ export const MAGIC_ITEMS = {
       "weight": 8
     },
     {
-      "name": "Elven Chain Shirt, +1",
+      "name": "Elven Chain",
       "source": "DMG",
       "weight": 8
     },
@@ -2666,7 +2666,7 @@ export const MAGIC_ITEMS = {
       "weight": 8
     },
     {
-      "name": "Glamoured Studded Leather, +1",
+      "name": "Glamoured Studded Leather",
       "source": "DMG",
       "weight": 8
     },
@@ -2925,7 +2925,7 @@ export const MAGIC_ITEMS = {
       "weight": 2
     },
     {
-      "name": "Wraps of Unarmed Prowess, +2",
+      "name": "+2 Wraps of Unarmed Prowess",
       "source": "BMT",
       "weight": 2
     }
@@ -3019,12 +3019,12 @@ export const MAGIC_ITEMS = {
       "weight": 4
     },
     {
-      "name": "Sage's Serpent Signet",
+      "name": "Sage's Signet (Serpent)",
       "source": "BMT",
       "weight": 4
     },
     {
-      "name": "Sage's Songbird Signet",
+      "name": "Sage's Signet (Songbird)",
       "source": "BMT",
       "weight": 4
     }
@@ -3349,7 +3349,7 @@ export const MAGIC_ITEMS = {
       "weight": 6
     },
     {
-      "name": "All-Purpose Tool, +2",
+      "name": "+2 All-Purpose Tool",
       "source": "TCE",
       "weight": 6
     },
@@ -3384,7 +3384,7 @@ export const MAGIC_ITEMS = {
       "weight": 4
     },
     {
-      "name": "Rod of the Pact Keeper, +2",
+      "name": "+2 Rod of the Pact Keeper",
       "source": "DMG",
       "weight": 3
     },
@@ -3399,12 +3399,12 @@ export const MAGIC_ITEMS = {
       "weight": 3
     },
     {
-      "name": "Wand of the War Mage, +2",
+      "name": "+2 Wand of the War Mage",
       "source": "DMG",
       "weight": 3
     },
     {
-      "name": "Amulet of the Devout, +2",
+      "name": "+2 Amulet of the Devout",
       "source": "TCE",
       "weight": 2
     },
@@ -3419,12 +3419,12 @@ export const MAGIC_ITEMS = {
       "weight": 2
     },
     {
-      "name": "Fate Dealer's Deck, +1",
+      "name": "+1 Fate Dealer's Deck",
       "source": "BMT",
       "weight": 2
     },
     {
-      "name": "Moon Sickle, +2",
+      "name": "+2 Moon Sickle",
       "source": "TCE",
       "weight": 2
     },
@@ -3436,49 +3436,19 @@ export const MAGIC_ITEMS = {
   ],
   "Sorcerer-G": [
     {
-      "name": "Bloodwell Vial, +2",
+      "name": "+2 Bloodwell Vial",
       "source": "TCE",
       "weight": 1
     },
     {
-      "name": "Chaotic Essence Shard",
+      "name": "[Outer-Essence-Shard]",
       "source": "TCE",
-      "weight": 1
+      "weight": 4
     },
     {
-      "name": "Evil Essence Shard",
+      "name": "[Elemental-Essence-Shard]",
       "source": "TCE",
-      "weight": 1
-    },
-    {
-      "name": "Good Essence Shard",
-      "source": "TCE",
-      "weight": 1
-    },
-    {
-      "name": "Lawful Essence Shard",
-      "source": "TCE",
-      "weight": 1
-    },
-    {
-      "name": "Air Essence Shard",
-      "source": "TCE",
-      "weight": 1
-    },
-    {
-      "name": "Earth Essence Shard",
-      "source": "TCE",
-      "weight": 1
-    },
-    {
-      "name": "Fire Essence Shard",
-      "source": "TCE",
-      "weight": 1
-    },
-    {
-      "name": "Water Essence Shard",
-      "source": "TCE",
-      "weight": 1
+      "weight": 4
     },
     {
       "name": "Astral Shard",
@@ -3498,7 +3468,7 @@ export const MAGIC_ITEMS = {
   ],
   "Wizard-G": [
     {
-      "name": "Arcane Grimoire, +2",
+      "name": "+2 Arcane Grimoire",
       "source": "TCE",
       "weight": 1
     },
@@ -3550,7 +3520,7 @@ export const MAGIC_ITEMS = {
   ],
   "Bard-G": [
     {
-      "name": "Rhythm-Maker's Drum, +2",
+      "name": "+2 Rhythm-Maker's Drum",
       "source": "TCE",
       "weight": 2
     },
@@ -3777,7 +3747,7 @@ export const MAGIC_ITEMS = {
       "weight": 4
     },
     {
-      "name": "Dragonhide Belt, +3",
+      "name": "+3 Dragonhide Belt",
       "source": "FTD",
       "weight": 4
     },
@@ -3797,7 +3767,7 @@ export const MAGIC_ITEMS = {
       "weight": 4
     },
     {
-      "name": "Large Barrier Tattoo",
+      "name": "Barrier Tattoo (Large)",
       "source": "TCE",
       "weight": 4
     },
@@ -4079,7 +4049,7 @@ export const MAGIC_ITEMS = {
       "weight": 6
     },
     {
-      "name": "Wraps of Unarmed Prowess, +3",
+      "name": "+3 Wraps of Unarmed Prowess",
       "source": "BMT",
       "weight": 6
     },
@@ -4241,22 +4211,22 @@ export const MAGIC_ITEMS = {
       "weight": 1
     },
     {
-      "name": "Sage's Bear Signet",
+      "name": "Sage's Signet (Bear)",
       "source": "BMT",
       "weight": 1
     },
     {
-      "name": "Sage's Hart Signet",
+      "name": "Sage's Signet (Hart)",
       "source": "BMT",
       "weight": 1
     },
     {
-      "name": "Sage's Lion Signet",
+      "name": "Sage's Signet (Lion)",
       "source": "BMT",
       "weight": 1
     },
     {
-      "name": "Sage's Wolf Signet",
+      "name": "Sage's Signet (Wolf)",
       "source": "BMT",
       "weight": 1
     }
@@ -4300,7 +4270,7 @@ export const MAGIC_ITEMS = {
       "weight": 3
     },
     {
-      "name": "Carpet of Flying",
+      "name": "[Carpet-of-Flying]",
       "source": "DMG",
       "weight": 3
     },
@@ -4501,37 +4471,37 @@ export const MAGIC_ITEMS = {
   ],
   "Spellcaster-H": [
     {
-      "name": "All-Purpose Tool, +3",
+      "name": "+3 All-Purpose Tool",
       "source": "TCE",
       "weight": 10
     },
     {
-      "name": "Moon Sickle, +3",
+      "name": "+3 Moon Sickle",
       "source": "TCE",
       "weight": 10
     },
     {
-      "name": "Amulet of the Devout, +3",
+      "name": "+3 Amulet of the Devout",
       "source": "TCE",
       "weight": 7
     },
     {
-      "name": "Bloodwell Vial, +3",
+      "name": "+3 Bloodwell Vial",
       "source": "TCE",
       "weight": 7
     },
     {
-      "name": "Rhythm-Maker's Drum, +3",
+      "name": "+3 Rhythm-Maker's Drum",
       "source": "TCE",
       "weight": 7
     },
     {
-      "name": "Rod of the Pact Keeper, +3",
+      "name": "+3 Rod of the Pact Keeper",
       "source": "DMG",
       "weight": 7
     },
     {
-      "name": "Arcane Grimoire, +3",
+      "name": "+3 Arcane Grimoire",
       "source": "TCE",
       "weight": 4
     },
@@ -4551,7 +4521,7 @@ export const MAGIC_ITEMS = {
       "weight": 3
     },
     {
-      "name": "Fate Dealer's Deck, +2",
+      "name": "+2 Fate Dealer's Deck",
       "source": "BMT",
       "weight": 3
     },
@@ -4611,7 +4581,7 @@ export const MAGIC_ITEMS = {
       "weight": 3
     },
     {
-      "name": "Wand of the War Mage, +3",
+      "name": "+3 Wand of the War Mage",
       "source": "DMG",
       "weight": 3
     }
@@ -4733,7 +4703,7 @@ export const MAGIC_ITEMS = {
       "weight": 6
     },
     {
-      "name": "Efreeti Chain Mail",
+      "name": "Efreeti Chain",
       "source": "DMG",
       "weight": 1
     },
@@ -4748,7 +4718,7 @@ export const MAGIC_ITEMS = {
       "weight": 1
     },
     {
-      "name": "Plate Armor of Invulnerability",
+      "name": "Armor of Invulnerability",
       "source": "DMG",
       "weight": 1
     },
@@ -5161,7 +5131,7 @@ export const MAGIC_ITEMS = {
       "weight": 1
     },
     {
-      "name": "Fate Dealer's Deck, +3",
+      "name": "+3 Fate Dealer's Deck",
       "source": "BMT",
       "weight": 1
     },
@@ -5192,6 +5162,72 @@ export const MAGIC_ITEMS = {
     },
     {
       "name": "Tome of the Stilled Tongue",
+      "source": "DMG",
+      "weight": 1
+    }
+  ],
+  "Elemental-Essence-Shard": [
+    {
+      "name": "Elemental Essence Shard (Air)",
+      "source": "TCE",
+      "weight": 1
+    },
+    {
+      "name": "Elemental Essence Shard (Earth)",
+      "source": "TCE",
+      "weight": 1
+    },
+    {
+      "name": "Elemental Essence Shard (Fire)",
+      "source": "TCE",
+      "weight": 1
+    },
+    {
+      "name": "Elemental Essence Shard (Water)",
+      "source": "TCE",
+      "weight": 1
+    }
+  ],
+  "Outer-Essence-Shard": [
+    {
+      "name": "Outer Essence Shard (Chaotic)",
+      "source": "TCE",
+      "weight": 1
+    },
+    {
+      "name": "Outer Essence Shard (Evil)",
+      "source": "TCE",
+      "weight": 1
+    },
+    {
+      "name": "Outer Essence Shard (Good)",
+      "source": "TCE",
+      "weight": 1
+    },
+    {
+      "name": "Outer Essence Shard (Lawful)",
+      "source": "TCE",
+      "weight": 1
+    }
+  ],
+  "Carpet-of-Flying": [
+    {
+      "name": "Carpet of Flying, 3 ft. × 5 ft.",
+      "source": "DMG",
+      "weight": 4
+    },
+    {
+      "name": "Carpet of Flying, 4 ft. × 6 ft.",
+      "source": "DMG",
+      "weight": 3
+    },
+    {
+      "name": "Carpet of Flying, 5 ft. × 7 ft.",
+      "source": "DMG",
+      "weight": 2
+    },
+    {
+      "name": "Carpet of Flying, 6 ft. × 9 ft.",
       "source": "DMG",
       "weight": 1
     }

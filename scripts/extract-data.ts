@@ -35,7 +35,9 @@ function readTable(
     const weightCell = ws[XLSX.utils.encode_cell({ r, c: startCol + 2 })];
     if (!nameCell || !nameCell.v) continue;
     const weight = weightCell ? Number(weightCell.v) : 0;
-    if (weight <= 0) continue;
+    // Keep weight-0 rows — cursed items surface as non-rollable entries
+    // that DMs can still manually pick (see TASKS.md "Weight-0 Cursed Item Display").
+    if (weight < 0 || Number.isNaN(weight)) continue;
     entries.push({
       name: String(nameCell.v).trim(),
       source: srcCell ? String(srcCell.v).trim() : '',
