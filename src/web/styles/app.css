@@ -2851,8 +2851,10 @@ button {
   border-bottom: 1px solid var(--ck-border);
   padding: 0 16px;
   display: flex;
+  flex-wrap: nowrap;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
   height: 48px;
   position: sticky;
   top: 0;
@@ -2866,12 +2868,19 @@ button {
   font-weight: 500;
   letter-spacing: 0.05em;
   flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .ck-nav-tabs {
   display: flex;
   gap: 0;
   height: 100%;
+  /* CRITICAL: flex: 1 1 auto + min-width: 0 lets the tabs row shrink
+     below its intrinsic content width so overflow-x scroll actually
+     engages. Without min-width: 0, flex items refuse to shrink past
+     their content and overlap neighboring nav items on narrow screens. */
+  flex: 1 1 auto;
+  min-width: 0;
   overflow-x: auto;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
@@ -3220,9 +3229,21 @@ button {
     padding: 12px 10px 80px;
   }
 
+  .ck-nav {
+    padding: 0 12px;
+    gap: 8px;
+  }
+
   .ck-nav-tab {
     padding: 0 10px;
     font-size: var(--ck-text-xs);
+  }
+
+  /* Theme toggle shrinks on mobile — full 36px buttons + 3 wide eats
+     too much of the row, squeezing the scrollable tabs. */
+  .ck-theme-btn {
+    min-width: 30px;
+    padding: 0 6px;
   }
 
   .entry-row {
@@ -3248,7 +3269,15 @@ button {
 @media (max-width: 480px) {
   .ck-nav {
     padding: 0 10px;
+    gap: 6px;
   }
+
+  /* Hide the brand text below 480px — every pixel goes to the
+     scrollable tab row instead. */
+  .ck-nav-brand {
+    display: none;
+  }
+
   .ck-nav-tab {
     padding: 0 10px;
     font-size: var(--ck-text-xs);
