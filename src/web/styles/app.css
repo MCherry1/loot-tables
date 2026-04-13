@@ -761,6 +761,14 @@ button {
   letter-spacing: 0.04em;
 }
 
+.role-preview-disabled {
+  opacity: 0.4;
+}
+
+.role-preview-disabled .mono {
+  color: var(--ink-muted);
+}
+
 /* --- Encounter "Resolve All" inline button --- */
 .resolve-all-btn {
   display: inline-block;

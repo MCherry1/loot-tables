@@ -662,8 +662,9 @@ const CampaignSettingsPanel: React.FC<Props> = ({ settings, onChange, adminMode,
       <section className="card settings-section">
         <h2 className="card-title">Role Multipliers</h2>
         <p className="field-hint">
-          Fixed ~3× geometric steps. Over a balanced campaign (25% XP per role),
-          total wealth distributed equals total XP budget.
+          Narrative-fit multipliers calibrated against published adventures.
+          Mini-bosses earn above their fair share. Bosses get the big score.
+          Toggle roles on/off in the Loot Drops tab.
         </p>
         <div className="role-ratios-grid">
           {CREATURE_ROLES.map((role) => {

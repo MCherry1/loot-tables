@@ -76,6 +76,11 @@ export interface CampaignSettings {
   convertToGold: boolean;
   /** When true, divide coins among party members. */
   splitAmongParty: boolean;
+  /**
+   * When true (default), role multipliers apply to creature loot.
+   * When false, every creature gets its exact XP-proportional share (×1.0).
+   */
+  useRoles: boolean;
 }
 
 /** Input for generating loot for a single creature. */

@@ -383,10 +383,22 @@ const EncounterBuilder: React.FC<Props> = ({
         </div>
       </div>
 
-      {/* Role Multiplier Preview */}
-      <div className="role-preview">
+      {/* Role Multipliers */}
+      <div className="field-row">
+        <label className="field-label">
+          <label className="checkbox-label" style={{ fontWeight: 600 }}>
+            <input
+              type="checkbox"
+              checked={settings.useRoles ?? true}
+              onChange={(e) => onSettingsChange({ ...settings, useRoles: e.target.checked })}
+            />
+            Distribute by Role
+          </label>
+        </label>
+      </div>
+      <div className={`role-preview ${!(settings.useRoles ?? true) ? 'role-preview-disabled' : ''}`}>
         {CREATURE_ROLES.map((role) => {
-          const mult = ROLE_MULTIPLIER[role];
+          const mult = (settings.useRoles ?? true) ? ROLE_MULTIPLIER[role] : 1.0;
           return (
             <span key={role} className="role-preview-item">
               <span className="role-preview-label">{ROLE_DISPLAY[role]}</span>
@@ -395,6 +407,20 @@ const EncounterBuilder: React.FC<Props> = ({
           );
         })}
       </div>
+      {(settings.useRoles ?? true) && (
+        <p className="field-hint" style={{ fontSize: '0.78rem', marginTop: '0.25rem' }}>
+          Creatures in an organization share wealth unevenly — minions carry pocket change, bosses carry the big score.
+          {' '}
+          <button className="help-link" onClick={onNavigateHelp} style={{ fontSize: '0.78rem' }}>
+            Learn more →
+          </button>
+        </p>
+      )}
+      {!(settings.useRoles ?? true) && (
+        <p className="field-hint" style={{ fontSize: '0.78rem', marginTop: '0.25rem' }}>
+          Every creature gets its exact XP-proportional share — no organizational distribution.
+        </p>
+      )}
 
       {/* Roll Button */}
       <button className="roll-btn" onClick={handleRoll}>

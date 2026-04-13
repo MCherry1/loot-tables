@@ -99,18 +99,18 @@ export const ROLE_RAW_WEIGHT: Record<CreatureRole, number> = {
 
 /** Pre-computed role multipliers. */
 export const ROLE_MULTIPLIER: Record<CreatureRole, number> = {
-  minion: 0.10,    // pocket change
-  elite: 0.30,     // personal belongings
-  'mini-boss': 0.90, // well-equipped
-  boss: 2.70,      // the big score
+  minion: 0.20,    // pocket change — 1/5 of fair share
+  elite: 0.60,     // personal belongings — over half fair share
+  'mini-boss': 1.20, // well-equipped — above fair share
+  boss: 3.00,      // the big score — 3× fair share
 } as const;
 
 /** Default role ratios for CampaignSettings (includes vault). */
 export const DEFAULT_ROLE_RATIOS: Record<Role, number> = {
-  minion: 0.10,
-  elite: 0.30,
-  'mini-boss': 0.90,
-  boss: 2.70,
+  minion: 0.20,
+  elite: 0.60,
+  'mini-boss': 1.20,
+  boss: 3.00,
   vault: 1.00,
 } as const;
 
@@ -119,8 +119,7 @@ export const DEFAULT_ROLE_RATIOS: Record<Role, number> = {
  * @deprecated Use ROLE_MULTIPLIER directly. Kept for UI backward compatibility.
  */
 export function computeRoleMultipliers(concentration: number): Record<Role, number> {
-  // New system uses fixed 3× steps, concentration parameter is ignored.
-  // TODO: remove once CampaignSettings UI is updated.
+  // New system uses narrative-fit multipliers, concentration parameter is ignored.
   return { ...ROLE_MULTIPLIER, vault: 1.0 };
 }
 
@@ -349,6 +348,7 @@ export const DEFAULT_CAMPAIGN_SETTINGS: CampaignSettings = {
   showItemDetails: true,
   convertToGold: false,
   splitAmongParty: false,
+  useRoles: true,
 };
 
 // ---------------------------------------------------------------------------

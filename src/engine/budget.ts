@@ -21,27 +21,30 @@ import type { VaultSize } from './constants';
 import { XP_BY_CR, GP_PER_XP, VAULT_BUDGET_PER_TIER, VAULT_SIZE_MULTIPLIER, progressionMultiplier } from './constants';
 
 /**
- * Raw role weights (~3× geometric steps).
- * Normalized against 25/25/25/25 assumed campaign XP split:
- *   weightedAvg = (1+3+9+27)/4 = 10
- *   multiplier = rawWeight / 10
+ * Raw role weights (narrative-fit, non-geometric).
+ * Calibrated against real adventure XP distributions (LMoP, CoS)
+ * to deliver ~70% of total treasure through creature loot,
+ * with vault hoards covering the remaining ~30%.
+ *
+ *   weightedAvg = (1+3+6+15)/4 = 6.25 → use 5 for slight over-delivery
+ *   multiplier = rawWeight / 5
  */
 export const ROLE_RAW_WEIGHT: Record<CreatureRole, number> = {
   minion: 1,
   elite: 3,
-  'mini-boss': 9,
-  boss: 27,
+  'mini-boss': 6,
+  boss: 15,
 } as const;
 
-/** The assumed-even-split weighted average of role weights. */
-const WEIGHTED_AVG = 10; // (1 + 3 + 9 + 27) / 4
+/** The campaign-weighted average divisor (delivers ~70% via creature loot). */
+const WEIGHTED_AVG = 5;
 
 /** Pre-computed role multipliers (rawWeight / weightedAvg). */
 export const ROLE_MULTIPLIER: Record<CreatureRole, number> = {
-  minion: ROLE_RAW_WEIGHT.minion / WEIGHTED_AVG,       // 0.10
-  elite: ROLE_RAW_WEIGHT.elite / WEIGHTED_AVG,         // 0.30
-  'mini-boss': ROLE_RAW_WEIGHT['mini-boss'] / WEIGHTED_AVG, // 0.90
-  boss: ROLE_RAW_WEIGHT.boss / WEIGHTED_AVG,           // 2.70
+  minion: ROLE_RAW_WEIGHT.minion / WEIGHTED_AVG,       // 0.20
+  elite: ROLE_RAW_WEIGHT.elite / WEIGHTED_AVG,         // 0.60
+  'mini-boss': ROLE_RAW_WEIGHT['mini-boss'] / WEIGHTED_AVG, // 1.20
+  boss: ROLE_RAW_WEIGHT.boss / WEIGHTED_AVG,           // 3.00
 } as const;
 
 /**
@@ -96,7 +99,11 @@ export function calculateBudget(
   const fullBudget = xp * gpPerXp * aplAdj * partySizeScalar;
 
   // Vault role uses 1.0 multiplier (it's placed treasure, sized separately)
-  const mult = role === 'vault' ? 1.0 : ROLE_MULTIPLIER[role as CreatureRole];
+  // When useRoles is false, all creature roles also get 1.0 (flat CR distribution)
+  const useRoles = settings.useRoles ?? true;
+  const mult = role === 'vault' ? 1.0
+    : useRoles ? ROLE_MULTIPLIER[role as CreatureRole]
+    : 1.0;
   const roleBudget = fullBudget * mult;
 
   return { fullBudget, roleBudget };
