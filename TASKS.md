@@ -206,6 +206,71 @@ Password-gated item descriptions using client-side AES-256-GCM encryption. The p
 
 ## 🟡 Pending: Engine & Content
 
+### Simplified Role System (Engine Change)
+
+**Replace the current 4-role system with a simpler 3-role system.** Roles default to OFF.
+
+**Current system (remove):**
+| Role | Multiplier |
+|------|-----------|
+| Minion | 0.15× |
+| Elite | 0.50× |
+| Miniboss | 1.00× |
+| Boss | 1.75× |
+
+**New system:**
+| Role | Multiplier | Mental model |
+|------|-----------|-------------|
+| Minion | 0.10× | Trash mob — loot comes from the boss later |
+| Elite | 1.00× | Fair share — gets exactly what their XP earns |
+| Boss | 2.00× | The big score — double share |
+
+**Why this works:** XP scaling already creates a 6:1 to 14:1 per-creature ratio between boss and minions. The role multiplier only needs to nudge the narrative — it doesn't need to do heavy lifting. Analysis across all four tiers confirmed the 3-role system produces the right distribution without overcomplicating things.
+
+**Default: roles OFF.** When roles are off, every creature gets its flat XP-proportional share (multiplier = 1.0 for all). This is the "DM who doesn't think about it" mode and it produces perfectly reasonable loot. Roles are an opt-in for DMs who want to steer the narrative.
+
+**Engine changes:**
+- `src/engine/types.ts`: Replace `CreatureRole` with `'minion' | 'elite' | 'boss'`. Remove `'miniboss'`.
+- `src/engine/constants.ts`: Replace `ROLE_MULTIPLIER` with `{ minion: 0.10, elite: 1.00, boss: 2.00 }`. Replace `ROLE_DISPLAY` with 3 entries.
+- `src/engine/constants.ts`: Change `DEFAULT_CAMPAIGN_SETTINGS.useRoles` to `false`.
+- `CampaignSettings.tsx`: Update Role Multipliers display section to show 3 roles.
+- `EncounterBuilder.tsx`: Update role selector dropdown to show 3 options. Default new creatures to `'elite'` (fair share) not `'minion'`.
+
+**UI: Tooltip on "Use Roles" checkbox:**
+
+Next to the "Use Roles" checkbox, add a `?` help icon. Clicking it shows a tooltip:
+
+> *Use roles to shift the balance of loot towards figures of authority. Minions receive a fraction of their share — assign them when you expect a boss or treasure hoard later in the adventure to carry the remainder.*
+
+**UI: Warning when minions exist without a boss:**
+
+When the encounter contains one or more creatures assigned as Minion but no creature assigned as Boss, show an inline warning below the creature list:
+
+> ⚠ *Minions are receiving 10% of their loot share. Assign a Boss to an authority figure, or use the Hoard section below to allocate the remaining share as a treasure pile.*
+
+The warning uses `--ck-ember` color, `--ck-font-ui`, `--ck-text-xs`. It is NOT an error — it's a gentle reminder. It disappears when a Boss is added or when roles are turned off.
+
+### Partial Hoard Slider
+
+The Vault/Hoard section below the encounter builder gets a **hoard fraction slider** with 4 stops:
+
+| Stop | Label | Effect |
+|------|-------|--------|
+| 25% | ¼ Hoard | Rolls a quarter-sized treasure hoard |
+| 50% | ½ Hoard | Rolls a half-sized treasure hoard |
+| 75% | ¾ Hoard | Rolls three-quarter hoard |
+| 100% | Full Hoard | Rolls the full treasure hoard (current behavior) |
+
+**No stops above 100%.** If the DM wants 2× hoard, they roll twice.
+
+**The slider uses the same segmented-button style** as the tier selector (popped active state). Four small buttons in a row: `¼  ½  ¾  Full`. Default is `Full` (100%).
+
+**Implementation:** The hoard budget calculation multiplies by the fraction before generating. If `hoardFraction = 0.25`, the budget passed to the hoard generator is `fullBudget × 0.25`.
+
+**Use case:** A DM ran several minion encounters without a boss. They want to "top up" the party's loot with a partial treasure pile — maybe they find a chest in the last room. The ¼ or ½ hoard covers the deficit from the minions' reduced shares without being a full windfall.
+
+**Add `hoardFraction: number` to CampaignSettings** (default: 1.0). The slider sets it to 0.25, 0.50, 0.75, or 1.0.
+
 ### Documentation Refresh
 `ABOUT.md`, `HOW-IT-WORKS.md`, `DDESIGN.md` are stale after recent engine changes. Need updates for: independent pool model, updated role multipliers (0.15/0.50/1.00/1.75), removal of concentration slider, gem/art continuous-value systems, magic richness scaling.
 
