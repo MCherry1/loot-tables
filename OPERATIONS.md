@@ -104,6 +104,17 @@ If the merge button is **gray / disabled**, there are merge conflicts with anoth
 
 This is the **most important** thing to do after merging PR #31. The PR ships with an encrypted blob using the placeholder password `changeme-dev-password`, which means anyone who looks at the public GitHub repo can figure it out. You need to replace it with a real password of your choosing before you rely on it for anything.
 
+### How the system works (plain English)
+
+You might be wondering: "If the password is needed to encrypt descriptions, how does GitHub Pages build the site without knowing the password?" The answer is that it doesn't need to:
+
+1. The four encrypted files live at `public/data/` inside the repo and are **committed to git**.
+2. When GitHub Pages builds, it copies `public/data/` straight through into the deployed site — no encryption step runs on the server.
+3. You only re-run `npm run encrypt` **locally**, when you want to regenerate those files with a new password. Then you commit the updated files and push.
+4. `CHERRYKEEP_PASSWORD` is an environment variable that only matters during `npm run encrypt`. It is never set anywhere on GitHub, never stored in the repo, never pushed anywhere.
+
+This means there are exactly two places the password lives: (a) in your password manager, (b) temporarily in the `CHERRYKEEP_PASSWORD` env var on your local terminal when you run the encrypt command. Nothing else knows it.
+
 **What you'll need before starting:**
 - A local clone of the repo (section 1 above, one-time setup).
 - A password you've picked. Write it down somewhere safe (password manager, sticky note, whatever works for you). **Losing this password means losing access to every description until you rotate again.**
